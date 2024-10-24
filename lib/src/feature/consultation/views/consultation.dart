@@ -13,20 +13,19 @@ class ConsultationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AccountModel account = AccountModel(
-        gender: Gender.male, firstName: '', secondName: '', phone: '');
-
     return Scaffold(
       appBar: CustomAppBar(
         title: t.consultation.consultTitle,
       ),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
           Column(
             children: [
-              PhotoWidget(
-                  url: account.avatarUrl, size: Size(175, 175), radius: 12),
+              AvatarWidget(
+                  url: doctor?.account?.avatarUrl,
+                  size: const Size(175, 175),
+                  radius: 12),
               6.h,
               AutoSizeText(
                   '${doctor?.account?.firstName} ${doctor?.account?.secondName}'),
@@ -40,7 +39,9 @@ class ConsultationView extends StatelessWidget {
             ],
           ),
           20.h,
-          NewConsultationWidget(),
+          NewConsultationWidget(
+            workTime: doctor?.workTime,
+          ),
         ],
       ),
     );

@@ -35,3 +35,5 @@ timeOfConsultation: Время консультации
 tomorrow: Завтра
 select: Выбрать
 selectTime: Выберите время
+noAvailableTime: Свободных слотов нет\n\nПопробуйте выбрать другой день или формат консультации
+signUpOnline: Записаться на сайте
