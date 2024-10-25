@@ -138,10 +138,10 @@ class ProfileScreen extends StatelessWidget {
                                           item: alertDialog[0],
                                           onTapExit: () {
                                             context.pop();
+                                            verifyStore.logout();
                                           },
                                           onTapContinue: () {
                                             context.pop();
-                                            verifyStore.logout();
                                           },
                                         ),
                                       ),

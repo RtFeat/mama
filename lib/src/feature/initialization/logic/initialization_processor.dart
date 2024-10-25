@@ -15,8 +15,10 @@ final class InitializationProcessor {
   Future<Dependencies> _initDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
 
+    final storage = TokenStorageImpl();
+
     final tokenStorage = Fresh.oAuth2(
-        tokenStorage: TokenStorageImpl(),
+        tokenStorage: storage,
         refreshToken: (token, client) async {
           return await client
               .get(
@@ -34,6 +36,12 @@ final class InitializationProcessor {
                 refreshToken: v.data['refresh_token']);
           });
         });
+
+    // await tokenStorage.setToken(OAuth2Token(
+    //     accessToken: '',
+    //     refreshToken:
+    //         'eyJhbGciOiJlUzI1NilsInR5cC161kpXVCJ9.eyJ1c2VyX2lkIjoiOGJIM2MwM2MtYmlWOS00ODdjLWEyZTgtM2IzZDUzOTg3N2Njliwic3RhdGUiOiJVTIJFROITVEVSRUQILCJyb2xlljoiVVNFUilsInN0YXR1cy16lk5PX1NVQINDUKICRUQILCJpYXQiOjE3Mjk4ODU5MzUsImlzcyI6lk1hbWFDbylsInN1Yil6InJlZnJlc2gifQ.WM5N2zbs24V7B1m7d0rA1q_ia7ulTNLqCiN1K5PYtX4'));
+
     final restClient = await _initRestClient(tokenStorage);
     final errorTrackingManager = await _initErrorTrackingManager();
     final settingsStore = await _initSettingsStore(sharedPreferences);

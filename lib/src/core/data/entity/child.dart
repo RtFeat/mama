@@ -23,6 +23,9 @@ class ChildModel extends _ChildModel with _$ChildModel {
   @JsonKey(name: 'id', includeIfNull: false)
   final String? id;
 
+  @JsonKey(includeToJson: false)
+  final ChildStatus? status;
+
   @JsonKey(
     name: 'updated_at',
     includeToJson: false,
@@ -39,6 +42,7 @@ class ChildModel extends _ChildModel with _$ChildModel {
     this.id,
     required super.firstName,
     required super.secondName,
+    this.status,
     this.updatedAt,
     this.createdAt,
     super.avatarUrl,
