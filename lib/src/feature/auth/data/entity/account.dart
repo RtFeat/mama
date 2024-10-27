@@ -73,7 +73,7 @@ abstract class _AccountModel with Store {
   }
 
   @observable
-  @JsonKey(name: 'profession')
+  @JsonKey(name: 'profession', includeIfNull: false, includeToJson: false)
   String? profession = '';
 
   @action
@@ -113,7 +113,10 @@ abstract class _AccountModel with Store {
   }
 
   @observable
-  @JsonKey(name: 'info')
+  @JsonKey(
+    name: 'info',
+    includeIfNull: false,
+  )
   String? info;
 
   @action

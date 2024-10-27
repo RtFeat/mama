@@ -1,10 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/consultation/widgets/paragraph.dart';
 
 class NewConsultationWidget extends StatefulWidget {
-  const NewConsultationWidget({super.key});
+  final DoctorWorkTime? workTime;
+  const NewConsultationWidget({
+    super.key,
+    required this.workTime,
+  });
 
   @override
   State<NewConsultationWidget> createState() => _NewConsultationWidgetState();
@@ -37,6 +43,38 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
     final TextStyle inputTextStyle = textTheme.titleSmall!.copyWith(
       color: AppColors.primaryColor,
     );
+
+    final DoctorWorkTime? workTime = widget.workTime;
+
+    // final DoctorWorkTime workTime = DoctorWorkTime(
+    //   id: '',
+    //   monday: WeekDay(isWork: true, workSlots: [
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //   ]),
+    //   tuesday: WeekDay(isWork: true, workSlots: [
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //   ]),
+    //   wednesday: WeekDay(isWork: true, workSlots: [
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //   ]),
+    //   thursday: WeekDay(isWork: true, workSlots: [
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //     WorkSlot(isBusy: false, workSlot: '10:00'),
+    //     WorkSlot(isBusy: false, workSlot: '10:00'),
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //     WorkSlot(isBusy: true, workSlot: '10:00'),
+    //   ]),
+    //   friday: WeekDay(
+    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
+    //   saturday: WeekDay(
+    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
+    //   sunday: WeekDay(
+    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
+    // );
 
     return Column(
       children: [
@@ -123,47 +161,84 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                         iconPath: Assets.icons.calendar,
                       )),
                 ],
-                onTap: (index) {},
+                onTap: (index) {
+                  switch (index) {
+                    case 0:
+                      workTime?.setSelectedTime(DateTime.now());
+                    case 1:
+                      workTime?.setSelectedTime(
+                          DateTime.now().add(const Duration(days: 1)));
+                    case 2:
+                      showDatePicker(
+                          context: context,
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(const Duration(
+                            days: 30,
+                          ))).then((v) {
+                        workTime?.setSelectedTime(v!);
+                      });
+                  }
+                },
                 btnWidth: MediaQuery.of(context).size.width * .3,
                 btnHeight: 48),
             10.h,
-            IntrinsicHeight(
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  '10:00',
-                  '10:00',
-                  '10:00',
-                  '10:00',
-                  '10:00',
-                ].map((e) {
-                  return Chip(
-                    side: BorderSide(
-                      color: AppColors.primaryColor,
-                    ),
-                    // color: WidgetStatePropertyAll(
-                    //   AppColors.primaryColor,
-                    // ),
-                    label: Text(
-                      e,
-                      style: textTheme.titleMedium!.copyWith(),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            30.h,
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    // onTap: () {},
-                    title: t.consultation.selectTime,
-                  ),
+            Observer(builder: (_) {
+              if ((workTime == null || workTime.slots == null) &&
+                  !(workTime?.isWork ?? false)) {
+                return AutoSizeText(
+                  t.consultation.noAvailableTime,
+                  textAlign: TextAlign.center,
+                  style: textTheme.labelMedium,
+                );
+              }
+              return IntrinsicHeight(
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: workTime!.slots!.map((e) {
+                    if (e.isBusy) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return TimeChip(
+                      slot: e,
+                      onSelect: (v) {
+                        workTime.markAllAsNotSelected();
+                        e.select(v);
+                      },
+                    );
+                  }).toList(),
                 ),
-              ],
-            ),
+              );
+            }),
+            30.h,
+            Observer(builder: (_) {
+              final bool isSelected = workTime?.isSelectedDate ?? true;
+
+              return Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      onTap: isSelected
+                          ? () {
+                              context.pushNamed(AppViews.webView, extra: {
+                                'url': 'https://google.com',
+                              });
+                            }
+                          : null,
+                      title: isSelected
+                          ? t.consultation.signUpOnline
+                          : t.consultation.selectTime,
+                      icon: isSelected
+                          ? IconModel(
+                              icon: Icons.language,
+                            )
+                          : null,
+                    ),
+                  ),
+                ],
+              );
+            }),
             100.h,
           ],
         )

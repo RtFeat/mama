@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fresh/fresh.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,9 @@ class StartScreen extends StatelessWidget {
         builder: (context) {
           return reaction((_) => store.status.value, (v) async {
             // await store.tokenStorage.clearToken();
+
+            // await store.tokenStorage
+            //     .setToken(OAuth2Token(accessToken: '', refreshToken: ''));
 
             if (store.isAuthorized) {
               router.pushReplacementNamed(AppViews.homeScreen);

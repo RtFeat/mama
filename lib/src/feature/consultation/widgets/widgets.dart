@@ -4,5 +4,5 @@ export 'title.dart';
 export 'time.dart';
 export 'tags.dart';
 export 'type.dart';
-export 'photo.dart';
 export 'new_consultation.dart';
+export 'time_chip.dart';

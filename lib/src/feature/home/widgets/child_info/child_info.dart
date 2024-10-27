@@ -29,7 +29,7 @@ class ChildInfo extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ChildStatus(),
+                  const ChildStatusWidget(),
                   16.h,
                   const ChildCounter(),
                 ],
@@ -43,36 +43,11 @@ class ChildInfo extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   /// #
-                  userStore.selectedChild != null &&
-                          userStore.selectedChild!.avatarUrl != null
-                      ? Image(
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: AppColors.purpleLighterBackgroundColor,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: const Center(
-                                child: Icon(Icons.account_circle_outlined),
-                              ),
-                            );
-                          },
-                          image:
-                              NetworkImage(userStore.selectedChild!.avatarUrl!),
-                        )
-                      : SizedBox(
-                          width: MediaQuery.of(context).size.width * .42,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: AppColors.purpleLighterBackgroundColor,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: const Center(
-                              child: Icon(Icons.account_circle_outlined),
-                            ),
-                          ),
-                        ),
+                  AvatarWidget(
+                      url: userStore.selectedChild?.avatarUrl,
+                      size: Size.fromWidth(
+                          MediaQuery.of(context).size.width * .42),
+                      radius: 16),
                   Positioned(
                     bottom: -30,
                     child: FloatingActionButton(

@@ -37,3 +37,5 @@ timeOfConsultation: Time of consultation
 tomorrow: Tomorrow
 select: Select
 selectTime: Select time
+noAvailableTime: No available time\n\nTry selecting another day or format of consultation
+signUpOnline: Sign up online

@@ -70,6 +70,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                     CustomServiceBox(
                       imagePath: Assets.images.imgChatVideo4x.path,
                       text: t.home.onlineConsultation.title,
+                      onTap: () => context.pushNamed(AppViews.consultations),
                     ),
                   ],
                 ),
