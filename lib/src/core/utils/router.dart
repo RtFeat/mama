@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/feeding/views/bottle/add_bottle_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/ages_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/authors_screens.dart';
 import 'package:mama/src/feature/services/knowledge/views/category_screen.dart';
@@ -50,6 +51,8 @@ abstract class AppViews {
   static const feeding = 'feeding';
   static const addManually = 'addManually';
   static const addPumping = 'addPumping';
+  static const addLure = 'addLure';
+  static const addBottle = 'addBottle';
 
   static const diapersView = 'diapersView';
   static const addDiaper = 'addDiaper';
@@ -212,6 +215,16 @@ final GoRouter router = GoRouter(
               path: _Paths.addPumping,
               builder: (context, state) => const AddPumpingScreen(),
             ),
+            GoRoute(
+              name: AppViews.addBottle,
+              path: _Paths.addBottle,
+              builder: (context, state) => const AddBottleScreen(),
+            ),
+            GoRoute(
+              name: AppViews.addLure,
+              path: _Paths.addLure,
+              builder: (context, state) => const AddLureScreen(),
+            ),
           ],
         ),
         GoRoute(
@@ -332,6 +345,8 @@ abstract class _Paths {
 
   static const addManually = AppViews.addManually;
   static const addPumping = AppViews.addPumping;
+  static const addLure = AppViews.addLure;
+  static const addBottle = AppViews.addBottle;
 
   static const serviceKnowledge = AppViews.serviceKnowlegde;
 

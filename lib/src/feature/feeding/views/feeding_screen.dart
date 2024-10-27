@@ -52,7 +52,7 @@ class _FeedingScreenState extends State<FeedingScreen>
           BreastScreen(),
           PumpingScreen(),
           BottleScreen(),
-          WeaningScreen(),
+          LureScreen(),
           TableScreen()
         ],
       ),

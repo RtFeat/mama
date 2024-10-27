@@ -6,7 +6,8 @@ import 'package:mama/src/feature/feeding/widgets/widget.dart';
 
 class FeedingBody extends StatelessWidget {
   final List<Widget> children;
-  const FeedingBody({super.key, required this.children});
+  final Widget? bottomNavigatorBar;
+  const FeedingBody({super.key, required this.children, this.bottomNavigatorBar});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class FeedingBody extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: bottomNavigatorBar,
     );
   }
 }

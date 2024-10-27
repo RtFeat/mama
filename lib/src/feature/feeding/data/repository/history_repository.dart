@@ -80,7 +80,6 @@ final historyOfFeedings = [
       ]),
 ];
 
-
 final historyOfPumping = [
   HistoryOfFeeding(
       firstColumnText: '06 сентября',
@@ -288,3 +287,93 @@ final listOfTableData = [
       ]),
 ];
 
+final historyOfLure = [
+  HistoryOfFeeding(
+      firstColumnText: '10 сентября',
+      secondColumnText: '',
+      thirdColumnText: '',
+      detailColumnText: [
+        DetailTimeOfLeading(
+            detailFirstColumnText: '12:30',
+            detailSecondColumnText: 'Мясные консервы с говядиной',
+            detailThirdColumnText: '30г 😃'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '20г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '17:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '20г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '0г ⚠'),
+      ]),
+  HistoryOfFeeding(
+      firstColumnText: '09 сентября',
+      secondColumnText: '',
+      thirdColumnText: '',
+      detailColumnText: [
+        DetailTimeOfLeading(
+            detailFirstColumnText: '11:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '30г 😃'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '10г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '17:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '20г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '0г ⚠'),
+      ]),
+  HistoryOfFeeding(
+      firstColumnText: '09 сентября',
+      secondColumnText: '',
+      thirdColumnText: '',
+      detailColumnText: [
+        DetailTimeOfLeading(
+            detailFirstColumnText: '11:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '30г 😃'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '10г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '17:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '20г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '0г ⚠'),
+      ]),
+  HistoryOfFeeding(
+      firstColumnText: '09 сентября',
+      secondColumnText: '',
+      thirdColumnText: '',
+      detailColumnText: [
+        DetailTimeOfLeading(
+            detailFirstColumnText: '11:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '30г 😃'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '10г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '17:00',
+            detailSecondColumnText: 'Морковка',
+            detailThirdColumnText: '20г 🙂'),
+        DetailTimeOfLeading(
+            detailFirstColumnText: '',
+            detailSecondColumnText: 'Яблоко',
+            detailThirdColumnText: '0г ⚠'),
+      ]),
+];

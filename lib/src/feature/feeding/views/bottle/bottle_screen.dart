@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/feature/feeding/data/repository/feeding_repository.dart';
 import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
 import 'package:mama/src/feature/feeding/widgets/widget.dart';
@@ -14,11 +15,18 @@ class BottleScreen extends StatelessWidget {
     return FeedingBody(
       children: [
         GraphicWidget(listOfData: getBottleData(),
-            topColumnText: "Грудь",
+            topColumnText: 'Грудь',
             bottomColumnText: 'Смесь',
             minimum: 0,
             maximum: 500,
             interval: 100),
+        10.h,
+        FeedingButtons(
+            addBtnText: 'Добавить кормление',
+            learnMoreTap: () {},
+            addButtonTap: () {
+              context.pushNamed(AppViews.addBottle);
+            }),
         TableHistory(
           listOfData: listOfData,
           firstColumnName: t.feeding.feedingEndTime,

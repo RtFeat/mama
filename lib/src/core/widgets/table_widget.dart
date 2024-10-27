@@ -34,7 +34,22 @@ class TableWidget extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+                      children: item.fourthColumnText == null ? [
+                        _RowText(
+                          text: item.firstColumnText,
+                          type: RowTextType.title,
+                        ),
+                        _RowText(
+                          text: item.secondColumnText,
+                          type: RowTextType.titleText,
+                        ),
+                        _RowText(
+                          text: item.thirdColumnText,
+                          type: RowTextType.titleText,
+                        ),
+
+                      ]
+                          : [
                         _RowText(
                           text: item.firstColumnText,
                           type: RowTextType.title,
@@ -55,35 +70,62 @@ class TableWidget extends StatelessWidget {
                     ),
                     5.h,
                     SizedBox(
-                      height: item.detailColumnText.length * 25,
+                      height: item.detailColumnText.length * 35,
                       child: ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             final detailInfo = item.detailColumnText[index];
                             return Table(
                               children: [
-                                TableRow(children: [
-                                  _RowText(
-                                    text: detailInfo.detailFirstColumnText,
-                                    type: RowTextType.text,
-                                  ),
-                                  _RowText(
-                                    text: detailInfo.detailSecondColumnText,
-                                    type: RowTextType.text,
-                                    alignEnd: true,
-                                  ),
-                                  _RowText(
-                                    text: detailInfo.detailThirdColumnText,
-                                    type: RowTextType.text,
-                                    alignEnd: true,
-                                  ),
-                                   _RowText(
-                                    text: detailInfo.detailFourthColumnText ?? '',
-                                    type: RowTextType.text,
-                                    alignEnd: true,
-                                  ),
-                                ]
-                                ),
+                                TableRow(
+                                    children:
+                                        detailInfo.detailFourthColumnText ==
+                                                null
+                                            ? [
+                                                _RowText(
+                                                  text: detailInfo
+                                                      .detailFirstColumnText,
+                                                  type: RowTextType.text,
+                                                ),
+                                                _RowText(
+                                                  text: detailInfo
+                                                      .detailSecondColumnText,
+                                                  type: RowTextType.text,
+                                                  alignEnd: true,
+                                                ),
+                                                _RowText(
+                                                  text: detailInfo
+                                                      .detailThirdColumnText,
+                                                  type: RowTextType.text,
+                                                  alignEnd: true,
+                                                ),
+                                              ]
+                                            : [
+                                                _RowText(
+                                                  text: detailInfo
+                                                      .detailFirstColumnText,
+                                                  type: RowTextType.text,
+                                                ),
+                                                _RowText(
+                                                  text: detailInfo
+                                                      .detailSecondColumnText,
+                                                  type: RowTextType.text,
+                                                  alignEnd: true,
+                                                ),
+                                                _RowText(
+                                                  text: detailInfo
+                                                      .detailThirdColumnText,
+                                                  type: RowTextType.text,
+                                                  alignEnd: true,
+                                                ),
+                                                _RowText(
+                                                  text: detailInfo
+                                                          .detailFourthColumnText ??
+                                                      '',
+                                                  type: RowTextType.text,
+                                                  alignEnd: true,
+                                                ),
+                                              ]),
                               ],
                             );
                           },
@@ -114,14 +156,12 @@ class ListWidget extends StatelessWidget {
   }
 }
 
-
 class _RowText extends StatelessWidget {
   final RowTextType type;
   final String text;
   final bool? alignEnd;
 
-  const _RowText(
-      {required this.text, required this.type, this.alignEnd});
+  const _RowText({required this.text, required this.type, this.alignEnd});
 
   @override
   Widget build(BuildContext context) {
@@ -136,13 +176,10 @@ class _RowText extends StatelessWidget {
     return switch (type) {
       RowTextType.text => textTheme.labelLarge
           ?.copyWith(fontWeight: FontWeight.w400, color: Colors.black),
-
       RowTextType.title =>
         textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
-
       RowTextType.titleText =>
         textTheme.labelLarge?.copyWith(color: Colors.black),
-
       RowTextType.columnTitle => textTheme.labelLarge
           ?.copyWith(fontSize: 10, color: AppColors.greyBrighterColor),
     };

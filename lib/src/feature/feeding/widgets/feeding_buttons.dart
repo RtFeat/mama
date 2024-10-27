@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mama/src/core/utils/router.dart';
-import '../../../core/core.dart';
+import 'package:mama/src/core/core.dart';
 
-class AddPumpingButton extends StatelessWidget {
-  const AddPumpingButton({super.key});
+class FeedingButtons extends StatelessWidget {
+  final String addBtnText;
+  final Function() learnMoreTap;
+  final Function() addButtonTap;
+  final String? iconAsset;
+
+  const FeedingButtons(
+      {super.key,
+      required this.addBtnText,
+      required this.learnMoreTap,
+      required this.addButtonTap,
+      this.iconAsset});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +24,7 @@ class AddPumpingButton extends StatelessWidget {
           flex: 1,
           child: CustomButton(
             type: CustomButtonType.outline,
-            onTap: () {},
+            onTap: learnMoreTap,
             icon: IconModel(iconPath: Assets.icons.icLearnMore),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -29,17 +37,13 @@ class AddPumpingButton extends StatelessWidget {
           flex: 2,
           child: CustomButton(
             backgroundColor: AppColors.purpleLighterBackgroundColor,
-            onTap: () {
-              context.pushNamed(AppViews.addPumping);
-            },
-            title: 'Добавить сцеживание',
-            icon: IconModel(iconPath: Assets.icons.icCalendar),
+            onTap: addButtonTap,
+            title: addBtnText,
+            icon: iconAsset == null ? null : IconModel(iconPath: iconAsset),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
-            textStyle:
-                textTheme.bodyMedium?.copyWith(
-                  fontSize: 15,
-                    color: AppColors.primaryColor),
+            textStyle: textTheme.bodyMedium
+                ?.copyWith(fontSize: 15, color: AppColors.primaryColor),
           ),
         ),
       ],
