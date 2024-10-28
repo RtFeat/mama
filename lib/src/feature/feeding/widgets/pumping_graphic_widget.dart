@@ -15,8 +15,8 @@ class PumpingGraphicWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: GraphicWidget(
           listOfData: getPumpingData(),
-          topColumnText: 'Л',
-          bottomColumnText: 'П',
+          topColumnText: t.feeding.l,
+          bottomColumnText: t.feeding.r,
           minimum: 0,
           maximum: 150,
           interval: 50),

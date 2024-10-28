@@ -15,14 +15,14 @@ class BottleScreen extends StatelessWidget {
     return FeedingBody(
       children: [
         GraphicWidget(listOfData: getBottleData(),
-            topColumnText: 'Грудь',
-            bottomColumnText: 'Смесь',
+            topColumnText: t.feeding.breast,
+            bottomColumnText: t.feeding.mixture,
             minimum: 0,
             maximum: 500,
             interval: 100),
         10.h,
         FeedingButtons(
-            addBtnText: 'Добавить кормление',
+            addBtnText: t.feeding.addFeeding,
             learnMoreTap: () {},
             addButtonTap: () {
               context.pushNamed(AppViews.addBottle);

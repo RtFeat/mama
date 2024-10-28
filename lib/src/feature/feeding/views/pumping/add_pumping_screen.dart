@@ -13,7 +13,7 @@ class AddPumpingScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         height: 55,
-        titleWidget: Text('Сцеживание',
+        titleWidget: Text(t.feeding.pumping,
             style: textTheme.titleMedium
                 ?.copyWith(color: const Color(0xFF163C63))),
       ),
@@ -30,9 +30,9 @@ class AddPumpingScreen extends StatelessWidget {
               const AddPumpingInput(),
               35.h,
               Container(
-                padding: EdgeInsets.all(3),
+                padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                    color: Color(0xFFE7F2FE),
+                    color: const Color(0xFFE7F2FE),
                     borderRadius: BorderRadius.circular(8)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,7 +43,7 @@ class AddPumpingScreen extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(6)),
                       child: Text(
-                        'Сейчас',
+                        t.feeding.now,
                         style: textTheme.labelLarge,
                       ),
                     ),
@@ -84,7 +84,7 @@ class AddPumpingScreen extends StatelessWidget {
                       icon: IconModel(
                           color: AppColors.primaryColor,
                           iconPath: Assets.icons.icPencilFilled),
-                      title: 'Заметка',
+                      title: t.feeding.note,
                       onTap: () {},
                     ),
                   ),
@@ -97,7 +97,7 @@ class AddPumpingScreen extends StatelessWidget {
                       width: double.infinity,
                       type: CustomButtonType.filled,
                       icon: IconModel(iconPath: Assets.icons.icClose),
-                      title: "Отменить",
+                      title: t.feeding.cancel,
                       onTap: () {},
                     ),
                   ),
@@ -108,7 +108,7 @@ class AddPumpingScreen extends StatelessWidget {
                 backgroundColor: AppColors.greenLighterBackgroundColor,
                 height: 48,
                 width: double.infinity,
-                title: "Подтвердить",
+                title: t.feeding.confirm,
                 textStyle: textTheme.bodyMedium
                     ?.copyWith(color: AppColors.greenTextColor),
                 onTap: () {},

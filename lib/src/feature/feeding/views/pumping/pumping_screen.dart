@@ -19,7 +19,7 @@ class PumpingScreen extends StatelessWidget {
         const PumpingGraphicWidget(),
         30.h,
         FeedingButtons(
-            addBtnText: 'Добавить сцеживание',
+            addBtnText: t.feeding.addPumping,
             learnMoreTap: () {},
             addButtonTap: () {
               context.pushNamed(AppViews.addPumping);

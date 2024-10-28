@@ -12,7 +12,7 @@ class AddBottleScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFE7F2FE),
       appBar: CustomAppBar(
         height: 55,
-        titleWidget: Text('Бутылочка',
+        titleWidget: Text(t.feeding.bottle,
             style: textTheme.titleMedium?.copyWith(color: Color(0xFF163C63))),
       ),
     );

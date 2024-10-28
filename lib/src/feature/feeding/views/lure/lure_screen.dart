@@ -24,7 +24,7 @@ class _LureScreenState extends State<LureScreen> {
       bottomNavigatorBar: Padding(
         padding: const EdgeInsets.all(15),
         child: FeedingButtons(
-            addBtnText: 'Добавить прикорм',
+            addBtnText: t.feeding.addComplementaryFood,
             learnMoreTap: () {},
             addButtonTap: () {
               context.pushNamed(AppViews.addLure);
@@ -36,12 +36,12 @@ class _LureScreenState extends State<LureScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CustomToggleButton(
-                items: const ['Новые', 'Старые'],
+                items: [ t.feeding.newS, t.feeding.old],
                 onTap: (index) {},
                 btnWidth: 64,
                 btnHeight: 26),
             CustomToggleButton(
-                items: const ['Все', '🙂', '🤢', '⚠'],
+                items: [t.feeding.all, '🙂', '🤢', '⚠'],
                 onTap: (index) {},
                 btnWidth: 40,
                 btnHeight: 26),
@@ -52,7 +52,7 @@ class _LureScreenState extends State<LureScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              'Только\nс аллергией',
+              t.feeding.onlyWithAllergies,
               style: textTheme.labelLarge?.copyWith(
                   color: AppColors.greyBrighterColor,
                   fontWeight: FontWeight.w400),
@@ -70,9 +70,9 @@ class _LureScreenState extends State<LureScreen> {
         15.h,
         TableWidget(
             columnTitles: [
-              "Время",
-              'Продукт',
-              'Кол-во и\nреакция'
+              t.feeding.time,
+              t.feeding.food,
+              t.feeding.quantityAndReaction
             ], listOfData: historyOfLure)
       ],
     );
