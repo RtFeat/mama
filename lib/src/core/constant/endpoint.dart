@@ -37,9 +37,13 @@ class Endpoint {
 
   String get userConsultations => '$consultation/user';
 
+  static const String school = 'online-school';
+
+  String get schools => '$school/all';
+
   static const String article = 'article';
 
-  String get articles => '$article/all';
+  String get articles => '$article/list';
 
   String get articleOwn => '$article/file/own';
 

@@ -21,6 +21,9 @@ class DoctorModel extends BaseModel {
   @JsonKey(name: 'time_work')
   final DoctorWorkTime? workTime;
 
+  @JsonKey(name: 'count_articles')
+  final int? countArticles;
+
   DoctorModel({
     this.id,
     this.account,
@@ -28,6 +31,7 @@ class DoctorModel extends BaseModel {
     this.isConsultation = false,
     this.profession,
     super.updatedAt,
+    this.countArticles,
     super.createdAt,
     this.workTime,
   });

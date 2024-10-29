@@ -177,7 +177,11 @@ final GoRouter router = GoRouter(
                       final Map? extra = state.extra as Map?;
                       final DoctorModel? doctor =
                           extra?['doctor'] as DoctorModel?;
+                      final Consultation? consultation =
+                          extra?['consultation'] as Consultation?;
+
                       return ConsultationView(
+                        consultation: consultation,
                         doctor: doctor,
                       );
                     },

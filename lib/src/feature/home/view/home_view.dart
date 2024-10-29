@@ -68,6 +68,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           controller: _tabController,
           children: [
             HomeBodyWidget(
+              tabController: _tabController,
               appBar: CustomAppBar(
                 leading: leadingWidget,
                 action: switch (widget.userStore.role) {

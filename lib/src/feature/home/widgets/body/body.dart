@@ -9,9 +9,11 @@ import 'user_body.dart';
 
 class HomeBodyWidget extends StatelessWidget {
   final CustomAppBar appBar;
+  final TabController tabController;
   const HomeBodyWidget({
     super.key,
     required this.appBar,
+    required this.tabController,
   });
 
   @override
@@ -28,6 +30,7 @@ class HomeBodyWidget extends StatelessWidget {
             return HomeUserBody(
               articleStore: articleStore,
               userStore: userStore,
+              tabController: tabController,
             );
           case Role.moderator:
           case Role.doctor:
@@ -41,6 +44,7 @@ class HomeBodyWidget extends StatelessWidget {
             return HomeUserBody(
               articleStore: articleStore,
               userStore: userStore,
+              tabController: tabController,
             );
         }
       }),

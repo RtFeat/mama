@@ -10,6 +10,15 @@ class ArticleModel extends BaseModel {
 
   final String? title;
 
+  @JsonKey(fromJson: _extractPhotoUrls)
+  final List<String?>? images;
+
+  static List<String?>? _extractPhotoUrls(List? images) {
+    if (images == null) return null;
+
+    return images.map((e) => e['photo_url'] as String?).toList();
+  }
+
   final String? category;
 
   final String? file;
@@ -26,6 +35,7 @@ class ArticleModel extends BaseModel {
     this.file,
     this.photo,
     this.tags,
+    this.images,
   });
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
