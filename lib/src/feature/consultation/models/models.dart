@@ -5,3 +5,5 @@ export 'doctors.dart';
 export 'week_day.dart';
 export 'doctor_time.dart';
 export 'work_slot.dart';
+export 'school.dart';
+export 'schools.dart';

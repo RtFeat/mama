@@ -4,7 +4,13 @@ import 'package:mama/src/data.dart';
 
 class ConsultationTypeWidget extends StatelessWidget {
   final ConsultationType type;
-  const ConsultationTypeWidget({super.key, required this.type});
+  final MainAxisAlignment mainAxisAlignment;
+  final TextStyle? textStyle;
+  const ConsultationTypeWidget(
+      {super.key,
+      required this.type,
+      this.textStyle,
+      this.mainAxisAlignment = MainAxisAlignment.start});
 
   @override
   Widget build(BuildContext context) {
@@ -13,16 +19,22 @@ class ConsultationTypeWidget extends StatelessWidget {
         return _Widget(
           iconPath: Assets.icons.chatIcon,
           title: t.consultation.type.chat,
+          mainAxisAlignment: mainAxisAlignment,
+          textStyle: textStyle,
         );
       case ConsultationType.video:
         return _Widget(
           iconPath: Assets.icons.videoIcon,
           title: t.consultation.type.video,
+          mainAxisAlignment: mainAxisAlignment,
+          textStyle: textStyle,
         );
       case ConsultationType.express:
         return _Widget(
           iconPath: Assets.icons.videoIcon,
           title: t.consultation.type.express,
+          textStyle: textStyle,
+          mainAxisAlignment: mainAxisAlignment,
         );
       default:
         return const SizedBox.shrink();
@@ -33,7 +45,14 @@ class ConsultationTypeWidget extends StatelessWidget {
 class _Widget extends StatelessWidget {
   final String iconPath;
   final String title;
-  const _Widget({required this.iconPath, required this.title});
+  final TextStyle? textStyle;
+  final MainAxisAlignment mainAxisAlignment;
+  const _Widget({
+    required this.iconPath,
+    required this.textStyle,
+    required this.title,
+    required this.mainAxisAlignment,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +60,7 @@ class _Widget extends StatelessWidget {
     final TextTheme textTheme = themeData.textTheme;
 
     return Row(
+      mainAxisAlignment: mainAxisAlignment,
       children: [
         IconWidget(
             model: IconModel(
@@ -52,7 +72,7 @@ class _Widget extends StatelessWidget {
             child: FittedBox(
                 child: AutoSizeText(
               title,
-              style:
+              style: textStyle ??
                   textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500),
             ))),
       ],

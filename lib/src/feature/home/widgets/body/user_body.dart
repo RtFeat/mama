@@ -7,9 +7,11 @@ import 'package:provider/provider.dart';
 class HomeUserBody extends StatefulWidget {
   final ArticleStore articleStore;
   final UserStore userStore;
+  final TabController tabController;
   const HomeUserBody({
     super.key,
     required this.userStore,
+    required this.tabController,
     required this.articleStore,
   });
 
@@ -63,6 +65,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                     CustomServiceBox(
                       imagePath: Assets.images.chat.path,
                       text: t.home.supportChats.title,
+                      onTap: () => widget.tabController.animateTo(2),
                     ),
                     8.w,
 

@@ -64,10 +64,10 @@ abstract class _AccountModel with Store {
 
   @observable
   @JsonKey(name: 'second_name')
-  String secondName = '';
+  String? secondName;
 
   @action
-  void setSecondName(String value) {
+  void setSecondName(String? value) {
     secondName = value;
     isChanged = true;
   }

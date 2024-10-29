@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
 class ConsultationView extends StatelessWidget {
-  final bool isMadeAppointment;
   final DoctorModel? doctor;
+  final Consultation? consultation;
   const ConsultationView({
     super.key,
     this.doctor,
-    this.isMadeAppointment = false,
+    this.consultation,
   });
 
   @override
@@ -39,9 +39,13 @@ class ConsultationView extends StatelessWidget {
             ],
           ),
           20.h,
-          NewConsultationWidget(
-            workTime: doctor?.workTime,
-          ),
+          consultation != null
+              ? MyConsultationWidget(
+                  consultation: consultation!,
+                )
+              : NewConsultationWidget(
+                  workTime: doctor?.workTime,
+                ),
         ],
       ),
     );

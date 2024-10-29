@@ -33,10 +33,10 @@ class _ConsultationsViewState extends State<ConsultationsView>
             create: (context) => DoctorsStore(
                   restClient: context.read<Dependencies>().restClient,
                 )),
-        // Provider(
-        //     create: (context) => SchoolsStore(
-        //           restClient: context.read<Dependencies>().restClient,
-        //         )),
+        Provider(
+            create: (context) => SchoolsStore(
+                  restClient: context.read<Dependencies>().restClient,
+                )),
       ],
       builder: (context, _) => Scaffold(
           appBar: CustomAppBar(
@@ -57,7 +57,9 @@ class _ConsultationsViewState extends State<ConsultationsView>
             SpecialistsView(
               store: context.watch(),
             ),
-            const SchoolsView(),
+            SchoolsView(
+              store: context.watch(),
+            ),
           ])),
     );
   }

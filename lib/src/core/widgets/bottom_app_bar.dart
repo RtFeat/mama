@@ -28,6 +28,16 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   int _selectedIndex = 0;
 
+  @override
+  initState() {
+    super.initState();
+    widget.tabController.addListener(() {
+      setState(() {
+        _selectedIndex = widget.tabController.index;
+      });
+    });
+  }
+
   void _onItemTapped(int index) {
     widget.tabController.animateTo(index);
     setState(() {
