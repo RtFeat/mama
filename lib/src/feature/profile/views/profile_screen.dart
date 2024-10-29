@@ -77,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                                   accountModel: userStore.account,
                                   store: store,
                                   formatter: MaskTextInputFormatter(
-                                      mask: '### ###-##-##',
+                                      mask: '+# ### ###-##-##',
                                       filter: {'#': RegExp(r'[0-9]')}),
                                 );
                               }),

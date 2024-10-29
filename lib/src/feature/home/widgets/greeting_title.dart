@@ -7,9 +7,12 @@ class GreetingTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+
     return Text(
       title,
-      style: const TextStyle(
+      style: textTheme.headlineLarge?.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.w700,
       ),

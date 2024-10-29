@@ -9,11 +9,14 @@ class ChildCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
     final UserStore userStore = context.watch();
 
     return Observer(builder: (_) {
       return AutoSizeText(
         userStore.selectedChild?.birthDateCounter ?? '',
+        style: textTheme.titleSmall,
       );
     });
   }

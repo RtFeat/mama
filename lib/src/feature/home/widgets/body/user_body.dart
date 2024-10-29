@@ -52,7 +52,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
 
           /// #services
           CustomBackground(
-            height: 515,
+            height: 540,
             padding: 16,
             child: Column(
               children: [
@@ -61,14 +61,15 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                   children: [
                     /// #
                     CustomServiceBox(
-                      imagePath: Assets.images.imgChat4x.path,
+                      imagePath: Assets.images.chat.path,
                       text: t.home.supportChats.title,
                     ),
                     8.w,
 
                     /// #
                     CustomServiceBox(
-                      imagePath: Assets.images.imgChatVideo4x.path,
+                      maxLines: 2,
+                      imagePath: Assets.images.chatVideo.path,
                       text: t.home.onlineConsultation.title,
                       onTap: () => context.pushNamed(AppViews.consultations),
                     ),
@@ -81,14 +82,14 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                   children: [
                     /// #
                     CustomServiceBox(
-                      imagePath: Assets.images.imgProgress4x.path,
+                      imagePath: Assets.images.progress.path,
                       text: t.home.progressDiary.title,
                     ),
                     const SizedBox(width: 8),
 
                     /// #
                     CustomServiceBox(
-                      imagePath: Assets.images.imgMoonMusic4x.path,
+                      imagePath: Assets.images.moon.path,
                       text: t.home.musicForSleep.title,
                       onTap: () {
                         context.pushNamed(AppViews.servicesSleepMusicView);
@@ -100,7 +101,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
 
                 /// #long box
                 CustomServiceBoxTwo(
-                  imagePath: Assets.images.imgHat4x.path,
+                  imagePath: Assets.images.hat.path,
                   text: t.home.knowledgeCenter.title,
                   onTap: () {},
                 ),
