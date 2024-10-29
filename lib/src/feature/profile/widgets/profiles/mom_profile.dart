@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class MomsProfile extends StatefulWidget {
   final ProfileViewStore store;
@@ -77,8 +78,9 @@ class _MomsProfileState extends State<MomsProfile> {
                     item: InputItem(
                       controlName: 'phone',
                       hintText: t.profile.hintChangePhone,
-                      titleStyle: widget.titlesStyle!
-                          .copyWith(color: AppColors.blackColor),
+                      titleStyle: widget.titlesStyle!.copyWith(
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w400),
                       inputHintStyle: textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -90,30 +92,36 @@ class _MomsProfileState extends State<MomsProfile> {
                       },
                     ),
                   ),
-                  BodyItemWidget(
-                    item: InputItem(
-                      controlName: 'email',
-                      maxLines: 2,
-                      hintText: t.profile.hintChangeEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      inputHintStyle: textTheme.bodyLarge!.copyWith(
-                        color: AppColors.primaryColor,
+                  ReactiveFormConsumer(builder: (context, form, _) {
+                    final email = form.control('email');
+                    final bool isEmpty =
+                        email.value == null || email.value == '';
+                    return BodyItemWidget(
+                      item: InputItem(
+                        errorBorder: InputBorder.none,
+                        controlName: 'email',
+                        maxLines: isEmpty ? 2 : 1,
+                        hintText: t.profile.hintChangeEmail,
+                        keyboardType: TextInputType.emailAddress,
+                        inputHintStyle: textTheme.titleMedium!.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
+                        inputHint: t.profile.labelChangeEmail,
+                        onChanged: (value) {
+                          widget.store.updateData();
+                        },
                       ),
-                      inputHint: t.profile.labelChangeEmail,
-                      onChanged: (value) {
-                        widget.store.updateData();
-                      },
-                    ),
-                  ),
+                    );
+                  }),
                   BodyItemWidget(
                     item: InputItem(
+                      errorBorder: InputBorder.none,
                       controlName: 'about',
                       maxLines: 1,
                       hintText: t.profile.hintChangeNote,
                       titleStyle: widget.titlesStyle!,
                       inputHint: t.profile.labelChangeNote,
-                      inputHintStyle: textTheme.bodySmall!
-                          .copyWith(fontWeight: FontWeight.w700),
+                      inputHintStyle: textTheme.bodySmall,
                       onChanged: (value) {
                         widget.store.updateData();
                       },
@@ -168,7 +176,6 @@ class _MomsProfileState extends State<MomsProfile> {
                     context.pushNamed(AppViews.registerFillBabyName, extra: {
                       'isNotRegister': true,
                     });
-                    //! добавить ребенка
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

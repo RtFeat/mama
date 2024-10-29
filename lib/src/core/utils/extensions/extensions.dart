@@ -3,3 +3,4 @@ export 'string_extension.dart';
 export 'padding.dart';
 export 'radius.dart';
 export 'translate.dart';
+export 'color.dart';

@@ -8,6 +8,8 @@ class DateSubtitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
     final String locale =
         TranslationProvider.of(context).flutterLocale.languageCode;
 
@@ -18,7 +20,7 @@ class DateSubtitle extends StatelessWidget {
 
     return AutoSizeText(
       '${t.home.today} $dayOfWeek $day ${t.home.monthsData[today.month]}',
-      style: const TextStyle(fontSize: 17),
+      style: textTheme.titleSmall,
       maxLines: 1,
     );
   }
