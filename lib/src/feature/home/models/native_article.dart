@@ -7,6 +7,8 @@ enum NativeArticleType {
   image,
   @JsonValue('text')
   text,
+  @JsonValue('list')
+  list,
 }
 
 @JsonSerializable()
