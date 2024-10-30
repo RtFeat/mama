@@ -9,3 +9,4 @@ export 'finder.dart';
 export 'asset_row.dart';
 export 'emoji.dart';
 export 'chats_body.dart';
+export 'voice_bottom_bar.dart';

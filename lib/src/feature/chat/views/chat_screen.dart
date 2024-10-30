@@ -29,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
   List<PlatformFile> files = [];
   FilePickerResult? result;
+  bool isRecord = true;
 
   @override
   void initState() {
@@ -81,6 +82,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void clearList() {
     replyItem.clear();
+  }
+
+  void startRecording() {
+    isRecord = true;
+    setState(() {});
+  }
+
+  void endRecording() {
+    isRecord = false;
+    setState(() {});
   }
 
   List<ReplyItemWidget> replyItem = [];
@@ -173,22 +184,45 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                     ),
                   ),
-                  Container(
-                    decoration:
-                        const BoxDecoration(color: AppColors.lightPirple),
-                    child: SafeArea(
-                        child: ReactiveForm(
-                            formGroup: formGroup,
-                            child: MessageInput(
-                                controller: _controller,
-                                onTapAttach: getAttach,
-                                onTapSmile: () {
-                                  setState(() {
-                                    _emojiShowing = !_emojiShowing;
-                                  });
-                                },
-                                formControllName: 'message'))),
+                  // !isRecord
+                  //     ?
+                  // Container(
+                  //   child: Container(
+                  //     constraints: const BoxConstraints(
+                  //       minHeight: 70,
+                  //       maxHeight: 150,
+                  //     ),
+                  //     decoration:
+                  //         const BoxDecoration(color: AppColors.lightPirple),
+                  //     child:
+                  // SafeArea(
+                  // child:
+                  ReactiveForm(
+                    formGroup: formGroup,
+                    child: MessageInput(
+                        controller: _controller,
+                        onTapAttach: getAttach,
+                        onTapRecord: startRecording,
+                        onTapSmile: () {
+                          setState(() {
+                            _emojiShowing = !_emojiShowing;
+                          });
+                        },
+                        formControllName: 'message'),
                   ),
+                  // ),
+                  //   ),
+                  // ),
+                  // : Container(
+                  //     height: 120,
+                  //     decoration: const BoxDecoration(
+                  //       color: AppColors.lightPirple,
+                  //     ),
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.only(bottom: 8.0),
+                  //       child: VoiceButtonRecord(),
+                  //     ),
+                  //   ),
                   Offstage(
                     offstage: !_emojiShowing,
                     child: EmojiWidget(
@@ -198,6 +232,30 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
+            // if (isRecord)
+            // Draggable(
+            //   axis: Axis.horizontal,
+            //   childWhenDragging: Container(),
+            //   feedback: VoiceButtonRecord(
+            //       // selected: isRecord,
+            //       // onPressRecord: () {
+            //       //   startRecording();
+            //       // },
+            //       // onPressRecordEnd: () {
+            //       //   endRecording();
+            //       // },
+            //       ),
+            //   child:
+            // VoiceButtonRecord(
+            // selected: isRecord,
+            // onPressRecord: () {
+            //   startRecording();
+            // },
+            // onPressRecordEnd: () {
+            //   endRecording();
+            // },
+            // ),
+            // ),
           ],
         ),
       ),
