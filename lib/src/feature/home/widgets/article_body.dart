@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
@@ -25,11 +27,15 @@ class _ArticleBodyState extends State<ArticleBody> {
   Widget build(BuildContext context) {
     const double padding = 10;
 
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
     return LoadingWidget(
         future: widget.store.fetchFuture,
         builder: (context) {
           return ListView.builder(
-              itemCount: widget.store.listData.length,
+              itemCount: 1,
+              // widget.store.listData.length,
               padding: const EdgeInsets.only(
                 top: kToolbarHeight,
                 left: padding,
@@ -42,12 +48,33 @@ class _ArticleBodyState extends State<ArticleBody> {
 
                 switch (article.type) {
                   case NativeArticleType.text:
-                    return Text(article.data!);
+                    return Text(
+                      article.data!,
+                      style: textTheme.titleSmall,
+                    );
                   case NativeArticleType.image:
                     return Image.network(
                       article.data!,
                       errorBuilder: (context, error, stackTrace) =>
                           const SizedBox.shrink(),
+                    );
+                  case NativeArticleType.list:
+                    return Column(
+                      children: List.from(
+                          jsonDecode(article.data!).map((e) => ListTile(
+                                  title: Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: 8,
+                                  ),
+                                  10.w,
+                                  Text(
+                                    e.toString(),
+                                    style: textTheme.titleSmall,
+                                  ),
+                                ],
+                              )))),
                     );
                   default:
                     return const SizedBox.shrink();
