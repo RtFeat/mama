@@ -188,11 +188,6 @@ class _ChildItemState extends State<ChildItem> {
                 BodyItemWidget(
                     item: CustomBodyItem(
                         title: t.profile.birthTitle,
-                        subTitle: widget.model.childbirth.name
-                        // == null
-                        //     ? 'не указано'
-                        //     : null
-                        ,
                         titleStyle: titlesStyle,
                         hintStyle: textTheme.bodySmall!.copyWith(
                             fontSize: 10,

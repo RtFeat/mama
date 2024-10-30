@@ -34,7 +34,7 @@ abstract class _UserStore with Store {
   @computed
   // TODO: change this in production
   Role get role => account.role ?? Role.user;
-  // Role get role => Role.onlineSchool;
+  // Role get role => Role.doctor;
 
   @computed
   UserModel get user =>

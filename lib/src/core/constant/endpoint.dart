@@ -47,9 +47,13 @@ class Endpoint {
 
   String get articleOwn => '$article/file/own';
 
+  String get nativeArticle => '$article/native';
+
   static const String chat = 'chat';
 
   String get chats => '$chat/all';
 
   static const String doctor = 'doctor';
+
+  String get doctorData => '$doctor/me';
 }

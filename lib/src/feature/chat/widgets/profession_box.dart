@@ -14,6 +14,7 @@ class ProfessionBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 6.0),
       child: Container(
