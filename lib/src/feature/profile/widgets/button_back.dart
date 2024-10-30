@@ -7,6 +7,8 @@ class ButtonLeading extends StatelessWidget {
   final BorderRadius borderRadius;
   final String title;
   final Widget icon;
+  final IconAlignment iconAlignment;
+
   const ButtonLeading({
     super.key,
     required this.title,
@@ -14,6 +16,7 @@ class ButtonLeading extends StatelessWidget {
     this.labelStyle,
     required this.borderRadius,
     required this.icon,
+    this.iconAlignment = IconAlignment.start,
   });
 
   @override
@@ -21,9 +24,10 @@ class ButtonLeading extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: ElevatedButton.icon(
+        iconAlignment: iconAlignment,
         style: ElevatedButton.styleFrom(
-          fixedSize: const Size(100, 46),
-          padding: EdgeInsets.zero,
+          // fixedSize: const Size(100, 46),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           backgroundColor: AppColors.greyButton,
           shape: RoundedRectangleBorder(borderRadius: borderRadius),
         ),

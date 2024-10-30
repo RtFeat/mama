@@ -36,7 +36,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    isUser = widget.userStore.account.role == Role.user;
+    isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
   }
 
@@ -76,7 +76,10 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                       isShowText: true,
                       onTapSwitch: () {},
                     ),
-                  Role.doctor => null,
+                  Role.doctor => TextButton(
+                      onPressed: () {},
+                      child: Text(t.consultation.title),
+                    ),
                   _ => null,
                 },
                 // action: widget.userStore.role,

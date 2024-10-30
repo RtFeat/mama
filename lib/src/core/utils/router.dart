@@ -55,6 +55,8 @@ abstract class AppViews {
 
   static const webView = 'webView';
   static const pdfView = 'pdfView';
+
+  static const article = 'article';
 }
 
 final GlobalKey<NavigatorState> navKey = GlobalKey();
@@ -159,6 +161,17 @@ final GoRouter router = GoRouter(
       name: AppViews.homeScreen,
       builder: (context, state) => const HomeView(),
       routes: [
+        GoRoute(
+            path: _Paths.article,
+            name: AppViews.article,
+            builder: (context, state) {
+              final Map? extra = state.extra as Map?;
+              final String? id = extra?['id'] as String?;
+
+              return ArticleView(
+                id: id,
+              );
+            }),
         GoRoute(
           name: AppViews.servicesUserView,
           path: _Paths.servicesUserPath,
@@ -388,4 +401,6 @@ abstract class _Paths {
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';
+
+  static const article = AppViews.article;
 }

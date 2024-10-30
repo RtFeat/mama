@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
 
     final TextStyle? titlesStyle = textTheme.bodyMedium;
-    final TextStyle titlesColoredStyle = textTheme.labelLarge!.copyWith(
+    final TextStyle? titlesColoredStyle = textTheme.labelLarge?.copyWith(
       fontSize: 17,
       fontWeight: FontWeight.w600,
     );

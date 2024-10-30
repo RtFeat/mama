@@ -39,9 +39,8 @@ class MainBoxWithButtons extends StatelessWidget {
               /// #image and main text
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 8,
+                  padding: const EdgeInsets.all(
+                    16,
                   ),
                   child: Column(
                     children: [
@@ -80,6 +79,9 @@ class MainBoxWithButtons extends StatelessWidget {
                               isSmall: false,
                               title: button.title,
                               onTap: button.onTap,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              mainAxisAlignment: MainAxisAlignment.start,
                             ),
                           ),
                         );

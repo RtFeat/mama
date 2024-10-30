@@ -189,7 +189,9 @@ class _MomsProfileState extends State<MomsProfile> {
                       16.w,
                       Text(
                         t.profile.addChildButtonTitle,
-                        style: widget.titlesColoredStyle,
+                        style: widget.titlesColoredStyle?.copyWith(
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
