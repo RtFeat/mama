@@ -64,7 +64,7 @@ class _ArticleBodyState extends State<ArticleBody> {
                           jsonDecode(article.data!).map((e) => ListTile(
                                   title: Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.circle,
                                     size: 8,
                                   ),

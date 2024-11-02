@@ -106,8 +106,6 @@ class ChildBarWidget extends StatelessWidget {
                   if (child.birthDate != null)
                     Expanded(
                       child: AutoSizeText(
-                        // TODO: add format to child.birthDate
-                        // '24 недели\n5 месяцев 8 дней',
                         DateFormat.yMMMd().format(child.birthDate!),
                         style: titleStyle.copyWith(
                             color: AppColors.greyBrighterColor, fontSize: 10),

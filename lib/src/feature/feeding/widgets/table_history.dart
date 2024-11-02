@@ -40,7 +40,7 @@ class TableHistory extends StatelessWidget {
                     ),
                   ],
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
           15.h,
           Row(
             children: [
@@ -51,18 +51,19 @@ class TableHistory extends StatelessWidget {
                   btnWidth: 64,
                   btnHeight: 26),
               showTitle
-                  ? SizedBox.shrink()
+                  ? const SizedBox.shrink()
                   : Expanded(
                       child: Row(
                         children: [
-                          Spacer(),
+                          const Spacer(),
                           CustomButton(
-                            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
                             icon: IconModel(iconPath: Assets.icons.icUpload),
                             title: "ПДФ",
                             height: 26,
                             width: 70,
-                            onTap: (){},
+                            onTap: () {},
                           )
                         ],
                       ),
@@ -86,7 +87,7 @@ class TableHistory extends StatelessWidget {
                     SvgPicture.asset(Assets.icons.icArrowDown),
                   ],
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
           10.h
         ],
       ),

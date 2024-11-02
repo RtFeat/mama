@@ -21,4 +21,9 @@ abstract class _NativeArticleStore with Store, BaseStore {
       return data;
     });
   }
+
+  Future addToFavorite(String id) async {
+    return await restClient
+        .put('${Endpoint().addArticleToFavorite}/$id', body: {});
+  }
 }

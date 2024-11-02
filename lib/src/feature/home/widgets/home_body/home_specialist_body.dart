@@ -48,7 +48,7 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
               GreetingTitle(title: t.home.goodAfternoon.title),
 
               /// #today's date subtitle
-              DateSubtitle(),
+              const DateSubtitle(),
             ],
           ),
         ),

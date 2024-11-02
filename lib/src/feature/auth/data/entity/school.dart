@@ -64,6 +64,8 @@ class ArticleStore extends _ArticleStore with _$ArticleStore {
       required this.subAccountOnlineSchool,
       required this.bodyArticle,
       this.status,
+      super.tags,
+      super.ageCategory,
       required super.createdAt,
       required super.category,
       required super.countArticlesAuthor,

@@ -16,14 +16,14 @@ class AddGrowth extends StatelessWidget {
             size: Size(200 * 10, 200),
             top: 170,
           ),
-          SizedBox(height: 8),
+          8.h,
           CustomBlog(
             kgOrCm: t.trackers.cm.title,
             gOrM: t.trackers.m.title,
             onPressedElevated: () {},
             onPressedOutlined: () {},
           ),
-          SizedBox(height: 8),
+          8.h,
         ],
       ),
     );

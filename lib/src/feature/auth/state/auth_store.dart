@@ -27,5 +27,5 @@ abstract class _AuthStore with Store {
 
   @observable
   ObservableStream<AuthenticationStatus> status =
-      ObservableStream(Stream.empty());
+      ObservableStream(const Stream.empty());
 }
