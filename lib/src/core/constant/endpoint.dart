@@ -49,6 +49,8 @@ class Endpoint {
 
   String get nativeArticle => '$article/native';
 
+  String get addArticleToFavorite => '$article/favorite';
+
   static const String chat = 'chat';
 
   String get chats => '$chat/all';
