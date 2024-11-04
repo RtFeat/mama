@@ -89,6 +89,7 @@ promoScreenTitle: Подарочные коды
 promoItemButtonTitle: Нажмите, чтобы применить
 promoScreenHelper: Нажмите, чтобы ввести новый подарочный код
 promoScreenHintAddCode: Новый подарочный код
+promoIsNotValid: Подарочный код не действителен
 promoScreenErrorCode: Подарочный код не действителен. Нажмите, чтобы изменить
 promoDialogBackButton: Вернуться
 promoErrorDialogBackButton: Выйти
@@ -116,3 +117,10 @@ female: Девочка
 nature: Естественные
 cesarean: Кесарево
 save: Сохранить
+gift:
+  title: Подарочный
+  desc: Вы получили\n1 месяц подписки
+
+feedback: 
+  title: Отправьте запрос
+  send: Отправить

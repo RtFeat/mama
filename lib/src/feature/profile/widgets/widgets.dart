@@ -7,3 +7,4 @@ export 'profiles/profiles.dart';
 export 'promo/promo.dart';
 export 'custom_flutter_toogle.dart';
 export 'subscribe_block.dart';
+export 'feedback.dart';

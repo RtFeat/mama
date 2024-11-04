@@ -190,6 +190,24 @@ abstract class _ChildModel with Store {
     return '$formattedDifference ${t.home.or} $formattedWeeks';
   }
 
+  @computed
+  String get birthDateCounterInverted {
+    DateTime currentDate = DateTime.now();
+
+    Duration difference = currentDate.difference(birthDate ?? DateTime.now());
+
+    int months = (difference.inDays / 30).floor();
+    int days = difference.inDays - (months * 30);
+
+    int weeks = difference.inDays ~/ 7;
+
+    String formattedDifference =
+        '${t.home.months(n: months)} ${t.home.days(n: days)}';
+    String formattedWeeks = t.home.weeks(n: weeks);
+
+    return '$formattedWeeks\n$formattedDifference';
+  }
+
   @observable
   @JsonKey(name: 'weight')
   double? weight;

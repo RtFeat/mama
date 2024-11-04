@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 
 class SubscribeBlockItem extends StatelessWidget {
@@ -41,7 +42,11 @@ class SubscribeBlockItem extends StatelessWidget {
                 CustomButton(
                   isSmall: false,
                   title: t.profile.subscribeBlocButtonTitle,
-                  onTap: () {},
+                  onTap: () {
+                    context.pushNamed(AppViews.webView, extra: {
+                      'url': 'https://google.com',
+                    });
+                  },
                   icon: IconModel(
                     icon: Icons.language,
                   ),

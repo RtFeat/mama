@@ -85,7 +85,11 @@ class ChildBarWidget extends StatelessWidget {
                   IntrinsicWidth(
                     child: ReactiveDateTimePicker(
                       type: ReactiveDatePickerFieldType.date,
-                      dateFormat: DateFormat('dd MMMM yyy'),
+                      dateFormat: DateFormat(
+                        'dd MMMM yyy',
+                        LocaleSettings.currentLocale.flutterLocale
+                            .toLanguageTag(),
+                      ),
                       locale: LocaleSettings.currentLocale.flutterLocale,
                       formControlName: 'dateBirth',
                       showClearIcon: false,
@@ -106,7 +110,8 @@ class ChildBarWidget extends StatelessWidget {
                   if (child.birthDate != null)
                     Expanded(
                       child: AutoSizeText(
-                        DateFormat.yMMMd().format(child.birthDate!),
+                        child.birthDateCounterInverted,
+                        maxLines: 2,
                         style: titleStyle.copyWith(
                             color: AppColors.greyBrighterColor, fontSize: 10),
                       ),
