@@ -58,4 +58,8 @@ class Endpoint {
   static const String doctor = 'doctor';
 
   String get doctorData => '$doctor/me';
+
+  static const String avatar = 'resources/avatar';
+
+  static const String feedback = 'feedback';
 }

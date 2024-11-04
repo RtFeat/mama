@@ -104,6 +104,7 @@ class DialogWidget extends StatelessWidget {
               )
             else
               CustomButton(
+                isSmall: false,
                 title: t.profile.promoDialogBackButton,
                 onTap: onTapExit,
                 textStyle: titlesStyle.copyWith(

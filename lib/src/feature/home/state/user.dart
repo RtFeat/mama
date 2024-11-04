@@ -104,6 +104,8 @@ abstract class _UserStore with Store {
       if (secondName != null) 'second_name': secondName,
       if (email != null) 'email': email,
       if (info != null) 'info': info,
+    }).then((v) {
+      account.setIsChanged(false);
     });
   }
 
@@ -125,12 +127,15 @@ abstract class _UserStore with Store {
     return userData = await future;
   }
 
+  @action
   void updateAvatar(XFile file) {
     FormData formData = FormData.fromMap({
       'avatar': MultipartFile.fromFileSync(file.path, filename: file.name),
     });
 
-    restClient.put(Endpoint().accountAvatar, body: formData).then((v) {});
+    restClient.put(Endpoint().accountAvatar, body: formData).then((v) {
+      account.setAvatar('${Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+    });
   }
 
   @action

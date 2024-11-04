@@ -88,6 +88,7 @@ promoScreenTitle: Gift codes
 promoItemButtonTitle: Tap to apply
 promoScreenHelper: Tap to fill in new gift code
 promoScreenHintAddCode: New gift code
+promoIsNotValid: Gift code is invalid
 promoScreenErrorCode: Gift code is invalid. Tap to change promocode
 promoDialogBackButton: Return
 promoErrorDialogBackButton: Cancel
@@ -115,3 +116,11 @@ nature: Nature
 cesarean: Cesarean
 
 save: Save
+gift:
+  title: Gift
+  desc: You received\n1 month subscription
+
+
+feedback: 
+  title: Send request
+  send: Send

@@ -46,19 +46,24 @@ abstract class _ChildStore with Store {
 
   void update({required ChildModel model}) {
     restClient.patch('${Endpoint.child}/', body: model.toJson()).then((v) {
+      model.setIsChanged(false);
       userStore.children
           .firstWhere((v) => v.id == model.id)
           .setIsChanged(false);
     });
   }
 
-  void updateAvatar({required XFile file, required String id}) {
+  void updateAvatar({required XFile file, required ChildModel model}) {
     FormData formData = FormData.fromMap({
-      'child_id': id,
+      'child_id': model.id,
       'avatar': MultipartFile.fromFileSync(file.path, filename: file.name),
     });
 
-    restClient.put('${Endpoint().childAvatar}/', body: formData);
+    restClient.put('${Endpoint().childAvatar}/', body: formData).then((v) {
+      userStore.children
+          .firstWhere((v) => v.id == model.id)
+          .setAvatar('${Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+    });
   }
 
   void deleteAvatar({required String id}) {

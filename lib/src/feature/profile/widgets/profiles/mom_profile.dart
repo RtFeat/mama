@@ -52,7 +52,7 @@ class _MomsProfileState extends State<MomsProfile> {
       children: [
         widget.accountModel.avatarUrl == null
             ? const DashedPhotoProfile()
-            : ProfilePhoto(img: widget.accountModel.avatarUrl!),
+            : ProfilePhoto(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -70,7 +70,8 @@ class _MomsProfileState extends State<MomsProfile> {
                       titleStyle: textTheme.headlineSmall,
                       maxLines: 1,
                       onChanged: (value) {
-                        widget.store.updateData();
+                        userStore.account.setIsChanged(true);
+                        // widget.store.updateData();
                       },
                     ),
                   ),
@@ -88,7 +89,8 @@ class _MomsProfileState extends State<MomsProfile> {
                       maxLines: 1,
                       maskFormatter: widget.formatter,
                       onChanged: (value) {
-                        widget.store.updateData();
+                        userStore.account.setIsChanged(true);
+                        // widget.store.updateData();
                       },
                     ),
                   ),
@@ -108,7 +110,8 @@ class _MomsProfileState extends State<MomsProfile> {
                         ),
                         inputHint: t.profile.labelChangeEmail,
                         onChanged: (value) {
-                          widget.store.updateData();
+                          userStore.account.setIsChanged(true);
+                          // widget.store.updateData();
                         },
                       ),
                     );
@@ -123,7 +126,8 @@ class _MomsProfileState extends State<MomsProfile> {
                       inputHint: t.profile.labelChangeNote,
                       inputHintStyle: textTheme.bodySmall,
                       onChanged: (value) {
-                        widget.store.updateData();
+                        userStore.account.setIsChanged(true);
+                        // widget.store.updateData();
                       },
                     ),
                   ),
@@ -152,21 +156,20 @@ class _MomsProfileState extends State<MomsProfile> {
               ),
               30.h,
               Observer(builder: (_) {
-                return IgnorePointer(
-                  ignoring: !userStore.isPro,
-                  child: Stack(
-                    children: [
-                      Opacity(
-                        opacity: !userStore.isPro ? 0.25 : 1,
-                        child: Observer(builder: (_) {
-                          return ChildItems(
-                            childs: userStore.children.toList(),
-                          );
-                        }),
-                      ),
-                      if (!userStore.isPro) const SubscribeBlockItem(),
-                    ],
-                  ),
+                return Stack(
+                  children: [
+                    Opacity(
+                      opacity: !userStore.isPro ? 0.25 : 1,
+                      child: Observer(builder: (_) {
+                        return IgnorePointer(
+                            ignoring: !userStore.isPro,
+                            child: ChildItems(
+                              childs: userStore.children.toList(),
+                            ));
+                      }),
+                    ),
+                    if (!userStore.isPro) const SubscribeBlockItem(),
+                  ],
                 );
               }),
               Padding(
