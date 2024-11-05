@@ -13,6 +13,8 @@ enum ChildStatusType {
   birth,
   @JsonValue('')
   nothing,
+  @JsonValue('Неизвестно')
+  unknown,
 }
 
 @JsonSerializable()
