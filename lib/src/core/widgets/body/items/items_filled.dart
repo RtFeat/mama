@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:collection/collection.dart';
 
 class ItemsNeedToFill extends StatelessWidget {
   final FormGroup formGroup;
@@ -16,70 +15,75 @@ class ItemsNeedToFill extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final TextStyle titlesStyle =
         textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w400);
-    final List<String> data = [
-      t.profile.name,
-      t.profile.dateBirth,
-      t.profile.weight,
-      t.profile.height,
-      t.profile.headCirc,
-      'обо мне',
-    ];
+
+    // Отображаемые названия полей
+    final Map<String, String> data = {
+      'name': t.profile.name,
+      'dateBirth': t.profile.dateBirth,
+      'weight': t.profile.weight,
+      'height': t.profile.height,
+      'headCircumference': t.profile.headCirc,
+      'about': t.profile.aboutMe,
+    };
+
+    // Получаем список незаполненных полей по ключам
+    final List<String> missingFields = data.entries
+        .where((entry) {
+          final control = formGroup.control(entry.key);
+          final value = control.value;
+
+          if (value == null) return true;
+
+          logger.info(value);
+          if (['weight', 'height', 'headCircumference'].contains(entry.key) &&
+              (value as String).contains('0.0')) {
+            return true;
+          }
+          return false;
+        })
+        .map((entry) => entry.value)
+        .toList();
+
+    // Создаем TextSpan для незаполненных полей
+    List<TextSpan> missingFieldsTextSpans = [];
+    for (int i = 0; i < missingFields.length; i++) {
+      final String fieldName = missingFields[i];
+      final bool isLast = i == missingFields.length - 1;
+      final bool isPenultimate = i == missingFields.length - 2;
+
+      missingFieldsTextSpans.add(TextSpan(
+        text: fieldName,
+        style: titlesStyle.copyWith(
+          color: AppColors.primaryColor,
+          decoration: TextDecoration.underline,
+          decorationColor: AppColors.primaryColor,
+        ),
+      ));
+
+      if (isPenultimate) {
+        missingFieldsTextSpans.add(TextSpan(
+          text: ' ${t.profile.and} ',
+          style: titlesStyle.copyWith(
+            color: AppColors.greyBrighterColor,
+          ),
+        ));
+      } else if (!isLast) {
+        missingFieldsTextSpans.add(TextSpan(
+          text: ', ',
+          style: titlesStyle.copyWith(
+            color: AppColors.greyBrighterColor,
+          ),
+        ));
+      }
+    }
+
     return Text.rich(
       TextSpan(
         text: '${t.profile.needToFill} ',
         style: titlesStyle.copyWith(
           color: AppColors.greyBrighterColor,
         ),
-        children: formGroup.controls.values.mapIndexed((i, e) {
-          final bool isLast = formGroup.value.length - 1 == i;
-          final bool isPenultimate = formGroup.value.length - 2 == i;
-
-          if (e.value == null) {
-            if (isPenultimate || formGroup.value.length == 1) {
-              return TextSpan(
-                text: '${data[formGroup.value.length - 2]} ',
-                style: titlesStyle.copyWith(
-                  color: AppColors.primaryColor,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.primaryColor,
-                ),
-              );
-            } else if (isLast) {
-              return TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                    text: t.profile.and,
-                    style: titlesStyle.copyWith(
-                      color: AppColors.greyBrighterColor,
-                    ),
-                  ),
-                  TextSpan(
-                    text: ' ${data.last}',
-                    style: titlesStyle.copyWith(
-                      color: AppColors.primaryColor,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primaryColor,
-                    ),
-                  )
-                ],
-              );
-            } else {
-              return TextSpan(
-                text: '${data[i]}, ',
-                style: titlesStyle.copyWith(
-                  color: AppColors.primaryColor,
-                  decoration: TextDecoration.underline,
-                  decorationColor: AppColors.primaryColor,
-                ),
-              );
-            }
-          } else {
-            return const TextSpan(
-              text: '',
-              // style: style,
-            );
-          }
-        }).toList(),
+        children: missingFieldsTextSpans,
       ),
     );
   }
