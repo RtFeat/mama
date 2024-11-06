@@ -215,6 +215,11 @@ class ProfileScreen extends StatelessWidget {
                                           context.pop();
                                           context.pop();
                                           userStore.account.setIsChanged(false);
+
+                                          for (var e
+                                              in userStore.changedDataOfChild) {
+                                            e.setIsChanged(false);
+                                          }
                                         },
                                         onTapContinue: () {
                                           context.pop();
