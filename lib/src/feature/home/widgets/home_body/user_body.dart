@@ -115,7 +115,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
 
           if (articleStore.hasResults)
 
-            /// #current
+          /// #current
             CustomBackground(
               height: null,
               padding: 0,

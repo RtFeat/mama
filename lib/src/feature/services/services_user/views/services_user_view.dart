@@ -94,7 +94,7 @@ class ServicesUserView extends StatelessWidget {
                                 'selectedTab': 2,
                               });
                         },
-                      )
+                      ),
                     ],
                   ),
                 ],

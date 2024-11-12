@@ -99,15 +99,27 @@ class _ChildItemState extends State<ChildItem> {
                 ),
                 BodyItemWidget(
                     item: CustomBodyItem(
-                        titleStyle: titlesStyle,
-                        title: t.profile.genderTitle,
-                        body: CustomToggleButton(
-                            initialIndex: widget.model.gender.index,
-                            items: [Gender.female.name, Gender.male.name],
-                            onTap: (index) =>
-                                widget.model.setGender(Gender.values[index]),
-                            btnWidth: 128,
-                            btnHeight: 38))),
+                  titleStyle: titlesStyle,
+                  title: t.profile.genderTitle,
+                  body: FlutterToggleButton(
+                    outerContainerMargin: 3,
+                    buttonWidth: 128,
+                    buttonHeight: 38,
+                    buttonColor: Colors.white,
+                    enableTextColor: AppColors.primaryColor,
+                    buttonTextFontSize: 14,
+                    borderRadius: 6,
+                    outerContainerColor: AppColors.purpleLighterBackgroundColor,
+                    onTap: (index) =>
+                        widget.model.setGender(Gender.values[index]),
+                    items: [
+                      Gender.female,
+                      Gender.male,
+                      // t.profile.sex(context: GenderContext.female),
+                      // t.profile.sex(context: GenderContext.male),
+                    ],
+                  ),
+                )),
                 BodyItemWidget(
                     item: ItemWithSwitch(
                         title: t.profile.twinsTitle,

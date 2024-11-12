@@ -13,7 +13,7 @@ class AddManuallyScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFE7F2FE),
       appBar: CustomAppBar(
         height: 55,
-        titleWidget: Text('Добавить вручную',
+        titleWidget: Text(t.feeding.addManually,
             style: textTheme.titleMedium?.copyWith(color: Color(0xFF163C63))),
       ),
       body: Container(
@@ -28,25 +28,25 @@ class AddManuallyScreen extends StatelessWidget {
             30.h,
             Row(
               children: [
-                const Expanded(
+                Expanded(
                     child: DetailContainer(
-                  title: 'Начало',
+                  title: t.feeding.start,
                   text: '16:35',
-                  detail: 'Изменить',
+                  detail: t.feeding.change,
                   filled: true,
                 )),
                 10.w,
-                const Expanded(
+                Expanded(
                     child: DetailContainer(
-                  title: 'Завершение',
+                  title: t.feeding.end,
                   text: '16:35',
-                  detail: 'Таймер запущен',
+                  detail: t.feeding.timerStarted,
                   filled: true,
                 )),
                 10.w,
-                const Expanded(
+                Expanded(
                     child: DetailContainer(
-                  title: 'Всего',
+                  title: t.feeding.total,
                   text: '0м 0с',
                   detail: '',
                   filled: false,
@@ -61,7 +61,7 @@ class AddManuallyScreen extends StatelessWidget {
               icon: IconModel(
                   color: AppColors.primaryColor,
                   iconPath: Assets.icons.icPencilFilled),
-              title: "Заметка",
+              title: t.feeding.note,
               onTap: () {},
             ),
             10.h,
@@ -69,7 +69,7 @@ class AddManuallyScreen extends StatelessWidget {
               backgroundColor: AppColors.greenLighterBackgroundColor,
               height: 48,
               width: double.infinity,
-              title: "Подтвердить",
+              title: t.feeding.confirm,
               textStyle: textTheme.bodyMedium
                   ?.copyWith(color: AppColors.greenTextColor),
               onTap: () {},

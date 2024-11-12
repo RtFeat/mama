@@ -27,3 +27,24 @@ totalMl: Total, ml
 breastMl: Breast,\nml
 bottleMl: Bottle,\nml
 table: Table
+addPumping: Add pumping
+mixture: Mixture
+change: Change
+start: Start
+end: End
+timerStarted: Timer started
+total: Total
+note: Note
+confirm: Confirm
+now: Now
+cancel: Cancel
+addComplementaryFood: Add complementary foods
+all: All
+onlyWithAllergies: Only\nwith allergies
+time: Time
+food: Food
+quantityAndReaction: Quantity and\nreaction
+date: Date
+gwTime: GW time
+totalLiquidsMl: Total\nliquids,\nml
+totalComplementary: Total\ncomplementary,\ng

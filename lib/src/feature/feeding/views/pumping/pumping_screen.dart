@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
 import 'package:mama/src/feature/feeding/widgets/pumping_graphic_widget.dart';
 import 'package:mama/src/feature/feeding/widgets/widget.dart';
 
-import '../../../core/core.dart';
+import '../../../../core/core.dart';
 
 class PumpingScreen extends StatelessWidget {
   const PumpingScreen({super.key});
@@ -15,6 +16,13 @@ class PumpingScreen extends StatelessWidget {
     return FeedingBody(
       children: [
         const PumpingGraphicWidget(),
+        30.h,
+        FeedingButtons(
+            addBtnText: t.feeding.addPumping,
+            learnMoreTap: () {},
+            addButtonTap: () {
+              context.pushNamed(AppViews.addPumping);
+            }),
         TableHistory(
           listOfData: listOfData,
           firstColumnName: t.feeding.endTimeOfPumping,
