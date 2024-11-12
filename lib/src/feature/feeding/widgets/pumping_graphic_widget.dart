@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/feeding/data/entity/pumping_data.dart';
 import 'package:mama/src/feature/feeding/data/repository/feeding_repository.dart';
 import 'package:mama/src/feature/feeding/widgets/widget.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class PumpingGraphicWidget extends StatelessWidget {
   const PumpingGraphicWidget({super.key});
