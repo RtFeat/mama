@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class MomsProfile extends StatefulWidget {
   final ProfileViewStore store;
@@ -51,7 +52,7 @@ class _MomsProfileState extends State<MomsProfile> {
       children: [
         widget.accountModel.avatarUrl == null
             ? const DashedPhotoProfile()
-            : ProfilePhoto(img: widget.accountModel.avatarUrl!),
+            : ProfilePhoto(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -69,7 +70,8 @@ class _MomsProfileState extends State<MomsProfile> {
                       titleStyle: textTheme.headlineSmall,
                       maxLines: 1,
                       onChanged: (value) {
-                        widget.store.updateData();
+                        userStore.account.setIsChanged(true);
+                        // widget.store.updateData();
                       },
                     ),
                   ),
@@ -77,8 +79,9 @@ class _MomsProfileState extends State<MomsProfile> {
                     item: InputItem(
                       controlName: 'phone',
                       hintText: t.profile.hintChangePhone,
-                      titleStyle: widget.titlesStyle!
-                          .copyWith(color: AppColors.blackColor),
+                      titleStyle: widget.titlesStyle!.copyWith(
+                          color: AppColors.blackColor,
+                          fontWeight: FontWeight.w400),
                       inputHintStyle: textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -86,36 +89,45 @@ class _MomsProfileState extends State<MomsProfile> {
                       maxLines: 1,
                       maskFormatter: widget.formatter,
                       onChanged: (value) {
-                        widget.store.updateData();
+                        userStore.account.setIsChanged(true);
+                        // widget.store.updateData();
                       },
                     ),
                   ),
-                  BodyItemWidget(
-                    item: InputItem(
-                      controlName: 'email',
-                      maxLines: 2,
-                      hintText: t.profile.hintChangeEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      inputHintStyle: textTheme.bodyLarge!.copyWith(
-                        color: AppColors.primaryColor,
+                  ReactiveFormConsumer(builder: (context, form, _) {
+                    final email = form.control('email');
+                    final bool isEmpty =
+                        email.value == null || email.value == '';
+                    return BodyItemWidget(
+                      item: InputItem(
+                        errorBorder: InputBorder.none,
+                        controlName: 'email',
+                        maxLines: isEmpty ? 2 : 1,
+                        hintText: t.profile.hintChangeEmail,
+                        keyboardType: TextInputType.emailAddress,
+                        inputHintStyle: textTheme.titleMedium!.copyWith(
+                          fontWeight: FontWeight.w400,
+                        ),
+                        inputHint: t.profile.labelChangeEmail,
+                        onChanged: (value) {
+                          userStore.account.setIsChanged(true);
+                          // widget.store.updateData();
+                        },
                       ),
-                      inputHint: t.profile.labelChangeEmail,
-                      onChanged: (value) {
-                        widget.store.updateData();
-                      },
-                    ),
-                  ),
+                    );
+                  }),
                   BodyItemWidget(
                     item: InputItem(
+                      errorBorder: InputBorder.none,
                       controlName: 'about',
                       maxLines: 1,
                       hintText: t.profile.hintChangeNote,
                       titleStyle: widget.titlesStyle!,
                       inputHint: t.profile.labelChangeNote,
-                      inputHintStyle: textTheme.bodySmall!
-                          .copyWith(fontWeight: FontWeight.w700),
+                      inputHintStyle: textTheme.bodySmall,
                       onChanged: (value) {
-                        widget.store.updateData();
+                        userStore.account.setIsChanged(true);
+                        // widget.store.updateData();
                       },
                     ),
                   ),
@@ -144,21 +156,20 @@ class _MomsProfileState extends State<MomsProfile> {
               ),
               30.h,
               Observer(builder: (_) {
-                return IgnorePointer(
-                  ignoring: !userStore.isPro,
-                  child: Stack(
-                    children: [
-                      Opacity(
-                        opacity: !userStore.isPro ? 0.25 : 1,
-                        child: Observer(builder: (_) {
-                          return ChildItems(
-                            childs: userStore.children.toList(),
-                          );
-                        }),
-                      ),
-                      if (!userStore.isPro) const SubscribeBlockItem(),
-                    ],
-                  ),
+                return Stack(
+                  children: [
+                    Opacity(
+                      opacity: !userStore.isPro ? 0.25 : 1,
+                      child: Observer(builder: (_) {
+                        return IgnorePointer(
+                            ignoring: !userStore.isPro,
+                            child: ChildItems(
+                              childs: userStore.children.toList(),
+                            ));
+                      }),
+                    ),
+                    if (!userStore.isPro) const SubscribeBlockItem(),
+                  ],
                 );
               }),
               Padding(
@@ -168,7 +179,6 @@ class _MomsProfileState extends State<MomsProfile> {
                     context.pushNamed(AppViews.registerFillBabyName, extra: {
                       'isNotRegister': true,
                     });
-                    //! добавить ребенка
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +192,9 @@ class _MomsProfileState extends State<MomsProfile> {
                       16.w,
                       Text(
                         t.profile.addChildButtonTitle,
-                        style: widget.titlesColoredStyle,
+                        style: widget.titlesColoredStyle?.copyWith(
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),

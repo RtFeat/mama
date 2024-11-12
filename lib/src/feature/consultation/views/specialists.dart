@@ -61,10 +61,8 @@ class _SpecialistsViewState extends State<SpecialistsView> {
                         ),
                       ]),
                     ConsultationTags(tags: [
-                      'sdf',
-                      'sdf',
-                      'sdf',
-                      'sdf',
+                      (t.consultation.articles(n: doctor?.countArticles ?? 0)),
+                      if (doctor?.isConsultation ?? false) t.consultation.title,
                     ])
                   ],
                 ));

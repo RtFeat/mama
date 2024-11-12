@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/home/home.dart';
 
-class HomeSpecialistBody extends StatelessWidget {
+class HomeSpecialistBody extends StatefulWidget {
   const HomeSpecialistBody({super.key});
 
+  @override
+  State<HomeSpecialistBody> createState() => _HomeSpecialistBodyState();
+}
+
+class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
   @override
   Widget build(BuildContext context) {
     final phonePadding = MediaQuery.of(context).padding;
@@ -43,7 +48,7 @@ class HomeSpecialistBody extends StatelessWidget {
               GreetingTitle(title: t.home.goodAfternoon.title),
 
               /// #today's date subtitle
-              DateSubtitle(),
+              const DateSubtitle(),
             ],
           ),
         ),

@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
 
     final TextStyle? titlesStyle = textTheme.bodyMedium;
-    final TextStyle titlesColoredStyle = textTheme.labelLarge!.copyWith(
+    final TextStyle? titlesColoredStyle = textTheme.labelLarge?.copyWith(
       fontSize: 17,
       fontWeight: FontWeight.w600,
     );
@@ -49,7 +49,9 @@ class ProfileScreen extends StatelessWidget {
               ],
             )),
             child: Provider(
-                create: (context) => ProfileViewStore(model: userStore.account),
+                create: (context) => ProfileViewStore(
+                    model: userStore.account,
+                    restClient: context.read<Dependencies>().restClient),
                 builder: (context, _) {
                   final ProfileViewStore store = context.watch();
                   return Scaffold(
@@ -77,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                                   accountModel: userStore.account,
                                   store: store,
                                   formatter: MaskTextInputFormatter(
-                                      mask: '### ###-##-##',
+                                      mask: '+# ### ###-##-##',
                                       filter: {'#': RegExp(r'[0-9]')}),
                                 );
                               }),
@@ -117,7 +119,32 @@ class ProfileScreen extends StatelessWidget {
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 child: CustomButton(
                                   title: t.profile.feedbackButtonTitle,
-                                  onTap: () {},
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          contentPadding:
+                                              const EdgeInsets.all(10),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          title: Center(
+                                              child: Text(
+                                            t.profile.feedback.title,
+                                            style: textTheme.bodyMedium
+                                                ?.copyWith(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                          )),
+                                          content: FeedbackWidget(
+                                            store: store,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
                                   icon: IconModel(
                                     icon: Icons.language,
                                   ),
@@ -129,23 +156,24 @@ class ProfileScreen extends StatelessWidget {
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 child: CustomButton(
                                   onTap: () async {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (context) => Dialog(
-                                        insetPadding: const EdgeInsets.all(8.0),
-                                        child: DialogWidget(
-                                          errorDialog: true,
-                                          item: alertDialog[0],
-                                          onTapExit: () {
-                                            context.pop();
-                                            verifyStore.logout();
-                                          },
-                                          onTapContinue: () {
-                                            context.pop();
-                                          },
-                                        ),
-                                      ),
-                                    );
+                                    // await showDialog(
+                                    //   context: context,
+                                    //   builder: (context) => Dialog(
+                                    //     insetPadding: const EdgeInsets.all(8.0),
+                                    //     child: DialogWidget(
+                                    //       errorDialog: true,
+                                    //       item: alertDialog[0],
+                                    //       onTapExit: () {
+                                    //         context.pop();
+                                    //         verifyStore.logout();
+                                    //       },
+                                    //       onTapContinue: () {
+                                    //         context.pop();
+                                    //       },
+                                    //     ),
+                                    //   ),
+                                    // );
+                                    verifyStore.logout();
                                   },
                                   backgroundColor:
                                       AppColors.redLighterBackgroundColor,
@@ -173,8 +201,35 @@ class ProfileScreen extends StatelessWidget {
                               title: t.profile.backLeadingButton,
                               labelStyle: titlesStyle!
                                   .copyWith(fontWeight: FontWeight.w400),
-                              onTapButton: () {
-                                context.pop();
+                              onTapButton: () async {
+                                if (userStore.account.isChanged ||
+                                    userStore.changedDataOfChild.isNotEmpty) {
+                                  await showDialog(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      insetPadding: const EdgeInsets.all(8.0),
+                                      child: DialogWidget(
+                                        errorDialog: true,
+                                        item: alertDialog[0],
+                                        onTapExit: () {
+                                          context.pop();
+                                          context.pop();
+                                          userStore.account.setIsChanged(false);
+
+                                          for (var e
+                                              in userStore.changedDataOfChild) {
+                                            e.setIsChanged(false);
+                                          }
+                                        },
+                                        onTapContinue: () {
+                                          context.pop();
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  context.pop();
+                                }
                               },
                               borderRadius: const BorderRadius.horizontal(
                                 right: Radius.circular(20),
@@ -194,6 +249,7 @@ class ProfileScreen extends StatelessWidget {
                                   labelStyle: titlesStyle.copyWith(
                                       fontWeight: FontWeight.w400),
                                   onTapButton: () {
+                                    store.updateData();
                                     userStore.updateData(
                                         city: userStore.user.city,
                                         firstName: userStore.account.firstName,

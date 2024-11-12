@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
 class ConsultationRecords extends StatefulWidget {
@@ -30,6 +31,11 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
               final Consultation? consultation = widget.store.listData[index];
 
               return ConsultationItem(
+                  onTap: () {
+                    context.pushNamed(AppViews.consultation, extra: {
+                      'consultation': consultation,
+                    });
+                  },
                   url: consultation?.doctor?.account?.avatarUrl,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

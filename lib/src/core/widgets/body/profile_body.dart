@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
 import 'package:mama/src/data.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 

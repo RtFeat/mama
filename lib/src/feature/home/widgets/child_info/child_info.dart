@@ -59,7 +59,7 @@ class ChildInfo extends StatelessWidget {
                             .then((value) {
                           if (value != null) {
                             childStore.updateAvatar(
-                                file: value, id: userStore.selectedChild!.id!);
+                                file: value, model: userStore.selectedChild!);
                           }
                         });
                       },

@@ -128,7 +128,7 @@ class ChatItem extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: chatItem.lastMessageName,
+                            text: chatItem.lastMessageName?.trim(),
                             style: textTheme.labelMedium,
                           ),
                           if (chatEntity == ChatEntity.groupChat)

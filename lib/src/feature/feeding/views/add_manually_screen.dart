@@ -18,37 +18,39 @@ class AddManuallyScreen extends StatelessWidget {
       ),
       body: Container(
         color: Colors.white,
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         child: ListView(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height / 4.5,),
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 4.5,
+            ),
             const ManuallyInputContainer(),
             30.h,
             Row(
               children: [
                 const Expanded(
                     child: DetailContainer(
-                      title: 'Начало',
-                      text: '16:35',
-                      detail: 'Изменить',
-                      filled: true,
-                    )),
+                  title: 'Начало',
+                  text: '16:35',
+                  detail: 'Изменить',
+                  filled: true,
+                )),
                 10.w,
                 const Expanded(
                     child: DetailContainer(
-                      title: 'Завершение',
-                      text: '16:35',
-                      detail: 'Таймер запущен',
-                      filled: true,
-                    )),
+                  title: 'Завершение',
+                  text: '16:35',
+                  detail: 'Таймер запущен',
+                  filled: true,
+                )),
                 10.w,
                 const Expanded(
                     child: DetailContainer(
-                      title: 'Всего',
-                      text: '0м 0с',
-                      detail: '',
-                      filled: false,
-                    )),
+                  title: 'Всего',
+                  text: '0м 0с',
+                  detail: '',
+                  filled: false,
+                )),
               ],
             ),
             30.h,

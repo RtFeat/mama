@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +38,15 @@ class ChildBarWidget extends StatelessWidget {
             children: [
               ReactiveTextField(
                 formControlName: 'name',
+                onChanged: (control) {
+                  if (control.value is String &&
+                      (control.value as String).isNotEmpty) {
+                    final List<String> names =
+                        (control.value as String).split(' ');
+                    child.setFirstName(names[0]);
+                    child.setSecondName(names.length > 1 ? names[1] : '');
+                  }
+                },
                 // onChanged: (value) => onChangeName,
                 // controller: childNameController,
                 style: textTheme.headlineSmall!.copyWith(
@@ -82,10 +92,20 @@ class ChildBarWidget extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IntrinsicWidth(
-                    child: ReactiveDateTimePicker(
+                  IntrinsicWidth(child:
+                      ReactiveFormConsumer(builder: (context, formGroup, _) {
+                    final DateTime? dateBirth =
+                        formGroup.control('dateBirth').value;
+                    if (dateBirth != null && child.birthDate != dateBirth) {
+                      child.setBirthDate(dateBirth);
+                    }
+                    return ReactiveDateTimePicker(
                       type: ReactiveDatePickerFieldType.date,
-                      dateFormat: DateFormat('dd MMMM yyy'),
+                      dateFormat: DateFormat(
+                        'dd MMMM yyy',
+                        LocaleSettings.currentLocale.flutterLocale
+                            .toLanguageTag(),
+                      ),
                       locale: LocaleSettings.currentLocale.flutterLocale,
                       formControlName: 'dateBirth',
                       showClearIcon: false,
@@ -100,19 +120,19 @@ class ChildBarWidget extends StatelessWidget {
                         labelStyle: titleStyle.copyWith(
                             color: AppColors.greyBrighterColor),
                       ),
-                    ),
-                  ),
+                    );
+                  })),
                   16.w,
-                  if (child.birthDate != null)
-                    Expanded(
-                      child: AutoSizeText(
-                        // TODO: add format to child.birthDate
-                        // '24 недели\n5 месяцев 8 дней',
-                        DateFormat.yMMMd().format(child.birthDate!),
-                        style: titleStyle.copyWith(
-                            color: AppColors.greyBrighterColor, fontSize: 10),
-                      ),
-                    ),
+                  Observer(builder: (_) {
+                    return Expanded(
+                        child: AutoSizeText(
+                      child.birthDateCounterInverted,
+                      maxLines: 2,
+                      minFontSize: 8,
+                      style: titleStyle.copyWith(
+                          color: AppColors.greyBrighterColor, fontSize: 10),
+                    ));
+                  })
                 ],
               ),
               Text(

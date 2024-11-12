@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
@@ -41,10 +42,13 @@ class CategoryCard extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 12, left: 16),
-                  child: Text(
+                  child: AutoSizeText(
                     title,
-                    style: textTheme.titleLarge!
-                        .copyWith(color: AppColors.blackColor),
+                    style: textTheme.headlineSmall!.copyWith(
+                        fontSize: 20,
+                        color: backgroundColor.getDarkerColor(
+                          0.7,
+                        )),
                     // )
                   ),
                 ),

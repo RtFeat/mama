@@ -15,6 +15,9 @@ class CustomServiceBoxTwo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -23,30 +26,29 @@ class CustomServiceBoxTwo extends StatelessWidget {
             color: AppColors.purpleLighterBackgroundColor,
             borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              /// #text
-              Padding(
-                padding: const EdgeInsets.only(left: 16, bottom: 16),
-                child: Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryColor,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                /// #text
+                Padding(
+                    padding: const EdgeInsets.only(left: 8, bottom: 8),
+                    child: Text(text,
+                        style: textTheme.headlineSmall!.copyWith(
+                          fontSize: 17,
+                          color: AppColors.primaryColor,
+                        ))),
+
+                /// #image
+                Expanded(
+                  child: Image(
+                    fit: BoxFit.contain,
+                    image: AssetImage(imagePath),
                   ),
                 ),
-              ),
-
-              /// #image
-              Expanded(
-                child: Image(
-                  fit: BoxFit.cover,
-                  image: AssetImage(imagePath),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

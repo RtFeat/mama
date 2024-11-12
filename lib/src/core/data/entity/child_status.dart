@@ -13,11 +13,13 @@ enum ChildStatusType {
   birth,
   @JsonValue('')
   nothing,
+  @JsonValue('Неизвестно')
+  unknown,
 }
 
 @JsonSerializable()
 class ChildStatus {
-  @JsonKey(name: 'body')
+  @JsonKey(name: 'title')
   final String title;
 
   final ChildStatusType? value;

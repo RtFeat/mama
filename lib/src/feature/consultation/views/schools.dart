@@ -1,53 +1,66 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 
-class SchoolsView extends StatelessWidget {
-  const SchoolsView({super.key});
+class SchoolsView extends StatefulWidget {
+  final SchoolsStore store;
+  const SchoolsView({
+    super.key,
+    required this.store,
+  });
+
+  @override
+  State<SchoolsView> createState() => _SchoolsViewState();
+}
+
+class _SchoolsViewState extends State<SchoolsView> {
+  @override
+  initState() {
+    widget.store.loadData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return Observer(builder: (_) {
-      return ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            // final DoctorModel? doctor = widget.store.listData[index];
+    return LoadingWidget(
+        future: widget.store.fetchFuture,
+        builder: (v) => ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: widget.store.listData.length,
+            itemBuilder: (context, index) {
+              final SchoolModel? schoolModel = widget.store.listData[index];
 
-            return ConsultationItem(
-                // TODO: add url
-                // url: ,
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ConsultationItemTitle(
-                  name: 'FirstName SecondName',
-                  badgeTitle: null,
-                ),
-                Row(children: [
-                  Expanded(
-                    child: AutoSizeText(
-                      'Акушер / Консультант по ГВ Опыт ;})работы более 20 лет Мама 2 детей Основное Образование: Государственный медицинский институт им. Н. И. Пирогова — педиатрия Опыт работы: Врач-неонатолог роддома № 11 Врач-педиатр / неонатолог госпиталя MD GROUP',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: textTheme.bodySmall!
-                          .copyWith(color: textTheme.bodyLarge!.color),
-                    ),
-                  ),
-                ]),
-                ConsultationTags(tags: [
-                  'sdf',
-                  'sdf',
-                  'sdf',
-                  'sdf',
-                ])
-              ],
-            ));
-          });
-    });
+              return ConsultationItem(
+                  url: schoolModel?.account?.avatarUrl,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ConsultationItemTitle(
+                        name: schoolModel?.account?.firstName ?? '',
+                        badgeTitle: null,
+                      ),
+                      Row(children: [
+                        Expanded(
+                          child: AutoSizeText(
+                            schoolModel?.account?.info ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: textTheme.bodySmall!
+                                .copyWith(color: textTheme.bodyLarge!.color),
+                          ),
+                        ),
+                      ]),
+                      ConsultationTags(tags: [
+                        (t.consultation
+                            .articles(n: schoolModel?.articlesCount ?? 0)),
+                        if (schoolModel?.isCourse ?? false)
+                          t.consultation.course,
+                      ])
+                    ],
+                  ));
+            }));
   }
 }

@@ -123,6 +123,8 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     final UserStore userStore = context.watch();
 
     return Observer(builder: (context) {
@@ -163,8 +165,9 @@ class _Title extends StatelessWidget {
         // getAgeText(
         //     child?.birthDate ?? DateTime.now(), child?.gender == Gender.male),
         maxLines: 2,
-        style: const TextStyle(
+        style: textTheme.headlineSmall?.copyWith(
           fontSize: 20,
+          height: 1.26,
           fontWeight: FontWeight.w700,
         ),
       );

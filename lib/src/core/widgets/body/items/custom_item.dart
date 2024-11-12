@@ -40,16 +40,21 @@ class CustomBodyItemWidget extends StatelessWidget {
               ],
             ),
             if (item.subTitle != null)
-              Row(
-                children: [
-                  Expanded(
-                    child: AutoSizeText(
-                      item.subTitle!,
-                      style: item.hintStyle ?? helpersStyle,
+              SizedBox(
+                width: 50,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: AutoSizeText(
+                        item.subTitle!,
+                        style: item.hintStyle ?? helpersStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  20.w
-                ],
+                    20.w
+                  ],
+                ),
               )
           ],
         )),

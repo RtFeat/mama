@@ -30,6 +30,7 @@ class ItemWithSwitchWidget extends StatelessWidget {
                     child: AutoSizeText(
                       item.title,
                       style: item.titleStyle,
+                      maxLines: 1,
                     ),
                   ),
                 ],
