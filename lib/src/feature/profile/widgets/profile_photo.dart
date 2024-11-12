@@ -2,7 +2,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mama/src/core/core.dart';
+import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePhoto extends StatelessWidget {
   const ProfilePhoto({super.key});
