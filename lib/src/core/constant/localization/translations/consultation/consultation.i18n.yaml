@@ -1,9 +1,61 @@
-title: Consultation
+title: Consultations
+
+consultTitle: Consultation
+
 records: Records
-professionals: Professionals 
+professionals: Professionals
 schools: Schools
 
 type:
   chat: Consultation in chat
   video: Video-consultation
   express: Express-consultation
+
+format: Consultation format
+
+type_short:
+  chat:
+    title: In chat
+    desc: "Quickly consult with an expert via live chat for any questions you may have. Convenient and simple format\n\nConsultation time: 15 minutes"
+  video:
+    title: Video
+    desc: "Video consultation to discuss issues of any complexity\n\nThe time of consultation: 1 hour"
+  express:
+    title: Express
+    desc: "Video counseling in an accessible format. Takes half the time, while allowing you to discuss virtually any issue\n\nThe consultation time: 30 minutes"
+
+comment:
+  title: Comment
+  desc: Leave a comment for an expert to help you save time with your consultation
+  action: Leave a comment
+
+timeOfConsultation: Time of consultation
+
+tomorrow: Tomorrow
+select: Select
+selectTime: Select time
+noAvailableTime: No available time\n\nTry selecting another day or format of consultation
+signUpOnline: Sign up online
+
+yourRecord: Your record
+after(cardinal):
+  one: After $n minute
+  few: After $n minutes
+  other: After $n minutes
+
+myComment: My comment
+
+cancel: 
+  title: Cancel record
+  content: [
+    “If you cancel an appointment 24 hours in advance, a full refund will be given.”
+    “If you cancel within 3 hours, half of the consultation amount will be refunded”,
+    “No refund if canceled less than 3 hours in advance.”
+  ]
+
+course: Courses
+
+articles(cardinal): 
+  one: $n article
+  few: $n articles
+  other: $n articles

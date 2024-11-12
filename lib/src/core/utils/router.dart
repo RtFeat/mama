@@ -61,9 +61,12 @@ abstract class AppViews {
   static const doc = 'doc';
 
   static const consultation = 'consultation';
+  static const consultations = 'consultations';
 
   static const webView = 'webView';
   static const pdfView = 'pdfView';
+
+  static const article = 'article';
   static const serviceKnowlegde = 'serviceKnowlegde';
   static const serviceKnowledgeInfo = 'serviceKnowledgeInfo';
   static const categories = 'categories';
@@ -77,7 +80,6 @@ final GlobalKey<NavigatorState> navKey = GlobalKey();
 final GoRouter router = GoRouter(
   navigatorKey: navKey,
   initialLocation: '/',
-  // initialLocation: _Paths.homeScreen,
   routes: [
     GoRoute(
       path: _Paths.startScreen,
@@ -137,12 +139,52 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const HomeView(),
       routes: [
         GoRoute(
+            path: _Paths.article,
+            name: AppViews.article,
+            builder: (context, state) {
+              final Map? extra = state.extra as Map?;
+              final String? id = extra?['id'] as String?;
+
+              return ArticleView(
+                id: id,
+              );
+            }),
+        GoRoute(
           name: AppViews.servicesUserView,
           path: _Paths.servicesUserPath,
           builder: (context, state) => ServicesUserView(
             appBar: CustomAppBar(),
           ),
           routes: [
+            GoRoute(
+                path: _Paths.consultations,
+                name: AppViews.consultations,
+                routes: [
+                  GoRoute(
+                    path: _Paths.consultation,
+                    name: AppViews.consultation,
+                    builder: (context, state) {
+                      final Map? extra = state.extra as Map?;
+                      final DoctorModel? doctor =
+                          extra?['doctor'] as DoctorModel?;
+                      final Consultation? consultation =
+                          extra?['consultation'] as Consultation?;
+
+                      return ConsultationView(
+                        consultation: consultation,
+                        doctor: doctor,
+                      );
+                    },
+                  )
+                ],
+                builder: (context, state) {
+                  final Map? extra = state.extra as Map?;
+                  final int? selectedTab = extra?['selectedTab'] as int?;
+
+                  return ConsultationsView(
+                    initialIndex: selectedTab ?? 0,
+                  );
+                }),
             GoRoute(
               name: AppViews.servicesSleepMusicView,
               path: _Paths.servicesSleepMusicPath,
@@ -350,6 +392,13 @@ abstract class _Paths {
 
   static const serviceKnowledge = AppViews.serviceKnowlegde;
 
+  static const consultation = AppViews.consultation;
+  static const consultations = AppViews.consultations;
+
+  static const webView = '/${AppViews.webView}';
+  static const pdfView = '/${AppViews.pdfView}';
+
+  static const article = AppViews.article;
   static const serviceKnowledgeInfo = AppViews.serviceKnowledgeInfo;
   static const categories = AppViews.categories;
   static const ages = AppViews.ages;

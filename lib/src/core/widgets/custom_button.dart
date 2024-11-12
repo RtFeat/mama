@@ -31,6 +31,8 @@ class CustomButton extends StatelessWidget {
 
   final Color? iconColor;
 
+  final MainAxisAlignment mainAxisAlignment;
+
   const CustomButton({
     super.key,
     this.onTap,
@@ -45,6 +47,7 @@ class CustomButton extends StatelessWidget {
     this.textStyle,
     this.isSmall = true,
     this.maxLines,
+    this.mainAxisAlignment = MainAxisAlignment.center,
     this.type = CustomButtonType.filled,
     this.iconColor,
   }) : assert(title != null);
@@ -63,8 +66,9 @@ class CustomButton extends StatelessWidget {
 
     final bool isFilled = type == CustomButtonType.filled;
 
-    final Color bgColor =
-        backgroundColor ?? AppColors.purpleLighterBackgroundColor;
+    final Color bgColor = onTap == null
+        ? AppColors.greyColor
+        : backgroundColor ?? AppColors.purpleLighterBackgroundColor;
 
     final Color textColor = _getDarkerColor(bgColor);
 
@@ -96,7 +100,7 @@ class CustomButton extends StatelessWidget {
         style: buttonStyle,
         child: Row(
           mainAxisSize: isSmall ? MainAxisSize.min : MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: mainAxisAlignment,
           children: [
             if (icon != null) ...[
               IconWidget(

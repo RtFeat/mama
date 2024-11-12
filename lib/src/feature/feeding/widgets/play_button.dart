@@ -83,13 +83,13 @@ class _PlayerButtonState extends State<PlayerButton>
                         shape: BoxShape.circle,
                       ),
                       child: Container(
-                        padding: EdgeInsets.all(48),
+                        padding: const EdgeInsets.all(48),
                         child: Center(
                           child: SvgPicture.asset(
                             widget.isStart
                                 ? Assets.icons.icPauseFilled
                                 : Assets.icons.icPlayer,
-                            colorFilter: ColorFilter.mode(
+                            colorFilter: const ColorFilter.mode(
                                 AppColors.primaryColor, BlendMode.srcIn),
                           ),
                         ),

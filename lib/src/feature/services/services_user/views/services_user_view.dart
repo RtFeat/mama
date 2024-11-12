@@ -25,37 +25,40 @@ class ServicesUserView extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   /// #knowledge center box
-                  InkWell(
-                    highlightColor: Colors.transparent,
-                    splashFactory: NoSplash.splashFactory,
-                    onTap: () {
-                      context.pushNamed(AppViews.serviceKnowlegde);
-                    },
-                    child: MainBox(
-                      mainText: t.services.knowledgeCenter.title,
-                      image: Assets.images.imgHat4x.path,
-                    ),
+                  MainBox(
+                    mainText: t.services.knowledgeCenter.title,
+                    image: Assets.images.hat.path,
                   ),
                   const SizedBox(height: 8),
 
                   /// #online consultation box
                   MainBoxWithButtons(
-                    image: Assets.images.imgChatVideo4x.path,
+                    image: Assets.images.chatVideo.path,
                     mainText: t.services.onlineConsultation.title,
                     buttons: [
                       ButtonModel(
                         title: t.services.myRecords.title,
                         onTap: () {
-                          // context.pushNamed(AppViews.consultation);
+                          context.pushNamed(AppViews.consultations, extra: {
+                            'selectedTab': 0,
+                          });
                         },
                       ),
                       ButtonModel(
                         title: t.services.specialists.title,
-                        onTap: () {},
+                        onTap: () {
+                          context.pushNamed(AppViews.consultations, extra: {
+                            'selectedTab': 1,
+                          });
+                        },
                       ),
                       ButtonModel(
                         title: t.services.onlineSchools.title,
-                        onTap: () {},
+                        onTap: () {
+                          context.pushNamed(AppViews.consultations, extra: {
+                            'selectedTab': 2,
+                          });
+                        },
                       )
                     ],
                   ),
@@ -63,7 +66,7 @@ class ServicesUserView extends StatelessWidget {
 
                   /// #music for sleep box
                   MainBoxWithButtons(
-                    image: Assets.images.imgMoonMusic4x.path,
+                    image: Assets.images.moon.path,
                     mainText: t.services.sleepMusic.title,
                     onTap: () =>
                         context.pushNamed(AppViews.servicesSleepMusicView),

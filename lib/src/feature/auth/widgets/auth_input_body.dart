@@ -55,11 +55,8 @@ class AuthInputBodyWidget extends StatelessWidget {
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = () {
                                               context.pushNamed(
-                                                  AppViews.pdfView,
-                                                  extra: {
-                                                    'path': Assets.docs
-                                                        .consentToProcessPersonalDataMP,
-                                                  });
+                                                AppViews.docs,
+                                              );
                                             },
                                         )),
                                 style: textTheme.bodySmall,
@@ -74,7 +71,7 @@ class AuthInputBodyWidget extends StatelessWidget {
                   final bool isValid = control.valid;
 
                   return Observer(builder: (_) {
-                    final bool isAgree = !isLogin && store.isAgree;
+                    final bool isAgree = !isLogin ? (store.isAgree) : true;
 
                     return CustomButton(
                       title: t.auth.confirm,

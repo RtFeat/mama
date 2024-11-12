@@ -64,16 +64,16 @@ abstract class _AccountModel with Store {
 
   @observable
   @JsonKey(name: 'second_name')
-  String secondName = '';
+  String? secondName;
 
   @action
-  void setSecondName(String value) {
+  void setSecondName(String? value) {
     secondName = value;
     isChanged = true;
   }
 
   @observable
-  @JsonKey(name: 'profession')
+  @JsonKey(name: 'profession', includeIfNull: false, includeToJson: false)
   String? profession = '';
 
   @action
@@ -93,13 +93,12 @@ abstract class _AccountModel with Store {
   }
 
   @observable
-  @JsonKey(name: 'avatar', includeIfNull: false)
+  @JsonKey(name: 'avatar', includeIfNull: false, includeToJson: false)
   String? avatarUrl;
 
   @action
   void setAvatar(String value) {
     avatarUrl = value;
-    isChanged = true;
   }
 
   @observable
@@ -113,7 +112,10 @@ abstract class _AccountModel with Store {
   }
 
   @observable
-  @JsonKey(name: 'info')
+  @JsonKey(
+    name: 'info',
+    includeIfNull: false,
+  )
   String? info;
 
   @action
@@ -125,6 +127,11 @@ abstract class _AccountModel with Store {
   @observable
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool isChanged = false;
+
+  @action
+  void setIsChanged(bool value) {
+    isChanged = value;
+  }
 }
 
 enum Role {

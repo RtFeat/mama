@@ -22,5 +22,4 @@ class PumpingGraphicWidget extends StatelessWidget {
           interval: 50),
     );
   }
-
 }

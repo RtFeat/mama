@@ -80,8 +80,7 @@ class DialogWidget extends StatelessWidget {
             if (errorDialog != null)
               Row(
                 children: [
-                  Flexible(
-                    flex: 1,
+                  Expanded(
                     child: CustomButton(
                       title: t.profile.promoErrorDialogBackButton,
                       backgroundColor: AppColors.redLighterBackgroundColor,
@@ -92,8 +91,7 @@ class DialogWidget extends StatelessWidget {
                     ),
                   ),
                   8.w,
-                  Flexible(
-                    flex: 1,
+                  Expanded(
                     child: CustomButton(
                       title: t.profile.promoErrorDialogContinueButton,
                       onTap: onTapContinue,
@@ -106,6 +104,7 @@ class DialogWidget extends StatelessWidget {
               )
             else
               CustomButton(
+                isSmall: false,
                 title: t.profile.promoDialogBackButton,
                 onTap: onTapExit,
                 textStyle: titlesStyle.copyWith(

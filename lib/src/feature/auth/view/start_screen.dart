@@ -23,6 +23,9 @@ class StartScreen extends StatelessWidget {
           return reaction((_) => store.status.value, (v) async {
             // await store.tokenStorage.clearToken();
 
+            // await store.tokenStorage
+            //     .setToken(OAuth2Token(accessToken: '', refreshToken: ''));
+
             if (store.isAuthorized) {
               router.pushReplacementNamed(AppViews.homeScreen);
             }

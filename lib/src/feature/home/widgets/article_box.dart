@@ -15,8 +15,7 @@ class ArticleBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(AppViews.webView,
-            extra: {'url': 'https://www.google.com/'});
+        context.pushNamed(AppViews.article, extra: {'id': model.id});
       },
       child: DecoratedBox(
           decoration: BoxDecoration(

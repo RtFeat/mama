@@ -37,15 +37,29 @@ class Endpoint {
 
   String get userConsultations => '$consultation/user';
 
+  static const String school = 'online-school';
+
+  String get schools => '$school/all';
+
   static const String article = 'article';
 
-  String get articles => '$article/all';
+  String get articles => '$article/list';
 
   String get articleOwn => '$article/file/own';
+
+  String get nativeArticle => '$article/native';
+
+  String get addArticleToFavorite => '$article/favorite';
 
   static const String chat = 'chat';
 
   String get chats => '$chat/all';
 
   static const String doctor = 'doctor';
+
+  String get doctorData => '$doctor/me';
+
+  static const String avatar = 'resources/avatar';
+
+  static const String feedback = 'feedback';
 }

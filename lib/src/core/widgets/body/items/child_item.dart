@@ -199,35 +199,22 @@ class _ChildItemState extends State<ChildItem> {
                 ),
                 BodyItemWidget(
                     item: CustomBodyItem(
-                  title: t.profile.birthTitle,
-                  subTitle:
-                      widget.model.childbirth == null ? 'не указано' : null,
-                  titleStyle: titlesStyle,
-                  hintStyle: textTheme.bodySmall!.copyWith(
-                      fontSize: 10,
-                      letterSpacing: 0,
-                      color: AppColors.redColor),
-                  body: MyFlutterToggleButton(
-                    outerContainerMargin: 3,
-                    buttonWidth: 128,
-                    buttonHeight: 38,
-                    buttonColor: Colors.white,
-                    enableTextColor: AppColors.primaryColor,
-                    buttonTextFontSize: 14,
-                    borderRadius: 6,
-                    outerContainerColor: AppColors.purpleLighterBackgroundColor,
-                    onTap: (index) =>
-                        widget.model.setChildbirth(Childbirth.values[index]),
-                    items: [
-                      'd',
-                      's'
-                      // Childbirth.natural.name,
-                      // Childbirth.cesarian.name,
-                      // t.profile.birth(context: BirthContext.nature),
-                      // t.profile.birth(context: BirthContext.cesarean)
-                    ],
-                  ),
-                )),
+                        title: t.profile.birthTitle,
+                        titleStyle: titlesStyle,
+                        hintStyle: textTheme.bodySmall!.copyWith(
+                            fontSize: 10,
+                            letterSpacing: 0,
+                            color: AppColors.redColor),
+                        body: CustomToggleButton(
+                            initialIndex: widget.model.childbirth.index,
+                            items: [
+                              Childbirth.natural.name,
+                              Childbirth.cesarian.name,
+                            ],
+                            onTap: (index) => widget.model
+                                .setChildbirth(Childbirth.values[index]),
+                            btnWidth: 128,
+                            btnHeight: 38))),
                 BodyItemWidget(
                     item: ItemWithSwitch(
                         title: t.profile.birthComplicationsTitle,

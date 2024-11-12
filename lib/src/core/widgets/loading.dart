@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:fresh_dio/fresh_dio.dart';
+import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:provider/provider.dart';
 
 class LoadingWidget<T> extends StatelessWidget {
   final ObservableFuture<T> future;
@@ -21,6 +24,8 @@ class LoadingWidget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Dependencies dependencies = context.watch<Dependencies>();
+
     return Observer(
       builder: (context) {
         switch (future.status) {
@@ -31,8 +36,19 @@ class LoadingWidget<T> extends StatelessWidget {
                 );
           case FutureStatus.rejected:
             return errorWidget ??
-                const Center(
-                  child: Text('error loading'),
+                Center(
+                  child: FutureBuilder(
+                      future: dependencies.tokenStorage.token,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          final OAuth2Token token =
+                              snapshot.data as OAuth2Token;
+                          return Text(
+                              'Error loading.\nError: ${future.error} \nResult: ${future.result}\n Token: ${token.accessToken}\nRefresh: ${token.refreshToken}');
+                        }
+
+                        return const CircularProgressIndicator();
+                      }),
                 );
           case FutureStatus.fulfilled:
             final T data = future.value as T;

@@ -15,9 +15,14 @@ abstract class _PromoViewStore with Store {
   });
   final RestClient restClient;
 
-  void activatePromo(String promocode) {
-    restClient.post(Endpoint().promocode, queryParams: {
+  Future<bool> activatePromo(String promocode) async {
+    return restClient.post(Endpoint().promocode, queryParams: {
       'promocode': promocode,
-    }, body: {}).then((v) {});
+    }, body: {}).then((v) {
+      if (v?['status_code'] == 404) {
+        return false;
+      }
+      return true;
+    });
   }
 }

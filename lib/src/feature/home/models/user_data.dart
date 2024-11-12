@@ -10,7 +10,7 @@ class UserData {
   final List<ChildModel>? childs;
 
   @JsonKey(name: 'user')
-  final UserModel user;
+  final UserModel? user;
 
   UserData({
     required this.account,

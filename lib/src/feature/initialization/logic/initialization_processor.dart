@@ -15,8 +15,10 @@ final class InitializationProcessor {
   Future<Dependencies> _initDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
 
+    final storage = TokenStorageImpl();
+
     final tokenStorage = Fresh.oAuth2(
-        tokenStorage: TokenStorageImpl(),
+        tokenStorage: storage,
         refreshToken: (token, client) async {
           return await client
               .get(
@@ -34,6 +36,7 @@ final class InitializationProcessor {
                 refreshToken: v.data['refresh_token']);
           });
         });
+
     final restClient = await _initRestClient(tokenStorage);
     final errorTrackingManager = await _initErrorTrackingManager();
     final settingsStore = await _initSettingsStore(sharedPreferences);
@@ -93,7 +96,11 @@ final class InitializationProcessor {
       baseUrl: const Config().apiUrl,
       followRedirects: true,
     ));
-    dio.interceptors.add(PrettyDioLogger(requestBody: true));
+    dio.interceptors.add(PrettyDioLogger(
+        requestBody: true,
+        request: true,
+        responseBody: true,
+        requestHeader: true));
     dio.interceptors.add(storage);
 
     return RestClientDio(baseUrl: config.apiUrl, dio: dio);

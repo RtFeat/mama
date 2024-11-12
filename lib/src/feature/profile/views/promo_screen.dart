@@ -29,9 +29,8 @@ class _PromoScreenState extends State<PromoScreen> {
   @override
   Widget build(BuildContext context) {
     DialogItem giftDialog = DialogItem(
-        title: 'ПОДАРОЧНЫЙ',
-        subtitle: 'Вы получили',
-        text: '1 месяц подписки',
+        title: t.profile.gift.title.toUpperCase(),
+        subtitle: t.profile.gift.desc,
         onTap: () {});
 
     final List<PromoItem> items = [
@@ -156,6 +155,8 @@ class _PromoScreenState extends State<PromoScreen> {
                                           AppColors.redLighterBackgroundColor,
                                       onTap: () {
                                         form.control('code').value = ' ';
+                                        control.setErrors({});
+                                        setState(() {});
                                       },
                                       title: t.profile.cancel,
                                     ),
@@ -170,9 +171,35 @@ class _PromoScreenState extends State<PromoScreen> {
                                                   code = form.control('code')
                                                       as AbstractControl<
                                                           String>;
-                                              promoViewStore.activatePromo(code
-                                                  .value!
-                                                  .replaceAll(' ', ''));
+                                              promoViewStore
+                                                  .activatePromo(code.value!
+                                                      .replaceAll(' ', ''))
+                                                  .then((v) {
+                                                if (!v) {
+                                                  onTapButton();
+                                                } else {
+                                                  control.setErrors({
+                                                    'any': t
+                                                        .profile.promoIsNotValid
+                                                  });
+                                                  setState(() {});
+                                                  // control.markAsDirty();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                          content: Text(
+                                                            t.profile
+                                                                .promoIsNotValid,
+                                                            style: textTheme
+                                                                .bodyMedium
+                                                                ?.copyWith(),
+                                                          ),
+                                                          backgroundColor: AppColors
+                                                              .redLighterBackgroundColor));
+                                                }
+                                              });
                                             }
                                           : null,
                                       title: t.profile.apply,

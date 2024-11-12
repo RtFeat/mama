@@ -23,6 +23,9 @@ class ChildModel extends _ChildModel with _$ChildModel {
   @JsonKey(name: 'id', includeIfNull: false)
   final String? id;
 
+  @JsonKey(includeToJson: false)
+  final ChildStatus? status;
+
   @JsonKey(
     name: 'updated_at',
     includeToJson: false,
@@ -39,6 +42,7 @@ class ChildModel extends _ChildModel with _$ChildModel {
     this.id,
     required super.firstName,
     required super.secondName,
+    this.status,
     this.updatedAt,
     this.createdAt,
     super.avatarUrl,
@@ -184,6 +188,24 @@ abstract class _ChildModel with Store {
     String formattedWeeks = t.home.weeks(n: weeks);
 
     return '$formattedDifference ${t.home.or} $formattedWeeks';
+  }
+
+  @computed
+  String get birthDateCounterInverted {
+    DateTime currentDate = DateTime.now();
+
+    Duration difference = currentDate.difference(birthDate ?? DateTime.now());
+
+    int months = (difference.inDays / 30).floor();
+    int days = difference.inDays - (months * 30);
+
+    int weeks = difference.inDays ~/ 7;
+
+    String formattedDifference =
+        '${t.home.months(n: months)} ${t.home.days(n: days)}';
+    String formattedWeeks = t.home.weeks(n: weeks);
+
+    return '$formattedWeeks\n$formattedDifference';
   }
 
   @observable

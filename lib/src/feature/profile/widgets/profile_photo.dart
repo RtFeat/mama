@@ -1,31 +1,35 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/core/core.dart';
 
 class ProfilePhoto extends StatelessWidget {
-  final String img;
-  const ProfilePhoto({super.key, required this.img});
+  const ProfilePhoto({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final UserStore userStore = context.watch();
+
     return Stack(
       clipBehavior: Clip.none,
       children: <Widget>[
-        Container(
-          height: 390,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
+        Observer(builder: (_) {
+          return Container(
+            height: 390,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
+              ),
+              image: DecorationImage(
+                  image: NetworkImage(
+                    userStore.account.avatarUrl!,
+                  ),
+                  fit: BoxFit.cover),
             ),
-            image: DecorationImage(
-                image: NetworkImage(
-                  img,
-                ),
-                fit: BoxFit.cover),
-          ),
-        ),
+          );
+        }),
         Positioned.fill(
           bottom: -32,
           right: 32,
@@ -36,7 +40,15 @@ class ProfilePhoto extends StatelessWidget {
                 Assets.icons.icPhotoAdd.path,
                 height: 64,
               ),
-              onPressed: () {},
+              onPressed: () {
+                final ImagePicker picker = ImagePicker();
+
+                picker.pickImage(source: ImageSource.gallery).then((value) {
+                  if (value != null) {
+                    userStore.updateAvatar(value);
+                  }
+                });
+              },
             ),
           ),
         ),

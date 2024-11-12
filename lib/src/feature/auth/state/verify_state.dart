@@ -112,17 +112,18 @@ abstract class _VerifyStore with Store {
     }, body: {
       'account': data.user.toJson(),
       'child': data.child.toJson(),
-      'user': {
-        'city': data.city,
-      }
+      if (data.city.isNotEmpty)
+        'user': {
+          'city': data.city,
+        }
     }).then((v) async {});
   }
 
   void logout() async {
-    await tokenStorage.setToken(null);
     // await tokenStorage.clearTokenPair();
 
-    restClient.get(Endpoint().logout).then((_) {
+    restClient.get(Endpoint().logout).then((_) async {
+      await tokenStorage.setToken(null);
       router.pushReplacementNamed(AppViews.startScreen);
     });
   }

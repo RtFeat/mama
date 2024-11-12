@@ -4,3 +4,7 @@ export 'title.dart';
 export 'time.dart';
 export 'tags.dart';
 export 'type.dart';
+export 'new_consultation.dart';
+export 'time_chip.dart';
+export 'my_consultation.dart';
+export 'cancel_record.dart';

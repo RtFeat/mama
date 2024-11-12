@@ -25,7 +25,7 @@ class AccountModel {
   @JsonKey()
   final String id;
 
-  @JsonKey()
+  @JsonKey(includeIfNull: false)
   final String info;
 
   @JsonKey(name: 'is_deleted')
@@ -40,7 +40,7 @@ class AccountModel {
   @JsonKey()
   final String phone;
 
-  @JsonKey()
+  @JsonKey(includeIfNull: false)
   final String profession;
 
   @JsonKey()

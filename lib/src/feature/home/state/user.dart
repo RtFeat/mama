@@ -11,7 +11,6 @@ class UserStore extends _UserStore with _$UserStore {
   UserStore({
     required super.restClient,
   });
-
 }
 
 abstract class _UserStore with Store {
@@ -37,7 +36,7 @@ abstract class _UserStore with Store {
   @computed
   // TODO: change this in production
   Role get role => account.role ?? Role.user;
-  // Role get role => Role.onlineSchool;
+  // Role get role => Role.doctor;
 
   @computed
   UserModel get user =>
@@ -107,6 +106,8 @@ abstract class _UserStore with Store {
       if (secondName != null) 'second_name': secondName,
       if (email != null) 'email': email,
       if (info != null) 'info': info,
+    }).then((v) {
+      account.setIsChanged(false);
     });
   }
 
@@ -117,7 +118,7 @@ abstract class _UserStore with Store {
       if (v != null) {
         final data = UserData.fromJson(v);
         selectedChild = data.childs?.first;
-        children = ObservableList.of(data.childs as Iterable<ChildModel>);
+        children = ObservableList.of(data.childs ?? []);
         return data;
       }
       return emptyResponse;
@@ -128,12 +129,15 @@ abstract class _UserStore with Store {
     return userData = await future;
   }
 
+  @action
   void updateAvatar(XFile file) {
     FormData formData = FormData.fromMap({
       'avatar': MultipartFile.fromFileSync(file.path, filename: file.name),
     });
 
-    restClient.put(Endpoint().accountAvatar, body: formData).then((v) {});
+    restClient.put(Endpoint().accountAvatar, body: formData).then((v) {
+      account.setAvatar('${Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+    });
   }
 
   @action
