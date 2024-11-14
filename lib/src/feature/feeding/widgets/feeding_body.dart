@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/widgets/widget.dart';
@@ -7,7 +5,8 @@ import 'package:mama/src/feature/feeding/widgets/widget.dart';
 class FeedingBody extends StatelessWidget {
   final List<Widget> children;
   final Widget? bottomNavigatorBar;
-  const FeedingBody({super.key, required this.children, this.bottomNavigatorBar});
+  const FeedingBody(
+      {super.key, required this.children, this.bottomNavigatorBar});
 
   @override
   Widget build(BuildContext context) {

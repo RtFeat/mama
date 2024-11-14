@@ -5,10 +5,13 @@ part 'native_articles.g.dart';
 
 @JsonSerializable()
 class NativeArticles {
+  @JsonKey(name: 'author')
+  final AccountModel? author;
+
   @JsonKey(name: 'body')
   final List<NativeArticle>? articles;
 
-  NativeArticles({this.articles});
+  NativeArticles({this.author, this.articles});
 
   factory NativeArticles.fromJson(Map<String, dynamic> json) =>
       _$NativeArticlesFromJson(json);

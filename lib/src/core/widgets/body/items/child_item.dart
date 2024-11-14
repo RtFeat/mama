@@ -60,6 +60,28 @@ class _ChildItemState extends State<ChildItem> {
     super.dispose();
   }
 
+  double? _getValue(String? value, [int valueMaxLength = 5]) {
+    // Убираем все символы, кроме цифр и запятой
+    String? numericValue = value?.replaceAll(RegExp(r'[^0-9,]'), '');
+    logger.info('numericValue: $numericValue');
+
+    if (numericValue != null) {
+      // Заменяем запятую на точку
+      numericValue = numericValue.replaceAll(',', '.');
+
+      // Проверяем длину строки
+      if (numericValue.length > valueMaxLength) {
+        numericValue = numericValue.substring(0, valueMaxLength);
+      }
+
+      // Пробуем преобразовать строку в double
+      double? parsedValue = double.tryParse(numericValue);
+      return parsedValue;
+    } else {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -113,10 +135,8 @@ class _ChildItemState extends State<ChildItem> {
                     onTap: (index) =>
                         widget.model.setGender(Gender.values[index]),
                     items: [
-                      Gender.female,
-                      Gender.male,
-                      // t.profile.sex(context: GenderContext.female),
-                      // t.profile.sex(context: GenderContext.male),
+                      ToggleButtonItem(text: Gender.female.name),
+                      ToggleButtonItem(text: Gender.male.name),
                     ],
                   ),
                 )),
@@ -140,7 +160,9 @@ class _ChildItemState extends State<ChildItem> {
                         backgroundColor: AppColors.purpleLighterBackgroundColor,
                         inputHint: t.profile.inputHint,
                         onChanged: (value) {
-                          widget.model.setWeight(double.tryParse(value!));
+                          final double? cleanValue = _getValue(value);
+
+                          widget.model.setWeight(cleanValue);
                         },
                         inputHintStyle: titlesStyle.copyWith(
                             color: AppColors.greyBrighterColor),
@@ -163,7 +185,9 @@ class _ChildItemState extends State<ChildItem> {
                         backgroundColor: AppColors.purpleLighterBackgroundColor,
                         inputHint: t.profile.inputHint,
                         onChanged: (value) {
-                          widget.model.setHeight(double.tryParse(value!));
+                          final double? cleanValue = _getValue(value);
+
+                          widget.model.setHeight(cleanValue);
                         },
                         inputHintStyle: titlesStyle.copyWith(
                             color: AppColors.greyBrighterColor),
@@ -186,8 +210,9 @@ class _ChildItemState extends State<ChildItem> {
                         backgroundColor: AppColors.purpleLighterBackgroundColor,
                         inputHint: t.profile.inputHint,
                         onChanged: (value) {
-                          widget.model
-                              .setHeadCircumference(double.tryParse(value!));
+                          final double? cleanValue = _getValue(value);
+
+                          widget.model.setHeadCircumference(cleanValue);
                         },
                         inputHintStyle: titlesStyle.copyWith(
                             color: AppColors.greyBrighterColor),
@@ -208,8 +233,8 @@ class _ChildItemState extends State<ChildItem> {
                         body: CustomToggleButton(
                             initialIndex: widget.model.childbirth.index,
                             items: [
-                              Childbirth.natural.name,
-                              Childbirth.cesarian.name,
+                              ToggleButtonItem(text: Childbirth.natural.name),
+                              ToggleButtonItem(text: Childbirth.cesarian.name),
                             ],
                             onTap: (index) => widget.model
                                 .setChildbirth(Childbirth.values[index]),
@@ -223,8 +248,7 @@ class _ChildItemState extends State<ChildItem> {
                         onChanged: (value) {
                           widget.model.setChildbirthWithComplications(value);
                         })),
-                if (formGroup.controls.values.isNotEmpty)
-                  ItemsNeedToFill(formGroup: formGroup),
+                ItemsNeedToFill(formGroup: formGroup),
                 DottedInput(
                   model: widget.model,
                 ),

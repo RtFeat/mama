@@ -63,6 +63,16 @@ class _InputItemWidgetState extends State<InputItemWidget> {
           widget.item.onChanged!(control.value as String?);
         }
       },
+      onSubmitted: (control) {
+        if (widget.item.onSubmitted != null) {
+          widget.item.onSubmitted!(control.value as String?);
+        }
+      },
+      onEditingComplete: (control) {
+        if (widget.item.onEditingComplete != null) {
+          widget.item.onEditingComplete!(control.value as String?);
+        }
+      },
       textAlign: widget.item.textAlign ?? TextAlign.start,
       textInputAction: widget.item.textInputAction,
       formControlName: widget.item.controlName,

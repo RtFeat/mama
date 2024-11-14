@@ -175,7 +175,7 @@ class _PromoScreenState extends State<PromoScreen> {
                                                   .activatePromo(code.value!
                                                       .replaceAll(' ', ''))
                                                   .then((v) {
-                                                if (!v) {
+                                                if (v) {
                                                   onTapButton();
                                                 } else {
                                                   control.setErrors({
@@ -184,20 +184,25 @@ class _PromoScreenState extends State<PromoScreen> {
                                                   });
                                                   setState(() {});
                                                   // control.markAsDirty();
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                          behavior:
-                                                              SnackBarBehavior
-                                                                  .floating,
-                                                          content: Text(
-                                                            t.profile
-                                                                .promoIsNotValid,
-                                                            style: textTheme
-                                                                .bodyMedium
-                                                                ?.copyWith(),
-                                                          ),
-                                                          backgroundColor: AppColors
-                                                              .redLighterBackgroundColor));
+
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            behavior:
+                                                                SnackBarBehavior
+                                                                    .floating,
+                                                            content: Text(
+                                                              t.profile
+                                                                  .promoIsNotValid,
+                                                              style: textTheme
+                                                                  .bodyMedium
+                                                                  ?.copyWith(),
+                                                            ),
+                                                            backgroundColor:
+                                                                AppColors
+                                                                    .redLighterBackgroundColor));
+                                                  }
                                                 }
                                               });
                                             }

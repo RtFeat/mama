@@ -155,23 +155,13 @@ class _MomsProfileState extends State<MomsProfile> {
                 title: t.profile.settingsAccountButtonTitle,
               ),
               30.h,
-              Observer(builder: (_) {
-                return Stack(
-                  children: [
-                    Opacity(
-                      opacity: !userStore.isPro ? 0.25 : 1,
-                      child: Observer(builder: (_) {
-                        return IgnorePointer(
-                            ignoring: !userStore.isPro,
-                            child: ChildItems(
-                              childs: userStore.children.toList(),
-                            ));
-                      }),
-                    ),
-                    if (!userStore.isPro) const SubscribeBlockItem(),
-                  ],
-                );
-              }),
+              SubscribeBlockItem(child: Observer(builder: (_) {
+                return IgnorePointer(
+                    ignoring: !userStore.isPro,
+                    child: ChildItems(
+                      childs: userStore.children.toList(),
+                    ));
+              })),
               Padding(
                 padding: const EdgeInsets.all(28.0),
                 child: InkWell(

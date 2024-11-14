@@ -43,7 +43,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
         return Scaffold(
           backgroundColor: AppColors.purpleLighterBackgroundColor,
           appBar: widget.appBar,
-          body: ChatsBodyWidget(store: store),
+          body: SubscribeBlockItem(child: ChatsBodyWidget(store: store)),
         );
       },
     );

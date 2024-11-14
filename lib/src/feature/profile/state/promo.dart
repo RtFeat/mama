@@ -19,6 +19,7 @@ abstract class _PromoViewStore with Store {
     return restClient.post(Endpoint().promocode, queryParams: {
       'promocode': promocode,
     }, body: {}).then((v) {
+      logger.info('Promo data: $v');
       if (v?['status_code'] == 404) {
         return false;
       }
