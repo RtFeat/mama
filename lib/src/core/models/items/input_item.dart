@@ -23,6 +23,8 @@ class InputItem extends BodyItem {
   final bool needBackgroundOnFocus;
 
   final Function(String? value)? onChanged;
+  final Function(String? value)? onSubmitted;
+  final Function(String? value)? onEditingComplete;
 
   InputItem({
     required this.controlName,
@@ -31,6 +33,7 @@ class InputItem extends BodyItem {
     this.errorBorder,
     this.inputHint,
     this.onChanged,
+    this.onSubmitted,
     this.textAlign,
     super.hintStyle,
     this.textInputAction,
@@ -40,6 +43,7 @@ class InputItem extends BodyItem {
     super.titleStyle,
     super.maxLines,
     this.border,
+    this.onEditingComplete,
     this.isCollapsed = false,
     this.backgroundColor,
     this.contentPadding,

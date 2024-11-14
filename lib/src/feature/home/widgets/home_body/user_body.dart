@@ -58,49 +58,57 @@ class _HomeUserBodyState extends State<HomeUserBody> {
             padding: 16,
             child: Column(
               children: [
-                /// #custom service box
-                Row(
-                  children: [
-                    /// #
-                    CustomServiceBox(
-                      imagePath: Assets.images.chat.path,
-                      text: t.home.supportChats.title,
-                      onTap: () => widget.tabController.animateTo(2),
-                    ),
-                    8.w,
+                SubscribeBlockItem(
+                  child: Column(
+                    children: [
+                      /// #custom service box
+                      Row(
+                        children: [
+                          /// #
+                          CustomServiceBox(
+                            imagePath: Assets.images.chat.path,
+                            text: t.home.supportChats.title,
+                            onTap: () => widget.tabController.animateTo(2),
+                          ),
+                          8.w,
 
-                    /// #
-                    CustomServiceBox(
-                      maxLines: 2,
-                      imagePath: Assets.images.chatVideo.path,
-                      text: t.home.onlineConsultation.title,
-                      onTap: () => context.pushNamed(AppViews.consultations),
-                    ),
-                  ],
+                          /// #
+                          CustomServiceBox(
+                            maxLines: 2,
+                            imagePath: Assets.images.chatVideo.path,
+                            text: t.home.onlineConsultation.title,
+                            onTap: () =>
+                                context.pushNamed(AppViews.consultations),
+                          ),
+                        ],
+                      ),
+                      8.h,
+
+                      /// #custom service box
+                      Row(
+                        children: [
+                          /// #
+                          CustomServiceBox(
+                            imagePath: Assets.images.progress.path,
+                            text: t.home.progressDiary.title,
+                          ),
+                          const SizedBox(width: 8),
+
+                          /// #
+                          CustomServiceBox(
+                            imagePath: Assets.images.moon.path,
+                            text: t.home.musicForSleep.title,
+                            onTap: () {
+                              context
+                                  .pushNamed(AppViews.servicesSleepMusicView);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
-                8.h,
-
-                /// #custom service box
-                Row(
-                  children: [
-                    /// #
-                    CustomServiceBox(
-                      imagePath: Assets.images.progress.path,
-                      text: t.home.progressDiary.title,
-                    ),
-                    const SizedBox(width: 8),
-
-                    /// #
-                    CustomServiceBox(
-                      imagePath: Assets.images.moon.path,
-                      text: t.home.musicForSleep.title,
-                      onTap: () {
-                        context.pushNamed(AppViews.servicesSleepMusicView);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
 
                 /// #long box
                 CustomServiceBoxTwo(
@@ -115,7 +123,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
 
           if (articleStore.hasResults)
 
-          /// #current
+            /// #current
             CustomBackground(
               height: null,
               padding: 0,

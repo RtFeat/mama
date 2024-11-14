@@ -30,10 +30,7 @@ class DottedInput extends StatelessWidget {
               color: AppColors.greyBrighterColor,
             ),
             onChanged: (control) {
-              if (control.value is String &&
-                  (control.value as String).isNotEmpty) {
-                model.setAbout(control.value as String?);
-              }
+              model.setAbout(control.value as String?);
             },
             decoration: InputDecoration(
               border: InputBorder.none,

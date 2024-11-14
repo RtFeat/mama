@@ -296,6 +296,28 @@ final GoRouter router = GoRouter(
       ],
     ),
     GoRoute(
+        path: _Paths.webView,
+        name: AppViews.webView,
+        builder: (context, state) {
+          final Map? extra = state.extra as Map?;
+          final String? url = extra?['url'] as String?;
+
+          return WebView(
+            url: url ?? '',
+          );
+        }),
+    GoRoute(
+        path: _Paths.pdfView,
+        name: AppViews.pdfView,
+        builder: (context, state) {
+          final Map? extra = state.extra as Map?;
+          final String? path = extra?['path'] as String?;
+
+          return PdfView(
+            path: path ?? '',
+          );
+        }),
+    GoRoute(
       path: _Paths.registerFillBabyName,
       name: AppViews.registerFillBabyName,
       builder: (context, state) {

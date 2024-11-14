@@ -56,8 +56,9 @@ class ArticleView extends StatelessWidget {
                   onTapButton: () {
                     if (id != null) {
                       store.addToFavorite(id!);
+                    } else {
+                      context.pop();
                     }
-                    context.pop();
                   },
                   borderRadius: const BorderRadius.horizontal(
                     left: Radius.circular(20),

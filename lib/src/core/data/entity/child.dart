@@ -217,6 +217,7 @@ abstract class _ChildModel with Store {
     weight = value;
 
     isChanged = true;
+    logger.info('Weight: $weight');
   }
 
   @observable
@@ -228,6 +229,7 @@ abstract class _ChildModel with Store {
     height = value;
 
     isChanged = true;
+    logger.info('Height: $height');
   }
 
   @observable
@@ -238,12 +240,12 @@ abstract class _ChildModel with Store {
   setHeadCircumference(double? value) {
     headCircumference = value;
     isChanged = true;
+    logger.info('Head circumference: $headCircumference');
   }
 
   @observable
   @JsonKey(
     name: 'about',
-    includeIfNull: false,
   )
   String? about;
 
@@ -251,6 +253,7 @@ abstract class _ChildModel with Store {
   setAbout(String? value) {
     about = value;
     isChanged = true;
+    logger.info('About: $about');
   }
 
   @observable

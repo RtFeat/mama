@@ -28,6 +28,15 @@ class ArticleModel extends BaseModel {
 
   final List<String>? tags;
 
+  @JsonKey(name: 'account')
+  final AccountModel? author;
+
+  @JsonKey(name: 'body')
+  final List<NativeArticle>? articles;
+
+  @JsonKey(name: 'count_articles_author')
+  final int? countArticlesAuthor;
+
   ArticleModel({
     this.id,
     this.title,
@@ -36,6 +45,9 @@ class ArticleModel extends BaseModel {
     this.photo,
     this.tags,
     this.images,
+    this.author,
+    this.articles,
+    this.countArticlesAuthor,
   });
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>

@@ -103,17 +103,18 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
                             ),
                           ),
                           8.w,
-                          GestureDetector(
-                            onTap: () {
-                              onTapAvatar!();
-                            },
-                            child: CircleAvatar(
-                              radius: 23,
-                              backgroundImage: AssetImage(
-                                avatarUrl!,
+                          if (avatarUrl != null)
+                            GestureDetector(
+                              onTap: () {
+                                onTapAvatar!();
+                              },
+                              child: CircleAvatar(
+                                radius: 23,
+                                backgroundImage: AssetImage(
+                                  avatarUrl!,
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       )),
                 ],
