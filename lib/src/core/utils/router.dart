@@ -282,6 +282,16 @@ final GoRouter router = GoRouter(
           ],
         ),
         GoRoute(
+            name: AppViews.diapersView,
+            path: _Paths.diapers,
+            builder: (context, state) => const DiapersView(),
+            routes: [
+              GoRoute(
+                  path: _Paths.addDiapers,
+                  name: AppViews.addDiaper,
+                  builder: (context, state) => const AddDiaper())
+            ]),
+        GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
           builder: (context, state) => const ProfileScreen(),
@@ -406,6 +416,8 @@ abstract class _Paths {
   static const promoView = AppViews.promoView;
 
   static const feeding = AppViews.feeding;
+  static const diapers = AppViews.diapersView;
+  static const addDiapers = AppViews.addDiaper;
 
   static const addManually = AppViews.addManually;
   static const addPumping = AppViews.addPumping;

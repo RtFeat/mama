@@ -91,6 +91,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                           CustomServiceBox(
                             imagePath: Assets.images.progress.path,
                             text: t.home.progressDiary.title,
+                            onTap: () => widget.tabController.animateTo(1),
                           ),
                           const SizedBox(width: 8),
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
 class DiapersView extends StatelessWidget {
@@ -163,7 +164,7 @@ class DiapersView extends StatelessWidget {
                     child: CustomButton(
                       title: t.trackers.add.title,
                       onTap: () {
-                        // context.pushNamed(AppViews.addDiaper);
+                        context.pushNamed(AppViews.addDiaper);
                       },
                       icon: IconModel(
                         iconPath: Assets.icons.icThermometer,
