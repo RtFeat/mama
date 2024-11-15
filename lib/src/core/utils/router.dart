@@ -62,6 +62,7 @@ abstract class AppViews {
 
   static const consultation = 'consultation';
   static const consultations = 'consultations';
+  static const specializedConsultations = 'specializedConsultations';
 
   static const webView = 'webView';
   static const pdfView = 'pdfView';
@@ -185,6 +186,13 @@ final GoRouter router = GoRouter(
                     initialIndex: selectedTab ?? 0,
                   );
                 }),
+            GoRoute(
+              path: _Paths.specializedConsultations,
+              name: AppViews.specializedConsultations,
+              builder: (context, state) {
+                return const SpecialistConsultingScreen();
+              },
+            ),
             GoRoute(
               name: AppViews.servicesSleepMusicView,
               path: _Paths.servicesSleepMusicPath,
@@ -447,6 +455,7 @@ abstract class _Paths {
 
   static const consultation = AppViews.consultation;
   static const consultations = AppViews.consultations;
+  static const specializedConsultations = AppViews.specializedConsultations;
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';

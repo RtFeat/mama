@@ -66,4 +66,5 @@ abstract class AppColors {
   static const Color diapersBackroundColor = Color(0xFFE8F8F3);
 
   static const Color trackerColor = Color(0xFF11424B);
+  static const Color trackerColor2 = Color(0xFF382357);
 }
