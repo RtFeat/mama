@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
+import 'category.dart';
+
 class ArticleBox extends StatelessWidget {
   final ArticleModel model;
 
@@ -13,6 +15,7 @@ class ArticleBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const double cardWidth = 200;
     return GestureDetector(
       onTap: () {
         context.pushNamed(AppViews.article, extra: {'id': model.id});
@@ -31,13 +34,13 @@ class ArticleBox extends StatelessWidget {
                   /// #image
                   model.photo != null && model.photo!.isNotEmpty
                       ? Image(
-                          width: 165,
-                          height: 165,
+                          width: cardWidth,
+                          height: 180,
                           image: AssetImage(model.photo!),
                         )
                       : SizedBox(
-                          width: 165,
-                          height: 165,
+                          width: cardWidth,
+                          height: 180,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
@@ -49,34 +52,42 @@ class ArticleBox extends StatelessWidget {
                           ),
                         ),
 
-                  if (model.category != null && model.category!.isNotEmpty)
-
-                    /// #category
-                    Padding(
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: cardWidth,
+                    ),
+                    child: Padding(
                       padding: const EdgeInsets.all(8),
-                      child: DecoratedBox(
-                        decoration: const BoxDecoration(
-                          color: AppColors.lightBlue,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(100),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 1,
-                          ),
-                          child: Text(
-                            model.category!,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.greyBrighterColor,
+                      child: Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: [
+                          if (model.category != null &&
+                              model.category!.isNotEmpty)
+
+                            /// #category
+                            CategoryWidget(
+                              title: model.category!,
                             ),
-                          ),
-                        ),
+                          if (model.ageCategory != null &&
+                              model.ageCategory!.isNotEmpty)
+                            ...model.ageCategory!.map((e) {
+                              return CategoryWidget(
+                                title: switch (e) {
+                                  AgeCategory.halfYear =>
+                                    t.home.ageCategory.halfYear,
+                                  AgeCategory.year => t.home.ageCategory.year,
+                                  AgeCategory.twoYear =>
+                                    t.home.ageCategory.twoYear,
+                                  AgeCategory.older => t.home.ageCategory.older,
+                                  _ => '',
+                                },
+                              );
+                            }),
+                        ],
                       ),
                     ),
+                  )
                 ],
               ),
 

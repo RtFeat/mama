@@ -19,7 +19,7 @@ class HomeBodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch();
-    final ArticleStore articleStore = context.watch();
+    final HomeViewStore homeViewStore = context.watch<HomeViewStore>();
 
     return Scaffold(
       appBar: appBar,
@@ -28,7 +28,8 @@ class HomeBodyWidget extends StatelessWidget {
           case Role.admin:
           case Role.user:
             return HomeUserBody(
-              articleStore: articleStore,
+              homeViewStore: homeViewStore,
+              // articleStore: articleStore,
               userStore: userStore,
               tabController: tabController,
             );
@@ -37,12 +38,13 @@ class HomeBodyWidget extends StatelessWidget {
             return const HomeSpecialistBody();
           case Role.onlineSchool:
             return HomeSchoolBody(
-              articleStore: articleStore,
+              // articleStore: articleStore,
               userStore: userStore,
             );
           default:
             return HomeUserBody(
-              articleStore: articleStore,
+              homeViewStore: homeViewStore,
+              // articleStore: articleStore,
               userStore: userStore,
               tabController: tabController,
             );

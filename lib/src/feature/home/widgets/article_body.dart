@@ -20,7 +20,8 @@ class ArticleBody extends StatefulWidget {
 class _ArticleBodyState extends State<ArticleBody> {
   @override
   void initState() {
-    widget.store.getData(widget.id);
+    widget.store.loadData();
+    // widget.store.getData(widget.id);
     super.initState();
   }
 
@@ -38,18 +39,18 @@ class _ArticleBodyState extends State<ArticleBody> {
               slivers: [
                 SliverToBoxAdapter(
                     child: ConsultationItem(
-                        url: widget.store.avatarUrl,
+                        url: widget.store.data?.author?.avatarUrl,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ConsultationItemTitle(
-                              name: widget.store.author?.firstName ?? '',
+                              name: widget.store.data?.author?.firstName ?? '',
                               badgeTitle: null,
                             ),
                             Row(children: [
                               Expanded(
                                 child: AutoSizeText(
-                                  widget.store.author?.info ?? '',
+                                  widget.store.data?.author?.info ?? '',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: textTheme.bodySmall!.copyWith(
@@ -59,22 +60,24 @@ class _ArticleBodyState extends State<ArticleBody> {
                             ]),
                             ConsultationTags(tags: [
                               (t.consultation.articles(
-                                  n: widget.store.countArticlesAuthor ?? 0)),
+                                  n: widget.store.data?.countArticlesAuthor ??
+                                      0)),
                               // if (schoolModel?.isCourse ?? false)
                               // t.consultation.course,
                             ])
                           ],
                         ))),
                 SliverList.builder(
-                    itemCount: widget.store.listData.length,
+                    itemCount: widget.store.data?.articles?.length,
                     // padding: const EdgeInsets.only(
                     //   top: kToolbarHeight,
                     //   left: padding,
                     //   right: padding,
                     // ),
                     itemBuilder: (context, index) {
-                      final NativeArticle article =
-                          widget.store.listData[index]!;
+                      final NativeArticle article = widget
+                              .store.data?.articles?[index] ??
+                          NativeArticle(data: '', type: NativeArticleType.text);
 
                       if (article.data == null) return const SizedBox.shrink();
 

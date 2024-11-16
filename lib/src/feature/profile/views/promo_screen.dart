@@ -29,7 +29,7 @@ class _PromoScreenState extends State<PromoScreen> {
   @override
   Widget build(BuildContext context) {
     DialogItem giftDialog = DialogItem(
-        title: t.profile.gift.title.toUpperCase(),
+        title: form.control('code').value.toUpperCase(),
         subtitle: t.profile.gift.desc,
         onTap: () {});
 

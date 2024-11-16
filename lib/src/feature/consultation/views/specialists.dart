@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
 class SpecialistsView extends StatefulWidget {
-  final DoctorsStore store;
+  final ConsultationViewStore store;
   const SpecialistsView({
     super.key,
     required this.store,
@@ -16,8 +16,8 @@ class SpecialistsView extends StatefulWidget {
 
 class _SpecialistsViewState extends State<SpecialistsView> {
   @override
-  initState() {
-    widget.store.loadData();
+  void initState() {
+    widget.store.loadAllDoctors();
     super.initState();
   }
 
@@ -26,47 +26,43 @@ class _SpecialistsViewState extends State<SpecialistsView> {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return LoadingWidget(
-      future: widget.store.fetchFuture,
-      builder: (v) => ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: widget.store.listData.length,
-          itemBuilder: (context, index) {
-            final DoctorModel? doctor = widget.store.listData[index];
+    return PaginatedLoadingWidget(
+        store: widget.store.doctorsState,
+        itemBuilder: (context, item) {
+          final DoctorModel? doctor = item;
 
-            return ConsultationItem(
-                url: doctor?.account?.avatarUrl,
-                onTap: () {
-                  context.pushNamed(AppViews.consultation, extra: {
-                    'doctor': doctor,
-                  });
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ConsultationItemTitle(
-                        name:
-                            '${doctor?.account?.firstName} ${doctor?.account?.secondName}',
-                        badgeTitle: doctor?.profession),
-                    if (doctor?.account?.info != null)
-                      Row(children: [
-                        Expanded(
-                          child: AutoSizeText(
-                            doctor?.account?.info ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodySmall!
-                                .copyWith(color: textTheme.bodyLarge!.color),
-                          ),
+          return ConsultationItem(
+              url: doctor?.account?.avatarUrl,
+              onTap: () {
+                context.pushNamed(AppViews.consultation, extra: {
+                  'doctor': doctor,
+                });
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConsultationItemTitle(
+                      name:
+                          '${doctor?.account?.firstName} ${doctor?.account?.secondName}',
+                      badgeTitle: doctor?.profession),
+                  if (doctor?.account?.info != null)
+                    Row(children: [
+                      Expanded(
+                        child: AutoSizeText(
+                          doctor?.account?.info ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.bodySmall!
+                              .copyWith(color: textTheme.bodyLarge!.color),
                         ),
-                      ]),
-                    ConsultationTags(tags: [
-                      (t.consultation.articles(n: doctor?.countArticles ?? 0)),
-                      if (doctor?.isConsultation ?? false) t.consultation.title,
-                    ])
-                  ],
-                ));
-          }),
-    );
+                      ),
+                    ]),
+                  ConsultationTags(tags: [
+                    (t.consultation.articles(n: doctor?.countArticles ?? 0)),
+                    if (doctor?.isConsultation ?? false) t.consultation.title,
+                  ])
+                ],
+              ));
+        });
   }
 }

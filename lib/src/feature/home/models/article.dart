@@ -3,6 +3,17 @@ import 'package:mama/src/data.dart';
 
 part 'article.g.dart';
 
+enum AgeCategory {
+  @JsonValue('from0to0.5')
+  halfYear,
+  @JsonValue('from0.5to1')
+  year,
+  @JsonValue('from1to2')
+  twoYear,
+  @JsonValue('from2to')
+  older,
+}
+
 @JsonSerializable()
 class ArticleModel extends BaseModel {
   @JsonKey(name: 'id')
@@ -37,6 +48,9 @@ class ArticleModel extends BaseModel {
   @JsonKey(name: 'count_articles_author')
   final int? countArticlesAuthor;
 
+  @JsonKey(name: 'age_category')
+  List<AgeCategory?>? ageCategory;
+
   ArticleModel({
     this.id,
     this.title,
@@ -47,6 +61,7 @@ class ArticleModel extends BaseModel {
     this.images,
     this.author,
     this.articles,
+    this.ageCategory,
     this.countArticlesAuthor,
   });
 

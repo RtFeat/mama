@@ -23,44 +23,36 @@ class _ConsultationsViewState extends State<ConsultationsView>
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(
-            create: (context) => ConsultationRecordsStore(
-                  restClient: context.read<Dependencies>().restClient,
-                )),
-        Provider(
-            create: (context) => DoctorsStore(
-                  restClient: context.read<Dependencies>().restClient,
-                )),
-        Provider(
-            create: (context) => SchoolsStore(
-                  restClient: context.read<Dependencies>().restClient,
-                )),
-      ],
-      builder: (context, _) => Scaffold(
-          appBar: CustomAppBar(
-            title: t.consultation.title,
-            height: 120,
-            action: const ProfileWidget(),
-            tabController: controller,
-            tabs: [
-              t.consultation.records,
-              t.consultation.professionals,
-              t.consultation.schools,
-            ],
-          ),
-          body: TabBarView(controller: controller, children: [
-            ConsultationRecords(
-              store: context.watch(),
+    return Provider(
+      create: (context) => ConsultationViewStore(
+          restClient: context.read<Dependencies>().restClient),
+      builder: (context, _) {
+        final ConsultationViewStore store = context.watch();
+
+        return Scaffold(
+            appBar: CustomAppBar(
+              title: t.consultation.title,
+              height: 108,
+              action: const ProfileWidget(),
+              tabController: controller,
+              tabs: [
+                t.consultation.records,
+                t.consultation.professionals,
+                t.consultation.schools,
+              ],
             ),
-            SpecialistsView(
-              store: context.watch(),
-            ),
-            SchoolsView(
-              store: context.watch(),
-            ),
-          ])),
+            body: TabBarView(controller: controller, children: [
+              ConsultationRecords(
+                store: store,
+              ),
+              SpecialistsView(
+                store: store,
+              ),
+              SchoolsView(
+                store: store,
+              ),
+            ]));
+      },
     );
   }
 }
