@@ -124,5 +124,9 @@ gift:
 feedback: 
   title: Отправьте запрос
   send: Отправить
+  success: 
+    title: Успешно
+    desc: Мы свяжемся с вами в ближайшее время
+    ok: Ок
 
 aboutMe: обо мне

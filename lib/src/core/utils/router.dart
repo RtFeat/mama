@@ -306,6 +306,11 @@ final GoRouter router = GoRouter(
       ],
     ),
     GoRoute(
+      path: _Paths.docsView,
+      name: AppViews.docs,
+      builder: (context, state) => const DocsView(),
+    ),
+    GoRoute(
         path: _Paths.webView,
         name: AppViews.webView,
         builder: (context, state) {
@@ -431,6 +436,7 @@ abstract class _Paths {
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';
+  static const docsView = '/${AppViews.docs}';
 
   static const article = AppViews.article;
   static const serviceKnowledgeInfo = AppViews.serviceKnowledgeInfo;

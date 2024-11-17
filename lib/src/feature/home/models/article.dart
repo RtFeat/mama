@@ -34,7 +34,7 @@ class ArticleModel extends BaseModel {
 
   final String? file;
 
-  @JsonKey(name: 'photo_id')
+  @JsonKey(name: 'photo_url')
   final String? photo;
 
   final List<String>? tags;

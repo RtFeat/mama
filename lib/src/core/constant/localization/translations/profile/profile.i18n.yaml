@@ -124,6 +124,9 @@ gift:
 feedback: 
   title: Send request
   send: Send
-
+  success: 
+    title: Success
+    desc: We will contact you soon
+    ok: Ok
 
 aboutMe: about me

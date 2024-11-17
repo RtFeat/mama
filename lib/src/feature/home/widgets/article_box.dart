@@ -33,10 +33,14 @@ class ArticleBox extends StatelessWidget {
                 children: [
                   /// #image
                   model.photo != null && model.photo!.isNotEmpty
-                      ? Image(
-                          width: cardWidth,
-                          height: 180,
-                          image: AssetImage(model.photo!),
+                      ? ClipRRect(
+                          borderRadius: 16.r,
+                          child: Image(
+                            width: cardWidth,
+                            height: 180,
+                            fit: BoxFit.cover,
+                            image: NetworkImage(model.photo!),
+                          ),
                         )
                       : SizedBox(
                           width: cardWidth,
@@ -53,7 +57,7 @@ class ArticleBox extends StatelessWidget {
                         ),
 
                   ConstrainedBox(
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       maxWidth: cardWidth,
                     ),
                     child: Padding(

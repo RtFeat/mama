@@ -29,7 +29,7 @@ class ConsultationItem extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                const AvatarWidget(url: null, size: Size(100, 100), radius: 12),
+                AvatarWidget(url: url, size: const Size(100, 100), radius: 12),
                 10.w,
                 Expanded(
                   child: child,

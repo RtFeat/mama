@@ -44,8 +44,9 @@ class _ArticleBodyState extends State<ArticleBody> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ConsultationItemTitle(
-                              name: widget.store.data?.author?.firstName ?? '',
-                              badgeTitle: null,
+                              name:
+                                  '${widget.store.data?.author?.firstName} ${widget.store.data?.author?.secondName ?? ''}',
+                              badgeTitle: widget.store.data?.author?.profession,
                             ),
                             Row(children: [
                               Expanded(

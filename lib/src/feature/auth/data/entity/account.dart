@@ -114,12 +114,11 @@ abstract class _AccountModel with Store {
   @observable
   @JsonKey(
     name: 'info',
-    includeIfNull: false,
   )
   String? info;
 
   @action
-  void setInfo(String value) {
+  void setInfo(String? value) {
     info = value;
     isChanged = true;
   }

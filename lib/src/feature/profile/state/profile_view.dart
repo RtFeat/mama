@@ -42,7 +42,6 @@ abstract class _ProfileViewStore with Store {
       ),
       'about': FormControl<String>(
         value: model.info,
-        validators: [Validators.required],
       ),
     });
   }
