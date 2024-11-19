@@ -27,8 +27,8 @@
 
 import 'package:mama/src/data.dart';
 
-class DoctorState extends SingleDataStore {
-  DoctorState({required RestClient restClient})
+class DoctorStore extends SingleDataStore {
+  DoctorStore({required RestClient restClient})
       : super(
           fetchFunction: () => restClient.get(Endpoint().doctorData),
           transformer: (v) {

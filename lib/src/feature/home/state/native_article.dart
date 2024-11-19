@@ -10,10 +10,6 @@ class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
           transformer: (raw) {
             final data = ArticleModel.fromJson(raw?['article']);
 
-            // author = data.author;
-            // avatarUrl = data.author?.avatarUrl;
-            // countArticlesAuthor = data.countArticlesAuthor;
-
             return data;
           },
         );

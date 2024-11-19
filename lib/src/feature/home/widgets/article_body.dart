@@ -21,7 +21,6 @@ class _ArticleBodyState extends State<ArticleBody> {
   @override
   void initState() {
     widget.store.loadData();
-    // widget.store.getData(widget.id);
     super.initState();
   }
 

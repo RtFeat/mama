@@ -407,15 +407,15 @@ abstract class _Paths {
   static const trackersHealthAddTemperaturePath = AppViews.addTemperature;
 
   // static const healthMedicine = AppViews.healthMedicine;
-  static const addMedicine = AppViews.addMedicine;
+  // static const addMedicine = AppViews.addMedicine;
 
   static const servicesUserPath = AppViews.servicesUserView;
   static const servicesSleepMusicPath = AppViews.servicesSleepMusicView;
   static const evolutionView = AppViews.evolutionView;
 
   static const addWeightView = AppViews.addWeightView;
-  static const addGrowthView = AppViews.addGrowthView;
-  static const addHeadView = AppViews.addHeadView;
+  // static const addGrowthView = AppViews.addGrowthView;
+  // static const addHeadView = AppViews.addHeadView;
 
   static const profile = AppViews.profile;
   static const promoView = AppViews.promoView;
