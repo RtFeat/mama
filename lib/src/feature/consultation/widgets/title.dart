@@ -14,7 +14,7 @@ class ConsultationItemTitle extends StatelessWidget {
       children: [
         AutoSizeText(name),
         2.w,
-        if (badgeTitle != null)
+        if (badgeTitle != null && badgeTitle!.isNotEmpty)
           ConsultationBadge(
             title: badgeTitle!,
           )

@@ -54,6 +54,7 @@ class ProfileScreen extends StatelessWidget {
                     restClient: context.read<Dependencies>().restClient),
                 builder: (context, _) {
                   final ProfileViewStore store = context.watch();
+
                   return Scaffold(
                     extendBodyBehindAppBar: true,
                     body: DecoratedBox(
@@ -231,6 +232,7 @@ class ProfileScreen extends StatelessWidget {
                                 } else {
                                   context.pop();
                                 }
+                                // store.formGroup.updateValue({});
                               },
                               borderRadius: const BorderRadius.horizontal(
                                 right: Radius.circular(20),
@@ -268,7 +270,6 @@ class ProfileScreen extends StatelessWidget {
                                     }
 
                                     FocusScope.of(context).unfocus();
-                                    context.pop();
                                   },
                                   borderRadius: const BorderRadius.horizontal(
                                     left: Radius.circular(20),

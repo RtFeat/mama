@@ -282,6 +282,16 @@ final GoRouter router = GoRouter(
           ],
         ),
         GoRoute(
+            name: AppViews.diapersView,
+            path: _Paths.diapers,
+            builder: (context, state) => const DiapersView(),
+            routes: [
+              GoRoute(
+                  path: _Paths.addDiapers,
+                  name: AppViews.addDiaper,
+                  builder: (context, state) => const AddDiaper())
+            ]),
+        GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
           builder: (context, state) => const ProfileScreen(),
@@ -294,6 +304,11 @@ final GoRouter router = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: _Paths.docsView,
+      name: AppViews.docs,
+      builder: (context, state) => const DocsView(),
     ),
     GoRoute(
         path: _Paths.webView,
@@ -392,20 +407,22 @@ abstract class _Paths {
   static const trackersHealthAddTemperaturePath = AppViews.addTemperature;
 
   // static const healthMedicine = AppViews.healthMedicine;
-  static const addMedicine = AppViews.addMedicine;
+  // static const addMedicine = AppViews.addMedicine;
 
   static const servicesUserPath = AppViews.servicesUserView;
   static const servicesSleepMusicPath = AppViews.servicesSleepMusicView;
   static const evolutionView = AppViews.evolutionView;
 
   static const addWeightView = AppViews.addWeightView;
-  static const addGrowthView = AppViews.addGrowthView;
-  static const addHeadView = AppViews.addHeadView;
+  // static const addGrowthView = AppViews.addGrowthView;
+  // static const addHeadView = AppViews.addHeadView;
 
   static const profile = AppViews.profile;
   static const promoView = AppViews.promoView;
 
   static const feeding = AppViews.feeding;
+  static const diapers = AppViews.diapersView;
+  static const addDiapers = AppViews.addDiaper;
 
   static const addManually = AppViews.addManually;
   static const addPumping = AppViews.addPumping;
@@ -419,6 +436,7 @@ abstract class _Paths {
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';
+  static const docsView = '/${AppViews.docs}';
 
   static const article = AppViews.article;
   static const serviceKnowledgeInfo = AppViews.serviceKnowledgeInfo;

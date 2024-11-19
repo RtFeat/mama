@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
 class SchoolsView extends StatefulWidget {
-  final SchoolsStore store;
+  final ConsultationViewStore store;
   const SchoolsView({
     super.key,
     required this.store,
@@ -16,8 +16,8 @@ class SchoolsView extends StatefulWidget {
 class _SchoolsViewState extends State<SchoolsView> {
   @override
   initState() {
-    widget.store.loadData();
     super.initState();
+    widget.store.loadAllSchools();
   }
 
   @override
@@ -25,42 +25,38 @@ class _SchoolsViewState extends State<SchoolsView> {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return LoadingWidget(
-        future: widget.store.fetchFuture,
-        builder: (v) => ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: widget.store.listData.length,
-            itemBuilder: (context, index) {
-              final SchoolModel? schoolModel = widget.store.listData[index];
+    return PaginatedLoadingWidget(
+        store: widget.store.schoolsState,
+        itemBuilder: (context, item) {
+          final SchoolModel? schoolModel = item;
 
-              return ConsultationItem(
-                  url: schoolModel?.account?.avatarUrl,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ConsultationItemTitle(
-                        name: schoolModel?.account?.firstName ?? '',
-                        badgeTitle: null,
+          return ConsultationItem(
+              url: schoolModel?.account?.avatarUrl,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConsultationItemTitle(
+                    name: schoolModel?.account?.firstName ?? '',
+                    badgeTitle: null,
+                  ),
+                  Row(children: [
+                    Expanded(
+                      child: AutoSizeText(
+                        schoolModel?.account?.info ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodySmall!
+                            .copyWith(color: textTheme.bodyLarge!.color),
                       ),
-                      Row(children: [
-                        Expanded(
-                          child: AutoSizeText(
-                            schoolModel?.account?.info ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodySmall!
-                                .copyWith(color: textTheme.bodyLarge!.color),
-                          ),
-                        ),
-                      ]),
-                      ConsultationTags(tags: [
-                        (t.consultation
-                            .articles(n: schoolModel?.articlesCount ?? 0)),
-                        if (schoolModel?.isCourse ?? false)
-                          t.consultation.course,
-                      ])
-                    ],
-                  ));
-            }));
+                    ),
+                  ]),
+                  ConsultationTags(tags: [
+                    (t.consultation
+                        .articles(n: schoolModel?.articlesCount ?? 0)),
+                    if (schoolModel?.isCourse ?? false) t.consultation.course,
+                  ])
+                ],
+              ));
+        });
   }
 }

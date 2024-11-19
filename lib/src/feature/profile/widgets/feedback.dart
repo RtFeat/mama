@@ -57,6 +57,34 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
                           controller.clear();
                           if (context.mounted) {
                             context.pop();
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    t.profile.feedback.success.title,
+                                    style: textTheme.displaySmall?.copyWith(
+                                        color: AppColors
+                                            .greenBrighterBackgroundColor),
+                                  ),
+                                  content: Text(
+                                    t.profile.feedback.success.desc,
+                                    style: textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          if (context.mounted) {
+                                            context.pop();
+                                          }
+                                        },
+                                        child:
+                                            Text(t.profile.feedback.success.ok))
+                                  ],
+                                );
+                              },
+                            );
                           }
                         });
                       },

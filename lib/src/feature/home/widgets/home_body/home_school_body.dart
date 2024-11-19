@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
+import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/home/home.dart';
+import 'package:provider/provider.dart';
 
 class HomeSchoolBody extends StatefulWidget {
   final UserStore userStore;
-  final ArticleStore articleStore;
+  // final ArticleStore articleStore;
   const HomeSchoolBody(
-      {super.key, required this.articleStore, required this.userStore});
+      {super.key,
+      // required this.articleStore,
+
+      required this.userStore});
 
   @override
   State<HomeSchoolBody> createState() => _HomeSchoolBodyState();
 }
 
 class _HomeSchoolBodyState extends State<HomeSchoolBody> {
-  @override
-  void initState() {
-    widget.articleStore.fetchOwnList(widget.userStore.account.id!);
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   widget.articleStore.fetchOwnList(widget.userStore.account.id!);
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final HomeViewStore homeStore = context.watch<HomeViewStore>();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: ListView(
@@ -32,7 +38,7 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
           const DateSubtitle(),
           24.h,
 
-          if (widget.articleStore.ownListData.isNotEmpty)
+          if (homeStore.ownArticlesStore.listData.isNotEmpty)
 
             /// #my articles
             CustomBackground(
@@ -57,9 +63,23 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
                   const SizedBox(height: 16),
 
                   /// #articles
-                  ArticlesListView(
-                    listData: widget.articleStore.ownListData.toList(),
-                  ),
+                  // ArticlesListView(
+                  //   listData: widget.articleStore.ownListData.toList(),
+                  // ),
+
+                  SizedBox(
+                      height: 220,
+                      child: PaginatedLoadingWidget(
+                        store: homeStore.ownArticlesStore,
+                        itemBuilder: (context, item) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ArticleBox(
+                              model: item,
+                            ),
+                          );
+                        },
+                      )),
 
                   const SizedBox(height: 24),
                 ],

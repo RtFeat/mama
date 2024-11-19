@@ -47,6 +47,8 @@ class Endpoint {
 
   String get articleOwn => '$article/file/own';
 
+  String get articlesForMe => '$article/for_you';
+
   String get addArticleToFavorite => '$article/favorite';
 
   static const String chat = 'chat';

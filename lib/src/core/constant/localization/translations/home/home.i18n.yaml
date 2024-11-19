@@ -180,3 +180,10 @@ monthsData: [january, february, march, april, may, june, july, august, september
 clickToSeeMore: Click to see more
 
 toFavorites: To favorites
+
+
+ageCategory:
+  halfYear: 0-6 months
+  year: 6-12 months
+  twoYear: 1-2 years
+  older: ">2 years"

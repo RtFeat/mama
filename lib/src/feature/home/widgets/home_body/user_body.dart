@@ -5,14 +5,14 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
 class HomeUserBody extends StatefulWidget {
-  final ArticleStore articleStore;
+  final HomeViewStore homeViewStore;
   final UserStore userStore;
   final TabController tabController;
   const HomeUserBody({
     super.key,
     required this.userStore,
     required this.tabController,
-    required this.articleStore,
+    required this.homeViewStore,
   });
 
   @override
@@ -23,14 +23,16 @@ class _HomeUserBodyState extends State<HomeUserBody> {
   @override
   initState() {
     super.initState();
-    widget.articleStore.fetchAll();
-    widget.articleStore.fetchForMe(widget.userStore.account.id ?? '');
+    widget.homeViewStore.loadAllArticles();
+    widget.homeViewStore.loadForMeArticles(widget.userStore.account.id ?? '');
+    // widget.articleStore.fetchAll();
+    // widget.articleStore.fetchForMe(widget.userStore.account.id ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch();
-    final ArticleStore articleStore = context.watch<ArticleStore>();
+    // final ArticleStore articleStore = context.watch<ArticleStore>();
 
     return Observer(builder: (context) {
       return ListView(
@@ -91,6 +93,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                           CustomServiceBox(
                             imagePath: Assets.images.progress.path,
                             text: t.home.progressDiary.title,
+                            onTap: () => widget.tabController.animateTo(1),
                           ),
                           const SizedBox(width: 8),
 
@@ -121,7 +124,9 @@ class _HomeUserBodyState extends State<HomeUserBody> {
           ),
           16.h,
 
-          if (articleStore.hasResults)
+          // if (articleStore.hasResults)
+
+          if (widget.homeViewStore.allArticlesStore.listData.isNotEmpty)
 
             /// #current
             CustomBackground(
@@ -147,9 +152,23 @@ class _HomeUserBodyState extends State<HomeUserBody> {
 
                   /// #articles
 
-                  ArticlesListView(
-                    listData: articleStore.listData.toList(),
-                  ),
+                  SizedBox(
+                      height: 250,
+                      child: PaginatedLoadingWidget(
+                        scrollDirection: Axis.horizontal,
+                        store: widget.homeViewStore.allArticlesStore,
+                        itemBuilder: (context, item) {
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: ArticleBox(
+                              model: item,
+                            ),
+                          );
+                        },
+                      )),
+                  // ArticlesListView(
+                  //   listData: articleStore.listData.toList(),
+                  // ),
 
                   24.h,
                 ],
@@ -158,7 +177,8 @@ class _HomeUserBodyState extends State<HomeUserBody> {
           16.h,
 
           /// #for you
-          if (articleStore.listForMe.isNotEmpty)
+          // if (articleStore.listForMe.isNotEmpty)
+          if (widget.homeViewStore.forMeArticlesStore.listData.isNotEmpty)
             CustomBackground(
                 height: null,
                 padding: 0,
@@ -181,9 +201,23 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                       16.h,
 
                       /// #articles
-                      ArticlesListView(
-                        listData: articleStore.listForMe.toList(),
-                      ),
+                      // ArticlesListView(
+                      //   listData: articleStore.listForMe.toList(),
+                      // ),
+                      SizedBox(
+                          height: 250,
+                          child: PaginatedLoadingWidget(
+                            scrollDirection: Axis.horizontal,
+                            store: widget.homeViewStore.forMeArticlesStore,
+                            itemBuilder: (context, item) {
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: ArticleBox(
+                                  model: item,
+                                ),
+                              );
+                            },
+                          )),
                       24.h,
                     ])),
 

@@ -26,7 +26,7 @@ class _EvolutionViewState extends State<EvolutionView>
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
-        height: 120,
+        height: 108,
         title: t.trackers.evolution,
         tabController: _tabController,
         action: const ProfileWidget(),

@@ -10,8 +10,9 @@ class HomeView extends StatelessWidget {
     final UserStore userStore = context.watch<UserStore>();
 
     return Provider(
-      create: (context) =>
-          ArticleStore(restClient: context.read<Dependencies>().restClient),
+      create: (context) => HomeViewStore(
+          restClient: context.read<Dependencies>().restClient,
+          userId: userStore.user.id),
       builder: (context, _) {
         return LoadHomeData(
             userStore: userStore, child: _Body(userStore: userStore));

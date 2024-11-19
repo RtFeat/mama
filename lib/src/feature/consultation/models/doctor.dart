@@ -18,6 +18,10 @@ class DoctorModel extends BaseModel {
   @JsonKey(name: 'profession')
   final String? profession;
 
+  final String? firstName;
+
+  final String? lastName;
+
   @JsonKey(name: 'time_work')
   final DoctorWorkTime? workTime;
 
@@ -32,6 +36,8 @@ class DoctorModel extends BaseModel {
     this.profession,
     super.updatedAt,
     this.countArticles,
+    this.firstName,
+    this.lastName,
     super.createdAt,
     this.workTime,
   });

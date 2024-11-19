@@ -28,11 +28,6 @@ class _PromoScreenState extends State<PromoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    DialogItem giftDialog = DialogItem(
-        title: t.profile.gift.title.toUpperCase(),
-        subtitle: t.profile.gift.desc,
-        onTap: () {});
-
     final List<PromoItem> items = [
       PromoItem(
         title: 'ПОДАРОЧНЫЙ',
@@ -42,6 +37,11 @@ class _PromoScreenState extends State<PromoScreen> {
     ];
 
     Future<void> onTapButton() async {
+      DialogItem giftDialog = DialogItem(
+          title: form.control('code').value.toUpperCase(),
+          subtitle: t.profile.gift.desc,
+          onTap: () {});
+
       await showDialog(
         context: context,
         builder: (context) => Dialog(
