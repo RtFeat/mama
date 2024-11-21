@@ -1,1 +1,2 @@
-export 'chats.dart';
+export 'chats_view.dart';
+export 'messages.dart';

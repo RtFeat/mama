@@ -93,7 +93,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
             ChatsListScreen(
               appBar: appBar,
             ),
-            ServicesUserView(
+            ServicesView(
               appBar: appBar,
             ),
           ],

@@ -10,6 +10,12 @@ class PaginatedLoadingWidget<R> extends StatefulWidget {
   final Axis scrollDirection;
   final EdgeInsetsGeometry? padding;
 
+  final bool shrinkWrap;
+
+  final EdgeInsets? itemsPadding;
+
+  final Widget? separator;
+
   /// Виджет для начальной загрузки (первой страницы)
   final Widget? initialLoadingWidget;
 
@@ -31,7 +37,10 @@ class PaginatedLoadingWidget<R> extends StatefulWidget {
     required this.itemBuilder,
     this.scrollDirection = Axis.vertical,
     this.physics,
+    this.shrinkWrap = false,
+    this.itemsPadding,
     this.padding,
+    this.separator,
     this.initialLoadingWidget,
     this.additionalLoadingWidget,
     this.errorWidget,
@@ -103,11 +112,21 @@ class _PaginatedLoadingWidgetState<R> extends State<PaginatedLoadingWidget<R>> {
               );
         }
 
-        return ListView.builder(
+        return ListView.separated(
           controller: _controller,
           scrollDirection: widget.scrollDirection,
           physics: widget.physics,
           padding: widget.padding,
+          shrinkWrap: widget.shrinkWrap,
+          separatorBuilder: (context, index) =>
+              widget.separator ??
+              Padding(
+                  padding: widget.itemsPadding ??
+                      EdgeInsets.symmetric(
+                          horizontal:
+                              widget.scrollDirection == Axis.horizontal ? 8 : 0,
+                          vertical:
+                              widget.scrollDirection == Axis.vertical ? 8 : 0)),
           itemCount: widget.store.listData.length +
               (widget.store.hasMore ? 1 : 0), // Добавляем место для индикатора
           itemBuilder: (context, index) {

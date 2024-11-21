@@ -152,7 +152,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           name: AppViews.servicesUserView,
           path: _Paths.servicesUserPath,
-          builder: (context, state) => const ServicesUserView(
+          builder: (context, state) => const ServicesView(
             appBar: CustomAppBar(),
           ),
           routes: [
@@ -292,6 +292,18 @@ final GoRouter router = GoRouter(
                   builder: (context, state) => const AddDiaper())
             ]),
         GoRoute(
+          path: _Paths.chat,
+          name: AppViews.chatView,
+          builder: (context, state) {
+            final Map? extra = state.extra as Map?;
+            final item = extra?['item'];
+
+            return ChatView(
+              item: item,
+            );
+          },
+        ),
+        GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
           builder: (context, state) => const ProfileScreen(),
@@ -419,6 +431,8 @@ abstract class _Paths {
 
   static const profile = AppViews.profile;
   static const promoView = AppViews.promoView;
+
+  static const chat = AppViews.chatView;
 
   static const feeding = AppViews.feeding;
   static const diapers = AppViews.diapersView;

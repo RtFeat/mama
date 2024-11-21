@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/home/home.dart';
-import 'package:provider/provider.dart';
 
 class HomeSchoolBody extends StatefulWidget {
   final UserStore userStore;
+  final HomeViewStore homeViewStore;
   // final ArticleStore articleStore;
   const HomeSchoolBody(
       {super.key,
+      required this.homeViewStore,
       // required this.articleStore,
 
       required this.userStore});
@@ -17,6 +18,12 @@ class HomeSchoolBody extends StatefulWidget {
 }
 
 class _HomeSchoolBodyState extends State<HomeSchoolBody> {
+  @override
+  void initState() {
+    widget.homeViewStore.loadOwnArticles(widget.userStore.account.id!);
+    super.initState();
+  }
+
   // @override
   // void initState() {
   //   widget.articleStore.fetchOwnList(widget.userStore.account.id!);
@@ -25,20 +32,26 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
 
   @override
   Widget build(BuildContext context) {
-    final HomeViewStore homeStore = context.watch<HomeViewStore>();
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: ListView(
+    return Observer(builder: (context) {
+      return ListView(
         children: [
           /// #good afternoon title
-          GreetingTitle(title: t.home.goodAfternoon.title),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GreetingTitle(title: t.home.goodAfternoon.title),
+          ),
 
           /// #today's date subtitle
-          const DateSubtitle(),
+          const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: DateSubtitle()),
           24.h,
 
-          if (homeStore.ownArticlesStore.listData.isNotEmpty)
+          if (widget.homeViewStore.ownArticlesStore.listData.isNotEmpty)
 
             /// #my articles
             CustomBackground(
@@ -51,15 +64,11 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
 
                   /// #article category text
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      t.home.yourArticles,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        t.home.yourArticles,
+                        style: textTheme.headlineSmall?.copyWith(fontSize: 24),
+                      )),
                   const SizedBox(height: 16),
 
                   /// #articles
@@ -67,26 +76,26 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
                   //   listData: widget.articleStore.ownListData.toList(),
                   // ),
 
-                  SizedBox(
-                      height: 220,
-                      child: PaginatedLoadingWidget(
-                        store: homeStore.ownArticlesStore,
-                        itemBuilder: (context, item) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ArticleBox(
-                              model: item,
-                            ),
-                          );
-                        },
-                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: SizedBox(
+                          height: 250,
+                          child: PaginatedLoadingWidget(
+                            scrollDirection: Axis.horizontal,
+                            store: widget.homeViewStore.ownArticlesStore,
+                            itemBuilder: (context, item) {
+                              return ArticleBox(
+                                model: item,
+                              );
+                            },
+                          ))),
 
                   const SizedBox(height: 24),
                 ],
               ),
             ),
         ],
-      ),
-    );
+      );
+    });
   }
 }

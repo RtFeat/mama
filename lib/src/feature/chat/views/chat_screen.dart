@@ -1,6 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -8,13 +7,13 @@ class ChatScreen extends StatefulWidget {
   final List<MessageModel> listMessages;
   final ChatEntity chatEntity;
   final ChatModelSingle? singleChat;
-  final ChatModelGroup? groupChat;
+  // final ChatModelGroup? groupChat;
   const ChatScreen({
     super.key,
     required this.listMessages,
     required this.chatEntity,
     this.singleChat,
-    this.groupChat,
+    // this.groupChat,
   });
 
   @override
@@ -102,34 +101,36 @@ class _ChatScreenState extends State<ChatScreen> {
       formGroup: formGroup,
       child: Scaffold(
         backgroundColor: AppColors.lightPirple,
-        appBar: _isSearching
-            ? finder()
-            : ChatsAppBar(
-                title: widget.groupChat != null
-                    ? widget.groupChat!.groupChatInfo.name ?? ''
-                    : '${widget.singleChat!.participant1.firstName} ${widget.singleChat!.participant1.secondName}',
-                // тут для групп чата нужно сколько специалистов, этой инфо в модели нет
-                subTitle: widget.groupChat != null
-                    ? widget.groupChat!.participant.firstName
-                    : '${t.chat.lastSeen} ${DateFormat('kk:mm').format(widget.singleChat!.participant1.lastActiveAt!)}',
-                profession: widget.groupChat != null
-                    ? null
-                    : widget.singleChat!.participant1.profession,
-                avatarUrl: widget.groupChat != null
-                    ? widget.groupChat!.groupChatInfo.avatar
-                    : widget.singleChat!.participant1.avatarUrl,
-                onTapSearch: _startSearch,
-                onTapAvatar: () {
-                  widget.chatEntity == ChatEntity.groupChat
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GroupScreen(
-                                    groupChatInfo:
-                                        widget.groupChat!.groupChatInfo,
-                                  )))
-                      : null;
-                }),
+        // appBar: _isSearching
+        //     ? finder()
+        //     :
+        // ChatsAppBar(
+        //     title: widget.groupChat != null
+        //         ? widget.groupChat!.groupChatInfo.name ?? ''
+        //         : '${widget.singleChat!.participant1.firstName} ${widget.singleChat!.participant1.secondName}',
+        //     // тут для групп чата нужно сколько специалистов, этой инфо в модели нет
+        //     subTitle: widget.groupChat != null
+        //         ? widget.groupChat!.participant.firstName
+        //         : '${t.chat.lastSeen} ${DateFormat('kk:mm').format(widget.singleChat!.participant1.lastActiveAt!)}',
+        //     profession: widget.groupChat != null
+        //         ? null
+        //         : widget.singleChat!.participant1.profession,
+        //     avatarUrl: widget.groupChat != null
+        //         ? widget.groupChat!.groupChatInfo.avatar
+        //         : widget.singleChat!.participant1.avatarUrl,
+        //     onTapSearch: _startSearch,
+        //     onTapAvatar: () {
+        //       widget.chatEntity == ChatEntity.groupChat
+        //           ? Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                   builder: (context) => GroupScreen(
+        //                         groupChatInfo:
+        //                             widget.groupChat!.groupChatInfo,
+        //                       )))
+        //           : null;
+        //     }),)
+        // ,
         body: Stack(
           children: [
             Container(

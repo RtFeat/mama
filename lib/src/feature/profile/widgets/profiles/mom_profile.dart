@@ -162,34 +162,35 @@ class _MomsProfileState extends State<MomsProfile> {
                       childs: userStore.children.toList(),
                     ));
               })),
-              Padding(
-                padding: const EdgeInsets.all(28.0),
-                child: InkWell(
-                  onTap: () {
-                    context.pushNamed(AppViews.registerFillBabyName, extra: {
-                      'isNotRegister': true,
-                    });
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image(
-                        height: 17,
-                        image: AssetImage(
-                          Assets.icons.icAddChild.path,
+              if (userStore.role == Role.user)
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: InkWell(
+                    onTap: () {
+                      context.pushNamed(AppViews.registerFillBabyName, extra: {
+                        'isNotRegister': true,
+                      });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image(
+                          height: 17,
+                          image: AssetImage(
+                            Assets.icons.icAddChild.path,
+                          ),
                         ),
-                      ),
-                      16.w,
-                      Text(
-                        t.profile.addChildButtonTitle,
-                        style: widget.titlesColoredStyle?.copyWith(
-                          fontSize: 14,
+                        16.w,
+                        Text(
+                          t.profile.addChildButtonTitle,
+                          style: widget.titlesColoredStyle?.copyWith(
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

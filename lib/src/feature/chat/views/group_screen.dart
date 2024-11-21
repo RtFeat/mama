@@ -60,11 +60,11 @@ class _GroupScreenState extends State<GroupScreen> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (widget.groupChatInfo.avatar != null)
+            if (widget.groupChatInfo.avatarUrl != null)
               CircleAvatar(
                 radius: 43,
                 backgroundImage: AssetImage(
-                  widget.groupChatInfo.avatar!,
+                  widget.groupChatInfo.avatarUrl!,
                 ),
               ),
             8.h,
@@ -94,7 +94,7 @@ class _GroupScreenState extends State<GroupScreen> {
                 style: textTheme.labelLarge,
               ),
             ),
-            CardWithoutMargin(
+            CardWidget(
               child: ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 scrollDirection: Axis.vertical,

@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/services/services_user/model/button_model.dart';
+import 'package:mama/src/feature/services/services/model/button_model.dart';
 
 class MainBoxWithButtons extends StatelessWidget {
   final String image;
