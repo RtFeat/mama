@@ -1,0 +1,44 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:mama/src/data.dart';
+import 'package:mobx/mobx.dart';
+
+part 'group.g.dart';
+
+@JsonSerializable()
+class GroupItem extends _GroupItem with _$GroupItem {
+  @JsonKey(name: 'can_delete')
+  final bool isCanDelete;
+
+  @JsonKey(name: 'id_group_chat')
+  final String? groupChatId;
+
+  @JsonKey(name: 'id_participant')
+  final String? participantId;
+
+  @JsonKey(name: 'is_write')
+  final bool isWrite;
+
+  @JsonKey(name: 'participant')
+  final AccountModel? participant;
+
+  @JsonKey(name: 'group_chat')
+  final GroupChatInfo? groupInfo;
+
+  GroupItem({
+    this.isCanDelete = false,
+    this.groupChatId,
+    this.participantId,
+    this.isWrite = false,
+    this.participant,
+    this.groupInfo,
+  });
+
+  factory GroupItem.fromJson(Map<String, dynamic> json) =>
+      _$GroupItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GroupItemToJson(this);
+}
+
+abstract class _GroupItem extends ChatItem with Store {
+  // _GroupItem({ });
+}

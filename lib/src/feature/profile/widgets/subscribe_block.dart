@@ -21,7 +21,7 @@ class SubscribeBlockItem extends StatelessWidget {
         textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w400);
 
     return Observer(builder: (context) {
-      final bool userIsPro = userStore.isPro;
+      final bool userIsPro = userStore.isPro || userStore.role != Role.user;
 
       return Stack(
         children: [

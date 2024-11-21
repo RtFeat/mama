@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:provider/provider.dart';
 
 class HomeUserBody extends StatefulWidget {
   final HomeViewStore homeViewStore;
@@ -31,7 +30,8 @@ class _HomeUserBodyState extends State<HomeUserBody> {
 
   @override
   Widget build(BuildContext context) {
-    final UserStore userStore = context.watch();
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     // final ArticleStore articleStore = context.watch<ArticleStore>();
 
     return Observer(builder: (context) {
@@ -48,7 +48,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: DateSubtitle()),
 
-          if (userStore.children.isNotEmpty) ...[
+          if (widget.userStore.children.isNotEmpty) ...[
             24.h,
             const ChildInfo(),
           ],
@@ -142,30 +142,26 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       t.home.current.title,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: textTheme.headlineSmall?.copyWith(fontSize: 24),
                     ),
                   ),
                   16.h,
 
                   /// #articles
 
-                  SizedBox(
-                      height: 250,
-                      child: PaginatedLoadingWidget(
-                        scrollDirection: Axis.horizontal,
-                        store: widget.homeViewStore.allArticlesStore,
-                        itemBuilder: (context, item) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 8),
-                            child: ArticleBox(
-                              model: item,
-                            ),
-                          );
-                        },
-                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: SizedBox(
+                          height: 250,
+                          child: PaginatedLoadingWidget(
+                            scrollDirection: Axis.horizontal,
+                            store: widget.homeViewStore.allArticlesStore,
+                            itemBuilder: (context, item) {
+                              return ArticleBox(
+                                model: item,
+                              );
+                            },
+                          ))),
                   // ArticlesListView(
                   //   listData: articleStore.listData.toList(),
                   // ),
@@ -204,20 +200,20 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                       // ArticlesListView(
                       //   listData: articleStore.listForMe.toList(),
                       // ),
-                      SizedBox(
-                          height: 250,
-                          child: PaginatedLoadingWidget(
-                            scrollDirection: Axis.horizontal,
-                            store: widget.homeViewStore.forMeArticlesStore,
-                            itemBuilder: (context, item) {
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 8),
-                                child: ArticleBox(
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: SizedBox(
+                            height: 250,
+                            child: PaginatedLoadingWidget(
+                              scrollDirection: Axis.horizontal,
+                              store: widget.homeViewStore.forMeArticlesStore,
+                              itemBuilder: (context, item) {
+                                return ArticleBox(
                                   model: item,
-                                ),
-                              );
-                            },
-                          )),
+                                );
+                              },
+                            )),
+                      ),
                       24.h,
                     ])),
 

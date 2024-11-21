@@ -25,26 +25,30 @@ class HomeBodyWidget extends StatelessWidget {
       appBar: appBar,
       body: Observer(builder: (_) {
         switch (userStore.role) {
-          case Role.admin:
           case Role.user:
             return HomeUserBody(
               homeViewStore: homeViewStore,
-              // articleStore: articleStore,
               userStore: userStore,
               tabController: tabController,
             );
-          case Role.moderator:
           case Role.doctor:
-            return const HomeSpecialistBody();
+            return Provider(
+              create: (context) => DoctorStore(
+                  restClient: context.read<Dependencies>().restClient),
+              builder: (context, child) => HomeSpecialistBody(
+                homeViewStore: homeViewStore,
+                userStore: userStore,
+                doctorStore: context.watch<DoctorStore>(),
+              ),
+            );
           case Role.onlineSchool:
             return HomeSchoolBody(
-              // articleStore: articleStore,
+              homeViewStore: homeViewStore,
               userStore: userStore,
             );
           default:
             return HomeUserBody(
               homeViewStore: homeViewStore,
-              // articleStore: articleStore,
               userStore: userStore,
               tabController: tabController,
             );

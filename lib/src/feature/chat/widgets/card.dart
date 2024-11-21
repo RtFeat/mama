@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 
-class CardWithoutMargin extends StatelessWidget {
+class CardWidget extends StatelessWidget {
+  final String? title;
+  final Widget? titleWidget;
   final Widget child;
-  const CardWithoutMargin({super.key, required this.child});
+  const CardWidget({
+    super.key,
+    this.title,
+    this.titleWidget,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
@@ -18,7 +28,17 @@ class CardWithoutMargin extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(24))),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8.0),
-          child: child,
+          child: Column(
+            children: [
+              if (title != null)
+                Text(
+                  title!,
+                  style: textTheme.labelSmall!.copyWith(fontSize: 14),
+                ),
+              if (titleWidget != null) titleWidget!,
+              child,
+            ],
+          ),
         ),
       ),
     );

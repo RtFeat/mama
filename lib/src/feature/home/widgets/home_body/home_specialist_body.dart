@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/home/home.dart';
 
 class HomeSpecialistBody extends StatefulWidget {
-  const HomeSpecialistBody({super.key});
+  final HomeViewStore homeViewStore;
+  final UserStore userStore;
+  final DoctorStore doctorStore;
+  const HomeSpecialistBody({
+    super.key,
+    required this.homeViewStore,
+    required this.userStore,
+    required this.doctorStore,
+  });
 
   @override
   State<HomeSpecialistBody> createState() => _HomeSpecialistBodyState();
@@ -11,8 +20,16 @@ class HomeSpecialistBody extends StatefulWidget {
 
 class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
   @override
+  void initState() {
+    widget.homeViewStore.loadOwnArticles(widget.userStore.account.id!);
+    widget.doctorStore.loadData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final phonePadding = MediaQuery.of(context).padding;
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
 
     final meetingsListOne = [
       for (int i = 0; i < 5; i++)
@@ -36,86 +53,98 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
         ),
     ];
 
-    return ListView(
-      children: [
-        /// #good afternoon title, today's date subtitleƒ
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// #good afternoon title
-              GreetingTitle(title: t.home.goodAfternoon.title),
+    return LoadingWidget(
+      future: widget.doctorStore.fetchFuture,
+      builder: (data) => Observer(builder: (context) {
+        return ListView(
+          children: [
+            /// #good afternoon title
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GreetingTitle(title: t.home.goodAfternoon.title),
+            ),
 
-              /// #today's date subtitle
-              const DateSubtitle(),
-            ],
-          ),
-        ),
-        16.h,
+            /// #today's date subtitle
+            const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: DateSubtitle()),
 
-        /// #meetings
-        CustomBackground(
-          padding: 16,
-          height: null,
-          child: Column(
-            children: [
-              /// #switch section
-              DateSwitchSection(
-                leftButtonOnPressed: () {},
-                rightButtonOnPressed: () {},
-                calendarButtonOnPressed: () {},
-              ),
-              const SizedBox(height: 8),
+            16.h,
 
-              /// #meetings section one
-              MeetingsSection(
-                whichSection: 1,
-                meetingsList: meetingsListOne,
-              ),
-              8.h,
-
-              /// #meetings section two
-              MeetingsSection(
-                whichSection: 2,
-                meetingsList: meetingsListTwo,
-              ),
-            ],
-          ),
-        ),
-        16.h,
-
-        /// #my articles
-        CustomBackground(
-          height: null,
-          padding: 0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-
-              /// #article category text
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  t.home.current.title,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
+            /// #meetings
+            CustomBackground(
+              padding: 16,
+              height: null,
+              child: Column(
+                children: [
+                  /// #switch section
+                  DateSwitchSection(
+                    leftButtonOnPressed: () {},
+                    rightButtonOnPressed: () {},
+                    calendarButtonOnPressed: () {},
                   ),
+                  const SizedBox(height: 8),
+
+                  /// #meetings section one
+                  MeetingsSection(
+                    whichSection: 1,
+                    meetingsList: meetingsListOne,
+                  ),
+                  8.h,
+
+                  /// #meetings section two
+                  MeetingsSection(
+                    whichSection: 2,
+                    meetingsList: meetingsListTwo,
+                  ),
+                ],
+              ),
+            ),
+            16.h,
+            if (widget.homeViewStore.ownArticlesStore.listData.isNotEmpty)
+
+              /// #my articles
+              /// #current
+              CustomBackground(
+                height: null,
+                padding: 0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    16.h,
+
+                    /// #article category text
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        t.home.yourArticles,
+                        style: textTheme.headlineSmall?.copyWith(fontSize: 24),
+                      ),
+                    ),
+                    16.h,
+
+                    /// #articles
+
+                    Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: SizedBox(
+                            height: 250,
+                            child: PaginatedLoadingWidget(
+                              scrollDirection: Axis.horizontal,
+                              store: widget.homeViewStore.allArticlesStore,
+                              itemBuilder: (context, item) {
+                                return ArticleBox(
+                                  model: item,
+                                );
+                              },
+                            ))),
+                    24.h,
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-
-              /// #articles
-              // const ArticlesListView(),
-
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-        (phonePadding.bottom + 24).h,
-      ],
+          ],
+        );
+      }),
     );
   }
 }
