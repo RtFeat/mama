@@ -44,9 +44,6 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
     _tabController.dispose();
   }
 
-  void _onAddTemperatureButtonPressed() =>
-      context.goNamed(AppViews.addTemperature);
-
   @override
   Widget build(BuildContext context) {
     final phonePadding = MediaQuery.of(context).padding;
@@ -65,7 +62,7 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
     return Scaffold(
       backgroundColor: AppColors.e8ddf9,
       appBar: CustomAppBar(
-        height: 110,
+        height: 120,
         title: t.trackers.health.title,
         tabs: tabs,
         action: const ProfileWidget(),
@@ -197,7 +194,9 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
                   Expanded(
                     child: CustomButton(
                       title: t.trackers.add.title,
-                      onTap: () {},
+                      onTap: () {
+                        context.pushNamed(AppViews.addGrowthView);
+                      },
                       icon: IconModel(
                         iconPath: Assets.icons.icThermometer,
                       ),

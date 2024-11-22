@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/constant/constant.dart';
+import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
 
 class CurrentAndDymanicContainer extends StatelessWidget {
   const CurrentAndDymanicContainer({
     super.key,
+    required this.trackerType,
   });
+  final EvolutionCategory trackerType;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '6 кг  250 г',
+                      trackerType.currentLabel,
                       style: AppTextStyles.f17w400.copyWith(
                         color: AppColors.blackColor,
                       ),
@@ -110,7 +113,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '+ 150 г',
+                      trackerType.dynamicLabel,
                       style: AppTextStyles.f17w400.copyWith(
                         color: AppColors.blackColor,
                       ),

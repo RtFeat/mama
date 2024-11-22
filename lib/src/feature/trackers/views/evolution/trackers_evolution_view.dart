@@ -1,9 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/views/evolution/table_view.dart';
+import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
 
-class Head extends StatelessWidget {
-  const Head({super.key});
+class EvolutionView extends StatefulWidget {
+  const EvolutionView({super.key});
+
+  @override
+  State<EvolutionView> createState() => _EvolutionViewState();
+}
+
+class _EvolutionViewState extends State<EvolutionView>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final EvolutionCategory evolutionCategory = EvolutionCategory.weight;
+
+  @override
+  void initState() {
+    _tabController = TabController(
+      length: EvolutionCategory.values.length,
+      vsync: this,
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.blueLighter1,
+      appBar: CustomAppBar(
+        height: 120,
+        title: t.trackers.evolution,
+        tabController: _tabController,
+        action: const ProfileWidget(),
+        tabs: EvolutionCategory.values.map((e) => e.title).toList(),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: EvolutionCategory.values.map((trackerType) {
+          if (trackerType == EvolutionCategory.table) {
+            return TablePage(trackerType: trackerType);
+          }
+          return WeightT(trackerType: trackerType);
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class WeightT extends StatelessWidget {
+  const WeightT({super.key, required this.trackerType});
+  final EvolutionCategory trackerType;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,15 +64,35 @@ class Head extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ToKnowMoreContainer(
-                title1: t.trackers.knowMoreOne.title,
-                title2: t.trackers.knowMoreTwo.title,
+                title1: trackerType.knowMoreTitle,
+                title2: trackerType.knowMoreTitle,
               ),
             ),
 
             /// Current and Dynamic Container
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: CurrentAndDymanicContainer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: CurrentAndDymanicContainer(
+                trackerType: trackerType,
+              ),
+            ),
+
+            /// KG Or gramm Container
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 5,
+                top: 16,
+              ),
+              child: Row(
+                children: [
+                  SwitchContainer(
+                    title1: t.trackers.kg.title,
+                    title2: t.trackers.g.title,
+                  ),
+                ],
+              ),
             ),
 
             /// Grafic
@@ -44,9 +113,9 @@ class Head extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   AddButton(
-                    title: t.trackers.head.add,
+                    title: trackerType.addButtonTitle,
                     onTap: () {
-                      context.pushNamed(AppViews.addHeadView);
+                      context.pushNamed(trackerType.route);
                     },
                   ),
                 ],
@@ -77,6 +146,12 @@ class Head extends StatelessWidget {
                     title2: t.trackers.old.title,
                     // isTrue: false,
                   ),
+                  trackerType.title == EvolutionCategory.head.title
+                      ? const SizedBox()
+                      : SwitchContainer(
+                          title1: t.trackers.kg.title,
+                          title2: t.trackers.g.title,
+                        ),
                 ],
               ),
             ),
@@ -86,7 +161,7 @@ class Head extends StatelessWidget {
               child: RowStroriesData(
                 data: t.trackers.date.title,
                 week: t.trackers.weeks.title,
-                weight: t.trackers.head.title,
+                growth: trackerType.storiesValueTitle,
                 style: AppTextStyles.f10w700.copyWith(
                   color: AppColors.greyBrighterColor,
                 ),
@@ -101,9 +176,9 @@ class Head extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: RowStroriesData(
-                      data: '25 октября',
+                      data: '01 сентября',
                       week: '17',
-                      weight: '42.2',
+                      weight: trackerType.storiesValue,
                       style: AppTextStyles.f17w400,
                     ),
                   );
