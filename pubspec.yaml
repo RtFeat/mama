@@ -89,6 +89,7 @@ dependencies:
   google_fonts: ^6.2.1
   reactive_date_time_picker: ^4.0.0
   flutter_envify: ^3.0.1
+  action_slider: ^0.7.0
   syncfusion_flutter_charts: ^27.1.50
 
   # -- image -- #
@@ -96,7 +97,6 @@ dependencies:
   table_calendar: ^3.1.2
   emoji_picker_flutter: ^3.1.0
   file_picker: ^8.1.2
-  interactive_slider: ^0.4.0
 
 dev_dependencies:
   # -- testing -- #

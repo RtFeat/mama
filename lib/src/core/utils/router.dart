@@ -8,6 +8,7 @@ import 'package:mama/src/feature/services/knowledge/views/category_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/saved_files_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_screen.dart';
+import 'package:provider/provider.dart';
 
 abstract class AppViews {
   static const String startScreen = 'startScreen';
@@ -63,6 +64,8 @@ abstract class AppViews {
   static const consultation = 'consultation';
   static const consultations = 'consultations';
   static const specializedConsultations = 'specializedConsultations';
+
+  static const specialistConsultations = 'specialistConsultations';
 
   static const webView = 'webView';
   static const pdfView = 'pdfView';
@@ -237,6 +240,11 @@ final GoRouter router = GoRouter(
                 ),
               ],
             ),
+            GoRoute(
+                path: _Paths.specialistConsultations,
+                name: AppViews.specialistConsultations,
+                builder: (context, state) =>
+                    const SpecialistConsultationsView()),
           ],
         ),
         GoRoute(
@@ -456,6 +464,8 @@ abstract class _Paths {
   static const consultation = AppViews.consultation;
   static const consultations = AppViews.consultations;
   static const specializedConsultations = AppViews.specializedConsultations;
+
+  static const specialistConsultations = AppViews.specialistConsultations;
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';

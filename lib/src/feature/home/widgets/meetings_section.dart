@@ -3,7 +3,7 @@ import 'package:mama/src/data.dart';
 
 class MeetingsSection extends StatelessWidget {
   final int whichSection;
-  final List<MeetingBox> meetingsList;
+  final List<MeetingBox>? meetingsList;
   const MeetingsSection({
     super.key,
     required this.whichSection,
@@ -12,6 +12,9 @@ class MeetingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
       child: DecoratedBox(
@@ -29,7 +32,7 @@ class MeetingsSection extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.start,
-            children: meetingsList.map((e) => e).toList(),
+            children: meetingsList!.map((e) => e).toList(),
           ),
         ),
       ),

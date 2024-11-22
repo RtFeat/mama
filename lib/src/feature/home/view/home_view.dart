@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -78,7 +79,9 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                       onTapSwitch: () {},
                     ),
                   Role.doctor => TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.pushNamed(AppViews.specializedConsultations);
+                      },
                       child: Text(t.consultation.title),
                     ),
                   _ => null,

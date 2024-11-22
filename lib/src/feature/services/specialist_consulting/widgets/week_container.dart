@@ -1,78 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../../core/core.dart';
+import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 
 class WeekContainer extends StatelessWidget {
-  const WeekContainer({super.key});
+  const WeekContainer({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var weeks = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+    final ScheduleViewStore store = context.watch();
 
-    return Container(
-      height: 64,
-      decoration: BoxDecoration(
-          color: AppColors.lightBlueBackgroundStatus,
-          borderRadius: BorderRadius.circular(24)),
-      child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return _WeekBloc(
-              week: weeks[index],
-            );
-          },
-          separatorBuilder: (context, index) {
-            return VerticalDivider(
-              width: 2,
-              color: Colors.white,
-            );
-          },
-          itemCount: weeks.length),
+    return ItemsLineWidget(
+      height: 70,
+      data: store.weeks,
+      builder: (item, isFirst, isLast) {
+        return _WeekBloc(
+            week: item,
+            borderRadius: isFirst
+                ? const BorderRadius.horizontal(left: Radius.circular(24))
+                : isLast
+                    ? const BorderRadius.horizontal(right: Radius.circular(24))
+                    : null);
+      },
     );
   }
 }
 
-class _WeekBloc extends StatefulWidget {
-  final String week;
+class _WeekBloc extends StatelessWidget {
+  final BorderRadius? borderRadius;
+  final WeekDay week;
 
-  const _WeekBloc({super.key, required this.week});
-
-  @override
-  State<_WeekBloc> createState() => _WeekBlocState();
-}
-
-class _WeekBlocState extends State<_WeekBloc> {
-  var filled = false;
+  const _WeekBloc({this.borderRadius, required this.week});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    return Container(
-      color: filled ? AppColors.primaryColor : Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            filled = !filled;
-          });
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          child: Column(
-            children: [
-              Text(
-                widget.week,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: filled ? Colors.white : AppColors.primaryColor
-                ),
-              ),
-              filled ? Expanded(child: SvgPicture.asset(Assets.icons.icCheck)) : SizedBox()
-            ],
+    return GestureDetector(
+      onTap: () {
+        week.setIsWork(!week.isWork);
+      },
+      child: Observer(builder: (context) {
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: week.isWork ? AppColors.primaryColor : null,
+            borderRadius: borderRadius,
           ),
-        ),
-      ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Column(
+              children: [
+                Text(
+                  week.title ?? '',
+                  style: textTheme.bodyMedium?.copyWith(
+                      color:
+                          week.isWork ? Colors.white : AppColors.primaryColor),
+                ),
+                if (week.isWork)
+                  Expanded(
+                      child: SvgPicture.asset(
+                    Assets.icons.icCheck,
+                  ))
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 }

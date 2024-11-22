@@ -59,3 +59,5 @@ articles(cardinal):
   one: $n статья
   few: $n статьи
   other: $n статей
+
+chatWithUser: Чат с пользователем

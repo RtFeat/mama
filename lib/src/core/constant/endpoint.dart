@@ -61,6 +61,8 @@ class Endpoint {
 
   String get doctorData => '$doctor/me';
 
+  String get updateDoctorWorkTime => '$doctor/update_work_time';
+
   static const String avatar = 'resources/avatar';
 
   static const String feedback = 'feedback';

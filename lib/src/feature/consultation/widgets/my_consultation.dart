@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/consultation/widgets/paragraph.dart';
+import 'package:provider/provider.dart';
 
 class MyConsultationWidget extends StatelessWidget {
   final Consultation consultation;
@@ -12,11 +13,15 @@ class MyConsultationWidget extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
+    final UserStore userStore = context.watch();
+
+    final Role role = userStore.role;
+
     return Column(
       children: [
         ParagraphWidget(title: t.consultation.yourRecord, children: [
           ConsultationTypeWidget(
-            type: ConsultationType.chat,
+            type: consultation.type,
             mainAxisAlignment: MainAxisAlignment.center,
             textStyle: textTheme.titleSmall,
           ),
@@ -66,17 +71,27 @@ class MyConsultationWidget extends StatelessWidget {
             ),
           ),
           30.h,
-          CustomButton(
-            isSmall: false,
-            backgroundColor: AppColors.redLighterBackgroundColor,
-            title: t.consultation.cancel.title,
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => const CancelRecordWidget(),
-              );
-            },
-          ),
+          switch (role) {
+            Role.doctor => CustomButton(
+                isSmall: false,
+                icon: IconModel(
+                    iconPath: Assets.icons.icBnChatsTap.path,
+                    size: const Size(24, 24)),
+                title: t.consultation.chatWithUser,
+                onTap: () {},
+              ),
+            _ => CustomButton(
+                isSmall: false,
+                backgroundColor: AppColors.redLighterBackgroundColor,
+                title: t.consultation.cancel.title,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const CancelRecordWidget(),
+                  );
+                },
+              ),
+          }
         ]),
       ],
     );

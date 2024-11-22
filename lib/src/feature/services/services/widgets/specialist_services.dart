@@ -22,6 +22,9 @@ class SpecialistServicesBodyWidget extends StatelessWidget {
             child: MainBox(
               mainText: t.home.onlineConsultation.title,
               image: Assets.images.chatVideo.path,
+              onTap: () {
+                context.pushNamed(AppViews.specialistConsultations);
+              },
             ),
           ),
         ],

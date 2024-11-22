@@ -59,3 +59,6 @@ articles(cardinal):
   one: $n article
   few: $n articles
   other: $n articles
+
+
+chatWithUser: Chat with user
