@@ -55,4 +55,12 @@ abstract class _WorkSlot with Store {
     return DateTime(now.year, now.month, now.day, int.parse(timeParts[0]),
         int.parse(timeParts[1]));
   }
+
+  DateTime get endTime {
+    final parts = workSlot.split(' - ');
+    final timeParts = parts[1].split(':');
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, int.parse(timeParts[0]),
+        int.parse(timeParts[1]));
+  }
 }

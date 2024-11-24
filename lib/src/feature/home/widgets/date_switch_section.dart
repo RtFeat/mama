@@ -1,28 +1,107 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
+
+import 'calendar/slots.dart';
+import 'calendar/table.dart';
 
 class DateSwitchSection extends StatelessWidget {
-  final VoidCallback leftButtonOnPressed;
-  final VoidCallback rightButtonOnPressed;
-  final VoidCallback calendarButtonOnPressed;
+  final Function(DateTime value) leftButtonOnPressed;
+  final Function(DateTime value) rightButtonOnPressed;
+  final Function(DateTime value) calendarButtonOnPressed;
 
-  final CalendarStore store;
+  final VoidCallback? backToTodayOnPressed;
+
+  final bool isOnlyCalendar;
 
   const DateSwitchSection({
     super.key,
-    required this.store,
     required this.leftButtonOnPressed,
     required this.rightButtonOnPressed,
     required this.calendarButtonOnPressed,
+    this.backToTodayOnPressed,
+    this.isOnlyCalendar = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider(create: (context) {
+      return CalendarStore();
+    }, builder: (context, child) {
+      final CalendarStore store = context.read();
+
+      final GlobalKey<MonthViewState> monthViewKey =
+          GlobalKey<MonthViewState>();
+
+      return Observer(builder: (context) {
+        return store.isCalendar || isOnlyCalendar
+            ? Column(
+                children: [
+                  _Header(
+                    isOnlyCalendar: isOnlyCalendar,
+                    leftButtonOnPressed: (v) {
+                      leftButtonOnPressed(v);
+                      monthViewKey.currentState?.previousPage();
+                    },
+                    rightButtonOnPressed: (v) {
+                      rightButtonOnPressed(v);
+                      monthViewKey.currentState?.nextPage();
+                    },
+                    calendarButtonOnPressed: calendarButtonOnPressed,
+                    backToTodayOnPressed: () {
+                      monthViewKey.currentState!.animateToMonth(DateTime.now());
+                      if (backToTodayOnPressed != null) backToTodayOnPressed!();
+                    },
+                  ),
+                  CustomTableWidget(
+                    isOnlyCalendar: isOnlyCalendar,
+                    doctorStore: context.watch(),
+                    monthViewKey: monthViewKey,
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  _Header(
+                    leftButtonOnPressed: leftButtonOnPressed,
+                    rightButtonOnPressed: rightButtonOnPressed,
+                    calendarButtonOnPressed: calendarButtonOnPressed,
+                    backToTodayOnPressed: backToTodayOnPressed,
+                  ),
+                  const SizedBox(height: 8),
+                  const SlotsWidget(),
+                ],
+              );
+      });
+    });
+  }
+}
+
+class _Header extends StatelessWidget {
+  final Function(DateTime value) leftButtonOnPressed;
+  final Function(DateTime value) rightButtonOnPressed;
+  final Function(DateTime value) calendarButtonOnPressed;
+
+  final VoidCallback? backToTodayOnPressed;
+  final bool isOnlyCalendar;
+
+  const _Header({
+    required this.leftButtonOnPressed,
+    required this.rightButtonOnPressed,
+    required this.calendarButtonOnPressed,
+    this.backToTodayOnPressed,
+    this.isOnlyCalendar = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
+    final CalendarStore store = context.watch();
 
     return Observer(builder: (context) {
       final bool isToday = store.selectedDate.day == DateTime.now().day;
@@ -30,7 +109,6 @@ class DateSwitchSection extends StatelessWidget {
           DateTime.now().add(const Duration(days: 1)).day;
       final bool isYesterday = store.selectedDate.day ==
           DateTime.now().subtract(const Duration(days: 1)).day;
-
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -39,7 +117,14 @@ class DateSwitchSection extends StatelessWidget {
             children: [
               /// #left button
               IconButton(
-                onPressed: leftButtonOnPressed,
+                onPressed: () {
+                  store.setSelectedDate(
+                    store.selectedDate.subtract(
+                      const Duration(days: 1),
+                    ),
+                  );
+                  leftButtonOnPressed(store.selectedDate);
+                },
                 icon: SvgPicture.asset(
                   Assets.icons.icArrowLeftFilled,
                   color: AppColors.primaryColor,
@@ -79,7 +164,14 @@ class DateSwitchSection extends StatelessWidget {
 
               /// #right button
               IconButton(
-                onPressed: rightButtonOnPressed,
+                onPressed: () {
+                  store.setSelectedDate(
+                    store.selectedDate.add(
+                      const Duration(days: 1),
+                    ),
+                  );
+                  rightButtonOnPressed(store.selectedDate);
+                },
                 icon: SvgPicture.asset(
                   Assets.icons.icArrowRightFilled,
                   color: AppColors.primaryColor,
@@ -94,6 +186,7 @@ class DateSwitchSection extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     store.selectedDate = DateTime.now();
+                    if (backToTodayOnPressed != null) backToTodayOnPressed!();
                   },
                   child: SizedBox(
                     width: 80,
@@ -121,24 +214,28 @@ class DateSwitchSection extends StatelessWidget {
               10.w,
 
               /// #calendar button
-              Material(
-                borderRadius: const BorderRadius.all(Radius.circular(16)),
-                color: AppColors.purpleLighterBackgroundColor,
-                child: InkWell(
-                  onTap: calendarButtonOnPressed,
+              if (!isOnlyCalendar)
+                Material(
                   borderRadius: const BorderRadius.all(Radius.circular(16)),
-                  child: SizedBox(
-                    width: 48,
-                    height: 48,
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: SvgPicture.asset(
-                        Assets.icons.icCalendarBadgeClockFilled,
+                  color: AppColors.purpleLighterBackgroundColor,
+                  child: InkWell(
+                    onTap: () {
+                      store.toggleIsCalendar();
+                      calendarButtonOnPressed(store.selectedDate);
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    child: SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: SvgPicture.asset(
+                          Assets.icons.icCalendarBadgeClockFilled,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ],

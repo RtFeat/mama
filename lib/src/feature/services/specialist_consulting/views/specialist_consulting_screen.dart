@@ -24,10 +24,25 @@ class SpecialistConsultingScreen extends StatelessWidget {
           ),
         ),
         body: ListView(
-          children: const [
-            SpecialistScheduleWidget(),
-            CalendarWidget(),
-            SaveButton()
+          children: [
+            const SpecialistScheduleWidget(),
+            // CalendarWidget(),
+
+            20.h,
+            CustomBackground(
+                padding: 16,
+                height: null,
+                child: DateSwitchSection(
+                    isOnlyCalendar: true,
+                    leftButtonOnPressed: (v) {},
+                    rightButtonOnPressed: (v) {},
+                    calendarButtonOnPressed: (v) {})),
+
+            // CustomTableWidget(
+            //   monthViewKey: GlobalKey<MonthViewState>(),
+            //   doctorStore: context.watch(),
+            // ),
+            const SaveButton()
           ],
         ),
       ),

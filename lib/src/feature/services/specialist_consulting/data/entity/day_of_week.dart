@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/core.dart';
-
 class DayOfWeek {
   final int day;
   final List<Events> events;
+  final String? consultationId;
 
-  DayOfWeek({required this.day, required this.events});
+  DayOfWeek({
+    required this.day,
+    required this.events,
+    this.consultationId,
+  });
 }
 
 class Events {

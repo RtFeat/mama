@@ -1,39 +1,84 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
-
-import '../data/data.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mama/src/data.dart';
 
 class CalendarCell extends StatelessWidget {
+  final bool isInMonth;
+  final bool isToday;
   final DayOfWeek data;
+  final bool isOnlyCalendar;
+  final List<CalendarEventData<Object?>> event;
 
-  const CalendarCell({super.key, required this.data});
+  const CalendarCell({
+    super.key,
+    required this.isToday,
+    required this.isInMonth,
+    required this.data,
+    this.isOnlyCalendar = false,
+    required this.event,
+  });
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
-    return Column(
-      children: [
-        Text(
-          data.day.toString(),
-          style: textTheme.labelLarge
-              ?.copyWith(fontWeight: FontWeight.w400, color: Colors.black),
-        ),
-        5.h,
-        data.events.isEmpty
-            ? const Expanded(child: SizedBox())
-            : Expanded(
-                child: Column(
-                  children: data.events
-                      .map((c) => _CellContainer(
-                            data: c,
-                          ))
-                      .toList(),
+    return GestureDetector(
+      onTap: () {
+        if (isOnlyCalendar) {
+          context.pushNamed(AppViews.specialistSlots, extra: {
+            'event': event,
+          });
+        } else {
+          context.pushNamed(AppViews.consultation, extra: {
+            'consultation': Consultation(
+              id: data.consultationId,
+            )
+          });
+        }
+      },
+      child: Column(
+        children: [
+          isToday
+              ? CircleAvatar(
+                  radius: 14,
+                  backgroundColor: AppColors.primaryColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: AutoSizeText(
+                      '${data.day}',
+                      minFontSize: 4,
+                      style: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.whiteColor),
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    data.day.toString(),
+                    style: textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: isInMonth ? Colors.black : Colors.grey),
+                  ),
                 ),
-              ),
-        5.h
-      ],
+          5.h,
+          data.events.isEmpty
+              ? const Expanded(child: SizedBox())
+              : Expanded(
+                  child: Column(
+                    children: data.events
+                        .map((c) => _CellContainer(
+                              data: c,
+                            ))
+                        .toList(),
+                  ),
+                ),
+          5.h
+        ],
+      ),
     );
   }
 }
@@ -41,7 +86,7 @@ class CalendarCell extends StatelessWidget {
 class _CellContainer extends StatelessWidget {
   final Events data;
 
-  const _CellContainer({super.key, required this.data});
+  const _CellContainer({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -50,14 +95,16 @@ class _CellContainer extends StatelessWidget {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 3),
-        child: Container(
+        child: SizedBox(
           width: 38,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4), color: data.fillColor),
-          child: Center(
-            child: Text(
-              data.event.toString(),
-              style: textTheme.labelSmall?.copyWith(color: data.textColor),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4), color: data.fillColor),
+            child: Center(
+              child: Text(
+                data.event.toString(),
+                style: textTheme.labelSmall?.copyWith(color: data.textColor),
+              ),
             ),
           ),
         ),

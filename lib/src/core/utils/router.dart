@@ -1,14 +1,15 @@
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/views/bottle/add_bottle_screen.dart';
+import 'package:mama/src/feature/home/view/day_work.dart';
 import 'package:mama/src/feature/services/knowledge/views/ages_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/authors_screens.dart';
 import 'package:mama/src/feature/services/knowledge/views/category_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/saved_files_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_screen.dart';
-import 'package:provider/provider.dart';
 
 abstract class AppViews {
   static const String startScreen = 'startScreen';
@@ -66,6 +67,7 @@ abstract class AppViews {
   static const specializedConsultations = 'specializedConsultations';
 
   static const specialistConsultations = 'specialistConsultations';
+  static const specialistSlots = 'specialistSlots';
 
   static const webView = 'webView';
   static const pdfView = 'pdfView';
@@ -243,6 +245,20 @@ final GoRouter router = GoRouter(
             GoRoute(
                 path: _Paths.specialistConsultations,
                 name: AppViews.specialistConsultations,
+                routes: [
+                  GoRoute(
+                    path: _Paths.specialistSlots,
+                    name: AppViews.specialistSlots,
+                    builder: (context, state) {
+                      final Map? extra = state.extra as Map?;
+                      final List<CalendarEventData<Object?>> event =
+                          extra?['event'] as List<CalendarEventData<Object?>>;
+                      return SpecialistDayView(
+                        event: event,
+                      );
+                    },
+                  )
+                ],
                 builder: (context, state) =>
                     const SpecialistConsultationsView()),
           ],
@@ -466,6 +482,8 @@ abstract class _Paths {
   static const specializedConsultations = AppViews.specializedConsultations;
 
   static const specialistConsultations = AppViews.specialistConsultations;
+
+  static const specialistSlots = AppViews.specialistSlots;
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';

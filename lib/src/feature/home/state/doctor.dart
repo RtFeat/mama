@@ -60,34 +60,47 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
         );
 
   @computed
-  List<WorkSlot> get slots => [
-        WorkSlot(
-          isBusy: false,
-          workSlot: '9:00 - 10:00',
-          consultationType: 'sdf',
-          patientFullName: 'dsfsdf sdf s',
-        ),
-        WorkSlot(
-          isBusy: false,
-          workSlot: '11:00 - 12:00',
-          consultationType: 'type1',
-          patientFullName: 'John Doe',
-        ),
-        WorkSlot(
-          isBusy: true,
-          workSlot: '13:00 - 14:00',
-          consultationType: 'type2',
-          patientFullName: 'Jane Smith',
-        ),
-        WorkSlot(
-          isBusy: true,
-          workSlot: '21:00 - 22:00',
-          consultationType: 'type2',
-          patientFullName: 'Jane Smith',
-        ),
-      ];
-  // data?.doctor?.workTime?.slots ?? [];
+  List<WorkSlot> get slots =>
+      // [
+      //       WorkSlot(
+      //         isBusy: false,
+      //         workSlot: '9:00 - 10:00',
+      //         consultationType: 'sdf',
+      //         patientFullName: 'dsfsdf sdf s',
+      //       ),
+      //       WorkSlot(
+      //         isBusy: false,
+      //         workSlot: '11:00 - 13:00',
+      //         consultationType: 'type1',
+      //         patientFullName: 'John Doe',
+      //       ),
+      //       WorkSlot(
+      //         isBusy: true,
+      //         workSlot: '13:00 - 14:00',
+      //         consultationType: 'type2',
+      //         patientFullName: 'Jane Smith',
+      //       ),
+      //       WorkSlot(
+      //         isBusy: true,
+      //         workSlot: '21:00 - 22:00',
+      //         consultationType: 'type2',
+      //         patientFullName: 'Jane Smith',
+      //       ),
+      //     ];
+      data?.doctor?.workTime?.slots ?? [];
 
+  @computed
+  List<List<WorkSlot>> get weekSlots => [
+        data?.doctor?.workTime?.monday?.workSlots ?? [],
+        data?.doctor?.workTime?.tuesday?.workSlots ?? [],
+        data?.doctor?.workTime?.wednesday?.workSlots ?? [],
+        data?.doctor?.workTime?.thursday?.workSlots ?? [],
+        data?.doctor?.workTime?.friday?.workSlots ?? [],
+        data?.doctor?.workTime?.saturday?.workSlots ?? [],
+        data?.doctor?.workTime?.sunday?.workSlots ?? [],
+      ];
+
+  @computed
   List<List<WorkSlot>> get dividedSlots {
     final now = DateTime.now();
     List<WorkSlot> beforeNow = [];

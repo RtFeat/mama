@@ -35,18 +35,19 @@ class SlotsWidget extends StatelessWidget {
                     ),
                   ))),
         if (!isEmpty) ...[
-          MeetingsSection(
-            whichSection: 1,
-            meetingsList: doctorStore.dividedSlots[0]
-                .map((e) => MeetingBox(
-                    consultationId: e.consultationId ?? '',
-                    scheduledTime: e.workSlot,
-                    meetingType: e.consultationType ?? '',
-                    isCancelled: false,
-                    tutorFullName: e.patientFullName ?? '',
-                    whichSection: 1))
-                .toList(),
-          ),
+          if (doctorStore.dividedSlots[0].isNotEmpty)
+            MeetingsSection(
+              whichSection: 1,
+              meetingsList: doctorStore.dividedSlots[0]
+                  .map((e) => MeetingBox(
+                      consultationId: e.consultationId ?? '',
+                      scheduledTime: e.workSlot,
+                      meetingType: e.consultationType ?? '',
+                      isCancelled: false,
+                      tutorFullName: e.patientFullName ?? '',
+                      whichSection: 1))
+                  .toList(),
+            ),
           if (doctorStore.dividedSlots[1].isNotEmpty) ...[
             8.h,
             MeetingsSection(

@@ -8,6 +8,9 @@ part 'doctor_time.g.dart';
 class DoctorWorkTime extends _DoctorWorkTime with _$DoctorWorkTime {
   final String? id;
 
+  @JsonKey(name: 'week_start')
+  final DateTime? weekStart;
+
   DoctorWorkTime({
     required this.id,
     required super.monday,
@@ -17,6 +20,7 @@ class DoctorWorkTime extends _DoctorWorkTime with _$DoctorWorkTime {
     required super.friday,
     required super.saturday,
     required super.sunday,
+    this.weekStart,
   });
 
   factory DoctorWorkTime.fromJson(Map<String, dynamic> json) =>
