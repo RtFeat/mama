@@ -17,14 +17,18 @@ head:
 
 table: Таблица
 
+edit: Редактировать
+
 health:
   title: Здоровье
 
 temperature:
   title: Температура
+  add: Добавить температуру
 
 medicines:
   title: Лекарства
+  add: Добавить лекарство
 
 doctorsAppointment:
   title: Прием врача
@@ -55,9 +59,6 @@ pdf:
 
 add:
   title: Добавить
-
-addTemperature:
-  title: Добавить температуру
 
 now:
   title: Сейчас
@@ -153,3 +154,5 @@ dirty:
   diarrhea: Диарея
 
 diaperforday: 6 подгузников в день в среднем
+
+save: Сохранить

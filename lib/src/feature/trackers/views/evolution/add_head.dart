@@ -13,7 +13,7 @@ class AddHead extends StatelessWidget {
           FixedCenterIndicator(
             kgOrG: t.trackers.cm.title,
             painter: CustomPointCm(),
-            size: Size(200 * 10, 200),
+            size: const Size(200 * 10, 200),
             top: 170,
           ),
           8.h,

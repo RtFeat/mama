@@ -122,11 +122,11 @@ class _TablePageState extends State<TablePage> {
               ),
             ),
             const SizedBox(height: 8),
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                itemCount: 8,
-                itemBuilder: (context, index) {
+            // Таблица бөлүгү (скролл менен кошо)
+            Column(
+              children: List.generate(
+                5,
+                (index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: RowStroriesData(
@@ -148,7 +148,6 @@ class _TablePageState extends State<TablePage> {
     );
   }
 
-  // Виджет для индикаторов состояния
   Widget _buildIndicator({
     required String label,
     required Color? color,
@@ -157,7 +156,6 @@ class _TablePageState extends State<TablePage> {
     return Container(
       width: 100,
       height: 40,
-      // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(8),

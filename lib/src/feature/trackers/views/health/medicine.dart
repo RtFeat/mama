@@ -18,6 +18,9 @@ class Medicine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final phonePadding = MediaQuery.of(context).padding;
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
@@ -63,7 +66,6 @@ class Medicine extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(16)),
                     ),
                     child: SizedBox(
-                      height: 100,
                       width: MediaQuery.sizeOf(context).width,
                       child: Row(
                         children: [
@@ -75,8 +77,8 @@ class Medicine extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(16)),
                             ),
                             child: SizedBox(
-                              width: 100,
-                              height: 100,
+                              width: 120,
+                              height: 120,
                               child: Center(
                                 child: SvgPicture.asset(
                                   Assets.icons.icPillsFilled,
@@ -118,7 +120,7 @@ class Medicine extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  // const SizedBox(height: 8),
 
                                   /// #pill exact time, pill remaining time
                                   Column(
@@ -162,10 +164,9 @@ class Medicine extends StatelessWidget {
             ColoredBox(
               color: AppColors.whiteColor,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ).copyWith(
+                padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
                   top: 8,
+                  bottom: phonePadding.bottom + 16,
                 ),
                 child: Row(
                   children: [
@@ -174,20 +175,15 @@ class Medicine extends StatelessWidget {
                       child: CustomButton(
                         title: t.trackers.findOutMore.title,
                         onTap: () {},
-                        iconColor: AppColors.primaryColor,
-                        textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryColor,
-                        ),
                         icon: IconModel(
                           iconPath: Assets.icons.icGraduationCapFilled,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
+                            horizontal: 16, vertical: 8),
                         type: CustomButtonType.outline,
+                        textStyle: textTheme.titleMedium!.copyWith(
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     8.w,
@@ -195,15 +191,8 @@ class Medicine extends StatelessWidget {
                     /// #pdf button
                     Expanded(
                       child: CustomButton(
-                        onTap: () {},
                         title: t.trackers.pdf.title,
-                        backgroundColor: AppColors.whiteColor,
-                        iconColor: AppColors.primaryColor,
-                        textStyle: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primaryColor,
-                        ),
+                        onTap: () {},
                         icon: IconModel(
                           iconPath: Assets.icons.icArrowDownFilled,
                         ),
@@ -214,11 +203,12 @@ class Medicine extends StatelessWidget {
 
                     /// #add temperature button
                     Expanded(
-                      flex: 2,
                       child: CustomButton(
                         title: t.trackers.add.title,
-                        backgroundColor: AppColors.purpleLighterBackgroundColor,
-                        onTap: () => _navigateToAddMedicineView(context),
+                        onTap: () {
+                          // context.pushNamed(AppViews.trackersHealthAddMedicineView);
+                          _navigateToAddMedicineView(context);
+                        },
                         icon: IconModel(
                           iconPath: Assets.icons.icPillsFilled,
                         ),

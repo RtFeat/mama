@@ -1,38 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
+import 'package:mama/src/data.dart';
 
-class TrackersHealthAddTemperature extends StatelessWidget {
-  const TrackersHealthAddTemperature({super.key});
-
+class AddTemperature extends StatelessWidget {
+  const AddTemperature({super.key});
   @override
   Widget build(BuildContext context) {
-    final phonePadding = MediaQuery.of(context).padding;
-
     return Scaffold(
-      backgroundColor: AppColors.e8ddf9,
-      body: Column(
+      backgroundColor: AppColors.blueLighter1,
+      appBar: CustomAppBar(title: t.trackers.temperature.add),
+      body: ListView(
         children: [
-          SizedBox(height: phonePadding.top + 10),
-
-          /// #custom app bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                /// #arrow left, back text
-                const CustomBackButton(),
-
-                /// #sleep music text
-                Text(
-                  t.trackers.addTemperature.title,
-                  style: const TextStyle(
-                    
-                  ),
-                ),
-              ],
-            ),
+          FixedCenterIndicator(
+            kgOrG: t.trackers.cm.title,
+            painter: CustomPointCm(),
+            size: const Size(200 * 10, 200),
+            top: 170,
           ),
-          const SizedBox(height: 10),
+          8.h,
+          CustomBlog(
+            onPressedElevated: () {},
+            onPressedOutlined: () {},
+          ),
+          8.h,
         ],
       ),
     );

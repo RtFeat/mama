@@ -168,11 +168,11 @@ class WeightT extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                itemCount: 8,
-                itemBuilder: (context, index) {
+
+            Column(
+              children: List.generate(
+                5,
+                (index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: RowStroriesData(

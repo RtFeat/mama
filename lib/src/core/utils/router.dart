@@ -287,7 +287,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: AppViews.trackersHealthAddMedicineView,
               path: _Paths.trackersHealthAddTemperaturePath,
-              builder: (context, state) => const TrackersHealthAddTemperature(),
+              builder: (context, state) => const AddTemperature(),
             )
           ],
         ),
