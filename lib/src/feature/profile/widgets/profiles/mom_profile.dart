@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mama/src/core/widgets/body/decoration.dart';
 import 'package:mama/src/data.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,8 @@ class MomsProfile extends StatefulWidget {
   final TextStyle? helpersStyle;
   final TextStyle? titlesColoredStyle;
 
+  final HomeViewStore? homeStore;
+
   const MomsProfile({
     super.key,
     required this.store,
@@ -23,6 +26,7 @@ class MomsProfile extends StatefulWidget {
     this.titlesColoredStyle,
     required this.accountModel,
     required this.formatter,
+    this.homeStore,
   });
 
   @override
@@ -48,6 +52,22 @@ class _MomsProfileState extends State<MomsProfile> {
     final TextTheme textTheme = theme.textTheme;
     final UserStore userStore = context.watch();
 
+    final BodyItemWidget aboutMe = BodyItemWidget(
+      item: InputItem(
+        errorBorder: InputBorder.none,
+        controlName: 'about',
+        maxLines: 1,
+        hintText: t.profile.hintChangeNote,
+        titleStyle: widget.titlesStyle!,
+        inputHint: t.profile.labelChangeNote,
+        inputHintStyle: textTheme.bodySmall,
+        onChanged: (value) {
+          userStore.account.setIsChanged(true);
+          // widget.store.updateData();
+        },
+      ),
+    );
+
     return Column(
       children: [
         widget.accountModel.avatarUrl == null
@@ -61,7 +81,11 @@ class _MomsProfileState extends State<MomsProfile> {
               20.h,
               BodyGroup(
                 formGroup: widget.store.formGroup,
-                title: t.profile.accountTitle,
+                title: switch (userStore.account.role) {
+                  Role.doctor => t.profile.accountTitleSpecialist,
+                  Role.onlineSchool => t.profile.accountTitleSchool,
+                  _ => t.profile.accountTitle,
+                },
                 items: [
                   BodyItemWidget(
                     item: InputItem(
@@ -75,10 +99,67 @@ class _MomsProfileState extends State<MomsProfile> {
                       },
                     ),
                   ),
+                  if (userStore.account.role == Role.doctor)
+                    BodyItemWidget(
+                      item: InputItem(
+                        controlName: 'profession',
+                        hintText: t.profile.helperProfession,
+                        titleStyle: widget.titlesStyle!.copyWith(
+                            color: AppColors.blackColor,
+                            fontWeight: FontWeight.w400),
+                        inputHintStyle: textTheme.bodySmall!.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        onChanged: (value) {
+                          userStore.account.setIsChanged(true);
+                          // widget.store.updateData();
+                        },
+                      ),
+                    ),
+                  if (userStore.account.role == Role.doctor)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                t.profile.titleNameProffession,
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                style: textTheme.labelLarge,
+                              ),
+                            ],
+                          ),
+                          6.h,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  '${userStore.account.firstName} ${userStore.account.secondName}',
+                                  style: textTheme.displaySmall?.copyWith(
+                                    fontSize: 24,
+                                  ),
+                                  maxLines: 1),
+                              if (userStore.account.profession != null &&
+                                  userStore.account.profession!.isNotEmpty)
+                                ConsultationBadge(
+                                  title: userStore.account.profession ?? '',
+                                )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   BodyItemWidget(
                     item: InputItem(
                       controlName: 'phone',
-                      hintText: t.profile.hintChangePhone,
+                      hintText: userStore.role == Role.user
+                          ? t.profile.hintChangePhone
+                          : t.profile.hintChangePhoneSchool,
                       titleStyle: widget.titlesStyle!.copyWith(
                           color: AppColors.blackColor,
                           fontWeight: FontWeight.w400),
@@ -103,7 +184,9 @@ class _MomsProfileState extends State<MomsProfile> {
                         errorBorder: InputBorder.none,
                         controlName: 'email',
                         maxLines: isEmpty ? 2 : 1,
-                        hintText: t.profile.hintChangeEmail,
+                        hintText: userStore.role == Role.user
+                            ? t.profile.hintChangeEmail
+                            : t.profile.hintChangeEmailSchool,
                         keyboardType: TextInputType.emailAddress,
                         inputHintStyle: textTheme.titleMedium!.copyWith(
                           fontWeight: FontWeight.w400,
@@ -116,44 +199,41 @@ class _MomsProfileState extends State<MomsProfile> {
                       ),
                     );
                   }),
-                  BodyItemWidget(
-                    item: InputItem(
-                      errorBorder: InputBorder.none,
-                      controlName: 'about',
-                      maxLines: 1,
-                      hintText: t.profile.hintChangeNote,
-                      titleStyle: widget.titlesStyle!,
-                      inputHint: t.profile.labelChangeNote,
-                      inputHintStyle: textTheme.bodySmall,
-                      onChanged: (value) {
-                        userStore.account.setIsChanged(true);
-                        // widget.store.updateData();
-                      },
-                    ),
-                  ),
+                  switch (userStore.account.role) {
+                    Role.onlineSchool || Role.doctor => Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: BodyGroup(
+                            title: t.profile.titleInfo,
+                            formGroup: widget.store.formGroup,
+                            items: [aboutMe]),
+                      ),
+                    _ => aboutMe,
+                  }
                 ],
               ),
-              32.h,
-              CustomButton(
-                isSmall: false,
-                onTap: () {
-                  context.pushNamed(AppViews.promoView);
-                },
-                title: t.profile.addGiftCodeButtonTitle,
-              ),
-              8.h,
-              CustomButton(
-                onTap: () {
-                  context.pushNamed(AppViews.webView, extra: {
-                    'url': 'https://google.com',
-                  });
-                },
-                isSmall: false,
-                icon: IconModel(
-                  icon: Icons.language,
+              26.h,
+              if (userStore.role == Role.user)
+                CustomButton(
+                  isSmall: false,
+                  onTap: () {
+                    context.pushNamed(AppViews.promoView);
+                  },
+                  title: t.profile.addGiftCodeButtonTitle,
                 ),
-                title: t.profile.settingsAccountButtonTitle,
-              ),
+              8.h,
+              if (userStore.role != Role.doctor)
+                CustomButton(
+                  onTap: () {
+                    context.pushNamed(AppViews.webView, extra: {
+                      'url': 'https://google.com',
+                    });
+                  },
+                  isSmall: false,
+                  icon: IconModel(
+                    icon: Icons.language,
+                  ),
+                  title: t.profile.settingsAccountButtonTitle,
+                ),
               30.h,
               SubscribeBlockItem(child: Observer(builder: (_) {
                 return IgnorePointer(
@@ -162,6 +242,90 @@ class _MomsProfileState extends State<MomsProfile> {
                       childs: userStore.children.toList(),
                     ));
               })),
+              if (userStore.role == Role.onlineSchool)
+                BodyGroup(
+                    title: t.profile.titleCourses,
+                    items: [
+                      SchoolCourseItem(
+                          title: t.profile.schoolItems.first.title,
+                          description: t.profile.schoolItems.first.desc,
+                          url: 'https://google.com'),
+                      SchoolCourseItem(
+                          title: t.profile.schoolItems.second.title,
+                          description: t.profile.schoolItems.second.desc,
+                          url: 'https://google.com'),
+                      SchoolCourseItem(
+                          title: t.profile.schoolItems.third.title,
+                          description: t.profile.schoolItems.third.desc,
+                          url: 'https://google.com'),
+                      SchoolCourseItem(
+                          title: t.profile.schoolItems.fourth.title,
+                          description: t.profile.schoolItems.fourth.desc,
+                          url: 'https://google.com'),
+                    ]
+                        .map((e) => BodyItemDecoration(
+                            borderRadius: 32.r,
+                            padding: const EdgeInsets.only(left: 10),
+                            child: SizedBox(
+                                height: 120,
+                                child: BodyItemWidget(
+                                    item: CustomBodyItem(
+                                        bodyAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        title: e.title,
+                                        titleStyle:
+                                            textTheme.headlineSmall?.copyWith(
+                                          fontSize: 20,
+                                        ),
+                                        subTitleLines: 2,
+                                        hintStyle: textTheme.titleSmall,
+                                        subTitle: e.description,
+                                        subTitleWidth: double.infinity,
+                                        body: GestureDetector(
+                                          onTap: () {
+                                            context.pushNamed(AppViews.webView,
+                                                extra: {
+                                                  'url': e.url,
+                                                });
+                                          },
+                                          child: SizedBox(
+                                            width: 70,
+                                            child: DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  color: AppColors
+                                                      .lightBlueBackgroundStatus,
+                                                  borderRadius: 32.r,
+                                                ),
+                                                child: Center(
+                                                    child: IconWidget(
+                                                  model: IconModel(
+                                                    icon: Icons.language,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                ))),
+                                          ),
+                                        ))))))
+                        .toList()),
+              if (userStore.role == Role.onlineSchool &&
+                  widget.homeStore!.ownArticlesStore.listData.isNotEmpty) ...[
+                30.h,
+                BodyGroup(title: t.profile.titleArticle, items: [
+                  Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: SizedBox(
+                          height: 250,
+                          child: PaginatedLoadingWidget(
+                            scrollDirection: Axis.horizontal,
+                            store: widget.homeStore!.ownArticlesStore,
+                            itemBuilder: (context, item) {
+                              return ArticleBox(
+                                model: item,
+                              );
+                            },
+                          ))),
+                ]),
+              ],
               if (userStore.role == Role.user)
                 Padding(
                   padding: const EdgeInsets.all(28.0),

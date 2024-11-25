@@ -16,7 +16,11 @@ class HomeView extends StatelessWidget {
           userId: userStore.user.id),
       builder: (context, _) {
         return LoadHomeData(
-            userStore: userStore, child: _Body(userStore: userStore));
+            userStore: userStore,
+            child: _Body(
+              userStore: userStore,
+              store: context.watch(),
+            ));
       },
     );
   }
@@ -24,7 +28,11 @@ class HomeView extends StatelessWidget {
 
 class _Body extends StatefulWidget {
   final UserStore userStore;
-  const _Body({required this.userStore});
+  final HomeViewStore store;
+  const _Body({
+    required this.userStore,
+    required this.store,
+  });
 
   @override
   State<_Body> createState() => __BodyState();
@@ -44,7 +52,9 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
 
   late final Widget leadingWidget = ProfileWidget(
     onTap: () {
-      router.pushNamed(AppViews.profile);
+      router.pushNamed(AppViews.profile, extra: {
+        'store': widget.store,
+      });
     },
     alignment: Alignment.centerLeft,
     avatarUrl: widget.userStore.account.avatarUrl ?? '',

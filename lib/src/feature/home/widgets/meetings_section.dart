@@ -14,9 +14,6 @@ class MeetingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
-
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
       child: DecoratedBox(

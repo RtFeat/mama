@@ -6,12 +6,14 @@ class BodyItemDecoration extends StatelessWidget {
   final Border? backgroundBorder;
   final bool? shadow;
   final EdgeInsets? padding;
+  final BorderRadius? borderRadius;
   const BodyItemDecoration({
     super.key,
     required this.child,
     this.backgroundBorder,
     this.shadow = false,
     this.padding,
+    this.borderRadius,
   });
 
   @override
@@ -19,7 +21,7 @@ class BodyItemDecoration extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
           color: AppColors.whiteColor,
-          borderRadius: 16.r,
+          borderRadius: borderRadius ?? 16.r,
           border: backgroundBorder,
           boxShadow: shadow!
               ? [

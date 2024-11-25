@@ -338,7 +338,14 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
-          builder: (context, state) => const ProfileScreen(),
+          builder: (context, state) {
+            final Map? extra = state.extra as Map?;
+            final HomeViewStore? store = extra?['store'] as HomeViewStore?;
+
+            return ProfileScreen(
+              homeViewStore: store,
+            );
+          },
           routes: [
             GoRoute(
               path: _Paths.promoView,

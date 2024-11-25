@@ -97,13 +97,18 @@ abstract class _UserStore with Store {
     String? secondName,
     String? email,
     String? info,
+    String? profession,
   }) {
-    restClient.patch('${Endpoint.user}/', body: {
+    final bool isDoctor = role == Role.doctor;
+
+    restClient
+        .patch(isDoctor ? '${Endpoint.doctor}/' : '${Endpoint.user}/', body: {
       if (city != null) 'city': city,
       if (firstName != null) 'first_name': firstName,
       if (secondName != null) 'second_name': secondName,
       if (email != null) 'email': email,
       if (info != null) 'info': info,
+      if (profession != null) 'profession': profession,
     }).then((v) {
       account.setIsChanged(false);
     });

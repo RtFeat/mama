@@ -130,3 +130,17 @@ feedback:
     ok: Ok
 
 aboutMe: about me
+
+schoolItems:
+  first: 
+    title: Useful webinars
+    desc: Recording 6-ten useful webinars with answers to questions
+  second: 
+    title: From birth to 3 months
+    desc: All about children from 3 to 6 months of life
+  third: 
+    title: From 6 to 12 months
+    desc: All about children in the age of 6 to 12 months
+  fourth: 
+    title: From 12 to 18 months
+    desc: All about children in the age of 12 to 18 months

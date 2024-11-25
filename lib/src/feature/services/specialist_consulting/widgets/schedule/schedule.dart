@@ -3,7 +3,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
-import 'duration.dart';
 import 'title.dart';
 import 'work_days.dart';
 import 'work_time.dart';
@@ -29,9 +28,9 @@ class SpecialistScheduleWidget extends StatelessWidget {
               8.h,
               const SpecialistWorkTimeWidget(),
               8.h,
-              const Divider(),
-              8.h,
-              const SpecialistDurationWidget(),
+              // const Divider(),
+              // 8.h,
+              // const SpecialistDurationWidget(),
             ]
           ],
         );

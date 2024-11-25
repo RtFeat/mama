@@ -6,7 +6,11 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final HomeViewStore? homeViewStore;
+  const ProfileScreen({
+    super.key,
+    this.homeViewStore,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +79,7 @@ class ProfileScreen extends StatelessWidget {
                             children: <Widget>[
                               Observer(builder: (_) {
                                 return MomsProfile(
+                                  homeStore: homeViewStore,
                                   titlesStyle: titlesStyle,
                                   titlesColoredStyle: titlesColoredStyle,
                                   accountModel: userStore.account,
@@ -152,6 +157,26 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                               ),
                               8.h,
+                              if (userStore.account.role == Role.doctor) ...[
+                                Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: CustomButton(
+                                      onTap: () {
+                                        context.pushNamed(AppViews.webView,
+                                            extra: {
+                                              'url': 'https://google.com',
+                                            });
+                                      },
+                                      isSmall: false,
+                                      icon: IconModel(
+                                        icon: Icons.language,
+                                      ),
+                                      title:
+                                          t.profile.settingsAccountButtonTitle,
+                                    )),
+                                8.h,
+                              ],
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
@@ -259,6 +284,8 @@ class ProfileScreen extends StatelessWidget {
                                         secondName:
                                             userStore.account.secondName,
                                         email: userStore.account.email,
+                                        profession:
+                                            userStore.account.profession,
                                         info: userStore.account.info);
 
                                     if (userStore

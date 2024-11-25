@@ -68,6 +68,12 @@ abstract class _VerifyStore with Store {
     }
   }
 
+  @observable
+  bool isUser = true;
+
+  @action
+  void setIsUser(bool value) => isUser = value;
+
   @action
   void login(
     String code, {
@@ -84,11 +90,18 @@ abstract class _VerifyStore with Store {
 
       final String? state = v?['state'] as String?;
 
+      final String? role = v?['role'] as String?;
+
       if (refreshToken != null) {
         await tokenStorage
             .setToken(OAuth2Token(accessToken: '', refreshToken: refreshToken));
 
         logger.info('Status: $state');
+
+        if (role != null) {
+          setIsUser(role == 'USER');
+          //   setRole(Role.values.firstWhere((e) => e.name == role));
+        }
 
         if (state == 'ACTIVE') {
           isRegistered = true;
