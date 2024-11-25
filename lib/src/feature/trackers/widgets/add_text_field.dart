@@ -27,6 +27,8 @@ class AddSomethingTextField extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              maxLines: 4,
+              minLines: 1,
               controller: controller,
               decoration: InputDecoration(
                 hintText: hintText,

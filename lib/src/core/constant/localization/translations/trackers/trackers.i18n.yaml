@@ -156,3 +156,21 @@ dirty:
 diaperforday: 6 diapers a day on average
 
 save: save
+
+name:
+  title: Name
+  subTitle: Click to enter drug name
+
+dateStart:
+  title: Date start
+  subTitle: Click to enter your start date
+
+dose: 
+  title: Dose
+  subTitle: Click to enter dose. It will be immediately visible on the medication screen
+
+comment:
+  title: Comment
+  subTitle: Click to add comments
+
+dailyreminders: Daily reminders
