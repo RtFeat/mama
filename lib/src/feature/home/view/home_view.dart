@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -10,19 +11,12 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
 
-    return Provider(
-      create: (context) => HomeViewStore(
-          restClient: context.read<Dependencies>().restClient,
-          userId: userStore.user.id),
-      builder: (context, _) {
-        return LoadHomeData(
-            userStore: userStore,
-            child: _Body(
-              userStore: userStore,
-              store: context.watch(),
-            ));
-      },
-    );
+    return LoadHomeData(
+        userStore: userStore,
+        child: _Body(
+          userStore: userStore,
+          store: context.watch(),
+        ));
   }
 }
 
@@ -50,16 +44,6 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
   }
 
-  late final Widget leadingWidget = ProfileWidget(
-    onTap: () {
-      router.pushNamed(AppViews.profile, extra: {
-        'store': widget.store,
-      });
-    },
-    alignment: Alignment.centerLeft,
-    avatarUrl: widget.userStore.account.avatarUrl ?? '',
-  );
-
   late CustomAppBar appBar = CustomAppBar(
     leading: ProfileWidget(
       onTap: () {
@@ -82,7 +66,15 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
             HomeBodyWidget(
               tabController: _tabController,
               appBar: CustomAppBar(
-                leading: leadingWidget,
+                leading: Observer(builder: (context) {
+                  return ProfileWidget(
+                    onTap: () {
+                      router.pushNamed(AppViews.profile);
+                    },
+                    alignment: Alignment.centerLeft,
+                    avatarUrl: widget.userStore.account.avatarUrl ?? '',
+                  );
+                }),
                 action: switch (widget.userStore.role) {
                   Role.user => ProfileWidget(
                       isShowText: true,

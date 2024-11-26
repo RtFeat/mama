@@ -4,3 +4,4 @@ export 'reply_item.dart';
 export 'reply.dart';
 export 'person_item.dart';
 export 'asset_item.dart';
+export 'message.dart';

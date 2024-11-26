@@ -47,7 +47,12 @@ class App extends StatelessWidget {
           Provider(
             create: (context) => DoctorStore(
                 restClient: context.read<Dependencies>().restClient),
-          )
+          ),
+          Provider(
+            create: (context) => HomeViewStore(
+                restClient: context.read<Dependencies>().restClient,
+                userId: context.read<UserStore>().user.id),
+          ),
         ],
         child: TranslationProvider(child: const MaterialContext()),
       );

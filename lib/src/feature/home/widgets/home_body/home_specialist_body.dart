@@ -83,7 +83,7 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
                             height: 250,
                             child: PaginatedLoadingWidget(
                               scrollDirection: Axis.horizontal,
-                              store: widget.homeViewStore.allArticlesStore,
+                              store: widget.homeViewStore.ownArticlesStore,
                               itemBuilder: (context, item) {
                                 return ArticleBox(
                                   model: item,

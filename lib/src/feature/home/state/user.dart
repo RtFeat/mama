@@ -139,7 +139,8 @@ abstract class _UserStore with Store {
     });
 
     restClient.put(Endpoint().accountAvatar, body: formData).then((v) {
-      account.setAvatar('${Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+      account.setAvatar(
+          '${const Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
     });
   }
 

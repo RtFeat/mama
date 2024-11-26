@@ -6,10 +6,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final HomeViewStore? homeViewStore;
   const ProfileScreen({
     super.key,
-    this.homeViewStore,
   });
 
   @override
@@ -79,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                             children: <Widget>[
                               Observer(builder: (_) {
                                 return MomsProfile(
-                                  homeStore: homeViewStore,
+                                  homeStore: context.watch(),
                                   titlesStyle: titlesStyle,
                                   titlesColoredStyle: titlesColoredStyle,
                                   accountModel: userStore.account,

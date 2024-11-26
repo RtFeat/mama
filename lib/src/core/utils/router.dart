@@ -339,12 +339,7 @@ final GoRouter router = GoRouter(
           path: _Paths.profile,
           name: AppViews.profile,
           builder: (context, state) {
-            final Map? extra = state.extra as Map?;
-            final HomeViewStore? store = extra?['store'] as HomeViewStore?;
-
-            return ProfileScreen(
-              homeViewStore: store,
-            );
+            return const ProfileScreen();
           },
           routes: [
             GoRoute(

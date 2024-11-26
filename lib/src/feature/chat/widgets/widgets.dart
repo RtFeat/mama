@@ -1,4 +1,4 @@
-export 'items/item.dart';
+export 'items/items.dart';
 export 'card.dart';
 export 'app_bar_chat.dart';
 export 'profession_box.dart';
