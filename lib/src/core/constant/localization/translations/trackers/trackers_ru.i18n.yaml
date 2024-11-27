@@ -32,14 +32,49 @@ doctorsAppointment:
 vaccinations:
   title: Прививки
 
-findOutMore:
-  title: Узнать больше
+learnMoreBtn: Узнать\nбольше
 
-findOutMoreTextOne:
-  title: Здесь вы можете фиксировать температуру малыша и отслеживать ее изменение.
+titlePlayButtonSleep: Счетчик сна
+h: ч
+min: м
 
-findOutMoreTextTwo:
-  title: "Узнайте, от чего может подниматься температура ребенка, в Центре Знаний:"
+currentEditTrackFeedingTitle: Текущее кормление
+currentEditTrackSleepingTitle: Малыш спит
+currentEditTrackStart: Начало
+currentEditTrackFinish: Завершение
+currentEditTrackAll: Всего
+currentEditTrackButtonNote: Заметка
+currentEditTrackButtonSubmit: Подтвердить
+currentEditTrackButtonCancel: Отменить
+currentEditTrackButtonManually: Вручную
+currentEditTrackButtonChange: Изменить
+currentEditTrackButtonTimerStart: Таймер запущен
+currentEditTrackCountTextTitleSleep: Счетчик будет добавлять время
+currentEditTrackCountTextSleep: Подтвердите окончание сна или отмените его
+currentEditTrackCountTextFeed: Подтвердите окончание кормления или отмените его
+currentEditTrackCountTextTitleFeed: Счетчик запущен
+
+findOutMoreTextTemp: Здесь вы можете фиксировать температуру малыша и отслеживать ее изменение.\n\nУзнайте, от чего может подниматься температура ребенка, в Центре Знаний
+
+findOutMoreTextDiapers: Здесь вы можете следить за использованием подгузников и походами малыша в туалет.\n\nУзнайте больше о подгузниках и пищеварительной системе ребенка в Центре Знаний
+
+findOutMoreTextWeight: Здесь вы можете следить за весом своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять вес в нашем Центре Знаний
+
+findOutMoreTextHeight: Здесь вы можете следить за ростом своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять рост в нашем Центре Знаний
+
+findOutMoreTextHead: Здесь вы можете следить за изменениями окружности головы своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять окружность головы в нашем Центре Знаний 
+
+findOutMoreTextBrist: Здесь вы можете отслеживать, как проходит кормление грудью.\n\nУзнайте больше про процесс грудного вскармливания в нашем Центре Знаний
+
+findOutMoreTextPumping: Здесь вы можете отмечать процесс сцеживания и следить за изменениями количества молока.\n\nУзнайте больше про сцеживание грудного молока в нашем Центре Знаний
+
+findOutMoreTextBottle: Здесь вы можете следить за кормлением из бутылочки и контролировать соотношение грудного молока и смеси.\n\nУзнайте больше про кормление из бутылочки в нашем Центре Знаний
+
+findOutMoreTextLure: Здесь вы можете вести учет прикорма и следить за тем, какие продукты нравятся вашему ребенку.\n\nУзнайте больше про прикорм в нашем Центре Знаний
+
+findOutMoreTextSleep: Здесь вы можете отслеживать сон малыша.\n\nУзнайте больше про детский сон в нашем Центре Знаний
+
+findOutMoreTextCry: Здесь вы можете отслеживать плач малыша.\n\nУзнайте больше про детский плач в нашем Центре Знаний
 
 date:
   title: Дата
@@ -72,10 +107,10 @@ note:
   title: Заметка
 
 knowMoreOne:
-  title: Здесь вы можете следить за весом своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.
+  title: Here you can monitor your child's weight and control its development, comparing it with the standards of the World Health Organization.
 
 knowMoreTwo:
-  title: Узнайте больше про эти нормативы и научитесь правильно измерять вес в нашем Центре Знаний
+  title: Find out more about these standards and learn how to measure weight correctly in our Knowledge Center;
 
 knowMoreText:
   title: Узнать больше

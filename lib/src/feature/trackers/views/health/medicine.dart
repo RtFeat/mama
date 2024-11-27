@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/trackers/views/health/add_medicine.dart';
-import 'package:mama/src/feature/trackers/widgets/big_find_out_more_button.dart';
+import 'package:mama/src/feature/trackers/widgets/learn_more_widget.dart';
 
 class Medicine extends StatelessWidget {
   const Medicine({super.key});
@@ -30,9 +30,10 @@ class Medicine extends StatelessWidget {
               child: Column(
                 children: [
                   /// #big find out more button
-                  BigFindOutMoreButton(
-                    closeButtonOnPressed: () {},
-                    findOutMoreButtonOnPressed: () {},
+                  LearnMoreWidget(
+                    onPressClose: () {},
+                    onPressButton: () {},
+                    title: t.trackers.knowMoreOne.title,
                   ),
                   14.h,
 
@@ -172,7 +173,7 @@ class Medicine extends StatelessWidget {
                     /// #find out more button
                     Expanded(
                       child: CustomButton(
-                        title: t.trackers.findOutMore.title,
+                        title: t.trackers.knowMoreText.title,
                         onTap: () {},
                         iconColor: AppColors.primaryColor,
                         textStyle: const TextStyle(

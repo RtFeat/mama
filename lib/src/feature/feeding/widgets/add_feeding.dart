@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/state/add_feeding.dart';
-import 'package:mama/src/feature/feeding/widgets/feeding_buttons.dart';
+import 'package:mama/src/feature/feeding/widgets/editing_buttons.dart';
 import 'package:mama/src/feature/feeding/widgets/feeding_state_container.dart';
-import 'package:mama/src/feature/feeding/widgets/current_feeding_widget.dart';
+import 'package:mama/src/feature/feeding/widgets/current_editing_track_widget.dart';
 import 'package:mama/src/feature/feeding/widgets/play_button.dart';
 import 'package:provider/provider.dart';
 
@@ -28,34 +28,57 @@ class AddFeedingWidget extends StatelessWidget {
           return Column(
             children: [
               30.h,
-              Align(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              SizedBox(
+                height: 300,
+                child: Stack(
+                  // fit: StackFit.passthrough,
+                  clipBehavior: Clip.none,
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
-                        child: PlayerButton(
-                      side: t.feeding.left,
-                      onTap: () {
-                        addFeeding.changeStatusOfLeftSide();
-                      },
-                      isStart: addFeeding.isLeftSideStart,
-                    )),
-                    Expanded(
-                        child: PlayerButton(
-                      side: t.feeding.right,
-                      onTap: () {
-                        addFeeding.changeStatusOfRightSide();
-                      },
-                      isStart: addFeeding.isRightSideStart,
-                    )),
+                    Positioned(
+                      left: -50,
+                      child: PlayerButton(
+                        side: t.feeding.left,
+                        onTap: () {
+                          addFeeding.changeStatusOfLeftSide();
+                        },
+                        isStart: addFeeding.isLeftSideStart,
+                        needTimer: true,
+                      ),
+                    ),
+                    Positioned(
+                      right: -50,
+                      child: PlayerButton(
+                        side: t.feeding.right,
+                        onTap: () {
+                          addFeeding.changeStatusOfRightSide();
+                        },
+                        isStart: addFeeding.isRightSideStart,
+                        needTimer: true,
+                      ),
+                    ),
                   ],
                 ),
               ),
               30.h,
               isStart
-                  ? const CurrentFeedingWidget()
-                  : FeedingButtons(
+                  ? CurrentEditingTrackWidget(
+                      title: t.trackers.currentEditTrackFeedingTitle,
+                      noteTitle: t.trackers.currentEditTrackCountTextTitleSleep,
+                      noteText: t.trackers.currentEditTrackCountTextSleep,
+                      onPressNote: () {},
+                      onPressSubmit: () {
+                        // addFeeding.confirmButtonPressed();
+                      },
+                      onPressCancel: () {
+                        // addFeeding.cancelFeeding();
+                      },
+                      onPressManually: () {},
+                      timerStart: addFeeding.timerStartTime,
+                      timerEnd: addFeeding.timerEndTime,
+                    )
+                  : EditingButtons(
                       iconAsset: Assets.icons.icCalendar,
                       addBtnText: t.feeding.addManually,
                       learnMoreTap: () {},

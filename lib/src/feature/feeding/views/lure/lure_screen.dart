@@ -20,10 +20,11 @@ class _LureScreenState extends State<LureScreen> {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    return FeedingBody(
+    return TrackerBody(
+      learnMoreWidgetText: t.trackers.findOutMoreTextLure,
       bottomNavigatorBar: Padding(
         padding: const EdgeInsets.all(15),
-        child: FeedingButtons(
+        child: EditingButtons(
             addBtnText: t.feeding.addComplementaryFood,
             learnMoreTap: () {},
             addButtonTap: () {
@@ -36,7 +37,7 @@ class _LureScreenState extends State<LureScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CustomToggleButton(
-                items: [ t.feeding.newS, t.feeding.old],
+                items: [t.feeding.newS, t.feeding.old],
                 onTap: (index) {},
                 btnWidth: 64,
                 btnHeight: 26),
@@ -68,12 +69,11 @@ class _LureScreenState extends State<LureScreen> {
           ],
         ),
         15.h,
-        TableWidget(
-            columnTitles: [
-              t.feeding.time,
-              t.feeding.food,
-              t.feeding.quantityAndReaction
-            ], listOfData: historyOfLure)
+        TableWidget(columnTitles: [
+          t.feeding.time,
+          t.feeding.food,
+          t.feeding.quantityAndReaction
+        ], listOfData: historyOfLure)
       ],
     );
   }

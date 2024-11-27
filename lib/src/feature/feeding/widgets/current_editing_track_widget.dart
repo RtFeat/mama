@@ -1,47 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/state/add_feeding.dart';
 import 'package:mama/src/feature/feeding/widgets/widget.dart';
-import 'package:provider/provider.dart';
 
-class CurrentFeedingWidget extends StatelessWidget {
-  const CurrentFeedingWidget({super.key});
+class CurrentEditingTrackWidget extends StatelessWidget {
+  final String title;
+  final String noteTitle;
+  final String noteText;
+  final DateTime timerStart;
+  final DateTime timerEnd;
+  final VoidCallback onPressNote;
+  final VoidCallback onPressSubmit;
+  final VoidCallback onPressCancel;
+  final VoidCallback onPressManually;
+  const CurrentEditingTrackWidget(
+      {super.key,
+      required this.title,
+      required this.noteTitle,
+      required this.noteText,
+      required this.onPressNote,
+      required this.onPressSubmit,
+      required this.onPressCancel,
+      required this.onPressManually,
+      required this.timerStart,
+      required this.timerEnd});
 
   @override
   Widget build(BuildContext context) {
-    final AddFeeding addFeeding = context.watch();
+    // DateTime start = DateTime.now();
+    String timeStart = DateFormat('hh:mm').format(DateTime.now());
+    String timeTotal = DateFormat('hh${t.trackers.currentEditTrackStart} mmм')
+        .format(DateTime.now());
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Текущее кормление',
+          title,
           style:
               textTheme.titleLarge?.copyWith(color: Colors.black, fontSize: 20),
         ),
         20.h,
         Row(
           children: [
-            const Expanded(
+            Expanded(
                 child: DetailContainer(
-              title: 'Начало',
-              text: '16:35',
-              detail: 'Изменить',
+              title: t.trackers.currentEditTrackStart,
+              text: timeStart,
+              detail: t.trackers.currentEditTrackButtonChange,
               filled: true,
             )),
             10.w,
-            const Expanded(
+            Expanded(
                 child: DetailContainer(
-              title: 'Завершение',
+              title: t.trackers.currentEditTrackFinish,
               text: '',
-              detail: 'Таймер запущен',
+              detail: t.trackers.currentEditTrackButtonTimerStart,
               filled: false,
             )),
             10.w,
-            const Expanded(
+            Expanded(
                 child: DetailContainer(
-              title: 'Всего',
+              title: t.trackers.currentEditTrackAll,
               text: '19м 58с',
               detail: '',
               filled: false,
@@ -55,14 +76,16 @@ class CurrentFeedingWidget extends StatelessWidget {
               flex: 1,
               child: CustomButton(
                 type: CustomButtonType.outline,
-                onTap: () {},
+                onTap: () {
+                  onPressNote;
+                },
                 icon: IconModel(iconPath: Assets.icons.icPencilFilled),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
-                title: 'Заметка',
+                title: t.trackers.currentEditTrackButtonNote,
               ),
             ),
             10.w,
@@ -71,9 +94,9 @@ class CurrentFeedingWidget extends StatelessWidget {
               child: CustomButton(
                 backgroundColor: AppColors.greenLighterBackgroundColor,
                 onTap: () {
-                  addFeeding.confirmButtonPressed();
+                  onPressSubmit;
                 },
-                title: 'Подтвердить',
+                title: t.trackers.currentEditTrackButtonSubmit,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 textStyle: textTheme.titleMedium
@@ -91,14 +114,14 @@ class CurrentFeedingWidget extends StatelessWidget {
                 type: CustomButtonType.filled,
                 backgroundColor: AppColors.redLighterBackgroundColor,
                 onTap: () {
-                  addFeeding.cancelFeeding();
+                  onPressCancel;
                 },
                 icon: IconModel(iconPath: Assets.icons.icClose),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600, color: AppColors.redColor),
-                title: 'Отменить',
+                title: t.trackers.currentEditTrackButtonCancel,
               ),
             ),
             10.w,
@@ -106,8 +129,10 @@ class CurrentFeedingWidget extends StatelessWidget {
               flex: 1,
               child: CustomButton(
                 backgroundColor: AppColors.purpleLighterBackgroundColor,
-                onTap: () {},
-                title: 'Вручную',
+                onTap: () {
+                  onPressManually;
+                },
+                title: t.trackers.currentEditTrackButtonManually,
                 icon: IconModel(iconPath: Assets.icons.icCalendar),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
@@ -119,12 +144,12 @@ class CurrentFeedingWidget extends StatelessWidget {
         ),
         20.h,
         Text(
-          'Счетчик будет добавлять время',
+          noteTitle,
           style: textTheme.labelLarge?.copyWith(
               fontWeight: FontWeight.w400, color: AppColors.greyBrighterColor),
         ),
         5.h,
-        Text('Подтвердите окончание кормления или отмените его',
+        Text(noteText,
             textAlign: TextAlign.center,
             style: textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w400,

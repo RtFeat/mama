@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
 
-class FeedingBody extends StatelessWidget {
+class TrackerBody extends StatelessWidget {
   final List<Widget> children;
+  final String learnMoreWidgetText;
   final Widget? bottomNavigatorBar;
-  const FeedingBody(
-      {super.key, required this.children, this.bottomNavigatorBar});
+  const TrackerBody(
+      {super.key,
+      required this.children,
+      this.bottomNavigatorBar,
+      required this.learnMoreWidgetText});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,11 @@ class FeedingBody extends StatelessWidget {
         child: ListView(
           children: [
             16.h,
-            const LearnMoreWidget(),
+            LearnMoreWidget(
+              onPressClose: () {},
+              onPressButton: () {},
+              title: learnMoreWidgetText,
+            ),
             Column(
               children: children,
             )

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 
-class FeedingButtons extends StatelessWidget {
+class EditingButtons extends StatelessWidget {
   final String addBtnText;
   final Function() learnMoreTap;
   final Function() addButtonTap;
   final String? iconAsset;
 
-  const FeedingButtons(
+  const EditingButtons(
       {super.key,
       required this.addBtnText,
       required this.learnMoreTap,

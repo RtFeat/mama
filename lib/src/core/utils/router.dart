@@ -49,6 +49,7 @@ abstract class AppViews {
   static const chatView = 'chatView';
 
   static const feeding = 'feeding';
+  static const sleeping = 'sleeping';
   static const addManually = 'addManually';
   static const addPumping = 'addPumping';
   static const addLure = 'addLure';
@@ -243,6 +244,33 @@ final GoRouter router = GoRouter(
               )
             ]),
         GoRoute(
+          path: _Paths.sleeping,
+          name: AppViews.sleeping,
+          builder: (context, state) => const SleepingScreen(),
+          routes: [
+            // GoRoute(
+            //   name: AppViews.addManually,
+            //   path: _Paths.addManually,
+            //   builder: (context, state) => const AddManuallyScreen(),
+            // ),
+            //   GoRoute(
+            //     name: AppViews.addPumping,
+            //     path: _Paths.addPumping,
+            //     builder: (context, state) => const AddPumpingScreen(),
+            //   ),
+            //   GoRoute(
+            //     name: AppViews.addBottle,
+            //     path: _Paths.addBottle,
+            //     builder: (context, state) => const AddBottleScreen(),
+            //   ),
+            //   GoRoute(
+            //     name: AppViews.addLure,
+            //     path: _Paths.addLure,
+            //     builder: (context, state) => const AddLureScreen(),
+            //   ),
+          ],
+        ),
+        GoRoute(
           path: _Paths.feeding,
           name: AppViews.feeding,
           builder: (context, state) => const FeedingScreen(),
@@ -435,6 +463,7 @@ abstract class _Paths {
   static const chat = AppViews.chatView;
 
   static const feeding = AppViews.feeding;
+  static const sleeping = AppViews.sleeping;
   static const diapers = AppViews.diapersView;
   static const addDiapers = AppViews.addDiaper;
 

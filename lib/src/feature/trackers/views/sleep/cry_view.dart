@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
-import '../../../../core/core.dart';
-import '../../widgets/widget.dart';
+import 'package:mama/src/feature/feeding/widgets/widget.dart';
 
-class BreastScreen extends StatelessWidget {
-  const BreastScreen({super.key});
+class CryScreen extends StatelessWidget {
+  const CryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final listOfData = historyOfFeedings;
 
     return TrackerBody(
-      learnMoreWidgetText: t.trackers.findOutMoreTextBrist,
+      learnMoreWidgetText: t.trackers.findOutMoreTextCry,
       children: [
         const AddFeedingWidget(),
         TableHistory(

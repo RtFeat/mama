@@ -19,6 +19,12 @@ abstract class _AddFeeding with Store {
   @observable
   bool isFeedingCanceled = false;
 
+  @observable
+  DateTime timerStartTime = DateTime.now();
+
+  @observable
+  DateTime timerEndTime = DateTime.now();
+
   @action
   changeStatusOfRightSide() {
     confirmFeedingTimer = false;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/trackers/widgets/big_find_out_more_button.dart';
+import 'package:mama/src/feature/trackers/widgets/learn_more_widget.dart';
 
 class TrackersHealthView extends StatefulWidget {
   const TrackersHealthView({super.key});
@@ -84,9 +84,10 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
                   padding: const EdgeInsets.only(top: 16),
                   children: [
                     /// #find out more box
-                    BigFindOutMoreButton(
-                      closeButtonOnPressed: () {},
-                      findOutMoreButtonOnPressed: () {},
+                    LearnMoreWidget(
+                      onPressClose: () {},
+                      onPressButton: () {},
+                      title: t.trackers.findOutMoreTextTemp,
                     ),
                     const SizedBox(height: 16),
 
@@ -165,7 +166,7 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
                   /// #find out more button
                   Expanded(
                     child: CustomButton(
-                      title: t.trackers.findOutMore.title,
+                      title: t.trackers.knowMoreText.title,
                       onTap: () {},
                       icon: IconModel(
                         iconPath: Assets.icons.icGraduationCapFilled,

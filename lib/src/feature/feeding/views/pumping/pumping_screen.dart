@@ -13,11 +13,12 @@ class PumpingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final listOfData = historyOfPumping;
 
-    return FeedingBody(
+    return TrackerBody(
+      learnMoreWidgetText: t.trackers.findOutMoreTextPumping,
       children: [
         const PumpingGraphicWidget(),
         30.h,
-        FeedingButtons(
+        EditingButtons(
             addBtnText: t.feeding.addPumping,
             learnMoreTap: () {},
             addButtonTap: () {

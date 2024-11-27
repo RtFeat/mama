@@ -1,12 +1,11 @@
-export 'learn_more_widget.dart';
 export 'add_feeding.dart';
 export 'play_button.dart';
 export 'feeding_body.dart';
-export 'current_feeding_widget.dart';
+export 'current_editing_track_widget.dart';
 export 'detail_container.dart';
 export 'feeding_state_container.dart';
 export 'manually_input_container.dart';
 export 'table_history.dart';
 export 'feeding_input.dart';
 export 'grapich_widget.dart';
-export 'feeding_buttons.dart';
+export 'editing_buttons.dart';

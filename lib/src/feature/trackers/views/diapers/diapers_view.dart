@@ -31,9 +31,10 @@ class DiapersView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: ListView(
                   children: [
-                    ToKnowMoreContainer(
-                      title1: t.trackers.knowMoreOne.title,
-                      title2: t.trackers.knowMoreTwo.title,
+                    LearnMoreWidget(
+                      title: t.trackers.knowMoreOne.title,
+                      onPressClose: () {},
+                      onPressButton: () {},
                     ),
                     20.h,
                     Row(
@@ -131,7 +132,7 @@ class DiapersView extends StatelessWidget {
                   /// #find out more button
                   Expanded(
                     child: CustomButton(
-                      title: t.trackers.findOutMore.title,
+                      title: t.trackers.knowMoreText.title,
                       onTap: () {},
                       icon: IconModel(
                         iconPath: Assets.icons.icGraduationCapFilled,

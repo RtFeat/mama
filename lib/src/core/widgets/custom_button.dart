@@ -10,6 +10,7 @@ enum CustomButtonType {
 class CustomButton extends StatelessWidget {
   final Function()? onTap;
   final String? title;
+  final Widget? titleWidget;
   final IconModel? icon;
 
   final EdgeInsets? contentPadding;
@@ -50,7 +51,8 @@ class CustomButton extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.type = CustomButtonType.filled,
     this.iconColor,
-  }) : assert(title != null);
+    this.titleWidget,
+  });
 
   Color _getDarkerColor(Color color) {
     final HSLColor hsl = HSLColor.fromColor(color);
@@ -111,18 +113,19 @@ class CustomButton extends StatelessWidget {
               8.w,
             ],
             Flexible(
-              child: AutoSizeText(
-                title!,
-                style: textStyle ??
-                    textTheme.titleMedium!.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
-                    ),
-                maxLines: maxLines ?? 2,
-                minFontSize: 8,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: titleWidget ??
+                  AutoSizeText(
+                    title!,
+                    style: textStyle ??
+                        textTheme.titleMedium!.copyWith(
+                          color: textColor,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                        ),
+                    maxLines: maxLines ?? 2,
+                    minFontSize: 8,
+                    overflow: TextOverflow.ellipsis,
+                  ),
             ),
           ],
         ),

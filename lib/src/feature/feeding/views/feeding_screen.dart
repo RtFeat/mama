@@ -32,7 +32,7 @@ class _FeedingScreenState extends State<FeedingScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFE7F2FE),
       appBar: CustomAppBar(
-        height: 100,
+        height: 98,
         tabController: _tabController,
         title: t.feeding.feeding,
         tabs: [

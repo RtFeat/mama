@@ -12,16 +12,18 @@ class BottleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final listOfData = historyOfPumping;
-    return FeedingBody(
+    return TrackerBody(
+      learnMoreWidgetText: t.trackers.findOutMoreTextBottle,
       children: [
-        GraphicWidget(listOfData: getBottleData(),
+        GraphicWidget(
+            listOfData: getBottleData(),
             topColumnText: t.feeding.breast,
             bottomColumnText: t.feeding.mixture,
             minimum: 0,
             maximum: 500,
             interval: 100),
         10.h,
-        FeedingButtons(
+        EditingButtons(
             addBtnText: t.feeding.addFeeding,
             learnMoreTap: () {},
             addButtonTap: () {
