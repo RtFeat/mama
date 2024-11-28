@@ -8,7 +8,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
   final String noteTitle;
   final String noteText;
   final DateTime timerStart;
-  final DateTime timerEnd;
+  final DateTime? timerEnd;
   final VoidCallback onPressNote;
   final VoidCallback onPressSubmit;
   final VoidCallback onPressCancel;
@@ -27,10 +27,15 @@ class CurrentEditingTrackWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // DateTime start = DateTime.now();
-    String timeStart = DateFormat('hh:mm').format(DateTime.now());
-    String timeTotal = DateFormat('hh${t.trackers.currentEditTrackStart} mmм')
-        .format(DateTime.now());
+    String timeStart = DateFormat('hh:mm').format(timerStart);
+    var infinity = String.fromCharCodes(Runes('\u221E'));
+    String timeEnd =
+        timerEnd == null ? infinity : DateFormat('hh:mm').format(timerEnd!);
+    String timeTotal = timerEnd == null
+        ? infinity
+        : DateFormat(
+                '${timerEnd!.difference(timerStart).inMinutes}${t.trackers.min} ${timerEnd!.difference(timerStart).inSeconds}${t.trackers.sec}')
+            .format(DateTime.now());
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
     return Column(
@@ -55,7 +60,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
             Expanded(
                 child: DetailContainer(
               title: t.trackers.currentEditTrackFinish,
-              text: '',
+              text: timeEnd,
               detail: t.trackers.currentEditTrackButtonTimerStart,
               filled: false,
             )),
@@ -63,7 +68,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
             Expanded(
                 child: DetailContainer(
               title: t.trackers.currentEditTrackAll,
-              text: '19м 58с',
+              text: timeTotal,
               detail: '',
               filled: false,
             )),
@@ -77,7 +82,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               child: CustomButton(
                 type: CustomButtonType.outline,
                 onTap: () {
-                  onPressNote;
+                  onPressNote();
                 },
                 icon: IconModel(iconPath: Assets.icons.icPencilFilled),
                 contentPadding:
@@ -94,7 +99,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               child: CustomButton(
                 backgroundColor: AppColors.greenLighterBackgroundColor,
                 onTap: () {
-                  onPressSubmit;
+                  onPressSubmit();
                 },
                 title: t.trackers.currentEditTrackButtonSubmit,
                 contentPadding:
@@ -114,7 +119,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
                 type: CustomButtonType.filled,
                 backgroundColor: AppColors.redLighterBackgroundColor,
                 onTap: () {
-                  onPressCancel;
+                  onPressCancel();
                 },
                 icon: IconModel(iconPath: Assets.icons.icClose),
                 contentPadding:
@@ -130,7 +135,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               child: CustomButton(
                 backgroundColor: AppColors.purpleLighterBackgroundColor,
                 onTap: () {
-                  onPressManually;
+                  onPressManually();
                 },
                 title: t.trackers.currentEditTrackButtonManually,
                 icon: IconModel(iconPath: Assets.icons.icCalendar),

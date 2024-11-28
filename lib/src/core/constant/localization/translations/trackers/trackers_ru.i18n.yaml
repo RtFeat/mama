@@ -35,8 +35,35 @@ vaccinations:
 learnMoreBtn: Узнать\nбольше
 
 titlePlayButtonSleep: Счетчик сна
-h: ч
 min: м
+sec: с
+
+infoManuallyContainerButtonBackAndContinue: Вернуться и продолжить
+infoManuallyContainerButtonNote: Заметка
+infoManuallyContainerSaveFeeding: 
+  title: Cохранено
+  text1: Кормление сохранено.
+  text2: 'Если нужно продолжить это кормление, нажмите на кнопку:'
+infoManuallyContainerCancellFeeding: 
+  title: Кормление отменено
+  text1: Отмененное кормление не будет сохранено.
+  text2: 'Чтобы продолжить отмененное кормление, нажмите на кнопку:'
+infoManuallyContainerSaveSleeping: 
+  title: Cохранено
+  text1: Сон сохранен.
+  text2: 'Если нужно продолжить этот сон, нажмите на кнопку:'
+infoManuallyContainerCancellSleeping: 
+  title: Сон отменен
+  text1: Отмененный сон не будет сохранен.
+  text2: 'Чтобы продолжить отмененный сон, нажмите на кнопку:'
+
+
+helperPlayButtonFeed: Добавьте кормление\n
+helperPlayButtonCry: Добавьте плач\n
+helperPlayButtonSleep: Добавьте сон\n
+helperPlayButtonText: 
+  first: Нажмите на
+  second: или добавьте вручную
 
 currentEditTrackFeedingTitle: Текущее кормление
 currentEditTrackSleepingTitle: Малыш спит

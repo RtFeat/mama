@@ -1,3 +1,4 @@
+import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/data/entity/detail_time_of_leading.dart';
 import 'package:mama/src/feature/feeding/data/entity/history_of_feeding.dart';
 
@@ -376,4 +377,31 @@ final historyOfLure = [
             detailSecondColumnText: 'Яблоко',
             detailThirdColumnText: '0г ⚠'),
       ]),
+];
+
+final historyOfSleepCry = [
+  HistoryOfTrackingSleepCry(
+    begin: DateTime(2024, 9, 6, 9, 20),
+    end: DateTime(2024, 9, 6, 9, 40),
+  ),
+  HistoryOfTrackingSleepCry(
+    begin: DateTime(2024, 9, 6, 9, 20),
+    end: DateTime(2024, 9, 6, 9, 40),
+  ),
+  HistoryOfTrackingSleepCry(
+    begin: DateTime(2024, 9, 6, 10, 20),
+    end: DateTime(2024, 9, 6, 10, 40),
+  ),
+  HistoryOfTrackingSleepCry(
+    begin: DateTime(2024, 9, 6, 10, 20),
+    end: DateTime(2024, 9, 6, 10, 40),
+  ),
+  HistoryOfTrackingSleepCry(
+    begin: DateTime(2024, 9, 7, 9, 20),
+    end: DateTime(2024, 9, 7, 9, 40),
+  ),
+  HistoryOfTrackingSleepCry(
+    begin: DateTime(2024, 9, 7, 9, 20),
+    end: DateTime(2024, 9, 7, 9, 40),
+  ),
 ];

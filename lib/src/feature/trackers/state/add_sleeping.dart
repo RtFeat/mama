@@ -11,6 +11,9 @@ abstract class _AddSleeping with Store {
   bool timerSleepStart = false;
 
   @observable
+  bool showEditMenu = false;
+
+  @observable
   bool confirmSleepTimer = false;
 
   @observable
@@ -20,17 +23,20 @@ abstract class _AddSleeping with Store {
   DateTime timerStartTime = DateTime.now();
 
   @observable
-  DateTime timerEndTime = DateTime.now();
+  DateTime? timerEndTime;
 
   @action
   changeStatusTimer() {
     confirmSleepTimer = false;
+    showEditMenu = true;
     timerSleepStart = !timerSleepStart;
+    timerSleepStart ? timerEndTime = null : timerEndTime = DateTime.now();
   }
 
   @action
   confirmButtonPressed() {
     timerSleepStart = false;
+    showEditMenu = false;
     confirmSleepTimer = true;
   }
 
@@ -41,26 +47,14 @@ abstract class _AddSleeping with Store {
   }
 
   @action
-  cancelFeeding() {
+  cancelSleeping() {
     timerSleepStart = false;
+    showEditMenu = false;
     isSleepCanceled = true;
   }
 
   @action
-  cancelFeedingClose() {
+  cancelSleepingClose() {
     isSleepCanceled = false;
-  }
-
-  @action
-  timerStart() {
-    timerStartTime = DateTime.now();
-    timerSleepStart = true;
-    confirmSleepTimer = false;
-  }
-
-  @action
-  timerCanceled() {
-    timerSleepStart = false;
-    timerEndTime = DateTime.now();
   }
 }

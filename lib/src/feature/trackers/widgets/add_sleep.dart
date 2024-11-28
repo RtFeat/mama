@@ -16,7 +16,6 @@ class AddSleepingWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Observer(builder: (context) {
           final AddSleeping addSleeping = context.watch();
-          var isStart = addSleeping.timerSleepStart;
           final confirmButtonPressed = addSleeping.confirmSleepTimer;
           final isFeedingCanceled = addSleeping.isSleepCanceled;
           return Column(
@@ -31,7 +30,7 @@ class AddSleepingWidget extends StatelessWidget {
                         child: PlayerButton(
                       side: t.trackers.titlePlayButtonSleep,
                       onTap: () {
-                        // addSleeping.();
+                        addSleeping.changeStatusTimer();
                       },
                       isStart: addSleeping.timerSleepStart,
                     )),
@@ -39,7 +38,7 @@ class AddSleepingWidget extends StatelessWidget {
                 ),
               ),
               30.h,
-              isStart
+              addSleeping.showEditMenu
                   ? CurrentEditingTrackWidget(
                       title: t.trackers.currentEditTrackSleepingTitle,
                       noteTitle: t.trackers.currentEditTrackCountTextTitleFeed,
@@ -49,31 +48,42 @@ class AddSleepingWidget extends StatelessWidget {
                         addSleeping.confirmButtonPressed();
                       },
                       onPressCancel: () {
-                        addSleeping.cancelFeeding();
+                        addSleeping.cancelSleeping();
                       },
                       onPressManually: () {},
                       timerStart: addSleeping.timerStartTime,
                       timerEnd: addSleeping.timerEndTime,
                     )
-                  : EditingButtons(
-                      iconAsset: Assets.icons.icCalendar,
-                      addBtnText: t.feeding.addManually,
-                      learnMoreTap: () {},
-                      addButtonTap: () {
-                        context.pushNamed(AppViews.addManually);
-                      }),
-              // confirmButtonPressed
-              //     ? FeedingStateContainer(
-              //         addFeeding: addFeeding,
-              //         type: ContainerType.feedingSaved,
-              //       )
-              //     : const SizedBox(),
-              // isFeedingCanceled
-              //     ? FeedingStateContainer(
-              //         addFeeding: addFeeding,
-              //         type: ContainerType.feedingCanceled,
-              //       )
-              //     : const SizedBox(),
+                  : Column(
+                      children: [
+                        HelperPlayButtonWidget(
+                          title: t.trackers.helperPlayButtonSleep,
+                        ),
+                        30.h,
+                        EditingButtons(
+                            iconAsset: Assets.icons.icCalendar,
+                            addBtnText: t.feeding.addManually,
+                            learnMoreTap: () {},
+                            addButtonTap: () {
+                              context.pushNamed(AppViews.addManually);
+                            }),
+                      ],
+                    ),
+              confirmButtonPressed
+                  ? TrackerStateContainer(
+                      type: ContainerType.sleepingSaved,
+                      onTapClose: () {},
+                      onTapGoBack: () {},
+                      onTapNote: () {},
+                    )
+                  : const SizedBox(),
+              isFeedingCanceled
+                  ? TrackerStateContainer(
+                      type: ContainerType.sleepingCanceled,
+                      onTapClose: () {},
+                      onTapGoBack: () {},
+                    )
+                  : const SizedBox(),
             ],
           );
         }),

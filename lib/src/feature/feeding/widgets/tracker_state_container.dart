@@ -2,17 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/feature/feeding/state/add_feeding.dart';
 import '../../../core/core.dart';
 
-enum ContainerType { feedingSaved, feedingCanceled }
+enum ContainerType {
+  feedingSaved,
+  feedingCanceled,
+  sleepingSaved,
+  sleepingCanceled,
+}
 
-class FeedingStateContainer extends StatelessWidget {
-  final AddFeeding addFeeding;
+class TrackerStateContainer extends StatelessWidget {
   final ContainerType type;
+  final VoidCallback onTapClose;
+  final VoidCallback onTapGoBack;
+  final VoidCallback? onTapNote;
 
-  const FeedingStateContainer(
-      {super.key, required this.addFeeding, required this.type});
+  const TrackerStateContainer({
+    super.key,
+    required this.type,
+    required this.onTapClose,
+    required this.onTapGoBack,
+    this.onTapNote,
+  });
 
   @override
   Widget build(BuildContext context) {
+    String title;
+    String subtitle;
+    String detail;
+    switch (type) {
+      case ContainerType.feedingSaved:
+        title = t.trackers.infoManuallyContainerSaveFeeding.title;
+        subtitle = t.trackers.infoManuallyContainerSaveFeeding.text1;
+        detail = t.trackers.infoManuallyContainerSaveFeeding.text2;
+        break;
+
+      case ContainerType.feedingCanceled:
+        title = t.trackers.infoManuallyContainerCancellFeeding.title;
+        subtitle = t.trackers.infoManuallyContainerCancellFeeding.text1;
+        detail = t.trackers.infoManuallyContainerCancellFeeding.text2;
+        break;
+
+      case ContainerType.sleepingCanceled:
+        title = t.trackers.infoManuallyContainerCancellSleeping.title;
+        subtitle = t.trackers.infoManuallyContainerCancellSleeping.text1;
+        detail = t.trackers.infoManuallyContainerCancellSleeping.text2;
+        break;
+
+      default:
+        title = t.trackers.infoManuallyContainerSaveSleeping.title;
+        subtitle = t.trackers.infoManuallyContainerSaveSleeping.text1;
+        detail = t.trackers.infoManuallyContainerSaveSleeping.text2;
+    }
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
     return Padding(
@@ -42,9 +81,7 @@ class FeedingStateContainer extends StatelessWidget {
                       right: 10,
                       left: 10,
                       child: Text(
-                        type == ContainerType.feedingSaved
-                            ? 'Сохранено'
-                            : "Кормление отменено",
+                        title,
                         textAlign: TextAlign.center,
                         style: textTheme.headlineSmall?.copyWith(
                             fontSize: 20,
@@ -59,7 +96,7 @@ class FeedingStateContainer extends StatelessWidget {
                         right: 10,
                         child: GestureDetector(
                           onTap: () {
-                            addFeeding.goBackAndContinue();
+                            onTapClose();
                           },
                           child: const Icon(
                             Icons.close,
@@ -69,22 +106,16 @@ class FeedingStateContainer extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              5.h,
               Text(
-                type == ContainerType.feedingSaved
-                    ? 'Кормление сохранено.'
-                    : "Отмененное кормление не будет сохранено.",
+                subtitle,
                 style: textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w400,
                     color: AppColors.greyBrighterColor),
               ),
               8.h,
               Text(
-                type == ContainerType.feedingSaved
-                    ? 'Если нужно продолжить это кормление, нажмите на кнопку:'
-                    : 'Чтобы продолжить отмененное кормление, нажмите на кнопку:',
+                detail,
                 style: textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w400,
                     color: AppColors.greyBrighterColor),
@@ -94,11 +125,11 @@ class FeedingStateContainer extends StatelessWidget {
                 backgroundColor: AppColors.greenLighterBackgroundColor,
                 height: 48,
                 width: double.infinity,
-                title: "Вернуться и продолжить",
+                title: t.trackers.infoManuallyContainerButtonBackAndContinue,
                 textStyle: textTheme.bodyMedium
                     ?.copyWith(color: AppColors.greenTextColor),
                 onTap: () {
-                  addFeeding.goBackAndContinue();
+                  onTapGoBack();
                 },
               ),
               10.h,
@@ -111,8 +142,10 @@ class FeedingStateContainer extends StatelessWidget {
                       icon: IconModel(
                           color: AppColors.primaryColor,
                           iconPath: Assets.icons.icPencilFilled),
-                      title: "Заметка",
-                      onTap: () {},
+                      title: t.trackers.infoManuallyContainerButtonNote,
+                      onTap: () {
+                        onTapNote!();
+                      },
                     ),
             ],
           ),

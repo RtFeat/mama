@@ -5,7 +5,7 @@ import 'package:mama/src/core/core.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/state/add_feeding.dart';
 import 'package:mama/src/feature/feeding/widgets/editing_buttons.dart';
-import 'package:mama/src/feature/feeding/widgets/feeding_state_container.dart';
+import 'package:mama/src/feature/feeding/widgets/tracker_state_container.dart';
 import 'package:mama/src/feature/feeding/widgets/current_editing_track_widget.dart';
 import 'package:mama/src/feature/feeding/widgets/play_button.dart';
 import 'package:provider/provider.dart';
@@ -65,8 +65,8 @@ class AddFeedingWidget extends StatelessWidget {
               isStart
                   ? CurrentEditingTrackWidget(
                       title: t.trackers.currentEditTrackFeedingTitle,
-                      noteTitle: t.trackers.currentEditTrackCountTextTitleSleep,
-                      noteText: t.trackers.currentEditTrackCountTextSleep,
+                      noteTitle: t.trackers.currentEditTrackCountTextTitleFeed,
+                      noteText: t.trackers.currentEditTrackCountTextFeed,
                       onPressNote: () {},
                       onPressSubmit: () {
                         // addFeeding.confirmButtonPressed();
@@ -78,22 +78,41 @@ class AddFeedingWidget extends StatelessWidget {
                       timerStart: addFeeding.timerStartTime,
                       timerEnd: addFeeding.timerEndTime,
                     )
-                  : EditingButtons(
-                      iconAsset: Assets.icons.icCalendar,
-                      addBtnText: t.feeding.addManually,
-                      learnMoreTap: () {},
-                      addButtonTap: () {
-                        context.pushNamed(AppViews.addManually);
-                      }),
+                  : Column(
+                      children: [
+                        HelperPlayButtonWidget(
+                          title: t.trackers.helperPlayButtonFeed,
+                        ),
+                        30.h,
+                        EditingButtons(
+                            iconAsset: Assets.icons.icCalendar,
+                            addBtnText: t.feeding.addManually,
+                            learnMoreTap: () {},
+                            addButtonTap: () {
+                              context.pushNamed(AppViews.addManually);
+                            }),
+                      ],
+                    ),
               confirmButtonPressed
-                  ? FeedingStateContainer(
-                      addFeeding: addFeeding,
+                  ? TrackerStateContainer(
+                      onTapClose: () {
+                        addFeeding.goBackAndContinue();
+                      },
+                      onTapGoBack: () {
+                        addFeeding.goBackAndContinue();
+                      },
+                      onTapNote: () {}, //Todo Заметки
                       type: ContainerType.feedingSaved,
                     )
                   : const SizedBox(),
               isFeedingCanceled
-                  ? FeedingStateContainer(
-                      addFeeding: addFeeding,
+                  ? TrackerStateContainer(
+                      onTapClose: () {
+                        addFeeding.goBackAndContinue();
+                      },
+                      onTapGoBack: () {
+                        addFeeding.goBackAndContinue();
+                      },
                       type: ContainerType.feedingCanceled,
                     )
                   : const SizedBox(),
