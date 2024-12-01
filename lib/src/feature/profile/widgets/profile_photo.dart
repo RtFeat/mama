@@ -6,7 +6,17 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePhoto extends StatelessWidget {
-  const ProfilePhoto({super.key});
+  final String? photoUrl;
+  final Function()? onIconTap;
+  final Widget? icon;
+  final bool isShowIcon;
+  const ProfilePhoto({
+    super.key,
+    this.photoUrl,
+    this.onIconTap,
+    this.icon,
+    this.isShowIcon = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,34 +35,39 @@ class ProfilePhoto extends StatelessWidget {
               ),
               image: DecorationImage(
                   image: NetworkImage(
-                    userStore.account.avatarUrl!,
+                    photoUrl ?? userStore.account.avatarUrl ?? '',
                   ),
                   fit: BoxFit.cover),
             ),
           );
         }),
-        Positioned.fill(
-          bottom: -32,
-          right: 32,
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: IconButton(
-              icon: Image.asset(
-                Assets.icons.icPhotoAdd.path,
-                height: 64,
-              ),
-              onPressed: () {
-                final ImagePicker picker = ImagePicker();
+        if (isShowIcon)
+          Positioned.fill(
+            bottom: -32,
+            right: 32,
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                icon: icon ??
+                    Image.asset(
+                      Assets.icons.icPhotoAdd.path,
+                      height: 64,
+                    ),
+                onPressed: onIconTap ??
+                    () {
+                      final ImagePicker picker = ImagePicker();
 
-                picker.pickImage(source: ImageSource.gallery).then((value) {
-                  if (value != null) {
-                    userStore.updateAvatar(value);
-                  }
-                });
-              },
+                      picker
+                          .pickImage(source: ImageSource.gallery)
+                          .then((value) {
+                        if (value != null) {
+                          userStore.updateAvatar(value);
+                        }
+                      });
+                    },
+              ),
             ),
           ),
-        ),
       ],
     );
   }

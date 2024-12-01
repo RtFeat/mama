@@ -52,7 +52,7 @@ class DoctorStore extends _DoctorStore with _$DoctorStore {
 abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
   _DoctorStore({required RestClient restClient})
       : super(
-          fetchFunction: () => restClient.get(Endpoint().doctorData),
+          fetchFunction: (_) => restClient.get(Endpoint().doctorData),
           transformer: (v) {
             if (v == null) return DoctorData();
             return DoctorData.fromJson(v);

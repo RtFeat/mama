@@ -39,6 +39,7 @@ class HomeBodyWidget extends StatelessWidget {
             );
           case Role.onlineSchool:
             return HomeSchoolBody(
+              schoolStore: context.watch<SchoolStore>(),
               homeViewStore: homeViewStore,
               userStore: userStore,
             );

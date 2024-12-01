@@ -2,6 +2,8 @@ accountTitle: Account
 accountTitleSpecialist: Specialist account
 accountTitleSchool: Online-school account
 
+onlineSchool: Online-school
+
 addPhotoTitle: Tap to add image
 
 backLeadingButton: Back
@@ -130,6 +132,9 @@ feedback:
     ok: Ok
 
 aboutMe: about me
+aboutMe2: about me
+aboutSchool: about school
+
 
 schoolItems:
   first: 
@@ -144,3 +149,5 @@ schoolItems:
   fourth: 
     title: From 12 to 18 months
     desc: All about children in the age of 12 to 18 months
+  
+consultationVariants: Consultation variants

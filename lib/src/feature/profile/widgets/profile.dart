@@ -12,6 +12,8 @@ class MomsProfile extends StatefulWidget {
   final MaskTextInputFormatter formatter;
   final AccountModel accountModel;
 
+  final String? schoolId;
+
   final TextStyle? titlesStyle;
   final TextStyle? helpersStyle;
   final TextStyle? titlesColoredStyle;
@@ -21,6 +23,7 @@ class MomsProfile extends StatefulWidget {
   const MomsProfile({
     super.key,
     required this.store,
+    this.schoolId,
     this.titlesStyle,
     this.helpersStyle,
     this.titlesColoredStyle,
@@ -37,6 +40,9 @@ class _MomsProfileState extends State<MomsProfile> {
   @override
   void initState() {
     widget.store.init();
+    if (widget.accountModel.role == Role.onlineSchool) {
+      widget.homeStore?.loadSchoolCourses(widget.schoolId!);
+    }
     super.initState();
   }
 
@@ -243,50 +249,37 @@ class _MomsProfileState extends State<MomsProfile> {
                       ));
                 })),
                 if (userStore.role == Role.onlineSchool)
-                  BodyGroup(
-                      title: t.profile.titleCourses,
-                      items: [
-                        SchoolCourseItem(
-                            title: t.profile.schoolItems.first.title,
-                            description: t.profile.schoolItems.first.desc,
-                            url: 'https://google.com'),
-                        SchoolCourseItem(
-                            title: t.profile.schoolItems.second.title,
-                            description: t.profile.schoolItems.second.desc,
-                            url: 'https://google.com'),
-                        SchoolCourseItem(
-                            title: t.profile.schoolItems.third.title,
-                            description: t.profile.schoolItems.third.desc,
-                            url: 'https://google.com'),
-                        SchoolCourseItem(
-                            title: t.profile.schoolItems.fourth.title,
-                            description: t.profile.schoolItems.fourth.desc,
-                            url: 'https://google.com'),
-                      ]
-                          .map((e) => BodyItemDecoration(
-                              borderRadius: 32.r,
-                              padding: const EdgeInsets.only(left: 10),
-                              child: SizedBox(
-                                  height: 120,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: BodyGroup(title: t.profile.titleCourses, items: [
+                      PaginatedLoadingWidget(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          store: widget.homeStore!.coursesStore,
+                          itemBuilder: (_, data) => SizedBox(
+                              height: 120,
+                              child: BodyItemDecoration(
+                                  borderRadius: 32.r,
+                                  padding: const EdgeInsets.only(left: 10),
                                   child: BodyItemWidget(
                                       item: CustomBodyItem(
                                           bodyAlignment:
                                               MainAxisAlignment.spaceEvenly,
-                                          title: e.title,
+                                          title: data.title ?? '',
                                           titleStyle:
                                               textTheme.headlineSmall?.copyWith(
                                             fontSize: 20,
                                           ),
                                           subTitleLines: 2,
                                           hintStyle: textTheme.titleSmall,
-                                          subTitle: e.description,
+                                          subTitle: data.shortDescription ?? '',
                                           subTitleWidth: double.infinity,
                                           body: GestureDetector(
                                             onTap: () {
                                               context.pushNamed(
                                                   AppViews.webView,
                                                   extra: {
-                                                    'url': e.url,
+                                                    'url': data.link,
                                                   });
                                             },
                                             child: SizedBox(
@@ -306,8 +299,9 @@ class _MomsProfileState extends State<MomsProfile> {
                                                     ),
                                                   ))),
                                             ),
-                                          ))))))
-                          .toList()),
+                                          )))))),
+                    ]),
+                  ),
                 if (userStore.role == Role.onlineSchool &&
                     widget.homeStore!.ownArticlesStore.listData.isNotEmpty) ...[
                   30.h,

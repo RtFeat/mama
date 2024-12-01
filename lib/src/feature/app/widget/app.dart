@@ -49,6 +49,9 @@ class App extends StatelessWidget {
                 restClient: context.read<Dependencies>().restClient),
           ),
           Provider(
+              create: (context) => SchoolStore(
+                  restClient: context.read<Dependencies>().restClient)),
+          Provider(
             create: (context) => HomeViewStore(
                 restClient: context.read<Dependencies>().restClient,
                 userId: context.read<UserStore>().user.id),

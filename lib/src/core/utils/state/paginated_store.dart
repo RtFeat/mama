@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+
 import 'extensions/extensions.dart';
 
 abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
@@ -14,6 +15,9 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     required this.fetchFunction,
     required this.transformer,
   });
+
+  @observable
+  Map<String, dynamic> queryParams = {};
 
   @observable
   int currentPage = 1;
@@ -37,7 +41,15 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     }
 
     isLoading = true;
-    final updatedParams = {...queryParams, 'page': '$currentPage'};
+    this.queryParams = {...this.queryParams, ...queryParams};
+
+    logger.info('Current queryParams: ${this.queryParams}');
+
+    final updatedParams = {
+      ...this.queryParams,
+      'page': '$currentPage',
+      'offset': '${pageSize * (currentPage - 1)}'
+    };
 
     fetchFuture = ObservableFuture(
       fetchFunction(updatedParams).then((rawData) {
@@ -45,28 +57,37 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
         if (rawData != null) {
           final transformedData = transformer(rawData);
           logger.info('Transformed data length: ${transformedData?.length}');
+
           if (transformedData != null && transformedData.isNotEmpty) {
-            // Если количество данных меньше, чем страница, но данные есть
-            if (transformedData.length <= pageSize) {
-              hasMore = false; // Мы считаем, что это последняя страница
-              listData.addAll(transformedData);
-              logger.info('Less data than expected, hasMore set to false');
+            // Здесь мы добавляем новые данные в listData
+            listData
+                .addAll(transformedData); // Добавляем данные с новой страницы
+
+            // Проверка на наличие дополнительных страниц
+            if (transformedData.length < pageSize) {
+              hasMore =
+                  false; // Если данных меньше, чем размер страницы, это последняя страница
+              logger.info(
+                  'Less data than pageSize, assuming no more pages available.');
             } else {
-              currentPage++; // Если данные есть, увеличиваем страницу
-              listData.addAll(transformedData);
-              logger.info('Data loaded, currentPage: $currentPage');
+              currentPage++; // Увеличиваем номер текущей страницы
+              hasMore = true; // Считаем, что есть еще данные
+              logger
+                  .info('Data loaded, currentPage incremented to $currentPage');
             }
           } else {
-            hasMore = false; // Нет данных, ставим hasMore в false
+            // Если данных нет, завершаем пагинацию
+            hasMore = false;
             logger.info('No data received, hasMore set to false');
           }
         } else {
+          // Если не получили данных
           hasMore = false;
           logger.info('No rawData received, hasMore set to false');
         }
       }).catchError((e) {
         logger.error('Error in loadPage: $e');
-        hasMore = false;
+        hasMore = false; // В случае ошибки завершаем загрузку
       }).whenComplete(() {
         isLoading = false;
         logger.info('LoadPage completed');
@@ -80,6 +101,6 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
   void resetPagination() {
     currentPage = 1;
     hasMore = true;
-    listData.clear();
+    listData.clear(); // Очищаем старые данные при сбросе пагинации
   }
 }

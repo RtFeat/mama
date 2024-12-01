@@ -5,6 +5,8 @@ class HomeViewStore {
   final ArticlesStore forMeArticlesStore;
   final ArticlesStore ownArticlesStore;
 
+  final CoursesStore coursesStore;
+
   HomeViewStore({
     required RestClient restClient,
     required String? userId,
@@ -28,6 +30,12 @@ class HomeViewStore {
             Endpoint().articleOwn,
             queryParams: params,
           ),
+        ),
+        coursesStore = CoursesStore(
+          fetchFunction: (params) => restClient.get(
+            Endpoint().schoolCourses,
+            queryParams: params,
+          ),
         );
 
   Future<void> loadAllArticles() async {
@@ -40,5 +48,10 @@ class HomeViewStore {
 
   Future<void> loadOwnArticles(String accountId) async {
     await ownArticlesStore.loadPage(queryParams: {'page_size': '10'});
+  }
+
+  Future<void> loadSchoolCourses(String schoolId) async {
+    await coursesStore
+        .loadPage(queryParams: {'page_size': '10', 'school_id': schoolId});
   }
 }

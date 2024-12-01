@@ -5,10 +5,12 @@ import 'package:mama/src/data.dart';
 class HomeSchoolBody extends StatefulWidget {
   final UserStore userStore;
   final HomeViewStore homeViewStore;
+  final SchoolStore schoolStore;
   // final ArticleStore articleStore;
   const HomeSchoolBody(
       {super.key,
       required this.homeViewStore,
+      required this.schoolStore,
       // required this.articleStore,
 
       required this.userStore});
@@ -21,6 +23,7 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
   @override
   void initState() {
     widget.homeViewStore.loadOwnArticles(widget.userStore.account.id!);
+    widget.schoolStore.loadData();
     super.initState();
   }
 

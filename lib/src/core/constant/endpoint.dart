@@ -41,6 +41,8 @@ class Endpoint {
 
   String get schools => '$school/all';
 
+  String get schoolCourses => '$school/course/all';
+
   static const String article = 'article';
 
   String get articles => '$article/list';

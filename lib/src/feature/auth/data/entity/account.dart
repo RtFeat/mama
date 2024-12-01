@@ -41,7 +41,7 @@ class AccountModel extends _AccountModel with _$AccountModel {
   Map<String, dynamic> toJson() => _$AccountModelToJson(this);
 }
 
-abstract class _AccountModel with Store {
+abstract class _AccountModel extends BaseModel with Store {
   _AccountModel({
     required this.firstName,
     required this.secondName,
@@ -71,6 +71,9 @@ abstract class _AccountModel with Store {
     secondName = value;
     isChanged = true;
   }
+
+  @computed
+  String get name => '$firstName ${secondName != null ? secondName! : ''}';
 
   @observable
   @JsonKey(name: 'profession', includeIfNull: false, includeToJson: false)

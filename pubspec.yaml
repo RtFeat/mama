@@ -92,6 +92,7 @@ dependencies:
   action_slider: ^0.7.0
   syncfusion_flutter_charts: ^27.1.50
   calendar_view: ^1.3.0
+  delightful_toast: ^1.1.0
 
   # -- image -- #
   flutter_svg: ^2.0.10+1

@@ -16,14 +16,19 @@ class ConsultationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
 
+    final DoctorStore doctorStore = context.watch<DoctorStore>();
+
     return Provider(
       create: (context) => ConsultationStore(
-          restClient: context.read<Dependencies>().restClient,
-          id: consultation?.id),
+        restClient: context.read<Dependencies>().restClient,
+      ),
       builder: (context, child) => _Body(
         doctor: doctor,
         consultation: consultation,
         role: userStore.role,
+        workSlots: consultation != null
+            ? doctorStore.weekSlots[consultation?.startedAt?.day ?? 0]
+            : [],
         store: context.watch<ConsultationStore>(),
       ),
     );
@@ -35,8 +40,10 @@ class _Body extends StatefulWidget {
   final Consultation? consultation;
   final Role role;
   final ConsultationStore store;
+  final List<WorkSlot> workSlots;
   const _Body({
     this.doctor,
+    required this.workSlots,
     this.consultation,
     required this.role,
     required this.store,
@@ -46,20 +53,104 @@ class _Body extends StatefulWidget {
   State<_Body> createState() => __BodyState();
 }
 
-class __BodyState extends State<_Body> {
+class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
+  TabController? tabController;
+
+  int selectedPage = 0;
+
   @override
   void initState() {
     if (widget.role == Role.doctor) {
-      widget.store.loadData();
+      widget.store.loadData(id: widget.workSlots.first.consultationId);
+      tabController =
+          TabController(length: widget.workSlots.length, vsync: this);
     }
     super.initState();
   }
 
   @override
+  void dispose() {
+    tabController?.dispose();
+    super.dispose();
+  }
+
+  void load() {
+    widget.store.loadData(id: widget.workSlots[selectedPage].consultationId);
+  }
+
+  void prevPage() {
+    if (selectedPage > 0) {
+      selectedPage--;
+      tabController?.animateTo(selectedPage);
+      load();
+    }
+  }
+
+  void nextPage() {
+    if (selectedPage < widget.workSlots.length - 1) {
+      selectedPage++;
+      tabController?.animateTo(selectedPage);
+      load();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomAppBar(
+        title: t.consultation.consultTitle,
+        action: widget.workSlots.length > 1
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        prevPage();
+                      },
+                      child: const Icon(Icons.arrow_left_rounded)),
+                  GestureDetector(
+                      onTap: () {
+                        nextPage();
+                      },
+                      child: const Icon(Icons.arrow_right_rounded)),
+                ],
+              )
+            : null,
+      ),
+      body: widget.role == Role.doctor
+          ? TabBarView(
+              controller: tabController,
+              children: widget.workSlots
+                  .map((e) => LoadingWidget(
+                        future: widget.store.fetchFuture,
+                        builder: (data) => _RoleBody(
+                          doctor: widget.doctor,
+                          consultation: widget.consultation,
+                        ),
+                      ))
+                  .toList())
+          : _RoleBody(
+              doctor: widget.doctor,
+              consultation: widget.consultation,
+            ),
+    );
+  }
+}
+
+class _RoleBody extends StatelessWidget {
+  final Consultation? consultation;
+  final DoctorModel? doctor;
+
+  const _RoleBody({
+    required this.doctor,
+    required this.consultation,
+  });
+
+  @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
 
-    final body = ListView(
+    return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
         switch (userStore.role) {
@@ -67,43 +158,31 @@ class __BodyState extends State<_Body> {
           _ => Column(
               children: [
                 AvatarWidget(
-                    url: widget.doctor?.account?.avatarUrl,
+                    url: doctor?.account?.avatarUrl,
                     size: const Size(175, 175),
                     radius: 12),
                 6.h,
-                AutoSizeText(
-                    '${widget.doctor?.account?.firstName} ${widget.doctor?.account?.secondName}'),
+                AutoSizeText(doctor?.account?.name ?? ''),
+                // '${doctor?.account?.firstName} ${doctor?.account?.secondName}'),
                 6.h,
                 SizedBox(
                   height: 26,
                   child: ConsultationBadge(
-                    title: widget.doctor?.profession ?? '',
+                    title: doctor?.profession ?? '',
                   ),
                 ),
               ],
             ),
         },
         20.h,
-        widget.consultation != null
+        consultation != null
             ? MyConsultationWidget(
-                consultation: widget.consultation!,
+                consultation: consultation!,
               )
             : NewConsultationWidget(
-                workTime: widget.doctor?.workTime,
+                workTime: doctor?.workTime,
               ),
       ],
-    );
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: t.consultation.consultTitle,
-      ),
-      body: widget.role == Role.doctor
-          ? LoadingWidget(
-              future: widget.store.fetchFuture,
-              builder: (data) => body,
-            )
-          : body,
     );
   }
 }

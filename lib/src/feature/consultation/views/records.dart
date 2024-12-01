@@ -23,6 +23,7 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
   @override
   Widget build(BuildContext context) {
     return PaginatedLoadingWidget(
+        emptyData: const SizedBox.shrink(),
         store: widget.store.recordsState,
         itemBuilder: (context, index) {
           final Consultation? consultation =

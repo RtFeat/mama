@@ -46,6 +46,7 @@ abstract class AppViews {
   static const addHeadView = 'addHeadView';
 
   static const profile = 'profile';
+  static const profileInfo = 'profileInfo';
   static const promoView = 'promoView';
 
   static const chatView = 'chatView';
@@ -338,9 +339,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
-          builder: (context, state) {
-            return const ProfileScreen();
-          },
+          builder: (context, state) => const ProfileScreen(),
           routes: [
             GoRoute(
               path: _Paths.promoView,
@@ -349,6 +348,18 @@ final GoRouter router = GoRouter(
             )
           ],
         ),
+        GoRoute(
+          path: _Paths.profileInfo,
+          name: AppViews.profileInfo,
+          builder: (context, state) {
+            final Map? extra = state.extra as Map?;
+            final BaseModel? model = extra?['model'] as BaseModel?;
+
+            return ProfileInfoView(
+              model: model!,
+            );
+          },
+        )
       ],
     ),
     GoRoute(
@@ -464,6 +475,7 @@ abstract class _Paths {
   // static const addHeadView = AppViews.addHeadView;
 
   static const profile = AppViews.profile;
+  static const profileInfo = AppViews.profileInfo;
   static const promoView = AppViews.promoView;
 
   static const chat = AppViews.chatView;
