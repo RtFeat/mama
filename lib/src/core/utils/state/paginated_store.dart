@@ -43,13 +43,13 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     isLoading = true;
     this.queryParams = {...this.queryParams, ...queryParams};
 
-    logger.info('Current queryParams: ${this.queryParams}');
-
     final updatedParams = {
       ...this.queryParams,
       'page': '$currentPage',
       'offset': '${pageSize * (currentPage - 1)}'
     };
+
+    logger.info('Requesting page $currentPage with params: $updatedParams');
 
     fetchFuture = ObservableFuture(
       fetchFunction(updatedParams).then((rawData) {
@@ -59,35 +59,43 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
           logger.info('Transformed data length: ${transformedData?.length}');
 
           if (transformedData != null && transformedData.isNotEmpty) {
-            // Здесь мы добавляем новые данные в listData
-            listData
-                .addAll(transformedData); // Добавляем данные с новой страницы
+            final previousLength = listData.length;
 
-            // Проверка на наличие дополнительных страниц
-            if (transformedData.length < pageSize) {
-              hasMore =
-                  false; // Если данных меньше, чем размер страницы, это последняя страница
+            final uniqueData = transformedData.where((element) {
+              final isUnique = !listData.contains(element);
+              if (!isUnique) {
+                logger.info('Duplicate data detected: $element');
+              }
+              return isUnique;
+            }).toList();
+
+            listData.addAll(uniqueData);
+
+            logger.info(
+                'Added ${uniqueData.length} unique items. Updated listData length: ${listData.length}, previous length: $previousLength');
+
+            // Если уникальных данных меньше pageSize или список не увеличился
+            if (uniqueData.isEmpty || uniqueData.length < pageSize) {
+              hasMore = false;
               logger.info(
-                  'Less data than pageSize, assuming no more pages available.');
+                  'No more unique data found or less than pageSize. Stopping pagination.');
             } else {
-              currentPage++; // Увеличиваем номер текущей страницы
-              hasMore = true; // Считаем, что есть еще данные
+              currentPage++;
+              hasMore = true;
               logger
                   .info('Data loaded, currentPage incremented to $currentPage');
             }
           } else {
-            // Если данных нет, завершаем пагинацию
             hasMore = false;
             logger.info('No data received, hasMore set to false');
           }
         } else {
-          // Если не получили данных
           hasMore = false;
           logger.info('No rawData received, hasMore set to false');
         }
       }).catchError((e) {
         logger.error('Error in loadPage: $e');
-        hasMore = false; // В случае ошибки завершаем загрузку
+        hasMore = false;
       }).whenComplete(() {
         isLoading = false;
         logger.info('LoadPage completed');

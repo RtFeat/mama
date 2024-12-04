@@ -279,7 +279,8 @@ class _MomsProfileState extends State<MomsProfile> {
                                               context.pushNamed(
                                                   AppViews.webView,
                                                   extra: {
-                                                    'url': data.link,
+                                                    'url': data.link ??
+                                                        'https://google.com',
                                                   });
                                             },
                                             child: SizedBox(

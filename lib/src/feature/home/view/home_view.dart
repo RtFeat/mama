@@ -44,21 +44,23 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
   }
 
-  late CustomAppBar appBar = CustomAppBar(
-    leading: ProfileWidget(
-      onTap: () {
-        router.pushNamed(AppViews.profile);
-      },
-      alignment: Alignment.centerLeft,
-      avatarUrl: widget.userStore.account.avatarUrl ?? '',
-    ),
-    action: const ProfileWidget(
-      isShowText: true,
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
+    final CustomAppBar appBar = CustomAppBar(
+      leading: Observer(builder: (context) {
+        return ProfileWidget(
+          onTap: () {
+            router.pushNamed(AppViews.profile);
+          },
+          alignment: Alignment.centerLeft,
+          avatarUrl: widget.userStore.account.avatarUrl ?? '',
+        );
+      }),
+      action: const ProfileWidget(
+        isShowText: true,
+      ),
+    );
+
     return Scaffold(
         body: TabBarView(
           controller: _tabController,

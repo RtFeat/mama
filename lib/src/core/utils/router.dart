@@ -50,6 +50,7 @@ abstract class AppViews {
   static const promoView = 'promoView';
 
   static const chatView = 'chatView';
+  static const groupUsers = 'groupUsers';
 
   static const feeding = 'feeding';
   static const addManually = 'addManually';
@@ -325,17 +326,31 @@ final GoRouter router = GoRouter(
                   builder: (context, state) => const AddDiaper())
             ]),
         GoRoute(
-          path: _Paths.chat,
-          name: AppViews.chatView,
-          builder: (context, state) {
-            final Map? extra = state.extra as Map?;
-            final item = extra?['item'];
+            path: _Paths.chat,
+            name: AppViews.chatView,
+            builder: (context, state) {
+              final Map? extra = state.extra as Map?;
+              final item = extra?['item'];
 
-            return ChatView(
-              item: item,
-            );
-          },
-        ),
+              return ChatView(
+                item: item,
+              );
+            },
+            routes: [
+              GoRoute(
+                path: _Paths.groupUsers,
+                name: AppViews.groupUsers,
+                builder: (context, state) {
+                  final Map? extra = state.extra as Map?;
+                  final GroupUsersStore? store =
+                      extra?['store'] as GroupUsersStore?;
+
+                  return GroupUsersView(
+                    store: store,
+                  );
+                },
+              )
+            ]),
         GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
@@ -479,6 +494,7 @@ abstract class _Paths {
   static const promoView = AppViews.promoView;
 
   static const chat = AppViews.chatView;
+  static const groupUsers = AppViews.groupUsers;
 
   static const feeding = AppViews.feeding;
   static const diapers = AppViews.diapersView;

@@ -4,6 +4,7 @@ class MessagesStore extends PaginatedListStore<MessageItem> {
   MessagesStore({
     required RestClient restClient,
     required String chatType,
+    super.pageSize = 20,
   }) : super(
             fetchFunction: (params) => restClient
                 .get('${Endpoint().messages}/$chatType', queryParams: params),

@@ -29,55 +29,60 @@ class DateSwitchSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(create: (context) {
-      return CalendarStore();
-    }, builder: (context, child) {
-      final CalendarStore store = context.read();
+    return Provider(
+        dispose: (context, value) => value.dispose(),
+        create: (context) => CalendarStore(store: context.read()),
+        builder: (context, child) {
+          final CalendarStore store = context.watch();
 
-      final GlobalKey<MonthViewState> monthViewKey =
-          GlobalKey<MonthViewState>();
+          final GlobalKey<MonthViewState> monthViewKey =
+              GlobalKey<MonthViewState>();
 
-      return Observer(builder: (context) {
-        return store.isCalendar || isOnlyCalendar
-            ? Column(
-                children: [
-                  _Header(
-                    isOnlyCalendar: isOnlyCalendar,
-                    leftButtonOnPressed: (v) {
-                      leftButtonOnPressed(v);
-                      monthViewKey.currentState?.previousPage();
-                    },
-                    rightButtonOnPressed: (v) {
-                      rightButtonOnPressed(v);
-                      monthViewKey.currentState?.nextPage();
-                    },
-                    calendarButtonOnPressed: calendarButtonOnPressed,
-                    backToTodayOnPressed: () {
-                      monthViewKey.currentState!.animateToMonth(DateTime.now());
-                      if (backToTodayOnPressed != null) backToTodayOnPressed!();
-                    },
-                  ),
-                  CustomTableWidget(
-                    isOnlyCalendar: isOnlyCalendar,
-                    doctorStore: context.watch(),
-                    monthViewKey: monthViewKey,
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  _Header(
-                    leftButtonOnPressed: leftButtonOnPressed,
-                    rightButtonOnPressed: rightButtonOnPressed,
-                    calendarButtonOnPressed: calendarButtonOnPressed,
-                    backToTodayOnPressed: backToTodayOnPressed,
-                  ),
-                  const SizedBox(height: 8),
-                  const SlotsWidget(),
-                ],
-              );
-      });
-    });
+          return Observer(builder: (context) {
+            return store.isCalendar || isOnlyCalendar
+                ? Column(
+                    children: [
+                      _Header(
+                        isOnlyCalendar: isOnlyCalendar,
+                        leftButtonOnPressed: (v) {
+                          leftButtonOnPressed(v);
+                          monthViewKey.currentState?.previousPage();
+                        },
+                        rightButtonOnPressed: (v) {
+                          rightButtonOnPressed(v);
+                          monthViewKey.currentState?.nextPage();
+                        },
+                        calendarButtonOnPressed: calendarButtonOnPressed,
+                        backToTodayOnPressed: () {
+                          monthViewKey.currentState!
+                              .animateToMonth(DateTime.now());
+                          if (backToTodayOnPressed != null) {
+                            backToTodayOnPressed!();
+                          }
+                        },
+                      ),
+                      CustomTableWidget(
+                        store: context.watch(),
+                        isOnlyCalendar: isOnlyCalendar,
+                        doctorStore: context.watch(),
+                        monthViewKey: monthViewKey,
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _Header(
+                        leftButtonOnPressed: leftButtonOnPressed,
+                        rightButtonOnPressed: rightButtonOnPressed,
+                        calendarButtonOnPressed: calendarButtonOnPressed,
+                        backToTodayOnPressed: backToTodayOnPressed,
+                      ),
+                      const SizedBox(height: 8),
+                      const SlotsWidget(),
+                    ],
+                  );
+          });
+        });
   }
 }
 
@@ -103,12 +108,15 @@ class _Header extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final CalendarStore store = context.watch();
 
+    final DoctorStore doctorStore = context.watch();
+
     return Observer(builder: (context) {
       final bool isToday = store.selectedDate.day == DateTime.now().day;
       final bool isTomorrow = store.selectedDate.day ==
           DateTime.now().add(const Duration(days: 1)).day;
       final bool isYesterday = store.selectedDate.day ==
           DateTime.now().subtract(const Duration(days: 1)).day;
+
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -123,6 +131,7 @@ class _Header extends StatelessWidget {
                       const Duration(days: 1),
                     ),
                   );
+                  doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
                   leftButtonOnPressed(store.selectedDate);
                 },
                 icon: SvgPicture.asset(
@@ -170,6 +179,7 @@ class _Header extends StatelessWidget {
                       const Duration(days: 1),
                     ),
                   );
+                  doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
                   rightButtonOnPressed(store.selectedDate);
                 },
                 icon: SvgPicture.asset(
@@ -186,6 +196,7 @@ class _Header extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     store.selectedDate = DateTime.now();
+                    doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
                     if (backToTodayOnPressed != null) backToTodayOnPressed!();
                   },
                   child: SizedBox(

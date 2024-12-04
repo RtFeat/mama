@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -63,9 +64,9 @@ class __BodyState extends State<_Body> {
 
     // logger.info('${(widget.item as GroupItem).groupChatId}');
 
-    if (widget.groupUsersStore != null) {
-      widget.groupUsersStore?.loadPage(queryParams: {});
-    }
+    // if (widget.groupUsersStore != null) {
+    //   widget.groupUsersStore?.loadPage(queryParams: {});
+    // }
 
     widget.store.loadPage(queryParams: {
       'limit': '10',
@@ -80,7 +81,23 @@ class __BodyState extends State<_Body> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightPirple,
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        action: GestureDetector(
+          onTap: () {
+            if (widget.groupUsersStore != null) {
+              context.pushNamed(AppViews.groupUsers, extra: {
+                'store': widget.groupUsersStore,
+              });
+            }
+          },
+          child: AvatarWidget(
+              url: widget.item is SingleChatItem
+                  ? (widget.item as SingleChatItem).participant2?.avatarUrl
+                  : (widget.item as GroupItem).groupInfo?.avatarUrl,
+              size: const Size(40, 40),
+              radius: 20),
+        ),
+      ),
       body: PaginatedLoadingWidget(
         store: widget.store,
         itemBuilder: (context, item) {

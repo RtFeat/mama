@@ -27,32 +27,63 @@ class SpecialistDayView extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final DoctorStore doctorStore = context.watch();
 
+    logger.info(event);
+
     return Scaffold(
-      appBar: CustomAppBar(
-          title: '${event.first.date.day} ${t.home.monthsData[now.month]}',
-          action: event.first.date.day == now.day
-              ? DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    child: Text(
-                      t.home.today,
-                      style: textTheme.titleLarge?.copyWith(
-                        color: AppColors.whiteColor,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink()),
+      appBar: CustomAppBar(),
+      // title: '${event.first.date.day} ${t.home.monthsData[now.month - 1]}',
+      // action: event.first.date.day == now.day
+      //     ? DecoratedBox(
+      //         decoration: BoxDecoration(
+      //           color: AppColors.primaryColor,
+      //           borderRadius: BorderRadius.circular(16),
+      //         ),
+      //         child: Padding(
+      //           padding:
+      //               const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      //           child: Text(
+      //             t.home.today,
+      //             style: textTheme.titleLarge?.copyWith(
+      //               color: AppColors.whiteColor,
+      //               fontSize: 10,
+      //             ),
+      //           ),
+      //         ),
+      //       )
+      //     : const SizedBox.shrink()),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
+            Row(
+              children: [
+                Text(
+                  '${event.first.date.day} ${t.home.monthsData[now.month - 1]}',
+                  style: textTheme.titleLarge,
+                ),
+                if (event.first.date.day == now.day) ...[
+                  10.w,
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      child: Text(
+                        t.home.today,
+                        style: textTheme.titleLarge?.copyWith(
+                          color: AppColors.whiteColor,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  )
+                ]
+              ],
+            ),
+            10.h,
             Row(
               children: [
                 CustomButton(

@@ -1,5 +1,4 @@
 import 'package:calendar_view/calendar_view.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/services/specialist_consulting/widgets/calendar_cell_widget.dart';
@@ -8,8 +7,10 @@ class CustomTableWidget extends StatefulWidget {
   final DoctorStore doctorStore;
   final GlobalKey<MonthViewState> monthViewKey;
   final bool isOnlyCalendar;
+  final CalendarStore store;
   const CustomTableWidget({
     super.key,
+    required this.store,
     this.isOnlyCalendar = false,
     required this.doctorStore,
     required this.monthViewKey,
@@ -20,44 +21,10 @@ class CustomTableWidget extends StatefulWidget {
 }
 
 class _CustomTableWidgetState extends State<CustomTableWidget> {
-  late final EventController controller;
-
   @override
   initState() {
-    controller = EventController();
-    final DateTime now = DateTime.now();
-    final DateTime weekStart = now.subtract(Duration(days: now.weekday - 1));
-    List<List<WorkSlot>> workSlots = widget.doctorStore.weekSlots;
-
-    workSlots.asMap().forEach((dayIndex, dailySlots) {
-      print('Day Index: $dayIndex, Slots: ${dailySlots.length}');
-
-      for (var slot in dailySlots) {
-        // Расчёт даты для текущего слота, добавляя индекс дня недели к начальной дате
-        DateTime slotDate = weekStart.add(Duration(days: dayIndex));
-
-        print('Adding slot: ${slot.workSlot} for date: $slotDate');
-
-        // Создание и добавление события в controller
-        controller.add(
-          CalendarEventData(
-            title: slot.workSlot,
-            date: DateTime(slotDate.year, slotDate.month, slotDate.day),
-            startTime: slot.startTime,
-            endTime: slot.endTime,
-            event: slot.patientFullName ?? 'Доступно', // Или какое-то описание
-          ),
-        );
-      }
-    });
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
+    widget.store.updateEvents();
   }
 
   List<Events> filterEvents(List<CalendarEventData> events) {
@@ -97,7 +64,7 @@ class _CustomTableWidgetState extends State<CustomTableWidget> {
     final TextTheme textTheme = themeData.textTheme;
 
     return CalendarControllerProvider(
-        controller: controller,
+        controller: widget.store.controller,
         child: SizedBox(
           height: 600,
           child: MonthView(

@@ -38,6 +38,7 @@
 //         );
 // }
 
+import 'package:flutter/foundation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
@@ -60,53 +61,108 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
         );
 
   @computed
-  List<WorkSlot> get slots =>
-      // [
-      //       WorkSlot(
-      //         isBusy: false,
-      //         workSlot: '9:00 - 10:00',
-      //         consultationType: 'sdf',
-      //         patientFullName: 'dsfsdf sdf s',
-      //       ),
-      //       WorkSlot(
-      //         isBusy: false,
-      //         workSlot: '11:00 - 13:00',
-      //         consultationType: 'type1',
-      //         patientFullName: 'John Doe',
-      //       ),
-      //       WorkSlot(
-      //         isBusy: true,
-      //         workSlot: '13:00 - 14:00',
-      //         consultationType: 'type2',
-      //         patientFullName: 'Jane Smith',
-      //       ),
-      //       WorkSlot(
-      //         isBusy: true,
-      //         workSlot: '21:00 - 22:00',
-      //         consultationType: 'type2',
-      //         patientFullName: 'Jane Smith',
-      //       ),
-      //     ];
-      data?.doctor?.workTime?.slots ?? [];
+  List<WorkSlot> get slots => [
+        WorkSlot(
+          isBusy: false,
+          workSlot: '9:00 - 10:00',
+          consultationType: 'sdf',
+          patientFullName: 'dsfsdf sdf s',
+        ),
+        WorkSlot(
+          isBusy: false,
+          workSlot: '11:00 - 13:00',
+          consultationType: 'type1',
+          patientFullName: 'John Doe',
+        ),
+        WorkSlot(
+          isBusy: true,
+          workSlot: '13:00 - 14:00',
+          consultationType: 'type2',
+          patientFullName: 'Jane Smith',
+        ),
+        WorkSlot(
+          isBusy: true,
+          workSlot: '21:00 - 22:00',
+          consultationType: 'type2',
+          patientFullName: 'Jane Smith',
+        ),
+      ];
+  // data?.doctor?.workTime?.slots ?? [];
 
   @computed
   List<List<WorkSlot>> get weekSlots => [
-        data?.doctor?.workTime?.monday?.workSlots ?? [],
+        data?.doctor?.workTime?.monday?.workSlots ??
+            (kDebugMode
+                ? [
+                    WorkSlot(
+                      isBusy: false,
+                      workSlot: '9:00 - 10:00',
+                      consultationType: 'sdf',
+                      patientFullName: 'dsfsdf sdf s',
+                    ),
+                    WorkSlot(
+                      isBusy: false,
+                      workSlot: '11:00 - 13:00',
+                      consultationType: 'type1',
+                      patientFullName: 'John Doe',
+                    ),
+                    WorkSlot(
+                      isBusy: true,
+                      workSlot: '13:00 - 14:00',
+                      consultationType: 'type2',
+                      patientFullName: 'Jane Smith',
+                    ),
+                    WorkSlot(
+                      isBusy: true,
+                      workSlot: '21:00 - 22:00',
+                      consultationType: 'type2',
+                      patientFullName: 'Jane Smith',
+                    ),
+                  ]
+                : []),
         data?.doctor?.workTime?.tuesday?.workSlots ?? [],
-        data?.doctor?.workTime?.wednesday?.workSlots ?? [],
+        data?.doctor?.workTime?.wednesday?.workSlots ??
+            (kDebugMode
+                ? [
+                    WorkSlot(
+                      isBusy: false,
+                      workSlot: '9:00 - 10:00',
+                      consultationType: 'sdf',
+                      patientFullName: 'dsfsdf sdf s',
+                    ),
+                    WorkSlot(
+                      isBusy: true,
+                      workSlot: '13:00 - 14:00',
+                      consultationType: 'type2',
+                      patientFullName: 'Jane Smith',
+                    ),
+                    WorkSlot(
+                      isBusy: true,
+                      workSlot: '21:00 - 22:00',
+                      consultationType: 'type2',
+                      patientFullName: 'Jane Smith',
+                    ),
+                  ]
+                : []),
         data?.doctor?.workTime?.thursday?.workSlots ?? [],
         data?.doctor?.workTime?.friday?.workSlots ?? [],
         data?.doctor?.workTime?.saturday?.workSlots ?? [],
         data?.doctor?.workTime?.sunday?.workSlots ?? [],
       ];
 
+  @observable
+  int selectedDay = 0;
+
+  @action
+  setSelectedDay(int value) => selectedDay = value;
+
   @computed
-  List<List<WorkSlot>> get dividedSlots {
+  ObservableList<List<WorkSlot>> get dividedSlots {
     final now = DateTime.now();
     List<WorkSlot> beforeNow = [];
     List<WorkSlot> afterNow = [];
 
-    for (var slot in slots) {
+    for (var slot in weekSlots[selectedDay]) {
       if (slot.startTime.isBefore(now)) {
         beforeNow.add(slot);
       } else {
@@ -114,6 +170,8 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
       }
     }
 
-    return [beforeNow, afterNow];
+    logger.info('${[beforeNow, afterNow]}');
+
+    return ObservableList.of([beforeNow, afterNow]);
   }
 }
