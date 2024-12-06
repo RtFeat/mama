@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/feature/feeding/data/entity/pumping_data.dart';
@@ -14,7 +12,14 @@ class GraphicWidget extends StatelessWidget {
   final double minimum;
   final double maximum;
   final double interval;
-  const GraphicWidget({super.key, required this.listOfData, required this.topColumnText, required this.bottomColumnText, required this.minimum, required this.maximum, required this.interval});
+  const GraphicWidget(
+      {super.key,
+      required this.listOfData,
+      required this.topColumnText,
+      required this.bottomColumnText,
+      required this.minimum,
+      required this.maximum,
+      required this.interval});
 
   @override
   Widget build(BuildContext context) {
@@ -73,36 +78,40 @@ class GraphicWidget extends StatelessWidget {
                     bottomRight: Radius.circular(4),
                     bottomLeft: Radius.circular(4)),
                 dataLabelSettings: DataLabelSettings(
-                    builder: (data, point, series, pointIndex, seriesIndex){
+                    builder: (data, point, series, pointIndex, seriesIndex) {
                       final model = data as GraphicData;
-                      if(model.bottom == 0 && model.top == 0){
+                      if (model.bottom == 0 && model.top == 0) {
                         return SizedBox();
                       }
-                      return Text('$bottomColumnText\n${model.bottom}',
+                      return Text(
+                        '$bottomColumnText\n${model.bottom}',
                         textAlign: TextAlign.right,
                         style: textTheme.labelSmall
-                            ?.copyWith(color: AppColors.trackerColor),);
+                            ?.copyWith(color: AppColors.trackerColor),
+                      );
                     },
-                    isVisible: true, showCumulativeValues: true),
+                    isVisible: true,
+                    showCumulativeValues: true),
                 dataSource: listOfData,
                 xValueMapper: (GraphicData data, _) => data.weekDay,
                 yValueMapper: (GraphicData data, _) => data.top),
-
             StackedBarSeries<GraphicData, String>(
                 width: 0.8,
                 color: AppColors.greenBrighterBackgroundColor,
                 borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4),
-                    topRight: Radius.circular(4)),
+                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                 dataLabelSettings: DataLabelSettings(
-                    builder: (data, point, series, pointIndex, seriesIndex){
+                    builder: (data, point, series, pointIndex, seriesIndex) {
                       final model = data as GraphicData;
-                      return Text('$topColumnText\n${model.top}',
+                      return Text(
+                        '$topColumnText\n${model.top}',
                         style: textTheme.labelSmall
-                            ?.copyWith(color: AppColors.trackerColor),);
+                            ?.copyWith(color: AppColors.trackerColor),
+                      );
                     },
                     alignment: ChartAlignment.center,
-                    isVisible: true, showCumulativeValues: false),
+                    isVisible: true,
+                    showCumulativeValues: false),
                 dataSource: listOfData,
                 xValueMapper: (GraphicData data, _) => data.weekDay,
                 yValueMapper: (GraphicData data, _) => data.bottom),
@@ -110,13 +119,13 @@ class GraphicWidget extends StatelessWidget {
           primaryXAxis: CategoryAxis(
             tickPosition: TickPosition.outside,
             labelStyle:
-            textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400),
+                textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400),
             majorGridLines: const MajorGridLines(width: 0),
           ),
           primaryYAxis: NumericAxis(
             majorGridLines: const MajorGridLines(width: 0),
             labelStyle:
-            textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400),
+                textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400),
             minimum: minimum,
             maximum: maximum,
             interval: interval,

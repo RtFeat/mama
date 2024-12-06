@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/data.dart';
 
 class AddPhoto extends StatelessWidget {
   const AddPhoto({
     super.key,
     this.onTap,
+    this.image,
   });
 
   final void Function()? onTap;
+  final XFile? image;
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +31,29 @@ class AddPhoto extends StatelessWidget {
               child: const DashBorder(),
             ),
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/icons/add_photo_ic.png', height: 32),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Добавить фото',
-                    style: AppTextStyles.f17w400
-                        .copyWith(color: AppColors.primaryColor),
-                  ),
-                ],
-              ),
+              child: image == null
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/icons/add_photo_ic.png',
+                            height: 32),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Добавить фото',
+                          style: AppTextStyles.f17w400
+                              .copyWith(color: AppColors.primaryColor),
+                        ),
+                      ],
+                    )
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.file(
+                        File(image!.path),
+                        fit: BoxFit.cover,
+                        height: 358,
+                        width: double.infinity,
+                      ),
+                    ),
             ),
           ],
         ),

@@ -1,26 +1,24 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/trackers/views/health/add_medicine.dart';
+import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/widgets/big_find_out_more_button.dart';
+import 'package:provider/provider.dart';
 
-class Medicine extends StatelessWidget {
-  const Medicine({super.key});
-
-  void _navigateToAddMedicineView(BuildContext context) =>
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const AddMedicine(),
-        ),
-      );
+class MedicineScreen extends StatelessWidget {
+  const MedicineScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // final UserStore userStore = context.watch();
+    final MedicineStore store = context.watch();
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+    final TextStyle? titlesStyle = textTheme.bodyMedium;
     final phonePadding = MediaQuery.of(context).padding;
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
@@ -203,16 +201,35 @@ class Medicine extends StatelessWidget {
 
                     /// #add temperature button
                     Expanded(
-                      child: CustomButton(
-                        title: t.trackers.add.title,
-                        onTap: () {
-                          // context.pushNamed(AppViews.trackersHealthAddMedicineView);
-                          _navigateToAddMedicineView(context);
-                        },
-                        icon: IconModel(
-                          iconPath: Assets.icons.icPillsFilled,
-                        ),
-                      ),
+                      child: Provider(
+                          create: (context) => DrugViewStore(
+                              model: store.drug,
+                              restClient:
+                                  context.read<Dependencies>().restClient),
+                          builder: (context, _) {
+                            final DrugViewStore store = context.watch();
+
+                            return CustomButton(
+                              title: t.trackers.add.title,
+                              onTap: () {
+                                // context.pushNamed(AppViews.trackersHealthAddMedicineView);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        Observer(builder: (_) {
+                                      return AddMedicine(
+                                        titlesStyle: titlesStyle,
+                                        store: store,
+                                      );
+                                    }),
+                                  ),
+                                );
+                              },
+                              icon: IconModel(
+                                iconPath: Assets.icons.icPillsFilled,
+                              ),
+                            );
+                          }),
                     )
                   ],
                 ),

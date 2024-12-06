@@ -1,11 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 
-class AddMedicine extends StatelessWidget {
-  const AddMedicine({super.key});
+class AddMedicine extends StatefulWidget {
+  const AddMedicine({
+    super.key,
+    required this.store,
+    this.titlesStyle,
+  });
+
+  final DrugViewStore store;
+  final TextStyle? titlesStyle;
+
+  @override
+  State<AddMedicine> createState() => _AddMedicineState();
+}
+
+class _AddMedicineState extends State<AddMedicine> {
+  final dateStartController = TextEditingController();
+
+  @override
+  void initState() {
+    widget.store.init();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.store.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
@@ -16,28 +46,76 @@ class AddMedicine extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const AddPhoto(),
-            const SizedBox(height: 16),
-            AddSomethingTextField(
-              hintText: t.trackers.name.title,
-              title: t.trackers.name.subTitle,
+            Observer(builder: (context) {
+              return AddPhoto(
+                onTap: () async {
+                  await widget.store.pickImage();
+                },
+                image: widget.store.image,
+              );
+            }),
+            20.h,
+            BodyGroup(
+              formGroup: widget.store.formGroup,
+              title: t.profile.accountTitle,
+              items: [
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'nameDrug',
+                    inputHint: t.trackers.name.title,
+                    hintText: t.trackers.name.subTitle,
+                    titleStyle: textTheme.headlineSmall,
+                    maxLines: 1,
+                    onChanged: (value) {
+                      // userStore.account.setIsChanged(true);
+                      // widget.store.updateData();
+                    },
+                  ),
+                ),
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'dataStart',
+                    inputHint: t.trackers.dateStart.title,
+                    hintText: t.trackers.dateStart.subTitle,
+                    titleStyle: widget.titlesStyle!.copyWith(
+                        color: AppColors.blackColor,
+                        fontWeight: FontWeight.w400),
+                    maxLines: 1,
+                    controller: dateStartController,
+                    readOnly: true,
+                    onTap: (value) async {
+                      await widget.store.selectDateTime(context);
+                      dateStartController.text = widget.store.formattedDateTime;
+                    },
+                  ),
+                ),
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'dose',
+                    inputHint: t.trackers.dose.title,
+                    hintText: t.trackers.dose.subTitle,
+                    titleStyle: widget.titlesStyle!.copyWith(
+                        color: AppColors.blackColor,
+                        fontWeight: FontWeight.w400),
+                    maxLines: 1,
+                    onChanged: (value) {},
+                  ),
+                ),
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'comment',
+                    inputHint: t.trackers.comment.title,
+                    hintText: t.trackers.comment.subTitle,
+                    titleStyle: widget.titlesStyle!.copyWith(
+                        color: AppColors.blackColor,
+                        fontWeight: FontWeight.w400),
+                    maxLines: 1,
+                    onChanged: (value) {},
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            AddSomethingTextField(
-              hintText: t.trackers.dateStart.title,
-              title: t.trackers.dateStart.subTitle,
-            ),
-            const SizedBox(height: 16),
-            AddSomethingTextField(
-              hintText: t.trackers.dose.title,
-              title: t.trackers.dose.subTitle,
-            ),
-            const SizedBox(height: 16),
-            AddSomethingTextField(
-              hintText: t.trackers.comment.title,
-              title: t.trackers.comment.subTitle,
-            ),
-            const SizedBox(height: 16),
+            16.h,
             Container(
               decoration: BoxDecoration(
                 color: AppColors.whiteColor,
@@ -55,21 +133,37 @@ class AddMedicine extends StatelessWidget {
                           .copyWith(color: AppColors.blackColor),
                     ),
                     const SizedBox(height: 8),
-                    CustomButton(
-                      title: t.trackers.add.title,
-                      textStyle: AppTextStyles.f17w400
-                          .copyWith(color: AppColors.primaryColor),
-                      onTap: () {},
-                      icon: IconModel(
-                        iconPath: Assets.icons.icClock,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
+                    Observer(builder: (context) {
+                      return Row(
+                        children: [
+                          Text(
+                            widget.store.formattedTime,
+                            style: AppTextStyles.f17w400
+                                .copyWith(color: AppColors.primaryColor),
+                          ),
+                          widget.store.formattedTime == ''
+                              ? const SizedBox()
+                              : const SizedBox(width: 16),
+                          CustomButton(
+                            title: t.trackers.add.title,
+                            textStyle: AppTextStyles.f17w400
+                                .copyWith(color: AppColors.primaryColor),
+                            icon: IconModel(
+                              iconPath: Assets.icons.icClock,
+                              color: AppColors.primaryColor,
+                            ),
+                            onTap: () async {
+                              await widget.store.pickTime(context);
+                            },
+                          ),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            16.h,
             Row(
               children: [
                 Expanded(
@@ -86,7 +180,6 @@ class AddMedicine extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mama/src/feature/trackers/state/medicine.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/data.dart';
 
@@ -41,6 +42,11 @@ class App extends StatelessWidget {
           Provider(
             create: (context) => ChildStore(
               userStore: context.read<UserStore>(),
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+            create: (context) => MedicineStore(
               restClient: context.read<Dependencies>().restClient,
             ),
           ),

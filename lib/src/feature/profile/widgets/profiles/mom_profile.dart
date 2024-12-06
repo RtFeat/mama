@@ -155,13 +155,13 @@ class _MomsProfileState extends State<MomsProfile> {
                 title: t.profile.settingsAccountButtonTitle,
               ),
               30.h,
-              SubscribeBlockItem(child: Observer(builder: (_) {
+              Observer(builder: (_) {
                 return IgnorePointer(
                     ignoring: !userStore.isPro,
                     child: ChildItems(
                       childs: userStore.children.toList(),
                     ));
-              })),
+              }),
               if (userStore.role == Role.user)
                 Padding(
                   padding: const EdgeInsets.all(28.0),

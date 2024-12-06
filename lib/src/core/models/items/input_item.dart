@@ -9,6 +9,8 @@ class InputItem extends BodyItem {
   final String controlName;
   final TextStyle? inputHintStyle;
   final bool isCollapsed;
+  final bool? readOnly;
+  final TextEditingController? controller;
 
   final EdgeInsets? contentPadding;
   final InputBorder? border;
@@ -22,6 +24,7 @@ class InputItem extends BodyItem {
   final Color? backgroundColor;
   final bool needBackgroundOnFocus;
 
+  final Function(String? value)? onTap;
   final Function(String? value)? onChanged;
   final Function(String? value)? onSubmitted;
   final Function(String? value)? onEditingComplete;
@@ -31,7 +34,10 @@ class InputItem extends BodyItem {
     this.autoFocus = false,
     super.hintText,
     this.errorBorder,
+    this.readOnly,
+    this.controller,
     this.inputHint,
+    this.onTap,
     this.onChanged,
     this.onSubmitted,
     this.textAlign,

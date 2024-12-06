@@ -34,7 +34,7 @@ class RowStroriesData extends StatelessWidget {
             Text(growth ?? '', style: style),
             growth == null ? const SizedBox() : const SizedBox(width: 30),
             Text(head ?? '', style: style),
-            head == null ? const SizedBox() : const SizedBox(width: 30),
+            // head == null ? const SizedBox() : const SizedBox(width: 30),
           ],
         ),
       ],

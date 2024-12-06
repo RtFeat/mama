@@ -48,6 +48,7 @@ class _InputItemWidgetState extends State<InputItemWidget> {
     final TextTheme textTheme = themeData.textTheme;
 
     return ReactiveTextField(
+      controller: widget.item.controller,
       showErrors: (_) => false,
       autofocus: widget.item.autoFocus,
       focusNode: focusNode,
@@ -58,6 +59,11 @@ class _InputItemWidgetState extends State<InputItemWidget> {
       inputFormatters: [
         if (widget.item.maskFormatter != null) widget.item.maskFormatter!
       ],
+      onTap: (control) {
+        if (widget.item.onTap != null) {
+          widget.item.onTap!(control.value as String?);
+        }
+      },
       onChanged: (control) {
         if (widget.item.onChanged != null) {
           widget.item.onChanged!(control.value as String?);
@@ -77,6 +83,7 @@ class _InputItemWidgetState extends State<InputItemWidget> {
       textInputAction: widget.item.textInputAction,
       formControlName: widget.item.controlName,
       onTapOutside: (event) {},
+      readOnly: widget.item.readOnly ?? false,
       validationMessages: {
         ValidationMessage.required: (_) => '',
       },

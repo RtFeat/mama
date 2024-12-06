@@ -63,7 +63,7 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
         controller: _tabController,
         children: const [
           Center(child: TemperatureView()),
-          Center(child: Medicine()),
+          Center(child: MedicineScreen()),
           Center(child: TemperatureView()),
           Center(child: TemperatureView()),
         ],
