@@ -27,6 +27,8 @@ class Consultation extends BaseModel {
 
   final DoctorModel? doctor;
 
+  final AccountModel? patient;
+
   final ConsultationType type;
 
   final ConsultationStatus status;
@@ -39,6 +41,7 @@ class Consultation extends BaseModel {
 
   Consultation({
     this.id,
+    this.patient,
     this.doctor,
     this.type = ConsultationType.chat,
     this.status = ConsultationStatus.pending,

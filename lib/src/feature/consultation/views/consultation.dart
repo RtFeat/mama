@@ -124,6 +124,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                   .map((e) => LoadingWidget(
                         future: widget.store.fetchFuture,
                         builder: (data) => _RoleBody(
+                          patient: widget.consultation?.patient,
                           doctor: widget.doctor,
                           consultation: widget.consultation,
                         ),
@@ -131,6 +132,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                   .toList())
           : _RoleBody(
               doctor: widget.doctor,
+              patient: widget.consultation?.patient,
               consultation: widget.consultation,
             ),
     );
@@ -140,21 +142,47 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
 class _RoleBody extends StatelessWidget {
   final Consultation? consultation;
   final DoctorModel? doctor;
+  final AccountModel? patient;
 
   const _RoleBody({
     required this.doctor,
     required this.consultation,
+    required this.patient,
   });
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     final UserStore userStore = context.watch<UserStore>();
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
         switch (userStore.role) {
-          Role.doctor => const SizedBox(),
+          Role.doctor => ConsultationItem(
+              url: patient?.avatarUrl,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AutoSizeText(
+                    patient?.name ?? '',
+                    maxLines: 1,
+                    style: textTheme.bodyMedium,
+                  ),
+                  4.h,
+                  Text(
+                    patient?.info ?? '',
+                    maxLines: 4,
+                    style: textTheme.titleSmall?.copyWith(
+                      fontSize: 14,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // '${patient?.firstName} ${patient?.secondName}'),
+                ],
+              )),
           _ => Column(
               children: [
                 AvatarWidget(
