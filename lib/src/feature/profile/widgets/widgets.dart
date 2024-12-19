@@ -1,4 +1,4 @@
-export 'profile_photo.dart';
+export 'photo_widget.dart';
 export 'button_back.dart';
 export 'container_account.dart';
 export 'custom_button.dart';

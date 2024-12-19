@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePhoto extends StatelessWidget {
-  const ProfilePhoto({super.key});
+class PhotoWidget extends StatelessWidget {
+  const PhotoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,9 @@ class ProfilePhoto extends StatelessWidget {
 }
 
 class DashedPhotoProfile extends StatelessWidget {
-  const DashedPhotoProfile({super.key});
+  const DashedPhotoProfile({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

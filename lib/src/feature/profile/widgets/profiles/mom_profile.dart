@@ -52,7 +52,7 @@ class _MomsProfileState extends State<MomsProfile> {
       children: [
         widget.accountModel.avatarUrl == null
             ? const DashedPhotoProfile()
-            : const ProfilePhoto(),
+            : const PhotoWidget(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -155,13 +155,15 @@ class _MomsProfileState extends State<MomsProfile> {
                 title: t.profile.settingsAccountButtonTitle,
               ),
               30.h,
-              Observer(builder: (_) {
-                return IgnorePointer(
-                    ignoring: !userStore.isPro,
-                    child: ChildItems(
-                      childs: userStore.children.toList(),
-                    ));
-              }),
+              SubscribeBlockItem(
+                child: Observer(builder: (_) {
+                  return IgnorePointer(
+                      ignoring: !userStore.isPro,
+                      child: ChildItems(
+                        childs: userStore.children.toList(),
+                      ));
+                }),
+              ),
               if (userStore.role == Role.user)
                 Padding(
                   padding: const EdgeInsets.all(28.0),

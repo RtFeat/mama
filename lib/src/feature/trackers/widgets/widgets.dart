@@ -23,3 +23,4 @@ export 'bar_item.dart';
 export 'tracker_category.dart';
 export 'add_photo.dart';
 export 'add_text_field.dart';
+export 'pill_container.dart';

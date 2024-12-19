@@ -52,7 +52,7 @@ class _SchoolProfileState extends State<SchoolProfile> {
       children: [
         widget.accountModel.avatarUrl == null
             ? const DashedPhotoProfile()
-            : ProfilePhoto(),
+            : PhotoWidget(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

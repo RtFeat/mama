@@ -24,19 +24,19 @@ abstract class _MedicineStore with Store {
   DrugModel get drug =>
       drugModel ??
       DrugModel(
-        childId: '',
-        dataStart: '',
+        child_id: '',
+        data_start: '',
         dose: '',
-        nameDrug: '',
-        comment: '',
-        isEnd: false,
+        name_drug: '',
+        notes: '',
+        is_end: false,
         photo: '',
         reminder: '',
       );
 
   @action
   void postData({required DrugModel model}) {
-    restClient.post('${Endpoint.medicine}/', body: model.toJson()).then(
+    restClient.post('${Endpoint.medicine}', body: model.toJson()).then(
       (value) {
         return print('Drug was successfully added');
       },

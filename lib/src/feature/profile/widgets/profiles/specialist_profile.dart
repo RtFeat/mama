@@ -52,7 +52,7 @@ class _SpecialistProfileState extends State<SpecialistProfile> {
       children: [
         widget.accountModel.avatarUrl == null
             ? const DashedPhotoProfile()
-            : ProfilePhoto(),
+            : PhotoWidget(),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

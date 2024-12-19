@@ -7,9 +7,11 @@ class AddMedicine extends StatefulWidget {
     super.key,
     required this.store,
     this.titlesStyle,
+    required this.medicineStore,
   });
 
   final DrugViewStore store;
+  final MedicineStore medicineStore;
   final TextStyle? titlesStyle;
 
   @override
@@ -36,6 +38,10 @@ class _AddMedicineState extends State<AddMedicine> {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
+    String? nameDrugValue = '';
+    String? doseValue = '';
+    String? commentValue = '';
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
@@ -54,6 +60,13 @@ class _AddMedicineState extends State<AddMedicine> {
                 image: widget.store.image,
               );
             }),
+
+            // Builder(builder: (context) {
+            //   return Observer(builder: (context) {
+            //     return const DashedPhotoProfile();
+            //   });
+            // }),
+
             20.h,
             BodyGroup(
               formGroup: widget.store.formGroup,
@@ -67,8 +80,7 @@ class _AddMedicineState extends State<AddMedicine> {
                     titleStyle: textTheme.headlineSmall,
                     maxLines: 1,
                     onChanged: (value) {
-                      // userStore.account.setIsChanged(true);
-                      // widget.store.updateData();
+                      nameDrugValue = value;
                     },
                   ),
                 ),
@@ -84,8 +96,8 @@ class _AddMedicineState extends State<AddMedicine> {
                     controller: dateStartController,
                     readOnly: true,
                     onTap: (value) async {
-                      await widget.store.selectDateTime(context);
                       dateStartController.text = widget.store.formattedDateTime;
+                      widget.store.formattedDateTime;
                     },
                   ),
                 ),
@@ -98,7 +110,9 @@ class _AddMedicineState extends State<AddMedicine> {
                         color: AppColors.blackColor,
                         fontWeight: FontWeight.w400),
                     maxLines: 1,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      doseValue = value;
+                    },
                   ),
                 ),
                 BodyItemWidget(
@@ -110,7 +124,9 @@ class _AddMedicineState extends State<AddMedicine> {
                         color: AppColors.blackColor,
                         fontWeight: FontWeight.w400),
                     maxLines: 1,
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      commentValue = value;
+                    },
                   ),
                 ),
               ],
@@ -171,7 +187,18 @@ class _AddMedicineState extends State<AddMedicine> {
                     title: t.trackers.save,
                     textStyle: AppTextStyles.f17w400
                         .copyWith(color: AppColors.primaryColor),
-                    onTap: () {},
+                    onTap: () async {
+                      final model = DrugModel(
+                        child_id: 'ad35f5d5-9911-4c12-bcda-9735b1946c8f',
+                        data_start: dateStartController.text,
+                        name_drug: nameDrugValue,
+                        dose: doseValue,
+                        notes: commentValue,
+                        reminder: widget.store.formattedTime,
+                        is_end: false,
+                      );
+                      widget.medicineStore.postData(model: model);
+                    },
                     icon: IconModel(
                       iconPath: Assets.icons.icPillsFilled,
                       color: AppColors.primaryColor,
