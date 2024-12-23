@@ -87,6 +87,7 @@ class __BodyState extends State<_Body> {
             if (widget.groupUsersStore != null) {
               context.pushNamed(AppViews.groupUsers, extra: {
                 'store': widget.groupUsersStore,
+                'groupInfo': (widget.item as GroupItem).groupInfo,
               });
             }
           },

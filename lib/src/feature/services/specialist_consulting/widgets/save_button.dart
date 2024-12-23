@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -15,11 +14,9 @@ class SaveButton extends StatelessWidget {
       child: CustomButton(
         backgroundColor: AppColors.lightBlueBackgroundStatus,
         onTap: () {
-          store.updateWorkTime();
+          store.updateWorkTime(context);
         },
-        title: "Сохранить",
-        icon: IconModel(
-            iconPath: Assets.icons.calendar, color: AppColors.primaryColor),
+        title: t.profile.save,
       ),
     );
   }

@@ -37,6 +37,8 @@ class Endpoint {
 
   String get userConsultations => '$consultation/user';
 
+  String get addConsultation => '$consultation/set';
+
   static const String school = 'online-school';
 
   String get schools => '$school/all';
@@ -64,6 +66,10 @@ class Endpoint {
   static const String doctor = 'doctor';
 
   String get doctorData => '$doctor/me';
+
+  String get doctorHoliday => '$doctor/holiday';
+
+  String get doctorCancelConsultations => '$doctor/cancel_consultations';
 
   String get updateDoctorWorkTime => '$doctor/update_work_time';
 

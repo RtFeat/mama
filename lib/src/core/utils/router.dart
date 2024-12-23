@@ -344,9 +344,10 @@ final GoRouter router = GoRouter(
                   final Map? extra = state.extra as Map?;
                   final GroupUsersStore? store =
                       extra?['store'] as GroupUsersStore?;
-
+                  final GroupChatInfo? groupInfo = extra?['groupInfo'];
                   return GroupUsersView(
                     store: store,
+                    groupInfo: groupInfo,
                   );
                 },
               )

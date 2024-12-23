@@ -28,15 +28,20 @@ class CalendarCell extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (isOnlyCalendar) {
-          context.pushNamed(AppViews.specialistSlots, extra: {
-            'event': event,
-          });
+          if (event.isNotEmpty) {
+            context.pushNamed(AppViews.specialistSlots, extra: {
+              'event': event,
+            });
+          }
         } else {
-          context.pushNamed(AppViews.consultation, extra: {
-            'consultation': Consultation(
-              id: data.consultationId,
-            )
-          });
+          if (event.first.description != null) {
+            context.pushNamed(AppViews.consultation, extra: {
+              'consultation': Consultation(
+                id: event.first.description,
+                startedAt: event.first.startTime,
+              )
+            });
+          }
         }
       },
       child: Column(

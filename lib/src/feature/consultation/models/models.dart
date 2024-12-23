@@ -7,3 +7,4 @@ export 'doctor_time.dart';
 export 'work_slot.dart';
 export 'school.dart';
 export 'schools.dart';
+export 'consult_slot.dart';

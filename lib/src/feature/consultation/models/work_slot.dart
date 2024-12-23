@@ -6,7 +6,7 @@ part 'work_slot.g.dart';
 @JsonSerializable()
 class WorkSlot extends _WorkSlot with _$WorkSlot {
   @JsonKey(name: 'is_busy')
-  final bool isBusy;
+  final bool? isBusy;
 
   @JsonKey(name: 'consultation_id')
   final String? consultationId;
@@ -18,7 +18,7 @@ class WorkSlot extends _WorkSlot with _$WorkSlot {
   final String? patientFullName;
 
   WorkSlot({
-    required this.isBusy,
+    this.isBusy,
     super.workSlot,
     this.consultationId,
     this.consultationType,

@@ -6,7 +6,12 @@ import 'package:provider/provider.dart';
 
 class MyConsultationWidget extends StatelessWidget {
   final Consultation consultation;
-  const MyConsultationWidget({super.key, required this.consultation});
+  final Color color;
+  const MyConsultationWidget({
+    super.key,
+    required this.consultation,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +22,23 @@ class MyConsultationWidget extends StatelessWidget {
 
     final Role role = userStore.role;
 
+    final Color commentColor = switch (consultation.status) {
+      ConsultationStatus.completed => AppColors.greenLighterBackgroundColor,
+      ConsultationStatus.rejected => AppColors.redLighterBackgroundColor,
+      ConsultationStatus.pending => AppColors.purpleLighterBackgroundColor,
+    };
+
     return Column(
       children: [
         ParagraphWidget(title: t.consultation.yourRecord, children: [
           ConsultationTypeWidget(
+            iconColor: color,
             type: consultation.type,
             mainAxisAlignment: MainAxisAlignment.center,
             textStyle: textTheme.titleSmall,
           ),
           ConsultationTime(
-              isWithTimeBefore: true,
+              status: consultation.status,
               startDate: consultation.startedAt ?? DateTime.now(),
               endDate: consultation.endedAt ?? DateTime.now()),
           20.h,
@@ -34,7 +46,7 @@ class MyConsultationWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: 8.r,
                 border: Border.all(
-                  color: AppColors.purpleLighterBackgroundColor,
+                  color: commentColor,
                   width: 2,
                 )),
             child: Column(
@@ -43,17 +55,19 @@ class MyConsultationWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       child: DecoratedBox(
-                        decoration: const BoxDecoration(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(8)),
-                          color: AppColors.purpleLighterBackgroundColor,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8)),
+                          color: commentColor,
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: AutoSizeText(
                             t.consultation.myComment,
                             maxLines: 1,
-                            style: textTheme.labelLarge,
+                            style: textTheme.labelLarge?.copyWith(
+                              color: color,
+                            ),
                           ),
                         ),
                       ),
@@ -62,9 +76,15 @@ class MyConsultationWidget extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: AutoSizeText(
-                    'dgdfgdfg' * 20,
-                    style: textTheme.titleSmall,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: AutoSizeText(
+                          consultation.comment ?? '',
+                          style: textTheme.titleSmall,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

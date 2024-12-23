@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,15 @@ class ConsultationView extends StatelessWidget {
 
     final DoctorStore doctorStore = context.watch<DoctorStore>();
 
+    logger.info('consultationId: ${consultation?.id}',
+        runtimeType: runtimeType);
+
+    logger.info('startedAt: ${consultation?.startedAt}',
+        runtimeType: runtimeType);
+
+    logger.info('weekday: ${consultation?.startedAt?.weekday}',
+        runtimeType: runtimeType);
+
     return Provider(
       create: (context) => ConsultationStore(
         restClient: context.read<Dependencies>().restClient,
@@ -26,8 +36,9 @@ class ConsultationView extends StatelessWidget {
         doctor: doctor,
         consultation: consultation,
         role: userStore.role,
-        workSlots: consultation != null
-            ? doctorStore.weekSlots[consultation?.startedAt?.day ?? 0]
+        consultationsSlots: consultation != null
+            ? doctorStore
+                .weekConsultations[consultation!.startedAt!.weekday - 1]
             : [],
         store: context.watch<ConsultationStore>(),
       ),
@@ -40,10 +51,10 @@ class _Body extends StatefulWidget {
   final Consultation? consultation;
   final Role role;
   final ConsultationStore store;
-  final List<WorkSlot> workSlots;
+  final List<ConsultationSlot> consultationsSlots;
   const _Body({
     this.doctor,
-    required this.workSlots,
+    required this.consultationsSlots,
     this.consultation,
     required this.role,
     required this.store,
@@ -61,9 +72,9 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     if (widget.role == Role.doctor) {
-      widget.store.loadData(id: widget.workSlots.first.consultationId);
+      widget.store.loadData(id: widget.consultation?.id);
       tabController =
-          TabController(length: widget.workSlots.length, vsync: this);
+          TabController(length: widget.consultationsSlots.length, vsync: this);
     }
     super.initState();
   }
@@ -75,7 +86,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   }
 
   void load() {
-    widget.store.loadData(id: widget.workSlots[selectedPage].consultationId);
+    widget.store.loadData(id: widget.consultationsSlots[selectedPage].id);
   }
 
   void prevPage() {
@@ -87,7 +98,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   }
 
   void nextPage() {
-    if (selectedPage < widget.workSlots.length - 1) {
+    if (selectedPage < widget.consultationsSlots.length - 1) {
       selectedPage++;
       tabController?.animateTo(selectedPage);
       load();
@@ -96,10 +107,24 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
     return Scaffold(
       appBar: CustomAppBar(
-        title: t.consultation.consultTitle,
-        action: widget.workSlots.length > 1
+        titleWidget: Observer(builder: (_) {
+          return Text(
+            t.consultation.consultTitle,
+            style: textTheme.titleLarge?.copyWith(
+              color: switch (widget.consultation?.status) {
+                ConsultationStatus.completed => AppColors.greenTextColor,
+                ConsultationStatus.rejected => AppColors.redColor,
+                _ => AppColors.primaryColor,
+              },
+            ),
+          );
+        }),
+        action: widget.consultationsSlots.length > 1
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -120,18 +145,21 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
       body: widget.role == Role.doctor
           ? TabBarView(
               controller: tabController,
-              children: widget.workSlots
+              children: widget.consultationsSlots
                   .map((e) => LoadingWidget(
                         future: widget.store.fetchFuture,
-                        builder: (data) => _RoleBody(
-                          patient: widget.consultation?.patient,
-                          doctor: widget.doctor,
-                          consultation: widget.consultation,
-                        ),
+                        builder: (data) {
+                          return _RoleBody(
+                            patient: widget.consultation?.patient,
+                            doctor:
+                                widget.consultation?.doctor ?? widget.doctor,
+                            consultation: data,
+                          );
+                        },
                       ))
                   .toList())
           : _RoleBody(
-              doctor: widget.doctor,
+              doctor: widget.consultation?.doctor ?? widget.doctor,
               patient: widget.consultation?.patient,
               consultation: widget.consultation,
             ),
@@ -156,24 +184,30 @@ class _RoleBody extends StatelessWidget {
     final TextTheme textTheme = themeData.textTheme;
     final UserStore userStore = context.watch<UserStore>();
 
+    final Color color = switch (consultation?.status) {
+      ConsultationStatus.completed => AppColors.greenTextColor,
+      ConsultationStatus.rejected => AppColors.redColor,
+      _ => AppColors.primaryColor,
+    };
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: [
         switch (userStore.role) {
           Role.doctor => ConsultationItem(
-              url: patient?.avatarUrl,
+              url: consultation?.patient?.avatarUrl ?? patient?.avatarUrl,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    patient?.name ?? '',
+                    consultation?.patient?.name ?? patient?.name ?? '',
                     maxLines: 1,
                     style: textTheme.bodyMedium,
                   ),
                   4.h,
                   Text(
-                    patient?.info ?? '',
+                    consultation?.patient?.info ?? patient?.info ?? '',
                     maxLines: 4,
                     style: textTheme.titleSmall?.copyWith(
                       fontSize: 14,
@@ -190,7 +224,13 @@ class _RoleBody extends StatelessWidget {
                     size: const Size(175, 175),
                     radius: 12),
                 6.h,
-                AutoSizeText(doctor?.account?.name ?? ''),
+                AutoSizeText(
+                  doctor?.account?.name ??
+                      consultation?.doctor?.fullName ??
+                      doctor?.fullName ??
+                      '',
+                ),
+                // doctor?.account?.name ?? ''),
                 // '${doctor?.account?.firstName} ${doctor?.account?.secondName}'),
                 6.h,
                 SizedBox(
@@ -206,8 +246,10 @@ class _RoleBody extends StatelessWidget {
         consultation != null
             ? MyConsultationWidget(
                 consultation: consultation!,
+                color: color,
               )
             : NewConsultationWidget(
+                doctorId: doctor?.id ?? '',
                 workTime: doctor?.workTime,
               ),
       ],

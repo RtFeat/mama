@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
@@ -29,7 +30,9 @@ abstract class _UserStore with Store {
 
   @computed
   bool get isPro =>
-      account.status == Status.trial || account.status == Status.subscribed;
+      kDebugMode ||
+      account.status == Status.trial ||
+      account.status == Status.subscribed;
 
   @computed
   // TODO: change this in production

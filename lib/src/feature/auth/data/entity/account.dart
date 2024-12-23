@@ -38,7 +38,38 @@ class AccountModel extends _AccountModel with _$AccountModel {
   factory AccountModel.fromJson(Map<String, dynamic> json) =>
       _$AccountModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AccountModelToJson(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountModel &&
+          id == other.id &&
+          fcmToken == other.fcmToken &&
+          gender == other.gender &&
+          role == other.role &&
+          status == other.status &&
+          runtimeType == other.runtimeType &&
+          firstName == other.firstName &&
+          secondName == other.secondName &&
+          phone == other.phone &&
+          avatarUrl == other.avatarUrl &&
+          email == other.email &&
+          profession == other.profession &&
+          info == other.info;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      fcmToken.hashCode ^
+      gender.hashCode ^
+      role.hashCode ^
+      status.hashCode ^
+      firstName.hashCode ^
+      secondName.hashCode ^
+      phone.hashCode ^
+      avatarUrl.hashCode ^
+      email.hashCode ^
+      profession.hashCode ^
+      info.hashCode;
 }
 
 abstract class _AccountModel extends BaseModel with Store {

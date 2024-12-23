@@ -89,10 +89,7 @@ class _CustomTableWidgetState extends State<CustomTableWidget> {
                   isToday: isToday,
                   isInMonth: isInMonth,
                   isOnlyCalendar: widget.isOnlyCalendar,
-                  data: DayOfWeek(
-                      day: date.day,
-                      // consultationId: widget.doctorStore.weekSlots[date.weekday][],
-                      events: filterEvents(event)));
+                  data: DayOfWeek(day: date.day, events: filterEvents(event)));
             },
           ),
         ));

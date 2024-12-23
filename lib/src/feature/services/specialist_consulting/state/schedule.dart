@@ -1,3 +1,6 @@
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
@@ -38,7 +41,7 @@ abstract class _ScheduleViewStore with Store {
     final updatedSlot = '$startTime - $endTime';
 
     for (var week in weeks) {
-      if (week.isWork) {
+      if (week.isWork ?? true) {
         final alreadyExists =
             week.workSlots.any((slot) => slot.workSlot == updatedSlot);
         if (!alreadyExists) {
@@ -51,7 +54,7 @@ abstract class _ScheduleViewStore with Store {
   @action
   void removeWorkSlots(int i) {
     for (var week in weeks) {
-      if (week.isWork) {
+      if (week.isWork ?? true) {
         week.workSlots.removeAt(i);
       }
     }
@@ -130,7 +133,15 @@ abstract class _ScheduleViewStore with Store {
     return '$hours:$minutes';
   }
 
-  Future updateWorkTime() async {
+  Future updateWorkTime(BuildContext context) async {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
+    final now = DateTime.now();
+    final days = now.weekday != 1 ? now.weekday - 1 : 0;
+
+    final monday = now.subtract(Duration(days: days));
+
     restClient.patch(Endpoint().updateDoctorWorkTime, body: {
       'monday': weeks[0],
       'tuesday': weeks[1],
@@ -139,7 +150,31 @@ abstract class _ScheduleViewStore with Store {
       'friday': weeks[4],
       'saturday': weeks[5],
       'sunday': weeks[6],
-      'week_start': DateTime.now().toUtc().toIso8601String(),
+      'week_start': monday.toUtc().toIso8601String(),
+    }).then((v) {
+      if (context.mounted) {
+        if (v?['status_code'] == 500) {
+          DelightToastBar(
+            autoDismiss: true,
+            builder: (context) => ToastCard(
+              title: Text(
+                t.consultation.cantChangeCurrentWeek,
+                style: textTheme.titleSmall,
+              ),
+            ),
+          ).show(context);
+        } else {
+          DelightToastBar(
+            autoDismiss: true,
+            builder: (context) => ToastCard(
+              title: Text(
+                t.consultation.scheduleSaved,
+                style: textTheme.titleSmall,
+              ),
+            ),
+          ).show(context);
+        }
+      }
     });
   }
 }

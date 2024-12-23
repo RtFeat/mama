@@ -56,6 +56,15 @@ class App extends StatelessWidget {
                 restClient: context.read<Dependencies>().restClient,
                 userId: context.read<UserStore>().user.id),
           ),
+          Provider(
+            create: (context) => ScheduleViewStore(
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+            dispose: (context, value) => value.dispose(),
+            create: (context) => CalendarStore(store: context.read()),
+          ),
         ],
         child: TranslationProvider(child: const MaterialContext()),
       );

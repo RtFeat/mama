@@ -27,7 +27,7 @@ class SubscribeBlockItem extends StatelessWidget {
         children: [
           Opacity(
             opacity: !userIsPro ? 0.25 : 1,
-            child: child,
+            child: AbsorbPointer(absorbing: !userIsPro, child: child),
           ),
           if (!userIsPro)
             Center(

@@ -29,60 +29,53 @@ class DateSwitchSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-        dispose: (context, value) => value.dispose(),
-        create: (context) => CalendarStore(store: context.read()),
-        builder: (context, child) {
-          final CalendarStore store = context.watch();
+    final CalendarStore store = context.watch();
 
-          final GlobalKey<MonthViewState> monthViewKey =
-              GlobalKey<MonthViewState>();
+    final GlobalKey<MonthViewState> monthViewKey = GlobalKey<MonthViewState>();
 
-          return Observer(builder: (context) {
-            return store.isCalendar || isOnlyCalendar
-                ? Column(
-                    children: [
-                      _Header(
-                        isOnlyCalendar: isOnlyCalendar,
-                        leftButtonOnPressed: (v) {
-                          leftButtonOnPressed(v);
-                          monthViewKey.currentState?.previousPage();
-                        },
-                        rightButtonOnPressed: (v) {
-                          rightButtonOnPressed(v);
-                          monthViewKey.currentState?.nextPage();
-                        },
-                        calendarButtonOnPressed: calendarButtonOnPressed,
-                        backToTodayOnPressed: () {
-                          monthViewKey.currentState!
-                              .animateToMonth(DateTime.now());
-                          if (backToTodayOnPressed != null) {
-                            backToTodayOnPressed!();
-                          }
-                        },
-                      ),
-                      CustomTableWidget(
-                        store: context.watch(),
-                        isOnlyCalendar: isOnlyCalendar,
-                        doctorStore: context.watch(),
-                        monthViewKey: monthViewKey,
-                      ),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      _Header(
-                        leftButtonOnPressed: leftButtonOnPressed,
-                        rightButtonOnPressed: rightButtonOnPressed,
-                        calendarButtonOnPressed: calendarButtonOnPressed,
-                        backToTodayOnPressed: backToTodayOnPressed,
-                      ),
-                      const SizedBox(height: 8),
-                      const SlotsWidget(),
-                    ],
-                  );
-          });
-        });
+    return Observer(builder: (context) {
+      return store.isCalendar || isOnlyCalendar
+          ? Column(
+              children: [
+                _Header(
+                  isOnlyCalendar: isOnlyCalendar,
+                  leftButtonOnPressed: (v) {
+                    leftButtonOnPressed(v);
+                    monthViewKey.currentState?.previousPage();
+                  },
+                  rightButtonOnPressed: (v) {
+                    rightButtonOnPressed(v);
+                    monthViewKey.currentState?.nextPage();
+                  },
+                  calendarButtonOnPressed: calendarButtonOnPressed,
+                  backToTodayOnPressed: () {
+                    monthViewKey.currentState!.animateToMonth(DateTime.now());
+                    if (backToTodayOnPressed != null) {
+                      backToTodayOnPressed!();
+                    }
+                  },
+                ),
+                CustomTableWidget(
+                  store: context.watch(),
+                  isOnlyCalendar: isOnlyCalendar,
+                  doctorStore: context.watch(),
+                  monthViewKey: monthViewKey,
+                ),
+              ],
+            )
+          : Column(
+              children: [
+                _Header(
+                  leftButtonOnPressed: leftButtonOnPressed,
+                  rightButtonOnPressed: rightButtonOnPressed,
+                  calendarButtonOnPressed: calendarButtonOnPressed,
+                  backToTodayOnPressed: backToTodayOnPressed,
+                ),
+                const SizedBox(height: 8),
+                const SlotsWidget(),
+              ],
+            );
+    });
   }
 }
 
@@ -111,11 +104,17 @@ class _Header extends StatelessWidget {
     final DoctorStore doctorStore = context.watch();
 
     return Observer(builder: (context) {
-      final bool isToday = store.selectedDate.day == DateTime.now().day;
-      final bool isTomorrow = store.selectedDate.day ==
-          DateTime.now().add(const Duration(days: 1)).day;
-      final bool isYesterday = store.selectedDate.day ==
-          DateTime.now().subtract(const Duration(days: 1)).day;
+      final DateTime now = DateTime.now();
+      final bool isToday = store.selectedDate.day == now.day;
+      final bool isTomorrow =
+          store.selectedDate.day == now.add(const Duration(days: 1)).day;
+      final bool isYesterday =
+          store.selectedDate.day == now.subtract(const Duration(days: 1)).day;
+
+      final String month =
+          t.home.monthsData.title[store.selectedDate.month - 1];
+      final String monthWithNumber =
+          t.home.monthsData.withNumbers[store.selectedDate.month - 1];
 
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -127,9 +126,12 @@ class _Header extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   store.setSelectedDate(
-                    store.selectedDate.subtract(
-                      const Duration(days: 1),
-                    ),
+                    store.isCalendar || isOnlyCalendar
+                        ? store.selectedDate
+                            .copyWith(month: store.selectedDate.month - 1)
+                        : store.selectedDate.subtract(
+                            const Duration(days: 1),
+                          ),
                   );
                   doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
                   leftButtonOnPressed(store.selectedDate);
@@ -143,31 +145,39 @@ class _Header extends StatelessWidget {
               /// #number date, word date
               Column(
                 children: [
-                  /// #number date
-                  Text(
-                    '${store.selectedDate.day} ${t.home.monthsData[store.selectedDate.month - 1]}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-
-                  /// #word date
-                  if (isToday || isTomorrow || isYesterday)
+                  if (store.isCalendar || isOnlyCalendar)
                     Text(
-                      isToday
-                          ? t.home.today
-                          : isTomorrow
-                              ? t.home.tomorrow
-                              : isYesterday
-                                  ? t.home.yesterday
-                                  : '',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.greyBrighterColor,
+                      '$month${store.selectedDate.year != now.year ? ' ${store.selectedDate.year}' : ''}',
+                      style: textTheme.titleSmall?.copyWith(
+                        fontSize: 14,
                       ),
                     ),
+                  if (!store.isCalendar && !isOnlyCalendar) ...[
+                    Text(
+                      '${store.selectedDate.day} $monthWithNumber',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+
+                    /// #word date
+                    if (isToday || isTomorrow || isYesterday)
+                      Text(
+                        isToday
+                            ? t.home.today
+                            : isTomorrow
+                                ? t.home.tomorrow
+                                : isYesterday
+                                    ? t.home.yesterday
+                                    : '',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.greyBrighterColor,
+                        ),
+                      ),
+                  ]
                 ],
               ),
 
@@ -175,9 +185,12 @@ class _Header extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   store.setSelectedDate(
-                    store.selectedDate.add(
-                      const Duration(days: 1),
-                    ),
+                    store.isCalendar || isOnlyCalendar
+                        ? store.selectedDate
+                            .copyWith(month: store.selectedDate.month + 1)
+                        : store.selectedDate.add(
+                            const Duration(days: 1),
+                          ),
                   );
                   doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
                   rightButtonOnPressed(store.selectedDate);

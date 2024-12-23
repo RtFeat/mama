@@ -61,3 +61,18 @@ articles(cardinal):
   other: $n статей
 
 chatWithUser: Чат с пользователем
+
+completed: Завершено
+canceled: Отменено
+
+
+schedule: Расписание
+scheduleSaved: Расписание сохранено
+cantChangeCurrentWeek: Вы не можете поменять рабочее время на текущую неделю
+
+consultationAdded: Консультация успешно добавлена
+makeAnAppointment: Записаться на консультацию
+hasConsultation: У вас уже есть консультация
+
+setDayAsHoliday: Сделать выходным
+cancelConsultations: Отменить все записи

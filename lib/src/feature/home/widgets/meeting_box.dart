@@ -20,10 +20,13 @@ class MeetingBox extends StatelessWidget {
 
   final TextStyle? tutorNameStyle;
 
+  final DateTime startedAt;
+
   const MeetingBox({
     super.key,
     this.icon,
     this.timeStyle,
+    required this.startedAt,
     required this.scheduledTime,
     required this.meetingType,
     required this.isCancelled,
@@ -36,12 +39,16 @@ class MeetingBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    logger.info('consultationId: $consultationId');
+    logger.info('startedAt: $startedAt');
+
     return GestureDetector(
       onTap: () {
         if (consultationId.isNotEmpty) {
           context.pushNamed(AppViews.consultation, extra: {
             'consultation': Consultation(
               id: consultationId,
+              startedAt: startedAt,
             )
           });
         }

@@ -40,18 +40,25 @@ abstract class _DoctorWorkTime with Store {
     required this.sunday,
   });
 
+  @JsonKey(name: 'Monday')
   final WeekDay? monday;
 
+  @JsonKey(name: 'Tuesday')
   final WeekDay? tuesday;
 
+  @JsonKey(name: 'Wednesday')
   final WeekDay? wednesday;
 
+  @JsonKey(name: 'Thursday')
   final WeekDay? thursday;
 
+  @JsonKey(name: 'Friday')
   final WeekDay? friday;
 
+  @JsonKey(name: 'Saturday')
   final WeekDay? saturday;
 
+  @JsonKey(name: 'Sunday')
   final WeekDay? sunday;
 
   @observable
@@ -88,7 +95,7 @@ abstract class _DoctorWorkTime with Store {
 
   @computed
   @JsonKey(includeToJson: false, includeFromJson: false)
-  List<WorkSlot>? get slots => switch (selectedTime.weekday) {
+  ObservableList<WorkSlot>? get slots => switch (selectedTime.weekday) {
         1 => monday?.workSlots,
         2 => tuesday?.workSlots,
         3 => wednesday?.workSlots,
@@ -96,6 +103,58 @@ abstract class _DoctorWorkTime with Store {
         5 => friday?.workSlots,
         6 => saturday?.workSlots,
         7 => sunday?.workSlots,
+        _ => ObservableList(),
+      };
+
+  ObservableList<WorkSlot>? slotByDay(int day) => switch (day) {
+        1 => monday?.workSlots,
+        2 => tuesday?.workSlots,
+        3 => wednesday?.workSlots,
+        4 => thursday?.workSlots,
+        5 => friday?.workSlots,
+        6 => saturday?.workSlots,
+        7 => sunday?.workSlots,
+        _ => ObservableList(),
+      };
+
+  @computed
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  List<ConsultationSlot> get consultationSlots =>
+      switch (selectedTime.weekday) {
+        1 => monday?.consultations ?? [],
+        2 => tuesday?.consultations ?? [],
+        3 => wednesday?.consultations ?? [],
+        4 => thursday?.consultations ?? [],
+        5 => friday?.consultations ?? [],
+        6 => saturday?.consultations ?? [],
+        7 => sunday?.consultations ?? [],
         _ => [],
       };
+
+  @action
+  void updateConsultations(int weekday, List<WorkSlot> consultationSlots) {
+    switch (weekday) {
+      case 1:
+        monday?.updateWorkSlots(consultationSlots);
+        break;
+      case 2:
+        tuesday?.updateWorkSlots(consultationSlots);
+        break;
+      case 3:
+        wednesday?.updateWorkSlots(consultationSlots);
+        break;
+      case 4:
+        thursday?.updateWorkSlots(consultationSlots);
+        break;
+      case 5:
+        friday?.updateWorkSlots(consultationSlots);
+        break;
+      case 6:
+        saturday?.updateWorkSlots(consultationSlots);
+        break;
+      case 7:
+        sunday?.updateWorkSlots(consultationSlots);
+        break;
+    }
+  }
 }

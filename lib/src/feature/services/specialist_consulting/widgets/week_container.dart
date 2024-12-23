@@ -41,12 +41,12 @@ class _WeekBloc extends StatelessWidget {
     final TextTheme textTheme = themeData.textTheme;
     return GestureDetector(
       onTap: () {
-        week.setIsWork(!week.isWork);
+        week.setIsWork(!(week.isWork ?? true));
       },
       child: Observer(builder: (context) {
         return DecoratedBox(
           decoration: BoxDecoration(
-            color: week.isWork ? AppColors.primaryColor : null,
+            color: (week.isWork ?? true) ? AppColors.primaryColor : null,
             borderRadius: borderRadius,
           ),
           child: Padding(
@@ -56,10 +56,11 @@ class _WeekBloc extends StatelessWidget {
                 Text(
                   week.title ?? '',
                   style: textTheme.bodyMedium?.copyWith(
-                      color:
-                          week.isWork ? Colors.white : AppColors.primaryColor),
+                      color: (week.isWork ?? true)
+                          ? Colors.white
+                          : AppColors.primaryColor),
                 ),
-                if (week.isWork)
+                if (week.isWork ?? true)
                   Expanded(
                       child: SvgPicture.asset(
                     Assets.icons.icCheck,

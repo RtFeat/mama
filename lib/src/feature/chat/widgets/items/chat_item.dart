@@ -66,6 +66,7 @@ class ChatItemWidget extends StatelessWidget {
     final bool isChat = item is SingleChatItem;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         context.pushNamed(AppViews.chatView, extra: {
           'item': item,

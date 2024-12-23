@@ -62,3 +62,20 @@ articles(cardinal):
 
 
 chatWithUser: Chat with user
+
+
+completed: Completed
+canceled: Canceled
+
+schedule: Schedule
+scheduleSaved: Schedule saved
+cantChangeCurrentWeek: You can't change the working time for the current week
+
+
+consultationAdded: Consultation added
+makeAnAppointment: Make an appointment
+hasConsultation: You already have a consultation
+
+
+setDayAsHoliday: Set day as holiday
+cancelConsultations: Cancel consultations

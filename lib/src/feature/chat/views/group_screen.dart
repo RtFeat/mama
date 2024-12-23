@@ -101,9 +101,10 @@ class _GroupScreenState extends State<GroupScreen> {
                 shrinkWrap: true,
                 itemCount: listSpecialist.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return PersonItem(
-                    person: listSpecialist[index],
-                  );
+                  return SizedBox.shrink();
+                  // return PersonItem(
+                  //   person: listSpecialist[index],
+                  // );
                 },
               ),
             ),
@@ -118,6 +119,7 @@ class _GroupScreenState extends State<GroupScreen> {
               child: Column(
                 children: [
                   Finder(
+                    onChanged: (v) {},
                     onPressedClear: () {
                       setState(() {
                         formGroup
@@ -128,11 +130,11 @@ class _GroupScreenState extends State<GroupScreen> {
                     },
                     formControlName: 'searchParticipant',
                     hintText: t.chat.hintSearchParticipant,
-                    onChange: () {
-                      setState(() {
-                        filterParticipant();
-                      });
-                    },
+                    // onChange: () {
+                    //   setState(() {
+                    //     filterParticipant();
+                    //   });
+                    // },
                   ),
                   const Divider(
                     indent: 16,
@@ -146,9 +148,10 @@ class _GroupScreenState extends State<GroupScreen> {
                       shrinkWrap: true,
                       itemCount: sortedParticipant.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return PersonItem(
-                          person: sortedParticipant[index],
-                        );
+                        return const SizedBox.shrink();
+                        // return PersonItem(
+                        //   person: sortedParticipant[index],
+                        // );
                       },
                     ),
                   ),

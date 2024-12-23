@@ -1,14 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/consultation/widgets/paragraph.dart';
+import 'package:provider/provider.dart';
 
 class NewConsultationWidget extends StatefulWidget {
+  final String doctorId;
   final DoctorWorkTime? workTime;
   const NewConsultationWidget({
     super.key,
+    required this.doctorId,
     required this.workTime,
   });
 
@@ -44,7 +46,11 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
       color: AppColors.primaryColor,
     );
 
+    final UserStore userStore = context.watch();
+
     final DoctorWorkTime? workTime = widget.workTime;
+
+    final ConsultationStore store = context.watch<ConsultationStore>();
 
     // final DoctorWorkTime workTime = DoctorWorkTime(
     //   id: '',
@@ -128,6 +134,7 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
             TextField(
               controller: _controller,
               style: inputTextStyle,
+              maxLines: null,
               onTapOutside: (event) => FocusScope.of(context).unfocus(),
               decoration: InputDecoration(
                   fillColor: AppColors.lavenderBlue.withOpacity(.5),
@@ -175,7 +182,9 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                           lastDate: DateTime.now().add(const Duration(
                             days: 30,
                           ))).then((v) {
-                        workTime?.setSelectedTime(v!);
+                        if (v != null) {
+                          workTime?.setSelectedTime(v);
+                        }
                       });
                   }
                 },
@@ -196,7 +205,7 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                   spacing: 6,
                   runSpacing: 6,
                   children: workTime!.slots!.map((e) {
-                    if (e.isBusy) {
+                    if (e.isBusy ?? false) {
                       return const SizedBox.shrink();
                     }
 
@@ -221,19 +230,31 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                     child: CustomButton(
                       onTap: isSelected
                           ? () {
-                              context.pushNamed(AppViews.webView, extra: {
-                                'url': 'https://google.com',
-                              });
+                              store.addConsultation(
+                                  doctorId: widget.doctorId,
+                                  userId: userStore.user.id ?? '',
+                                  comment: _controller.text.trim(),
+                                  slot: workTime?.slots
+                                          ?.firstWhere((v) => v.isSelected)
+                                          .workSlot
+                                          .replaceAll(' ', '') ??
+                                      '',
+                                  type: switch (_tabController.index) {
+                                    1 => ConsultationType.video,
+                                    2 => ConsultationType.express,
+                                    _ => ConsultationType.chat,
+                                  },
+                                  weekStart:
+                                      workTime?.weekStart ?? DateTime.now(),
+                                  weekDay: workTime?.selectedTime.weekday ?? 1);
+                              // context.pushNamed(AppViews.webView, extra: {
+                              //   'url': 'https://google.com',
+                              // });
                             }
                           : null,
                       title: isSelected
-                          ? t.consultation.signUpOnline
+                          ? t.consultation.makeAnAppointment
                           : t.consultation.selectTime,
-                      icon: isSelected
-                          ? IconModel(
-                              icon: Icons.language,
-                            )
-                          : null,
                     ),
                   ),
                 ],

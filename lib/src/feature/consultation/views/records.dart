@@ -25,9 +25,8 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
     return PaginatedLoadingWidget(
         emptyData: const SizedBox.shrink(),
         store: widget.store.recordsState,
-        itemBuilder: (context, index) {
-          final Consultation? consultation =
-              widget.store.recordsState.listData[index];
+        itemBuilder: (context, item) {
+          final Consultation? consultation = item;
 
           return ConsultationItem(
               onTap: () {

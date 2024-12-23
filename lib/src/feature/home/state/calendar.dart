@@ -36,28 +36,29 @@ abstract class _CalendarStore with Store {
   }
 
   void updateEvents() {
-    final DateTime now = DateTime.now();
-    final DateTime weekStart = now.subtract(Duration(days: now.weekday - 1));
-
-    store.weekSlots.asMap().forEach((dayIndex, dailySlots) {
+    store.weekConsultations.asMap().forEach((dayIndex, dailySlots) {
       // print('Day Index: $dayIndex, Slots: ${dailySlots.length}');
 
       for (var slot in dailySlots) {
         // Расчёт даты для текущего слота, добавляя индекс дня недели к начальной дате
-        DateTime slotDate = weekStart.add(Duration(days: dayIndex));
+        DateTime slotDate = store.weekStart.add(Duration(days: dayIndex));
 
         // print('Adding slot: ${slot.workSlot} for date: $slotDate');
+
+        // startedAt: e.slotTime(doctorStore.weekStart, true),
+
+        final DateTime slotTime = slot.slotTime(store.weekStart, true);
 
         // Создание и добавление события в controller
         controller.add(
           CalendarEventData(
-            title: slot.workSlot,
+            title: slot.consultationTime ?? '',
             date: DateTime(slotDate.year, slotDate.month, slotDate.day,
-                slot.startTime.hour, slot.startTime.minute),
-
-            startTime: slot.startTime,
-            endTime: slot.endTime,
-            event: slot.patientFullName ?? 'Доступно', // Или какое-то описание
+                slotTime.hour, slotTime.minute),
+            description: slot.id,
+            startTime: slot.slotTime(slotDate, true),
+            endTime: slot.slotTime(slotDate, false),
+            event: slot.fullName ?? 'Доступно', // Или какое-то описание
           ),
         );
       }

@@ -178,7 +178,9 @@ tomorrow: Tomorrow
 
 yesterday: Yesterday
 
-monthsData: [january, february, march, april, may, june, july, august, september, october, november, december]
+monthsData: 
+  withNumbers: [january, february, march, april, may, june, july, august, september, october, november, december]
+  title: [january, february, march, april, may, june, july, august, september, october, november, december]
 
 clickToSeeMore: Click to see more
 

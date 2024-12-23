@@ -1,5 +1,6 @@
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -27,30 +28,13 @@ class SpecialistDayView extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final DoctorStore doctorStore = context.watch();
 
-    logger.info(event);
+    final CalendarStore store = context.watch();
+    // Add 6 hours to the event date
+    // to format to utc correctly
+    final DateTime date = event.first.date.add(Duration(hours: 6));
 
     return Scaffold(
-      appBar: CustomAppBar(),
-      // title: '${event.first.date.day} ${t.home.monthsData[now.month - 1]}',
-      // action: event.first.date.day == now.day
-      //     ? DecoratedBox(
-      //         decoration: BoxDecoration(
-      //           color: AppColors.primaryColor,
-      //           borderRadius: BorderRadius.circular(16),
-      //         ),
-      //         child: Padding(
-      //           padding:
-      //               const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      //           child: Text(
-      //             t.home.today,
-      //             style: textTheme.titleLarge?.copyWith(
-      //               color: AppColors.whiteColor,
-      //               fontSize: 10,
-      //             ),
-      //           ),
-      //         ),
-      //       )
-      //     : const SizedBox.shrink()),
+      appBar: const CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
@@ -58,10 +42,10 @@ class SpecialistDayView extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '${event.first.date.day} ${t.home.monthsData[now.month - 1]}',
+                  '${date.day} ${t.home.monthsData.withNumbers[date.month - 1]}',
                   style: textTheme.titleLarge,
                 ),
-                if (event.first.date.day == now.day) ...[
+                if (date.day == now.day) ...[
                   10.w,
                   DecoratedBox(
                     decoration: BoxDecoration(
@@ -87,13 +71,10 @@ class SpecialistDayView extends StatelessWidget {
             Row(
               children: [
                 CustomButton(
-                  title: 'Сделать выходным',
+                  title: t.consultation.setDayAsHoliday,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('На бэкенде не реализовано'),
-                      ),
-                    );
+                    store.controller.removeAll(event);
+                    doctorStore.setDayHoliday(day: date);
                   },
                 ),
               ],
@@ -102,89 +83,48 @@ class SpecialistDayView extends StatelessWidget {
             Row(
               children: [
                 CustomButton(
-                  title: 'Отменить все записи',
+                  title: t.consultation.cancelConsultations,
                   backgroundColor: AppColors.redLighterBackgroundColor,
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('На бэкенде не реализовано'),
-                      ),
-                    );
+                    store.controller.removeAll(event);
+                    doctorStore.cancelConsultations(day: date);
                   },
                   icon: IconModel(icon: Icons.close, color: AppColors.redColor),
                 ),
               ],
             ),
             20.h,
-            ...doctorStore.slots.map((e) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    e.workSlot,
-                    style: textTheme.labelLarge?.copyWith(
-                      color: AppColors.greyBrighterColor,
-                    ),
-                  ),
-                  MeetingsSection(
-                      whichSection: 1,
-                      showDecoration: false,
-                      meetingsList: event
-                          .where((i) =>
-                              i.startTime?.hour ==
-                              int.parse(e.workSlot.split(':')[0]))
-                          .map((e) {
-                        final bool isLater = e.startTime!.hour > now.hour;
+            // ...doctorStore.slots.map((e) {
+            //   return SpecialistDaySlot(slot: e, event: event);
+            // })
 
-                        return MeetingBox(
-                            icon: IconModel(
-                              iconPath: !isLater
-                                  ? Assets.icons.icCheckmark
-                                  : Assets.icons.icClock,
-                              size: isLater
-                                  ? const Size(18, 18)
-                                  : const Size(12, 12),
-                              color: !isLater
-                                  ? AppColors.greenTextColor
-                                  : AppColors.primaryColor,
-                            ),
-                            timeStyle: textTheme.labelLarge?.copyWith(
-                              color: !isLater
-                                  ? AppColors.greenTextColor
-                                  : AppColors.primaryColor,
-                            ),
-                            tutorNameStyle: textTheme.titleSmall?.copyWith(
-                                fontSize: 14,
-                                color: !isLater
-                                    ? AppColors.greenTextColor
-                                    : AppColors.primaryColor),
-                            backgroundColor: !isLater
-                                ? AppColors.greenLighterBackgroundColor
-                                : AppColors.purpleLighterBackgroundColor,
-                            scheduledTime:
-                                formatTimeRange(e.startTime!, e.endTime!),
-                            meetingType: '',
-                            isCancelled: false,
-                            tutorFullName: '${e.event}',
-                            whichSection: 1,
-                            consultationId: '');
-                      }).toList()),
-
-                  // [
-                  //   MeetingBox(
-                  //       scheduledTime: 'sdfdsf',
-                  //       meetingType: 'dsf',
-                  //       isCancelled: false,
-                  //       tutorFullName: 'sdfd dfsdf',
-                  //       whichSection: 1,
-                  //       consultationId: '')
-                  // ])
-                ],
-              );
+            Observer(builder: (context) {
+              logger.info(doctorStore.weekSlots[date.weekday - 1].toList(),
+                  runtimeType: runtimeType);
+              return _Slots(
+                  slots: doctorStore.weekSlots[date.weekday - 1].toList(),
+                  event: event);
             })
           ],
         ),
       ),
     );
+  }
+}
+
+class _Slots extends StatelessWidget {
+  final List<WorkSlot> slots;
+  final List<CalendarEventData<Object?>> event;
+  const _Slots({
+    required this.slots,
+    required this.event,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+        children: slots
+            .map((e) => SpecialistDaySlot(slot: e, event: event))
+            .toList());
   }
 }

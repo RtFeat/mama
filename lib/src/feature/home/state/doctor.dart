@@ -38,7 +38,6 @@
 //         );
 // }
 
-import 'package:flutter/foundation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
@@ -51,7 +50,8 @@ class DoctorStore extends _DoctorStore with _$DoctorStore {
 }
 
 abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
-  _DoctorStore({required RestClient restClient})
+  final RestClient restClient;
+  _DoctorStore({required this.restClient})
       : super(
           fetchFunction: (_) => restClient.get(Endpoint().doctorData),
           transformer: (v) {
@@ -61,109 +61,52 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
         );
 
   @computed
-  List<WorkSlot> get slots => [
-        WorkSlot(
-          isBusy: false,
-          workSlot: '9:00 - 10:00',
-          consultationType: 'sdf',
-          patientFullName: 'dsfsdf sdf s',
-        ),
-        WorkSlot(
-          isBusy: false,
-          workSlot: '11:00 - 13:00',
-          consultationType: 'type1',
-          patientFullName: 'John Doe',
-        ),
-        WorkSlot(
-          isBusy: true,
-          workSlot: '13:00 - 14:00',
-          consultationType: 'type2',
-          patientFullName: 'Jane Smith',
-        ),
-        WorkSlot(
-          isBusy: true,
-          workSlot: '21:00 - 22:00',
-          consultationType: 'type2',
-          patientFullName: 'Jane Smith',
-        ),
-      ];
-  // data?.doctor?.workTime?.slots ?? [];
+  ObservableList<WorkSlot> get slots =>
+      data?.doctor?.workTime?.slots ?? ObservableList();
+
+  ObservableList<WorkSlot> slotsByDay(int weekDay) =>
+      data?.doctor?.workTime?.slotByDay(weekDay) ?? ObservableList();
 
   @computed
-  List<List<WorkSlot>> get weekSlots => [
-        data?.doctor?.workTime?.monday?.workSlots ??
-            (kDebugMode
-                ? [
-                    WorkSlot(
-                      isBusy: false,
-                      workSlot: '9:00 - 10:00',
-                      consultationType: 'sdf',
-                      patientFullName: 'dsfsdf sdf s',
-                    ),
-                    WorkSlot(
-                      isBusy: false,
-                      workSlot: '11:00 - 13:00',
-                      consultationType: 'type1',
-                      patientFullName: 'John Doe',
-                    ),
-                    WorkSlot(
-                      isBusy: true,
-                      workSlot: '13:00 - 14:00',
-                      consultationType: 'type2',
-                      patientFullName: 'Jane Smith',
-                    ),
-                    WorkSlot(
-                      isBusy: true,
-                      workSlot: '21:00 - 22:00',
-                      consultationType: 'type2',
-                      patientFullName: 'Jane Smith',
-                    ),
-                  ]
-                : []),
-        data?.doctor?.workTime?.tuesday?.workSlots ?? [],
-        data?.doctor?.workTime?.wednesday?.workSlots ??
-            (kDebugMode
-                ? [
-                    WorkSlot(
-                      isBusy: false,
-                      workSlot: '9:00 - 10:00',
-                      consultationType: 'sdf',
-                      patientFullName: 'dsfsdf sdf s',
-                    ),
-                    WorkSlot(
-                      isBusy: true,
-                      workSlot: '13:00 - 14:00',
-                      consultationType: 'type2',
-                      patientFullName: 'Jane Smith',
-                    ),
-                    WorkSlot(
-                      isBusy: true,
-                      workSlot: '21:00 - 22:00',
-                      consultationType: 'type2',
-                      patientFullName: 'Jane Smith',
-                    ),
-                  ]
-                : []),
-        data?.doctor?.workTime?.thursday?.workSlots ?? [],
-        data?.doctor?.workTime?.friday?.workSlots ?? [],
-        data?.doctor?.workTime?.saturday?.workSlots ?? [],
-        data?.doctor?.workTime?.sunday?.workSlots ?? [],
+  List<List<ConsultationSlot>> get weekConsultations => [
+        data?.doctor?.workTime?.monday?.consultations ?? [],
+        data?.doctor?.workTime?.tuesday?.consultations ?? [],
+        data?.doctor?.workTime?.wednesday?.consultations ?? [],
+        data?.doctor?.workTime?.thursday?.consultations ?? [],
+        data?.doctor?.workTime?.friday?.consultations ?? [],
+        data?.doctor?.workTime?.saturday?.consultations ?? [],
+        data?.doctor?.workTime?.sunday?.consultations ?? [],
       ];
 
+  @computed
+  List<ObservableList<WorkSlot>> get weekSlots => [
+        data?.doctor?.workTime?.monday?.workSlots ?? ObservableList(),
+        data?.doctor?.workTime?.tuesday?.workSlots ?? ObservableList(),
+        data?.doctor?.workTime?.wednesday?.workSlots ?? ObservableList(),
+        data?.doctor?.workTime?.thursday?.workSlots ?? ObservableList(),
+        data?.doctor?.workTime?.friday?.workSlots ?? ObservableList(),
+        data?.doctor?.workTime?.saturday?.workSlots ?? ObservableList(),
+        data?.doctor?.workTime?.sunday?.workSlots ?? ObservableList(),
+      ];
+
+  @computed
+  DateTime get weekStart => data?.doctor?.workTime?.weekStart ?? DateTime.now();
+
   @observable
-  int selectedDay = 0;
+  int selectedDay = DateTime.now().weekday - 1;
 
   @action
   setSelectedDay(int value) => selectedDay = value;
 
   @computed
-  ObservableList<List<WorkSlot>> get dividedSlots {
+  ObservableList<List<ConsultationSlot>> get dividedSlots {
+    logger.info('Week consultations: $weekConsultations');
     final now = DateTime.now();
-    List<WorkSlot> beforeNow = [];
-    List<WorkSlot> afterNow = [];
+    List<ConsultationSlot> beforeNow = [];
+    List<ConsultationSlot> afterNow = [];
 
-    for (var slot in weekSlots[selectedDay]) {
-      if (slot.startTime.isBefore(now)) {
+    for (var slot in weekConsultations[selectedDay]) {
+      if (slot.slotTime(weekStart, true).isBefore(now)) {
         beforeNow.add(slot);
       } else {
         afterNow.add(slot);
@@ -173,5 +116,23 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
     logger.info('${[beforeNow, afterNow]}');
 
     return ObservableList.of([beforeNow, afterNow]);
+  }
+
+  @action
+  void setDayHoliday({required DateTime day}) {
+    restClient.post(Endpoint().doctorHoliday, body: {
+      'date': day.toUtc().toIso8601String(),
+    }).then((v) {
+      data?.doctor?.workTime?.updateConsultations(day.weekday, []);
+    });
+  }
+
+  @action
+  void cancelConsultations({required DateTime day}) {
+    restClient.post(Endpoint().doctorCancelConsultations, body: {
+      'date': day.toUtc().toIso8601String(),
+    }).then((v) {
+      data?.doctor?.workTime?.updateConsultations(day.weekday, []);
+    });
   }
 }

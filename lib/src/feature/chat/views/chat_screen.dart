@@ -267,16 +267,17 @@ class _ChatScreenState extends State<ChatScreen> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Finder(
+        onChanged: (v) {},
         hintText: t.chat.hintSearchChat,
         formControlName: 'search',
         onPressedClear: () {
           _stopSearching();
         },
-        onChange: () {
-          setState(() {
-            filterMessage();
-          });
-        },
+        // onChange: () {
+        //   setState(() {
+        //     filterMessage();
+        //   });
+        // },
       ),
     );
   }
