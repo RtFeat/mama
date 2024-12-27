@@ -144,11 +144,20 @@ class _RecordingMicWidgetState extends State<RecordingMicWidget>
                   ),
                   width: micWidth,
                   height: micHeight,
-                  child: Image.asset(
-                    showSwipeOptions
-                        ? Assets.icons.audioFilled.path
-                        : Assets.icons.sound.path,
-                  ),
+                  // child: Image.asset(
+                  //   showSwipeOptions
+                  //       ? Assets.icons.audioFilled.path
+                  //       : Assets.icons.sound.path,
+                  // ),
+
+                  child: showSwipeOptions
+                      ? const Icon(
+                          AppIcons.mic,
+                        )
+                      : const Icon(
+                          AppIcons.mic,
+                          color: AppColors.greyLighterColor,
+                        ),
                 ),
               ],
             ),

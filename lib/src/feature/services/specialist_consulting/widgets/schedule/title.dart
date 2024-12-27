@@ -32,9 +32,13 @@ class SpecialistScheduleTitleWidget extends StatelessWidget {
                   children: [
                     IconWidget(
                         model: IconModel(
-                            iconPath: store.isCollapsed
-                                ? Assets.icons.chevronDown
-                                : Assets.icons.chevronUp)),
+                      icon: store.isCollapsed
+                          ? AppIcons.chevronDown
+                          : AppIcons.chevronUp,
+                      // iconPath: store.isCollapsed
+                      //     ? Assets.icons.chevronDown
+                      //     : Assets.icons.chevronUp
+                    )),
                     Text(
                       store.isCollapsed ? "Развернуть" : "Свернуть",
                       style: textTheme.titleMedium

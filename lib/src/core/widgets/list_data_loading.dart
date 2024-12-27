@@ -49,7 +49,7 @@ class PaginatedLoadingWidget<R> extends StatefulWidget {
   });
 
   @override
-  _PaginatedLoadingWidgetState<R> createState() =>
+  State<PaginatedLoadingWidget<R>> createState() =>
       _PaginatedLoadingWidgetState<R>();
 }
 

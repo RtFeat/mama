@@ -11,16 +11,6 @@ class SpecialistDayView extends StatelessWidget {
     required this.event,
   });
 
-  String formatTimeRange(DateTime startTime, DateTime endTime) {
-    // Форматируем время с ведущими нулями
-    String formatTime(DateTime time) {
-      return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-    }
-
-    // Возвращаем отформатированную строку
-    return '${formatTime(startTime)} - ${formatTime(endTime)}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
@@ -89,7 +79,8 @@ class SpecialistDayView extends StatelessWidget {
                     store.controller.removeAll(event);
                     doctorStore.cancelConsultations(day: date);
                   },
-                  icon: IconModel(icon: Icons.close, color: AppColors.redColor),
+                  icon: Icons.close,
+                  iconColor: AppColors.redColor,
                 ),
               ],
             ),
@@ -122,6 +113,10 @@ class _Slots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    logger.info(slots, runtimeType: runtimeType);
+
+    logger.info(event, runtimeType: runtimeType);
+
     return Column(
         children: slots
             .map((e) => SpecialistDaySlot(slot: e, event: event))

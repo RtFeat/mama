@@ -10,7 +10,7 @@ enum CustomButtonType {
 class CustomButton extends StatelessWidget {
   final Function()? onTap;
   final String? title;
-  final IconModel? icon;
+  final IconData? icon;
 
   final EdgeInsets? contentPadding;
   final EdgeInsets? padding;
@@ -103,11 +103,15 @@ class CustomButton extends StatelessWidget {
           mainAxisAlignment: mainAxisAlignment,
           children: [
             if (icon != null) ...[
-              IconWidget(
-                model: icon!.copyWith(
-                  color: iconColor,
-                ),
+              Icon(
+                icon,
+                color: iconColor,
               ),
+              // IconWidget(
+              //   model: icon!.copyWith(
+              //     color: iconColor,
+              //   ),
+              // ),
               8.w,
             ],
             Flexible(

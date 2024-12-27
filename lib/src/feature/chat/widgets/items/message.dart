@@ -13,20 +13,44 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     final UserStore userStore = context.watch<UserStore>();
     final bool isUser = item.senderId == userStore.account.id;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          // AvatarWidget(url: item., size: size, radius: radius)
-          MessageDecorationWidget(
-            isUser: isUser,
-            child: Text(item.text ?? ''),
+          !isUser
+              ? const AvatarWidget(url: null, size: Size(40, 40), radius: 20)
+              : const Spacer(),
+          Expanded(
+            flex: 5,
+            child: MessageDecorationWidget(
+              isUser: isUser,
+              child: Text(
+                item.text ?? '',
+                style: textTheme.titleSmall?.copyWith(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
+            ),
           ),
+          if (!isUser)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    AppIcons.arrowshapeTurnUpForward,
+                    color: AppColors.greyLighterColor,
+                  )),
+            ),
         ],
       ),
     );

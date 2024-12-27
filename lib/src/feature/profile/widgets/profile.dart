@@ -235,9 +235,10 @@ class _MomsProfileState extends State<MomsProfile> {
                       });
                     },
                     isSmall: false,
-                    icon: IconModel(
-                      icon: Icons.language,
-                    ),
+                    // icon: IconModel(
+                    //   icon: Icons.language,
+                    // ),
+                    icon: AppIcons.globe,
                     title: t.profile.settingsAccountButtonTitle,
                   ),
                 30.h,
@@ -335,11 +336,15 @@ class _MomsProfileState extends State<MomsProfile> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image(
-                            height: 17,
-                            image: AssetImage(
-                              Assets.icons.icAddChild.path,
-                            ),
+                          // Image(
+                          //   height: 17,
+                          //   image: AssetImage(
+                          //     Assets.icons.icAddChild.path,
+                          //   ),
+                          // ),
+                          Icon(
+                            AppIcons.plusSquareDashed,
+                            color: AppColors.primaryColor,
                           ),
                           16.w,
                           Text(

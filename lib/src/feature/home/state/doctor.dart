@@ -93,7 +93,7 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
   DateTime get weekStart => data?.doctor?.workTime?.weekStart ?? DateTime.now();
 
   @observable
-  int selectedDay = DateTime.now().weekday - 1;
+  int selectedDay = DateTime.now().weekday;
 
   @action
   setSelectedDay(int value) => selectedDay = value;
@@ -105,7 +105,7 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
     List<ConsultationSlot> beforeNow = [];
     List<ConsultationSlot> afterNow = [];
 
-    for (var slot in weekConsultations[selectedDay]) {
+    for (var slot in weekConsultations[selectedDay - 1]) {
       if (slot.slotTime(weekStart, true).isBefore(now)) {
         beforeNow.add(slot);
       } else {

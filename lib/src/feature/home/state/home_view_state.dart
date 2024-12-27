@@ -39,19 +39,18 @@ class HomeViewStore {
         );
 
   Future<void> loadAllArticles() async {
-    await allArticlesStore.loadPage(queryParams: {'page_size': '10'});
+    await allArticlesStore.loadPage(queryParams: {});
   }
 
   Future<void> loadForMeArticles(String accountId) async {
-    await forMeArticlesStore.loadPage(queryParams: {'page_size': '10'});
+    await forMeArticlesStore.loadPage(queryParams: {});
   }
 
   Future<void> loadOwnArticles(String accountId) async {
-    await ownArticlesStore.loadPage(queryParams: {'page_size': '10'});
+    await ownArticlesStore.loadPage(queryParams: {});
   }
 
   Future<void> loadSchoolCourses(String schoolId) async {
-    await coursesStore
-        .loadPage(queryParams: {'page_size': '10', 'school_id': schoolId});
+    await coursesStore.loadPage(queryParams: {'school_id': schoolId});
   }
 }

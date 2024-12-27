@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/feeding/widgets/add_pumping_input.dart';
 
@@ -49,7 +48,11 @@ class AddPumpingScreen extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        SvgPicture.asset(Assets.icons.icClock),
+                        // SvgPicture.asset(Assets.icons.icClock),
+                        Icon(
+                          AppIcons.clock,
+                          color: AppColors.greyLighterColor,
+                        ),
                         3.w,
                         Text(
                           '16:32',
@@ -60,7 +63,11 @@ class AddPumpingScreen extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        SvgPicture.asset(Assets.icons.calendar),
+                        // SvgPicture.asset(Assets.icons.calendar),
+                        Icon(
+                          AppIcons.calendar,
+                          color: AppColors.primaryColor,
+                        ),
                         5.w,
                         Text(
                           '14 сентября  ',
@@ -81,9 +88,12 @@ class AddPumpingScreen extends StatelessWidget {
                       width: double.infinity,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       type: CustomButtonType.outline,
-                      icon: IconModel(
-                          color: AppColors.primaryColor,
-                          iconPath: Assets.icons.icPencilFilled),
+                      // icon: IconModel(
+                      //     color: AppColors.primaryColor,
+                      //     iconPath: Assets.icons.icPencilFilled),
+
+                      icon: AppIcons.pencil,
+                      iconColor: AppColors.primaryColor,
                       title: t.feeding.note,
                       onTap: () {},
                     ),
@@ -96,7 +106,9 @@ class AddPumpingScreen extends StatelessWidget {
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       width: double.infinity,
                       type: CustomButtonType.filled,
-                      icon: IconModel(iconPath: Assets.icons.icClose),
+                      // icon: IconModel(iconPath: Assets.icons.icClose),
+                      icon: AppIcons.xmark,
+                      iconColor: AppColors.redColor,
                       title: t.feeding.cancel,
                       onTap: () {},
                     ),

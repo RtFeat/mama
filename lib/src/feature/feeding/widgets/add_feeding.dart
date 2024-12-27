@@ -56,7 +56,8 @@ class AddFeedingWidget extends StatelessWidget {
               isStart
                   ? const CurrentFeedingWidget()
                   : FeedingButtons(
-                      iconAsset: Assets.icons.icCalendar,
+                      // iconAsset: Assets.icons.icCalendar,
+                      iconAsset: AppIcons.calendar,
                       addBtnText: t.feeding.addManually,
                       learnMoreTap: () {},
                       addButtonTap: () {

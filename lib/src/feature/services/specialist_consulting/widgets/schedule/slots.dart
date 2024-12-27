@@ -61,8 +61,8 @@ class ScheduleSlotsWidget extends StatelessWidget {
                               padding: const EdgeInsets.only(right: 8),
                               child: IconWidget(
                                   model: IconModel(
-                                iconPath: Assets.icons.warning,
-                              )),
+                                      // iconPath: Assets.icons.warning,
+                                      icon: AppIcons.exclamationmarkCircle)),
                             ),
                           Text(formattedEndTime, style: timeStyle),
                         ],

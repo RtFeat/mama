@@ -36,7 +36,26 @@ class GroupItem extends _GroupItem with _$GroupItem {
   factory GroupItem.fromJson(Map<String, dynamic> json) =>
       _$GroupItemFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GroupItemToJson(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GroupItem &&
+          runtimeType == other.runtimeType &&
+          isCanDelete == other.isCanDelete &&
+          groupChatId == other.groupChatId &&
+          participantId == other.participantId &&
+          isWrite == other.isWrite &&
+          participant == other.participant &&
+          groupInfo == other.groupInfo;
+
+  @override
+  int get hashCode =>
+      isCanDelete.hashCode ^
+      groupChatId.hashCode ^
+      participantId.hashCode ^
+      isWrite.hashCode ^
+      participant.hashCode ^
+      groupInfo.hashCode;
 }
 
 abstract class _GroupItem extends ChatItem with Store {

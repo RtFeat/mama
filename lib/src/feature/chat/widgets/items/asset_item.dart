@@ -63,9 +63,13 @@ class AssetItemWidget extends StatelessWidget {
                               if (needIcon!)
                                 GestureDetector(
                                   onTap: () => onTapDownload,
-                                  child: Image.asset(
-                                    Assets.icons.download.path,
-                                    height: 28,
+                                  // child: Image.asset(
+                                  //   Assets.icons.download.path,
+                                  //   height: 28,
+                                  // ),
+                                  child: Icon(
+                                    AppIcons.arrowDownToLineCompact,
+                                    size: 28,
                                   ),
                                 ),
                             ],

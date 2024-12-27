@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -61,10 +60,14 @@ class _WeekBloc extends StatelessWidget {
                           : AppColors.primaryColor),
                 ),
                 if (week.isWork ?? true)
-                  Expanded(
-                      child: SvgPicture.asset(
-                    Assets.icons.icCheck,
+                  const Expanded(
+                      child: Icon(
+                    AppIcons.checkmark,
+                    color: AppColors.whiteColor,
                   ))
+                //  SvgPicture.asset(
+                //   Assets.icons.icCheck,
+                // )
               ],
             ),
           ),

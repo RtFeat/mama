@@ -56,7 +56,9 @@ class CurrentFeedingWidget extends StatelessWidget {
               child: CustomButton(
                 type: CustomButtonType.outline,
                 onTap: () {},
-                icon: IconModel(iconPath: Assets.icons.icPencilFilled),
+                // icon: IconModel(iconPath: Assets.icons.icPencilFilled),
+                icon: AppIcons.pencil,
+                iconColor: AppColors.greyLighterColor,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(
@@ -93,7 +95,9 @@ class CurrentFeedingWidget extends StatelessWidget {
                 onTap: () {
                   addFeeding.cancelFeeding();
                 },
-                icon: IconModel(iconPath: Assets.icons.icClose),
+                // icon: IconModel(iconPath: Assets.icons.icClose),
+                icon: AppIcons.xmark,
+                iconColor: AppColors.redColor,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(
@@ -108,7 +112,9 @@ class CurrentFeedingWidget extends StatelessWidget {
                 backgroundColor: AppColors.purpleLighterBackgroundColor,
                 onTap: () {},
                 title: 'Вручную',
-                icon: IconModel(iconPath: Assets.icons.icCalendar),
+                // icon: IconModel(iconPath: Assets.icons.icCalendar),
+                icon: AppIcons.calendar,
+                iconColor: AppColors.primaryColor,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 textStyle: textTheme.bodyMedium

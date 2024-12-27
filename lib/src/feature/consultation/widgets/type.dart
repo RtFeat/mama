@@ -20,7 +20,9 @@ class ConsultationTypeWidget extends StatelessWidget {
       case ConsultationType.chat:
         return _Widget(
           iconColor: iconColor,
-          iconPath: Assets.icons.chatIcon,
+          iconPath: AppIcons.messageCircleFill,
+
+          // iconPath: Assets.icons.chatIcon,
           title: t.consultation.type.chat,
           mainAxisAlignment: mainAxisAlignment,
           textStyle: textStyle,
@@ -28,7 +30,8 @@ class ConsultationTypeWidget extends StatelessWidget {
       case ConsultationType.video:
         return _Widget(
           iconColor: iconColor,
-          iconPath: Assets.icons.videoIcon,
+          // iconPath: Assets.icons.videoIcon,
+          iconPath: AppIcons.videoCircleFill,
           title: t.consultation.type.video,
           mainAxisAlignment: mainAxisAlignment,
           textStyle: textStyle,
@@ -36,7 +39,8 @@ class ConsultationTypeWidget extends StatelessWidget {
       case ConsultationType.express:
         return _Widget(
           iconColor: iconColor,
-          iconPath: Assets.icons.videoIcon,
+          // iconPath: Assets.icons.videoIcon,
+          iconPath: AppIcons.videoCircleFill,
           title: t.consultation.type.express,
           textStyle: textStyle,
           mainAxisAlignment: mainAxisAlignment,
@@ -48,7 +52,7 @@ class ConsultationTypeWidget extends StatelessWidget {
 }
 
 class _Widget extends StatelessWidget {
-  final String iconPath;
+  final IconData iconPath;
   final String title;
   final TextStyle? textStyle;
   final Color? iconColor;
@@ -69,7 +73,7 @@ class _Widget extends StatelessWidget {
     return Row(
       mainAxisAlignment: mainAxisAlignment,
       children: [
-        IconWidget(model: IconModel(iconPath: iconPath, color: iconColor)),
+        IconWidget(model: IconModel(icon: iconPath, color: iconColor)),
         2.w,
         SizedBox(
             height: 20,

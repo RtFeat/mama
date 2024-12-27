@@ -48,6 +48,15 @@ class SingleChatItem extends _SingleChatItem with _$SingleChatItem {
       _$SingleChatItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$SingleChatItemToJson(this);
+
+  @override
+  bool operator ==(Object other) =>
+      other is SingleChatItem &&
+      other.id == id &&
+      other.lastMessage == lastMessage;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 abstract class _SingleChatItem extends ChatItem with Store {

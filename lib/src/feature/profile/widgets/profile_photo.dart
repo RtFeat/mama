@@ -47,11 +47,19 @@ class ProfilePhoto extends StatelessWidget {
             right: 32,
             child: Align(
               alignment: Alignment.bottomRight,
-              child: IconButton(
-                icon: icon ??
-                    Image.asset(
-                      Assets.icons.icPhotoAdd.path,
-                      height: 64,
+              child: RawMaterialButton(
+                shape: const CircleBorder(),
+                fillColor: AppColors.primaryColor,
+                padding: EdgeInsets.all(20),
+                child: icon ??
+                    // Image.asset(
+                    //   Assets.icons.icPhotoAdd.path,
+                    //   height: 64,
+                    // ),
+                    const Icon(
+                      AppIcons.cameraOnRectangleFill,
+                      size: 32,
+                      color: AppColors.whiteColor,
                     ),
                 onPressed: onIconTap ??
                     () {
@@ -110,12 +118,17 @@ class DashedPhotoProfile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image(
-                    height: 64,
-                    image: AssetImage(
-                      Assets.icons.icPhotoAdd.path,
-                    ),
+                  const Icon(
+                    AppIcons.cameraOnRectangle,
+                    size: 64,
+                    color: AppColors.primaryColor,
                   ),
+                  // Image(
+                  //   height: 64,
+                  //   image: AssetImage(
+                  //     Assets.icons.icPhotoAdd.path,
+                  //   ),
+                  // ),
                   Text(t.profile.addPhotoTitle),
                 ],
               ),

@@ -153,9 +153,14 @@ class ChildBarWidget extends StatelessWidget {
                 : CircleAvatar(
                     radius: 64,
                     backgroundColor: AppColors.purpleLighterBackgroundColor,
-                    child: Image.asset(
-                      height: 56,
-                      Assets.icons.kidNoPhoto.path,
+                    // child: Image.asset(
+                    //   height: 56,
+                    //   Assets.icons.kidNoPhoto.path,
+                    //   color: AppColors.whiteColor,
+                    // ),
+                    child: Icon(
+                      AppIcons.faceDashed,
+                      size: 56,
                       color: AppColors.whiteColor,
                     ),
                   ),
@@ -167,10 +172,16 @@ class ChildBarWidget extends StatelessWidget {
                 onPressed: () {},
                 fillColor: AppColors.primaryColor,
                 shape: const CircleBorder(),
-                child: Image.asset(
-                  Assets.icons.icPhotoAdd.path,
-                  alignment: Alignment.center,
-                  height: 64,
+                padding: EdgeInsets.all(16),
+                // child: Image.asset(
+                //   Assets.icons.icPhotoAdd.path,
+                //   alignment: Alignment.center,
+                //   height: 64,
+                // ),
+                child: Icon(
+                  AppIcons.cameraOnRectangleFill,
+                  color: AppColors.whiteColor,
+                  size: 32,
                 ),
               ),
               // child: IconButton(

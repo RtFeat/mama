@@ -37,6 +37,24 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
     super.dispose();
   }
 
+  bool isNextWeek(DateTime? weekStart, DateTime? selectedTime) {
+    if (weekStart == null || selectedTime == null) return false;
+
+    // Приводим даты к началу недели (например, к понедельнику)
+    DateTime startOfWeek(DateTime date) {
+      return DateTime(date.year, date.month, date.day)
+          .subtract(Duration(days: date.weekday - 1));
+    }
+
+    DateTime startSelectedTime = startOfWeek(selectedTime);
+
+    // Рассчитываем разницу в неделях
+    final weekDifference = startSelectedTime.difference(weekStart).inDays ~/ 7;
+
+    // Если разница ровно 1 неделя, то это следующая неделя
+    return weekDifference == 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -47,40 +65,8 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
     );
 
     final UserStore userStore = context.watch();
-
     final DoctorWorkTime? workTime = widget.workTime;
-
     final ConsultationStore store = context.watch<ConsultationStore>();
-
-    // final DoctorWorkTime workTime = DoctorWorkTime(
-    //   id: '',
-    //   monday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   tuesday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   wednesday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   thursday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: false, workSlot: '10:00'),
-    //     WorkSlot(isBusy: false, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   friday: WeekDay(
-    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
-    //   saturday: WeekDay(
-    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
-    //   sunday: WeekDay(
-    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
-    // );
 
     return Column(
       children: [
@@ -91,16 +77,29 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                 items: [
                   ToggleButtonItem(
                       text: t.consultation.type_short.chat.title,
-                      icon: IconModel(iconPath: Assets.icons.chatIcon)),
+                      icon: IconModel(
+                        // iconPath: Assets.icons.chatIcon
+                        icon: AppIcons.messageCircleFill,
+                        color: AppColors.primaryColor,
+                      )),
                   ToggleButtonItem(
                       text: t.consultation.type_short.video.title,
-                      icon: IconModel(iconPath: Assets.icons.videoIcon)),
+                      icon: IconModel(
+                        // iconPath: Assets.icons.videoIcon
+                        icon: AppIcons.videoCircleFill,
+                        color: AppColors.primaryColor,
+                      )),
                   ToggleButtonItem(
                       text: t.consultation.type_short.express.title,
-                      icon: IconModel(iconPath: Assets.icons.videoIcon)),
+                      icon: IconModel(
+                        // iconPath: Assets.icons.videoIcon,
+                        icon: AppIcons.videoCircleFill,
+                        color: AppColors.primaryColor,
+                      )),
                 ],
                 onTap: (index) {
                   _tabController.animateTo(index);
+                  workTime?.setSelectedConsultationType(index);
                 },
                 btnWidth: MediaQuery.of(context).size.width * .3,
                 btnHeight: 48),
@@ -165,7 +164,9 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                   ToggleButtonItem(
                       text: t.consultation.select,
                       icon: IconModel(
-                        iconPath: Assets.icons.calendar,
+                        icon: AppIcons.calendar,
+                        color: AppColors.greyLighterColor,
+                        // iconPath: Assets.icons.calendar,
                       )),
                 ],
                 onTap: (index) {
@@ -192,8 +193,8 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                 btnHeight: 48),
             10.h,
             Observer(builder: (_) {
-              if ((workTime == null || workTime.slots == null) &&
-                  !(workTime?.isWork ?? false)) {
+              if ((workTime?.slots?.isEmpty ?? true) ||
+                  isNextWeek(workTime?.weekStart, workTime?.selectedTime)) {
                 return AutoSizeText(
                   t.consultation.noAvailableTime,
                   textAlign: TextAlign.center,
@@ -204,7 +205,7 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                 child: Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: workTime!.slots!.map((e) {
+                  children: workTime!.intervalSlots.map((e) {
                     if (e.isBusy ?? false) {
                       return const SizedBox.shrink();
                     }
@@ -234,8 +235,8 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                                   doctorId: widget.doctorId,
                                   userId: userStore.user.id ?? '',
                                   comment: _controller.text.trim(),
-                                  slot: workTime?.slots
-                                          ?.firstWhere((v) => v.isSelected)
+                                  slot: workTime?.intervalSlots
+                                          .firstWhere((v) => v.isSelected)
                                           .workSlot
                                           .replaceAll(' ', '') ??
                                       '',

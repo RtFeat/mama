@@ -21,6 +21,7 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
     widget.store.loadAllChats();
     widget.store.loadAllGroups(
       widget.childId,
+      // null,
     );
     super.initState();
   }

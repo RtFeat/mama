@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +41,7 @@ class TimeContainer extends StatelessWidget {
                 onTap: () {
                   store.removeWorkSlots(index);
                 },
-                child: SvgPicture.asset(Assets.icons.icClose),
+                child: Icon(AppIcons.xmark),
               ),
             ],
           ),

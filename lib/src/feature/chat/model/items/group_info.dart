@@ -23,6 +23,25 @@ class GroupChatInfo extends _GroupChatInfo with _$GroupChatInfo {
       _$GroupChatInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$GroupChatInfoToJson(this);
+
+  @override
+  String toString() =>
+      'GroupChatInfo(avatarUrl: $avatarUrl, groupChat: $groupChat, id: $id, name: $name)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is GroupChatInfo &&
+        other.avatarUrl == avatarUrl &&
+        other.groupChat == groupChat &&
+        other.id == id &&
+        other.name == name;
+  }
+
+  @override
+  int get hashCode =>
+      avatarUrl.hashCode ^ groupChat.hashCode ^ id.hashCode ^ name.hashCode;
 }
 
 abstract class _GroupChatInfo with Store {}

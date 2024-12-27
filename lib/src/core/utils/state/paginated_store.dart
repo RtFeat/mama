@@ -46,6 +46,7 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     final updatedParams = {
       ...this.queryParams,
       'page': '$currentPage',
+      'page_size': '$pageSize',
       'offset': '${pageSize * (currentPage - 1)}'
     };
 
@@ -96,6 +97,7 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
       }).catchError((e) {
         logger.error('Error in loadPage: $e');
         hasMore = false;
+        throw Exception(e);
       }).whenComplete(() {
         isLoading = false;
         logger.info('LoadPage completed');

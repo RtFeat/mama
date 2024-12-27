@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
@@ -33,7 +34,7 @@ class MeetingsSection extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.start,
-            children: meetingsList!.map((e) => e).toList(),
+            children: meetingsList!.mapIndexed((i, e) => e).toList(),
           ),
         ),
       ),

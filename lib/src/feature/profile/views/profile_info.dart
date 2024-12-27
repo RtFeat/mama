@@ -62,12 +62,19 @@ class ProfileInfoView extends StatelessWidget {
                       shape: const CircleBorder(),
                       color: AppColors.primaryColor,
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Image.asset(
-                          Assets.icons.icBnChatsTap.path,
+                        padding: const EdgeInsets.all(4),
+
+                        // child: Image.asset(
+                        //   Assets.icons.icBnChatsTap.path,
+                        //   color: AppColors.whiteColor,
+                        //   width: 32,
+                        //   height: 32,
+                        // ),
+
+                        child: Icon(
+                          AppIcons.bubbleLeftFill,
+                          size: 32,
                           color: AppColors.whiteColor,
-                          width: 32,
-                          height: 32,
                         ),
                       ),
                     ),
@@ -123,9 +130,10 @@ class ProfileInfoView extends StatelessWidget {
                               child: CustomButton(
                                 title: t.profile.consultationVariants,
                                 isSmall: false,
-                                icon: IconModel(
-                                  iconPath: Assets.icons.videoIcon,
-                                ),
+                                // icon: IconModel(
+                                //   iconPath: Assets.icons.videoIcon,
+                                // ),
+                                icon: AppIcons.videoBubbleLeftFill,
                                 onTap: () {},
                               ),
                             ),

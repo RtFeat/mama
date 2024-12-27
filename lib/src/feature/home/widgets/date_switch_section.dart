@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -133,11 +132,15 @@ class _Header extends StatelessWidget {
                             const Duration(days: 1),
                           ),
                   );
-                  doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
+                  doctorStore.setSelectedDay(store.selectedDate.weekday);
                   leftButtonOnPressed(store.selectedDate);
                 },
-                icon: SvgPicture.asset(
-                  Assets.icons.icArrowLeftFilled,
+                // icon: SvgPicture.asset(
+                //   Assets.icons.icArrowLeftFilled,
+                //   color: AppColors.primaryColor,
+                // ),
+                icon: const Icon(
+                  AppIcons.chevronBackward,
                   color: AppColors.primaryColor,
                 ),
               ),
@@ -192,11 +195,15 @@ class _Header extends StatelessWidget {
                             const Duration(days: 1),
                           ),
                   );
-                  doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
+                  doctorStore.setSelectedDay(store.selectedDate.weekday);
                   rightButtonOnPressed(store.selectedDate);
                 },
-                icon: SvgPicture.asset(
-                  Assets.icons.icArrowRightFilled,
+                // icon: SvgPicture.asset(
+                //   Assets.icons.icArrowRightFilled,
+                //   color: AppColors.primaryColor,
+                // ),
+                icon: const Icon(
+                  AppIcons.chevronForward,
                   color: AppColors.primaryColor,
                 ),
               ),
@@ -248,14 +255,12 @@ class _Header extends StatelessWidget {
                       calendarButtonOnPressed(store.selectedDate);
                     },
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    child: SizedBox(
+                    child: const SizedBox(
                       width: 48,
                       height: 48,
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: SvgPicture.asset(
-                          Assets.icons.icCalendarBadgeClockFilled,
-                        ),
+                      child: Icon(
+                        AppIcons.calendar,
+                        color: AppColors.primaryColor,
                       ),
                     ),
                   ),

@@ -49,7 +49,8 @@ class ArticleView extends StatelessWidget {
                   iconAlignment: IconAlignment.end,
                   icon: IconWidget(
                       model: IconModel(
-                    iconPath: Assets.icons.bookmark,
+                    // iconPath: Assets.icons.bookmark,
+                    icon: AppIcons.bookmark,
                   )),
                   title: t.home.toFavorites,
                   labelStyle: textTheme.titleSmall,

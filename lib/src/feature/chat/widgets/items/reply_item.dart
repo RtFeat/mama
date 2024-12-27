@@ -15,13 +15,18 @@ class ReplyItemWidget extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Flexible(
+          const Flexible(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                Assets.icons.replyFilled.path,
-                height: 28,
+              padding: EdgeInsets.all(8.0),
+              // child: Image.asset(
+              //   Assets.icons.replyFilled.path,
+              //   height: 28,
+              // ),
+              child: Icon(
+                AppIcons.arrowshapeTurnUpForwardFill,
+                size: 28,
+                color: AppColors.primaryColor,
               ),
             ),
           ),
@@ -35,9 +40,15 @@ class ReplyItemWidget extends StatelessWidget {
               onPressed: () {
                 onTapClose!();
               },
-              icon: Image.asset(
-                Assets.icons.close.path,
-                height: 28,
+              // icon: Image.asset(
+              //   Assets.icons.close.path,
+              //   height: 28,
+              // ),
+
+              icon: const Icon(
+                AppIcons.xmark,
+                color: AppColors.greyLighterColor,
+                size: 28,
               ),
             ),
           ),

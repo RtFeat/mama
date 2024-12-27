@@ -25,7 +25,7 @@ class ConsultationSlot {
   });
 
   DateTime slotTime(DateTime day, bool isStart) {
-    if (consultationTime == null) return DateTime.now();
+    // if (consultationTime == null) return DateTime.now();
 
     final parts = consultationTime!.split('-');
     final timeParts = parts[isStart ? 0 : 1].split(':');

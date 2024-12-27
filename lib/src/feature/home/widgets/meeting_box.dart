@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
 class MeetingBox extends StatelessWidget {
+  final int index;
   final String scheduledTime;
   final String meetingType;
   final bool isCancelled;
@@ -26,6 +26,7 @@ class MeetingBox extends StatelessWidget {
     super.key,
     this.icon,
     this.timeStyle,
+    required this.index,
     required this.startedAt,
     required this.scheduledTime,
     required this.meetingType,
@@ -39,8 +40,8 @@ class MeetingBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    logger.info('consultationId: $consultationId');
-    logger.info('startedAt: $startedAt');
+    logger.info('consultationId: $consultationId', runtimeType: runtimeType);
+    logger.info('startedAt: $startedAt', runtimeType: runtimeType);
 
     return GestureDetector(
       onTap: () {
@@ -49,7 +50,8 @@ class MeetingBox extends StatelessWidget {
             'consultation': Consultation(
               id: consultationId,
               startedAt: startedAt,
-            )
+            ),
+            'selectedTab': index,
           });
         }
       },
@@ -110,13 +112,25 @@ class MeetingBox extends StatelessWidget {
                       const SizedBox(width: 4),
 
                       /// #mark
-                      whichSection == 1
-                          ? SvgPicture.asset(
-                              isCancelled
-                                  ? Assets.icons.icXmark
-                                  : Assets.icons.icCheckmark,
-                            )
-                          : const SizedBox.shrink(),
+                      if (whichSection == 1)
+                        isCancelled
+                            ? const Icon(
+                                AppIcons.xmark,
+                                size: 14,
+                                color: AppColors.redColor,
+                              )
+                            : const Icon(
+                                AppIcons.checkmark,
+                                size: 14,
+                                color: AppColors.greenTextColor,
+                              )
+                      // ?
+                      // SvgPicture.asset(
+                      //     isCancelled
+                      //         ? Assets.icons.icXmark
+                      //         : Assets.icons.icCheckmark,
+                      //   )
+                      // : const SizedBox.shrink(),
                     ],
                   ),
 

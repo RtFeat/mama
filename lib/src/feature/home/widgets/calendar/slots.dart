@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
@@ -47,7 +48,8 @@ class SlotsWidget extends StatelessWidget {
               MeetingsSection(
                 whichSection: 1,
                 meetingsList: doctorStore.dividedSlots[0]
-                    .map((e) => MeetingBox(
+                    .mapIndexed((i, e) => MeetingBox(
+                        index: i,
                         consultationId: e.id ?? '',
                         scheduledTime: e.consultationTime ?? '',
                         meetingType: switch (e.type) {
@@ -68,7 +70,8 @@ class SlotsWidget extends StatelessWidget {
               MeetingsSection(
                 whichSection: 2,
                 meetingsList: doctorStore.dividedSlots[1]
-                    .map((e) => MeetingBox(
+                    .mapIndexed((i, e) => MeetingBox(
+                        index: i,
                         consultationId: e.id ?? '',
                         scheduledTime: e.consultationTime ?? '',
                         meetingType: switch (e.type) {

@@ -132,9 +132,7 @@ class ProfileScreen extends StatelessWidget {
                                   );
                                 });
                           },
-                          icon: IconModel(
-                            icon: Icons.language,
-                          ),
+                          icon: AppIcons.globe,
                         ),
                       ),
                       8.h,
@@ -148,9 +146,7 @@ class ProfileScreen extends StatelessWidget {
                                 });
                               },
                               isSmall: false,
-                              icon: IconModel(
-                                icon: Icons.language,
-                              ),
+                              icon: AppIcons.globe,
                               title: t.profile.settingsAccountButtonTitle,
                             )),
                         8.h,

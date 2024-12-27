@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/chat/chat.dart';
@@ -51,10 +50,13 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
                           onTap: () {
                             context.pop();
                           },
-                          child: SvgPicture.asset(
-                            Assets.icons.icArrowLeftFilled,
-                            width: 12,
-                            height: 20,
+                          // child: SvgPicture.asset(
+                          //   Assets.icons.icArrowLeftFilled,
+                          //   width: 12,
+                          //   height: 20,
+                          // ),
+                          child: Icon(
+                            AppIcons.chevronBackward,
                           ),
                         ),
                         16.w,
@@ -97,9 +99,13 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
                             onTap: () {
                               onTapSearch();
                             },
-                            child: Image.asset(
-                              height: 28,
-                              Assets.icons.magnifier.path,
+                            // child: Image.asset(
+                            //   height: 28,
+                            //   Assets.icons.magnifier.path,
+                            // ),
+                            child: Icon(
+                              AppIcons.magnifyingglass,
+                              size: 28,
                             ),
                           ),
                           8.w,

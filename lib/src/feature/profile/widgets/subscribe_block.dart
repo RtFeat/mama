@@ -35,10 +35,12 @@ class SubscribeBlockItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Image.asset(
-                    height: 80,
-                    Assets.icons.padlock.path,
-                  ),
+                  // Image.asset(
+                  //   height: 80,
+                  //   Assets.icons.padlock.path,
+                  // ),
+                  Icon(AppIcons.lockFill,
+                      size: 80, color: AppColors.primaryColor),
                   30.h,
                   Container(
                     padding: const EdgeInsets.all(12),
@@ -65,9 +67,7 @@ class SubscribeBlockItem extends StatelessWidget {
                               'url': 'https://google.com',
                             });
                           },
-                          icon: IconModel(
-                            icon: Icons.language,
-                          ),
+                          icon: AppIcons.globe,
                         ),
                       ],
                     ),

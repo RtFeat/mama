@@ -7,10 +7,12 @@ import 'package:provider/provider.dart';
 class ConsultationView extends StatelessWidget {
   final DoctorModel? doctor;
   final Consultation? consultation;
+  final int? selectedTab;
   const ConsultationView({
     super.key,
     this.doctor,
     this.consultation,
+    this.selectedTab,
   });
 
   @override
@@ -36,6 +38,7 @@ class ConsultationView extends StatelessWidget {
         doctor: doctor,
         consultation: consultation,
         role: userStore.role,
+        selectedTab: selectedTab,
         consultationsSlots: consultation != null
             ? doctorStore
                 .weekConsultations[consultation!.startedAt!.weekday - 1]
@@ -52,12 +55,14 @@ class _Body extends StatefulWidget {
   final Role role;
   final ConsultationStore store;
   final List<ConsultationSlot> consultationsSlots;
+  final int? selectedTab;
   const _Body({
     this.doctor,
     required this.consultationsSlots,
     this.consultation,
     required this.role,
     required this.store,
+    required this.selectedTab,
   });
 
   @override
@@ -67,14 +72,15 @@ class _Body extends StatefulWidget {
 class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   TabController? tabController;
 
-  int selectedPage = 0;
-
   @override
   void initState() {
     if (widget.role == Role.doctor) {
+      widget.store.setSelectedPage(widget.selectedTab ?? 0);
       widget.store.loadData(id: widget.consultation?.id);
-      tabController =
-          TabController(length: widget.consultationsSlots.length, vsync: this);
+      tabController = TabController(
+          length: widget.consultationsSlots.length,
+          vsync: this,
+          initialIndex: widget.selectedTab ?? 0);
     }
     super.initState();
   }
@@ -85,25 +91,25 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void load() {
-    widget.store.loadData(id: widget.consultationsSlots[selectedPage].id);
-  }
+  // void load() {
+  //   widget.store.loadData(id: widget.consultationsSlots[selectedPage].id);
+  // }
 
-  void prevPage() {
-    if (selectedPage > 0) {
-      selectedPage--;
-      tabController?.animateTo(selectedPage);
-      load();
-    }
-  }
+  // void prevPage() {
+  //   if (selectedPage > 0) {
+  //     selectedPage--;
+  //     tabController?.animateTo(selectedPage);
+  //     load();
+  //   }
+  // }
 
-  void nextPage() {
-    if (selectedPage < widget.consultationsSlots.length - 1) {
-      selectedPage++;
-      tabController?.animateTo(selectedPage);
-      load();
-    }
-  }
+  // void nextPage() {
+  //   if (selectedPage < widget.consultationsSlots.length - 1) {
+  //     selectedPage++;
+  //     tabController?.animateTo(selectedPage);
+  //     load();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -130,12 +136,20 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                 children: [
                   GestureDetector(
                       onTap: () {
-                        prevPage();
+                        widget.store.prevPage(
+                            consultationsSlots: widget.consultationsSlots,
+                            tabController: tabController);
+
+                        setState(() {});
                       },
                       child: const Icon(Icons.arrow_left_rounded)),
                   GestureDetector(
                       onTap: () {
-                        nextPage();
+                        widget.store.nextPage(
+                          consultationsSlots: widget.consultationsSlots,
+                          tabController: tabController,
+                        );
+                        setState(() {});
                       },
                       child: const Icon(Icons.arrow_right_rounded)),
                 ],
@@ -153,7 +167,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                             patient: widget.consultation?.patient,
                             doctor:
                                 widget.consultation?.doctor ?? widget.doctor,
-                            consultation: data,
+                            consultation: widget.store.data ?? Consultation(),
                           );
                         },
                       ))
@@ -161,7 +175,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           : _RoleBody(
               doctor: widget.consultation?.doctor ?? widget.doctor,
               patient: widget.consultation?.patient,
-              consultation: widget.consultation,
+              consultation: widget.consultation ?? Consultation(),
             ),
     );
   }

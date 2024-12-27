@@ -3,8 +3,8 @@ import 'package:mama/src/core/core.dart';
 
 class _Item {
   final String title;
-  final String iconPath;
-  final String iconPathTap;
+  final Icon iconPath;
+  final Icon iconPathTap;
   _Item({
     required this.title,
     required this.iconPath,
@@ -47,26 +47,59 @@ class _BottomBarState extends State<BottomBar> {
 
   late List<_Item> items = [
     _Item(
-      title: t.profile.bottomBarHome,
-      iconPath: Assets.icons.icBnHome.path,
-      iconPathTap: Assets.icons.icBnHomeTap.path,
-    ),
+        title: t.profile.bottomBarHome,
+        iconPath: Icon(
+          AppIcons.house,
+          color: AppColors.greyLighterColor,
+        ),
+        iconPathTap: Icon(
+          AppIcons.houseFill,
+          color: AppColors.primaryColor,
+        )
+        // iconPath: Assets.icons.icBnHome.path,
+        // iconPathTap: Assets.icons.icBnHomeTap.path,
+        ),
     if (widget.isUser)
       _Item(
         title: t.profile.bottomBarDiaries,
-        iconPath: Assets.icons.icBnDiary.path,
-        iconPathTap: Assets.icons.icBnDiary.path,
+        iconPath: Icon(
+          AppIcons.chartXyaxisLine,
+          color: AppColors.greyLighterColor,
+        ),
+        iconPathTap: Icon(
+          AppIcons.chartXyaxisLine,
+          color: AppColors.primaryColor,
+        ),
+
+        // iconPath: Assets.icons.icBnDiary.path,
+        // iconPathTap: Assets.icons.icBnDiary.path,
       ),
     _Item(
-      title: t.profile.bottomBarChats,
-      iconPath: Assets.icons.icBnChats.path,
-      iconPathTap: Assets.icons.icBnChatsTap.path,
-    ),
+        title: t.profile.bottomBarChats,
+        iconPath: Icon(
+          AppIcons.bubbleLeftFill,
+          color: AppColors.greyLighterColor,
+        ),
+        iconPathTap: Icon(
+          AppIcons.bubbleLeftFill,
+          color: AppColors.primaryColor,
+        )
+        // iconPath: Assets.icons.icBnChats.path,
+        // iconPathTap: Assets.icons.icBnChatsTap.path,
+        ),
     _Item(
-      title: t.profile.bottomBarServices,
-      iconPath: Assets.icons.icBnServices.path,
-      iconPathTap: Assets.icons.icBnServicesTap.path,
-    )
+        title: t.profile.bottomBarServices,
+        iconPath: Icon(
+          AppIcons.rectanglesGroupFill,
+          color: AppColors.greyLighterColor,
+        ),
+        iconPathTap: Icon(
+          AppIcons.rectanglesGroup,
+          color: AppColors.primaryColor,
+        )
+        // iconPath: Assets.icons.icBnServices.path,
+        // iconPathTap: Assets.icons.icBnServicesTap.path,
+        )
   ];
 
   @override
@@ -126,10 +159,11 @@ class _ItemWidget extends StatelessWidget {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    height: 28,
-                    item.iconPath,
-                  ),
+                  item.iconPath,
+                  // Image.asset(
+                  //   height: 28,
+                  //   item.iconPath,
+                  // ),
                   Text(
                     item.title,
                     style: textTheme.labelSmall,
@@ -148,11 +182,12 @@ class _ItemWidget extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        height: 28,
-                        item.iconPathTap,
-                        color: AppColors.primaryColor,
-                      ),
+                      item.iconPathTap,
+                      // Image.asset(
+                      //   height: 28,
+                      //   item.iconPathTap,
+                      //   color: AppColors.primaryColor,
+                      // ),
                       Text(
                         item.title,
                         style: textTheme.labelSmall!

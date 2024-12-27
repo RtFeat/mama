@@ -3,56 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/feature.dart';
 
-// class ChatItemSingle extends StatelessWidget {
-//   final ChatModelSingle chat;
-//   const ChatItemSingle({super.key, required this.chat});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ChatItemWidget(
-//       chatEntity: ChatEntity.singleChat,
-//       chatItem: ChatItemModel(
-//         avatarUrl: chat.participant1.avatarUrl,
-//         name: '${chat.participant1.firstName} ${chat.participant1.secondName} ',
-//         isAttach: chat.lastMessage?.filePath != null &&
-//             chat.lastMessage!.filePath!.isNotEmpty,
-//         profession: chat.participant1.profession,
-//         unreadMessages: chat.participant1Unread,
-//         lastMessageName: chat.lastMessage?.nickname,
-//         lastMessageText: chat.lastMessage?.text,
-//       ),
-//     );
-//   }
-// }
-
-// class ChatItemGroup extends StatelessWidget {
-//   final ChatModelGroup chat;
-//   const ChatItemGroup({super.key, required this.chat});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ChatItemWidget(
-//       chatEntity: ChatEntity.groupChat,
-//       chatItem: ChatItemModel(
-//         avatarUrl: chat.groupChatInfo.avatar ?? '',
-//         name: chat.groupChatInfo.name ?? '',
-//         isAttach: chat.lastMessage != null &&
-//             chat.lastMessage?.filePath != null &&
-//             chat.lastMessage!.filePath!.isNotEmpty,
-//         profession:
-//             chat.participant.profession!, //sender last message profession
-//         unreadMessages: chat.unreadMessages,
-//         lastMessageName: chat.lastMessage?.nickname,
-//         lastMessageText: chat.lastMessage?.text,
-//       ),
-//     );
-//   }
-// }
-
 class ChatItemWidget extends StatelessWidget {
   final ChatItem item;
-  // final ChatItemModel chatItem;
-  // final ChatEntity chatEntity;
   const ChatItemWidget({
     super.key,
     required this.item,
@@ -65,6 +17,10 @@ class ChatItemWidget extends StatelessWidget {
 
     final bool isChat = item is SingleChatItem;
 
+    final AccountModel? participant = isChat
+        ? (item as SingleChatItem).participant2
+        : (item as GroupItem).participant;
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -76,29 +32,13 @@ class ChatItemWidget extends StatelessWidget {
         children: [
           AvatarWidget(
               url: isChat
-                  ? (item as SingleChatItem).participant1?.avatarUrl
+                  ? participant?.avatarUrl
                   : (item as GroupItem).groupInfo?.avatarUrl,
+              // isChat
+              //     ? (item as SingleChatItem).participant2?.avatarUrl
+              //     : (item as GroupItem).groupInfo?.avatarUrl,
               size: const Size(56, 56),
               radius: 28),
-          // Flexible(
-          //   flex: 1,
-          //   child: chatItem.avatarUrl != null
-          //       ? CircleAvatar(
-          //           radius: 28,
-          //           backgroundImage: NetworkImage(
-          //             chatItem.avatarUrl!,
-          //           ))
-          //       : const SizedBox(
-          //           height: 56,
-          //           width: 56,
-          //           child: DecoratedBox(
-          //             decoration: BoxDecoration(
-          //               shape: BoxShape.circle,
-          //               color: AppColors.purpleLighterBackgroundColor,
-          //             ),
-          //           ),
-          //         ),
-          // ),
           8.w,
           Flexible(
             flex: 6,
@@ -117,19 +57,24 @@ class ChatItemWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: isChat
-                                ? '${(item as SingleChatItem).participant1?.firstName} ${(item as SingleChatItem).participant1?.secondName}'
+                                ? participant?.name
                                 : (item as GroupItem).groupInfo?.name,
+                            // isChat
+                            //     ? '${(item as SingleChatItem).participant2?.name}'
+                            //     : (item as GroupItem).groupInfo?.name,
                             style: textTheme.bodyMedium,
                           ),
                           if (isChat)
-                            if ((item as SingleChatItem)
-                                        .participant1
-                                        ?.profession !=
-                                    null &&
-                                (item as SingleChatItem)
-                                    .participant1!
-                                    .profession!
-                                    .isNotEmpty)
+                            if (participant?.profession != null &&
+                                participant!.profession!.isNotEmpty)
+                              // if ((item as SingleChatItem)
+                              //             .participant2
+                              //             ?.profession !=
+                              //         null &&
+                              //     (item as SingleChatItem)
+                              //         .participant2!
+                              //         .profession!
+                              //         .isNotEmpty)
                               // if (chatEntity == ChatEntity.singleChat)
                               //   if (chatItem.profession != null &&
                               //       chatItem.profession!.isNotEmpty)
@@ -165,12 +110,14 @@ class ChatItemWidget extends StatelessWidget {
                               style: textTheme.labelMedium,
                             ),
                             if (!isChat)
-                              if ((item as GroupItem).participant?.profession !=
-                                      null &&
-                                  (item as GroupItem)
-                                      .participant!
-                                      .profession!
-                                      .isNotEmpty)
+                              if (participant?.profession != null &&
+                                  participant!.profession!.isNotEmpty)
+                                // if ((item as GroupItem).participant?.profession !=
+                                //         null &&
+                                //     (item as GroupItem)
+                                //         .participant!
+                                //         .profession!
+                                //         .isNotEmpty)
                                 // if (chatEntity == ChatEntity.groupChat)
                                 //   if (chatItem.profession != null &&
                                 //       chatItem.profession!.isNotEmpty)
@@ -197,10 +144,16 @@ class ChatItemWidget extends StatelessWidget {
                     if (item.lastMessage != null &&
                         item.lastMessage?.filePath != null &&
                         item.lastMessage!.filePath!.isNotEmpty)
-                      Image.asset(
-                        Assets.icons.clip.path,
-                        height: 33,
-                      ),
+                      // Image.asset(
+                      //   Assets.icons.clip.path,
+                      //   height: 33,
+                      // ),
+
+                      Icon(
+                        AppIcons.paperclip,
+                        size: 33,
+                        color: AppColors.greyBrighterColor,
+                      )
                   ],
                 ),
               ],

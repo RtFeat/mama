@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/data.dart';
 
 class TrackWidget extends StatelessWidget {
@@ -46,10 +45,12 @@ class TrackWidget extends StatelessWidget {
                                   opacity: animation,
                                   child: child,
                                 ),
-                                child: SvgPicture.asset(
+                                child: Icon(
                                   model.isPlaying
-                                      ? Assets.icons.icPauseFilled
-                                      : Assets.icons.icPlayFilled,
+                                      ? AppIcons.pauseFill
+                                      // Assets.icons.icPauseFilled
+                                      : AppIcons.playFill,
+                                  // Assets.icons.icPlayFilled,
                                   key: ValueKey<bool>(model.isPlaying),
                                 ),
                               )),

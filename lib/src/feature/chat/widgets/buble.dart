@@ -94,9 +94,14 @@ class BubbleContainer extends StatelessWidget {
                 ? const SizedBox.shrink()
                 : IconButton(
                     onPressed: () => onTapReply(),
-                    icon: Image.asset(
-                      Assets.icons.reply.path,
-                      height: 28,
+                    // icon: Image.asset(
+                    //   Assets.icons.reply.path,
+                    //   height: 28,
+                    // ),
+                    icon: const Icon(
+                      AppIcons.arrowshapeTurnUpForward,
+                      size: 28,
+                      color: AppColors.greyLighterColor,
                     ),
                   ),
           ],

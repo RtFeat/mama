@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mama/src/data.dart';  
+import 'package:mama/src/data.dart';
 
 class CustomBackButton extends StatelessWidget {
   final Function()? onTap;
@@ -30,10 +30,13 @@ class CustomBackButton extends StatelessWidget {
         child: Row(
           children: [
             /// #arrow left
-            SvgPicture.asset(
-              Assets.icons.icArrowLeftFilled,
-              width: 12,
-              height: 20,
+            // SvgPicture.asset(
+            //   Assets.icons.icArrowLeftFilled,
+            //   width: 12,
+            //   height: 20,
+            // ),
+            Icon(
+              AppIcons.chevronBackward,
             ),
             if (isShowTitle) ...[
               const SizedBox(width: 12),

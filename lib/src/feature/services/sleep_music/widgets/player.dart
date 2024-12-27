@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
 
 class TrackPlayer extends StatelessWidget {
@@ -70,10 +69,15 @@ class TrackPlayer extends StatelessWidget {
                   /// #pause icon
                   IconButton(
                     onPressed: () {},
-                    icon: SvgPicture.asset(
-                      Assets.icons.icPauseFilled,
+                    // icon: SvgPicture.asset(
+                    //   Assets.icons.icPauseFilled,
+                    //   color: AppColors.primaryColor,
+                    //   width: 14,
+                    // ),
+
+                    icon: const Icon(
+                      AppIcons.pauseFill,
                       color: AppColors.primaryColor,
-                      width: 14,
                     ),
                   ),
 
@@ -110,17 +114,20 @@ class TrackPlayer extends StatelessWidget {
                       /// #infinity icon,
                       IconButton(
                         onPressed: () {},
-                        icon: SvgPicture.asset(
-                          Assets.icons.icInfinityCircled,
-                          width: 22,
-                        ),
+                        // icon: SvgPicture.asset(
+                        //   Assets.icons.icInfinityCircled,
+                        //   width: 22,
+                        // ),
+
+                        icon: const Icon(AppIcons.infinityCircle),
                       ),
 
                       /// #music forward icon
                       IconButton(
-                        icon: SvgPicture.asset(
-                          Assets.icons.icMusicForward,
-                        ),
+                        // icon: SvgPicture.asset(
+                        //   Assets.icons.icMusicForward,
+                        // ),
+                        icon: const Icon(AppIcons.forwardEndAltFill),
                         onPressed: () {},
                       ),
                     ],

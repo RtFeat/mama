@@ -51,7 +51,9 @@ class DocWidget extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: IconWidget(
                               model: IconModel(
-                            iconPath: Assets.icons.book,
+                            // iconPath: Assets.icons.book,
+                            icon: AppIcons.book,
+                            color: AppColors.primaryColor,
                           )),
                         )),
                   ),

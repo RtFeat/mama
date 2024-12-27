@@ -40,7 +40,8 @@ class SpecialistWorkTimeWidget extends StatelessWidget {
               textStyle:
                   textTheme.bodyMedium?.copyWith(color: AppColors.primaryColor),
               title: "Добавить рабочее время",
-              icon: IconModel(icon: Icons.add),
+              // icon: IconModel(icon: Icons.add),
+              icon: AppIcons.plus,
               onTap: () {
                 showTimePicker(
                   context: context,

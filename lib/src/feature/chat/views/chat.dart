@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:marquee/marquee.dart';
 import 'package:provider/provider.dart';
 
 class ChatView extends StatelessWidget {
@@ -79,26 +80,113 @@ class __BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
     return Scaffold(
       backgroundColor: AppColors.lightPirple,
-      appBar: CustomAppBar(
-        action: GestureDetector(
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        centerTitle: false,
+        titleSpacing: 0,
+        leading: GestureDetector(
           onTap: () {
-            if (widget.groupUsersStore != null) {
-              context.pushNamed(AppViews.groupUsers, extra: {
-                'store': widget.groupUsersStore,
-                'groupInfo': (widget.item as GroupItem).groupInfo,
-              });
-            }
+            context.pop();
           },
-          child: AvatarWidget(
-              url: widget.item is SingleChatItem
-                  ? (widget.item as SingleChatItem).participant2?.avatarUrl
-                  : (widget.item as GroupItem).groupInfo?.avatarUrl,
-              size: const Size(40, 40),
-              radius: 20),
+          child: const Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.iconColor,
+          ),
         ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: kToolbarHeight / 2,
+              child: Marquee(
+                text: (widget.item is SingleChatItem
+                        ? (widget.item as SingleChatItem).participant2?.name
+                        : (widget.item as GroupItem).groupInfo?.name) ??
+                    '',
+                velocity: 30,
+                blankSpace: 10,
+                style: textTheme.bodyMedium?.copyWith(letterSpacing: .01),
+              ),
+            ),
+            Text(
+              'sdfdsf',
+              style: textTheme.labelSmall,
+            ),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GestureDetector(
+              onTap: () {},
+              child: const Icon(Icons.search, color: AppColors.primaryColor),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              if (widget.groupUsersStore != null) {
+                context.pushNamed(AppViews.groupUsers, extra: {
+                  'store': widget.groupUsersStore,
+                  'groupInfo': (widget.item as GroupItem).groupInfo,
+                });
+              } else if (widget.item is SingleChatItem) {
+                context.pushNamed(AppViews.profileInfo, extra: {
+                  'model': (widget.item as SingleChatItem).participant2,
+                });
+              }
+            },
+            child: AvatarWidget(
+                url: widget.item is SingleChatItem
+                    ? (widget.item as SingleChatItem).participant2?.avatarUrl
+                    : (widget.item as GroupItem).groupInfo?.avatarUrl,
+                size: const Size(50, 50),
+                radius: 25),
+          ),
+          10.w,
+        ],
       ),
+
+      // CustomAppBar(
+      //   leading: GestureDetector(
+      //     onTap: () {
+      //       context.pop();
+      //     },
+      //     child: const Icon(
+      //       Icons.arrow_back_ios,
+      //       color: AppColors.iconColor,
+      //     ),
+      //   ),
+      //   titleWidget: Column(
+      //     crossAxisAlignment: CrossAxisAlignment.end,
+      //     children: [
+      //       Text((widget.item is SingleChatItem
+      //               ? (widget.item as SingleChatItem).participant2?.name
+      //               : (widget.item as GroupItem).groupInfo?.name) ??
+      //           ''),
+      //     ],
+      //   ),
+      //   action: GestureDetector(
+      //     onTap: () {
+      //       if (widget.groupUsersStore != null) {
+      //         context.pushNamed(AppViews.groupUsers, extra: {
+      //           'store': widget.groupUsersStore,
+      //           'groupInfo': (widget.item as GroupItem).groupInfo,
+      //         });
+      //       }
+      //     },
+      //     child: AvatarWidget(
+      //         url: widget.item is SingleChatItem
+      //             ? (widget.item as SingleChatItem).participant2?.avatarUrl
+      //             : (widget.item as GroupItem).groupInfo?.avatarUrl,
+      //         size: const Size(40, 40),
+      //         radius: 20),
+      //   ),
+      // ),
       body: PaginatedLoadingWidget(
         store: widget.store,
         itemBuilder: (context, item) {

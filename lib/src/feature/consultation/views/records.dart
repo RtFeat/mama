@@ -48,6 +48,7 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
                       badgeTitle: consultation?.doctor?.profession),
                   ConsultationTypeWidget(
                     type: consultation?.type ?? ConsultationType.chat,
+                    iconColor: AppColors.primaryColor,
                   ),
                 ],
               ));

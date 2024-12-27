@@ -85,13 +85,13 @@ abstract class _DoctorWorkTime with Store {
 
   @action
   void markAllAsNotSelected() {
-    for (WorkSlot? e in slots ?? []) {
+    for (WorkSlot? e in intervalSlots) {
       e?.select(false);
     }
   }
 
   @computed
-  bool get isSelectedDate => slots?.any((e) => e.isSelected) ?? false;
+  bool get isSelectedDate => intervalSlots.any((e) => e.isSelected);
 
   @computed
   @JsonKey(includeToJson: false, includeFromJson: false)
@@ -116,6 +116,61 @@ abstract class _DoctorWorkTime with Store {
         7 => sunday?.workSlots,
         _ => ObservableList(),
       };
+
+  @observable
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  int selectedConsultationType = 0;
+
+  @action
+  void setSelectedConsultationType(int value) =>
+      selectedConsultationType = value;
+
+  @computed
+  ObservableList<WorkSlot> get intervalSlots {
+    if (slots == null || slots!.isEmpty) {
+      return ObservableList<WorkSlot>();
+    }
+
+    final intervalMinutes = switch (selectedConsultationType) {
+      0 => 15,
+      1 => 60,
+      _ => 30,
+    };
+
+    final List<WorkSlot> result = [];
+
+    for (final slot in slots!) {
+      final startTime = slot.startTime;
+      final endTime = slot.endTime;
+
+      var currentStart = startTime;
+
+      while (currentStart.isBefore(endTime)) {
+        final currentEnd = currentStart.add(Duration(minutes: intervalMinutes));
+        if (currentEnd.isAfter(endTime)) break;
+
+        final formattedStart =
+            '${currentStart.hour.toString().padLeft(2, '0')}:${currentStart.minute.toString().padLeft(2, '0')}';
+        final formattedEnd =
+            '${currentEnd.hour.toString().padLeft(2, '0')}:${currentEnd.minute.toString().padLeft(2, '0')}';
+
+        final newWorkSlot = WorkSlot(
+          workSlot: '$formattedStart - $formattedEnd',
+          isBusy: slot.isBusy,
+          consultationId: slot.consultationId,
+          consultationType: slot.consultationType,
+          patientFullName: slot.patientFullName,
+        );
+
+        result.add(newWorkSlot);
+        currentStart = currentEnd;
+      }
+    }
+
+    // Убираем дублирующиеся записи
+    final uniqueSlots = result.toSet().toList();
+    return ObservableList<WorkSlot>.of(uniqueSlots);
+  }
 
   @computed
   @JsonKey(includeToJson: false, includeFromJson: false)

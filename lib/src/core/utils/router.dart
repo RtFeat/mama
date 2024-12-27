@@ -178,9 +178,12 @@ final GoRouter router = GoRouter(
                       final Consultation? consultation =
                           extra?['consultation'] as Consultation?;
 
+                      final int? selectedTab = extra?['selectedTab'] as int?;
+
                       return ConsultationView(
                         consultation: consultation,
                         doctor: doctor,
+                        selectedTab: selectedTab,
                       );
                     },
                   )

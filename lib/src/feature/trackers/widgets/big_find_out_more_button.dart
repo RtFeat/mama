@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
 
 class BigFindOutMoreButton extends StatelessWidget {
@@ -29,9 +28,10 @@ class BigFindOutMoreButton extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: IconButton(
                     onPressed: closeButtonOnPressed,
-                    icon: SvgPicture.asset(
-                      Assets.icons.icCrossMark,
-                    ),
+                    // icon: SvgPicture.asset(
+                    //   Assets.icons.icCrossMark,
+                    // ),
+                    icon: const Icon(AppIcons.xmark),
                   ),
                 ),
 
@@ -74,9 +74,10 @@ class BigFindOutMoreButton extends StatelessWidget {
                           vertical: 12,
                         ),
                         isSmall: false,
-                        icon: IconModel(
-                          iconPath: Assets.icons.icGraduationCapFilled,
-                        ),
+                        // icon: IconModel(
+                        //   iconPath: Assets.icons.icGraduationCapFilled,
+                        // ),
+                        icon: AppIcons.graduationcapFill,
                       ),
                     ],
                   ),

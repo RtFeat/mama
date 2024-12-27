@@ -53,17 +53,27 @@ class _MessageInputState extends State<MessageInput> {
                       //TODO! сделать кнопки внизу
                       prefixIcon: IconButton(
                         onPressed: () => widget.onTapSmile(),
-                        icon: Image.asset(
-                          Assets.icons.smile.path,
-                          height: 28,
+                        // icon: Image.asset(
+                        //   Assets.icons.smile.path,
+                        //   height: 28,
+                        // ),
+                        icon: const Icon(
+                          AppIcons.faceSmiling,
+                          color: AppColors.greyLighterColor,
+                          size: 28,
                         ),
                       ),
                       suffixIcon: (control.value != null && control.value != '')
                           ? IconButton(
                               onPressed: () {},
-                              icon: Image.asset(
-                                Assets.icons.send.path,
-                                height: 28,
+                              // icon: Image.asset(
+                              //   Assets.icons.send.path,
+                              //   height: 28,
+                              // ),
+                              icon: const Icon(
+                                AppIcons.send,
+                                size: 28,
+                                color: AppColors.primaryColor,
                               ),
                             )
                           : Row(
@@ -72,9 +82,14 @@ class _MessageInputState extends State<MessageInput> {
                               children: [
                                 IconButton(
                                   onPressed: () => widget.onTapAttach(),
-                                  icon: Image.asset(
-                                    Assets.icons.attach.path,
-                                    height: 24,
+                                  // icon: Image.asset(
+                                  //   Assets.icons.attach.path,
+                                  //   height: 24,
+                                  // ),
+                                  icon: const Icon(
+                                    AppIcons.paperclip,
+                                    size: 24,
+                                    color: AppColors.greyLighterColor,
                                   ),
                                 ),
                                 const SizedBox(

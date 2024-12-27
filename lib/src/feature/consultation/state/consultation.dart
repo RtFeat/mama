@@ -2,12 +2,22 @@ import 'package:delightful_toast/delight_toast.dart';
 import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:mobx/mobx.dart';
 
-class ConsultationStore extends SingleDataStore<Consultation> {
-  final RestClient restClient;
+part 'consultation.g.dart';
+
+class ConsultationStore extends _ConsultationStore with _$ConsultationStore {
   ConsultationStore({
-    required this.restClient,
-  }) : super(
+    required super.restClient,
+  });
+}
+
+abstract class _ConsultationStore extends SingleDataStore<Consultation>
+    with Store {
+  final RestClient restClient;
+
+  _ConsultationStore({required this.restClient})
+      : super(
             fetchFunction: (id) =>
                 restClient.get('${Endpoint.consultation}/$id'),
             transformer: (raw) {
@@ -65,5 +75,33 @@ class ConsultationStore extends SingleDataStore<Consultation> {
         ).show(navKey.currentContext!);
       }
     });
+  }
+
+  @observable
+  int selectedPage = 0;
+
+  @action
+  void setSelectedPage(int value) => selectedPage = value;
+
+  @action
+  void nextPage(
+      {required List<ConsultationSlot> consultationsSlots,
+      required TabController? tabController}) {
+    if (selectedPage < consultationsSlots.length - 1) {
+      selectedPage++;
+      tabController?.animateTo(selectedPage);
+      loadData(id: consultationsSlots[selectedPage].id);
+    }
+  }
+
+  @action
+  void prevPage(
+      {required List<ConsultationSlot> consultationsSlots,
+      required TabController? tabController}) {
+    if (selectedPage > 0) {
+      selectedPage--;
+      tabController?.animateTo(selectedPage);
+      loadData(id: consultationsSlots[selectedPage].id);
+    }
   }
 }

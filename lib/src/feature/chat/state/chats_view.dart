@@ -19,16 +19,13 @@ class ChatsViewStore {
         );
 
   Future loadAllChats() async {
-    await chats.loadPage(queryParams: {
-      'page_size': '10',
-    });
+    await chats.loadPage(queryParams: {});
   }
 
   Future loadAllGroups(
     String? childId,
   ) async {
     await groups.loadPage(queryParams: {
-      'page_size': '10',
       if (childId != null) 'child_id': childId,
     });
   }
