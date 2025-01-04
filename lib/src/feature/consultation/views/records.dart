@@ -39,8 +39,9 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ConsultationTime(
-                    startDate: consultation?.startedAt ?? DateTime.now(),
-                    endDate: consultation?.endedAt ?? DateTime.now(),
+                    startDate:
+                        consultation?.startedAt?.toLocal() ?? DateTime.now(),
+                    endDate: consultation?.endedAt?.toLocal() ?? DateTime.now(),
                   ),
                   ConsultationItemTitle(
                       name:

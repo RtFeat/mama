@@ -35,8 +35,8 @@ class App extends StatelessWidget {
                   )),
           Provider(
             create: (context) => UserStore(
-              restClient: context.read<Dependencies>().restClient,
-            ),
+                restClient: context.read<Dependencies>().restClient,
+                verifyStore: context.read()),
           ),
           Provider(
             create: (context) => ChildStore(

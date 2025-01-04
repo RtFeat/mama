@@ -21,15 +21,6 @@ class ConsultationView extends StatelessWidget {
 
     final DoctorStore doctorStore = context.watch<DoctorStore>();
 
-    logger.info('consultationId: ${consultation?.id}',
-        runtimeType: runtimeType);
-
-    logger.info('startedAt: ${consultation?.startedAt}',
-        runtimeType: runtimeType);
-
-    logger.info('weekday: ${consultation?.startedAt?.weekday}',
-        runtimeType: runtimeType);
-
     return Provider(
       create: (context) => ConsultationStore(
         restClient: context.read<Dependencies>().restClient,
@@ -42,7 +33,7 @@ class ConsultationView extends StatelessWidget {
         consultationsSlots: consultation != null
             ? doctorStore
                 .weekConsultations[consultation!.startedAt!.weekday - 1]
-            : [],
+            : null,
         store: context.watch<ConsultationStore>(),
       ),
     );
@@ -54,7 +45,7 @@ class _Body extends StatefulWidget {
   final Consultation? consultation;
   final Role role;
   final ConsultationStore store;
-  final List<ConsultationSlot> consultationsSlots;
+  final List<ConsultationSlot>? consultationsSlots;
   final int? selectedTab;
   const _Body({
     this.doctor,
@@ -76,9 +67,11 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
   void initState() {
     if (widget.role == Role.doctor) {
       widget.store.setSelectedPage(widget.selectedTab ?? 0);
-      widget.store.loadData(id: widget.consultation?.id);
+      widget.store.loadData(
+          id: widget.consultation?.id ??
+              widget.consultationsSlots?[widget.selectedTab ?? 0].id);
       tabController = TabController(
-          length: widget.consultationsSlots.length,
+          length: widget.consultationsSlots?.length ?? 1,
           vsync: this,
           initialIndex: widget.selectedTab ?? 0);
     }
@@ -130,14 +123,16 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
             ),
           );
         }),
-        action: widget.consultationsSlots.length > 1
+        action: widget.consultationsSlots != null &&
+                widget.consultationsSlots!.length > 1 &&
+                widget.role == Role.doctor
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
                       onTap: () {
                         widget.store.prevPage(
-                            consultationsSlots: widget.consultationsSlots,
+                            consultationsSlots: widget.consultationsSlots!,
                             tabController: tabController);
 
                         setState(() {});
@@ -146,7 +141,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                   GestureDetector(
                       onTap: () {
                         widget.store.nextPage(
-                          consultationsSlots: widget.consultationsSlots,
+                          consultationsSlots: widget.consultationsSlots!,
                           tabController: tabController,
                         );
                         setState(() {});
@@ -159,23 +154,23 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
       body: widget.role == Role.doctor
           ? TabBarView(
               controller: tabController,
-              children: widget.consultationsSlots
+              children: widget.consultationsSlots!
                   .map((e) => LoadingWidget(
                         future: widget.store.fetchFuture,
                         builder: (data) {
                           return _RoleBody(
-                            patient: widget.consultation?.patient,
-                            doctor:
-                                widget.consultation?.doctor ?? widget.doctor,
-                            consultation: widget.store.data ?? Consultation(),
-                          );
+                              patient: data?.patient,
+                              doctor: data?.doctor ?? widget.doctor,
+                              consultation: data);
                         },
                       ))
                   .toList())
           : _RoleBody(
               doctor: widget.consultation?.doctor ?? widget.doctor,
-              patient: widget.consultation?.patient,
-              consultation: widget.consultation ?? Consultation(),
+              patient:
+                  widget.store.data?.patient ?? widget.consultation?.patient,
+              consultation:
+                  widget.store.data ?? widget.consultation ?? Consultation(),
             ),
     );
   }
@@ -257,7 +252,7 @@ class _RoleBody extends StatelessWidget {
             ),
         },
         20.h,
-        consultation != null
+        consultation != null && consultation!.startedAt != null
             ? MyConsultationWidget(
                 consultation: consultation!,
                 color: color,

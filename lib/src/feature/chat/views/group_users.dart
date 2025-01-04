@@ -97,7 +97,10 @@ class _GroupUsersViewState extends State<GroupUsersView> {
                 backgroundBorderRadius: BorderRadius.circular(24),
                 title: t.chat.buttonToogleSpecialist,
                 items: widget.store?.doctors.map((e) {
-                      return PersonItem(person: e);
+                      return PersonItem(
+                        person: e,
+                        store: widget.store,
+                      );
                     }).toList() ??
                     [],
               ),
@@ -151,7 +154,10 @@ class _Users extends StatelessWidget {
           ),
           if (users != null)
             ...users!.map((e) {
-              return PersonItem(person: e);
+              return PersonItem(
+                person: e,
+                store: store,
+              );
             })
         ]);
   }

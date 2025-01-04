@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:very_good_infinite_list/very_good_infinite_list.dart';
 
-class PaginatedLoadingWidget<R> extends StatefulWidget {
+class PaginatedLoadingWidget<R> extends StatelessWidget {
   final PaginatedListStore<R> store;
+  final ObservableList<R>? Function()? listData;
+
   final Widget Function(BuildContext context, R item) itemBuilder;
   final ScrollPhysics? physics;
   final Axis scrollDirection;
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsets? padding;
 
-  final bool shrinkWrap;
+  final bool isReversed;
+
+  final bool isFewLists;
 
   final EdgeInsets? itemsPadding;
 
@@ -33,11 +38,13 @@ class PaginatedLoadingWidget<R> extends StatefulWidget {
 
   const PaginatedLoadingWidget({
     super.key,
+    this.listData,
     required this.store,
     required this.itemBuilder,
     this.scrollDirection = Axis.vertical,
     this.physics,
-    this.shrinkWrap = false,
+    this.isReversed = false,
+    this.isFewLists = false,
     this.itemsPadding,
     this.padding,
     this.separator,
@@ -49,101 +56,112 @@ class PaginatedLoadingWidget<R> extends StatefulWidget {
   });
 
   @override
-  State<PaginatedLoadingWidget<R>> createState() =>
-      _PaginatedLoadingWidgetState<R>();
-}
-
-class _PaginatedLoadingWidgetState<R> extends State<PaginatedLoadingWidget<R>> {
-  late final ScrollController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = ScrollController();
-
-    // Добавляем Listener для управления подгрузкой
-    _controller.addListener(() {
-      if (_controller.position.pixels >= _controller.position.maxScrollExtent &&
-          widget.store.hasMore &&
-          widget.store.fetchFuture.status != FutureStatus.pending) {
-        if (widget.onScrollEndReached != null) {
-          widget.onScrollEndReached!();
-        } else {
-          widget.store.loadPage(queryParams: {});
-        }
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose(); // Очищаем контроллер
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
-        if (widget.store.fetchFuture.status == FutureStatus.pending &&
-            widget.store.currentPage == 1) {
+        if (store.fetchFuture.status == FutureStatus.pending &&
+            store.currentPage == 1) {
           // Начальная загрузка
-          return widget.initialLoadingWidget ??
+          return initialLoadingWidget ??
               const Center(
                 child: CircularProgressIndicator(),
               );
         }
 
-        if (widget.store.fetchFuture.status == FutureStatus.rejected) {
+        if (store.fetchFuture.status == FutureStatus.rejected) {
           // Ошибка загрузки
-          return widget.errorWidget ??
+          return errorWidget ??
               Center(
                 child: Text(
-                  'Error loading data: ${widget.store.fetchFuture.error}',
+                  'Error loading data: ${store.fetchFuture.error}',
                 ),
               );
         }
 
-        if (widget.store.listData.isEmpty) {
+        if (store.listData.isEmpty) {
           // Пустые данные
-          return widget.emptyData ??
+          return emptyData ??
               const Center(
                 child: Text('No data available'),
               );
         }
-
-        return ListView.separated(
-          controller: _controller,
-          scrollDirection: widget.scrollDirection,
-          physics: widget.physics,
-          padding: widget.padding,
-          shrinkWrap: widget.shrinkWrap,
-          separatorBuilder: (context, index) =>
-              widget.separator ??
-              Padding(
-                  padding: widget.itemsPadding ??
-                      EdgeInsets.symmetric(
-                          horizontal:
-                              widget.scrollDirection == Axis.horizontal ? 8 : 0,
-                          vertical:
-                              widget.scrollDirection == Axis.vertical ? 8 : 0)),
-          itemCount: widget.store.listData.length +
-              (widget.store.hasMore ? 1 : 0), // Добавляем место для индикатора
-          itemBuilder: (context, index) {
-            if (index >= widget.store.listData.length) {
-              // Индикатор дополнительной загрузки
-              return widget.additionalLoadingWidget ??
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-            }
-            return widget.itemBuilder(context, widget.store.listData[index]);
-          },
+        return _DataWidget<R>(
+          listData: listData == null ? null : listData!(),
+          isFewLists: isFewLists,
+          itemsPadding: itemsPadding,
+          separator: separator,
+          store: store,
+          isReversed: isReversed,
+          itemBuilder: itemBuilder,
+          scrollDirection: scrollDirection,
+          physics: physics,
+          padding: padding,
         );
       },
+    );
+  }
+}
+
+class _DataWidget<R> extends StatelessWidget {
+  final PaginatedListStore store;
+  final List<R>? listData;
+  final Widget Function(BuildContext context, R item) itemBuilder;
+  final ScrollPhysics? physics;
+  final Axis scrollDirection;
+  final EdgeInsets? padding;
+  final bool isFewLists;
+
+  final EdgeInsets? itemsPadding;
+
+  final Widget? separator;
+
+  final bool isReversed;
+
+  const _DataWidget({
+    required this.listData,
+    required this.isFewLists,
+    required this.itemsPadding,
+    required this.separator,
+    required this.store,
+    required this.itemBuilder,
+    required this.scrollDirection,
+    required this.physics,
+    required this.padding,
+    this.isReversed = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final separatorWidget = separator ??
+        Padding(
+            padding: itemsPadding ??
+                EdgeInsets.symmetric(
+                    horizontal: scrollDirection == Axis.horizontal ? 8 : 0,
+                    vertical: scrollDirection == Axis.vertical ? 8 : 0));
+
+    if (isFewLists) {
+      return SliverInfiniteList(
+          isLoading: store.isLoading,
+          separatorBuilder: (context, index) => separatorWidget,
+          hasReachedMax: !store.hasMore,
+          itemCount: listData?.length ?? store.listData.length,
+          onFetchData: () => store.loadPage(queryParams: {}),
+          itemBuilder: (context, index) =>
+              itemBuilder(context, listData?[index] ?? store.listData[index]));
+    }
+
+    return InfiniteList(
+      physics: physics,
+      scrollDirection: scrollDirection,
+      padding: padding,
+      reverse: isReversed,
+      isLoading: store.isLoading,
+      separatorBuilder: (context, index) => separatorWidget,
+      hasReachedMax: !store.hasMore,
+      itemCount: listData?.length ?? store.listData.length,
+      onFetchData: () => store.loadPage(queryParams: {}),
+      itemBuilder: (context, index) =>
+          itemBuilder(context, listData?[index] ?? store.listData[index]),
     );
   }
 }

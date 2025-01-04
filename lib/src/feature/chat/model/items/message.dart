@@ -1,10 +1,75 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
+import 'package:mobx/mobx.dart';
 
 part 'message.g.dart';
 
+// @JsonSerializable()
+// class MessageItem extends BaseModel {
+//   final String? id;
+
+//   @JsonKey(name: 'chat_id')
+//   final String? chatId;
+
+//   @JsonKey(name: 'file_path')
+//   final String? filePath;
+
+//   final String? filename;
+
+//   @JsonKey(name: 'nick_name')
+//   final String? nickname;
+
+//   @JsonKey(name: 'read_at')
+//   final DateTime? readAt;
+
+//   @JsonKey(name: 'reply', fromJson: _replyFromJson)
+//   final dynamic reply;
+
+//   static _replyFromJson(value) {
+//     final isMap = value is Map<String, dynamic>;
+
+//     if (isMap) {
+//       return MessageItem.fromJson(value);
+//     }
+
+//     return value;
+//   }
+
+//   @JsonKey(name: 'files')
+//   final List<MessageFile>? files;
+
+//   @JsonKey(name: 'sender_id')
+//   final String? senderId;
+
+//   final String? text;
+
+//   @JsonKey(name: 'type_file')
+//   final String? typeFile;
+
+//   MessageItem({
+//     this.id,
+//     this.chatId,
+//     this.filePath,
+//     this.filename,
+//     this.nickname,
+//     this.readAt,
+//     this.files,
+//     this.reply,
+//     this.senderId,
+//     this.text,
+//     this.typeFile,
+//     super.createdAt,
+//     super.updatedAt,
+//   });
+
+//   factory MessageItem.fromJson(Map<String, dynamic> json) =>
+//       _$MessageItemFromJson(json);
+
+//   Map<String, dynamic> toJson() => _$MessageItemToJson(this);
+// }
+
 @JsonSerializable()
-class MessageItem extends BaseModel {
+class MessageItem extends _MessageItem with _$MessageItem {
   final String? id;
 
   @JsonKey(name: 'chat_id')
@@ -21,22 +86,6 @@ class MessageItem extends BaseModel {
   @JsonKey(name: 'read_at')
   final DateTime? readAt;
 
-  @JsonKey(name: 'reply', fromJson: _replyFromJson)
-  final dynamic reply;
-
-  static _replyFromJson(value) {
-    final isMap = value is Map<String, dynamic>;
-
-    if (isMap) {
-      return MessageItem.fromJson(value);
-    }
-
-    return value;
-  }
-
-  @JsonKey(name: 'files')
-  final List<MessageFile>? files;
-
   @JsonKey(name: 'sender_id')
   final String? senderId;
 
@@ -52,15 +101,81 @@ class MessageItem extends BaseModel {
     this.filename,
     this.nickname,
     this.readAt,
-    this.files,
-    this.reply,
+    super.files,
+    super.reply,
     this.senderId,
     this.text,
     this.typeFile,
+    super.createdAt,
+    super.updatedAt,
+    super.isAttached,
   });
 
   factory MessageItem.fromJson(Map<String, dynamic> json) =>
       _$MessageItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$MessageItemToJson(this);
+
+  MessageItem copyWith({
+    String? id,
+    String? chatId,
+    String? filePath,
+    String? filename,
+    String? nickname,
+    DateTime? readAt,
+    List<MessageFile>? files,
+    dynamic reply,
+    String? senderId,
+    String? text,
+    String? typeFile,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isAttached,
+  }) =>
+      MessageItem(
+        id: id ?? this.id,
+        chatId: chatId ?? this.chatId,
+        filePath: filePath ?? this.filePath,
+        filename: filename ?? this.filename,
+        nickname: nickname ?? this.nickname,
+        readAt: readAt ?? this.readAt,
+        files: files ?? this.files,
+        reply: reply ?? this.reply,
+        senderId: senderId ?? this.senderId,
+        text: text ?? this.text,
+        typeFile: typeFile ?? this.typeFile,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        isAttached: isAttached ?? this.isAttached,
+      );
+}
+
+abstract class _MessageItem extends BaseModel with Store {
+  _MessageItem({
+    required super.createdAt,
+    required super.updatedAt,
+    this.files,
+    this.reply,
+    this.isAttached = false,
+  });
+
+  @JsonKey(name: 'files')
+  List<MessageFile>? files;
+
+  @JsonKey(name: 'reply', fromJson: _replyFromJson)
+  dynamic reply;
+
+  static _replyFromJson(value) {
+    final isMap = value is Map<String, dynamic>;
+
+    if (isMap) {
+      return MessageItem.fromJson(value);
+    }
+
+    return value;
+  }
+
+  @observable
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool isAttached = false;
 }

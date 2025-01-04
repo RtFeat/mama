@@ -51,16 +51,18 @@ abstract class _WorkSlot with Store {
   DateTime get startTime {
     final parts = workSlot.split(' - ');
     final timeParts = parts[0].split(':');
-    final now = DateTime.now();
-    return DateTime(now.year, now.month, now.day, int.parse(timeParts[0]),
-        int.parse(timeParts[1]));
+    final now = DateTime.now().toLocal();
+    return DateTime.utc(now.year, now.month, now.day, int.parse(timeParts[0]),
+            int.parse(timeParts[1]))
+        .toLocal();
   }
 
   DateTime get endTime {
     final parts = workSlot.split(' - ');
     final timeParts = parts[1].split(':');
-    final now = DateTime.now();
-    return DateTime(now.year, now.month, now.day, int.parse(timeParts[0]),
-        int.parse(timeParts[1]));
+    final now = DateTime.now().toLocal();
+    return DateTime.utc(now.year, now.month, now.day, int.parse(timeParts[0]),
+            int.parse(timeParts[1]))
+        .toLocal();
   }
 }

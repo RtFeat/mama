@@ -32,20 +32,19 @@ abstract class _ScheduleViewStore with Store {
   @computed
   ObservableList<String> get workSlots => ObservableList.of(
         weeks
-            .expand((week) => week.workSlots.map((slot) => slot.workSlot))
+            .expand((week) => week.workSlots
+                .map((slot) => slot.startTime.timeRange(slot.endTime)))
             .toSet(),
       );
 
   @action
-  void updateWorkSlots(String startTime, String endTime) {
-    final updatedSlot = '$startTime - $endTime';
-
+  void updateWorkSlots(String slotTime) {
     for (var week in weeks) {
       if (week.isWork ?? true) {
         final alreadyExists =
-            week.workSlots.any((slot) => slot.workSlot == updatedSlot);
+            week.workSlots.any((slot) => slot.workSlot == slotTime);
         if (!alreadyExists) {
-          week.workSlots.add(WorkSlot(isBusy: true, workSlot: updatedSlot));
+          week.workSlots.add(WorkSlot(isBusy: true, workSlot: slotTime));
         }
       }
     }
@@ -137,11 +136,19 @@ abstract class _ScheduleViewStore with Store {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
-    final now = DateTime.now();
-    final days = now.weekday != 1 ? now.weekday - 1 : 0;
+    // Текущее UTC время
+    final now = DateTime.now().toUtc();
 
-    final monday = now.subtract(Duration(days: days));
+    // Определяем начало недели в UTC
+    final daysToSubtract = (now.weekday - 1) % 7; // Понедельник — 1
+    final mondayUtc = DateTime.utc(
+      now.year,
+      now.month,
+      now.day - daysToSubtract,
+      0, 0, 0, 0, // Устанавливаем начало дня
+    );
 
+    // Выполняем запрос
     restClient.patch(Endpoint().updateDoctorWorkTime, body: {
       'monday': weeks[0],
       'tuesday': weeks[1],
@@ -150,7 +157,7 @@ abstract class _ScheduleViewStore with Store {
       'friday': weeks[4],
       'saturday': weeks[5],
       'sunday': weeks[6],
-      'week_start': monday.toUtc().toIso8601String(),
+      'week_start': mondayUtc.toIso8601String(),
     }).then((v) {
       if (context.mounted) {
         if (v?['status_code'] == 500) {

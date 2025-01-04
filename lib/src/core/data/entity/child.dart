@@ -176,7 +176,8 @@ abstract class _ChildModel with Store {
   String get birthDateCounter {
     DateTime currentDate = DateTime.now();
 
-    Duration difference = currentDate.difference(birthDate ?? DateTime.now());
+    Duration difference =
+        currentDate.difference(birthDate?.toLocal() ?? DateTime.now());
 
     int months = (difference.inDays / 30).floor();
     int days = difference.inDays - (months * 30);
@@ -194,7 +195,8 @@ abstract class _ChildModel with Store {
   String get birthDateCounterInverted {
     DateTime currentDate = DateTime.now();
 
-    Duration difference = currentDate.difference(birthDate ?? DateTime.now());
+    Duration difference =
+        currentDate.difference(birthDate?.toLocal() ?? DateTime.now());
 
     int months = (difference.inDays / 30).floor();
     int days = difference.inDays - (months * 30);
@@ -245,7 +247,7 @@ abstract class _ChildModel with Store {
 
   @observable
   @JsonKey(
-    name: 'about',
+    name: 'info',
   )
   String? about;
 

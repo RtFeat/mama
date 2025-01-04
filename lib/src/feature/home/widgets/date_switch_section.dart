@@ -216,7 +216,7 @@ class _Header extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     store.selectedDate = DateTime.now();
-                    doctorStore.setSelectedDay(store.selectedDate.weekday - 1);
+                    doctorStore.setSelectedDay(store.selectedDate.weekday);
                     if (backToTodayOnPressed != null) backToTodayOnPressed!();
                   },
                   child: SizedBox(

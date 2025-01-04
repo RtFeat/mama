@@ -244,7 +244,7 @@ class __BodyState extends State<_Body> {
                         PaginatedLoadingWidget(
                             padding: EdgeInsets.zero,
                             store: widget.store.coursesStore,
-                            shrinkWrap: true,
+                            // shrinkWrap: true,
                             itemBuilder: (context, item) => SizedBox(
                                 height: 120,
                                 child: BodyItemDecoration(

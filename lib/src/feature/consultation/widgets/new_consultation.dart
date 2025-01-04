@@ -37,22 +37,18 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
     super.dispose();
   }
 
-  bool isNextWeek(DateTime? weekStart, DateTime? selectedTime) {
-    if (weekStart == null || selectedTime == null) return false;
+  bool isNotCurrentWeek(DateTime? weekStart, DateTime? selectedTime) {
+    if (weekStart == null || selectedTime == null) return true;
 
-    // Приводим даты к началу недели (например, к понедельнику)
     DateTime startOfWeek(DateTime date) {
-      return DateTime(date.year, date.month, date.day)
+      return DateTime.utc(date.year, date.month, date.day)
           .subtract(Duration(days: date.weekday - 1));
     }
 
     DateTime startSelectedTime = startOfWeek(selectedTime);
+    DateTime startWeekStart = startOfWeek(weekStart);
 
-    // Рассчитываем разницу в неделях
-    final weekDifference = startSelectedTime.difference(weekStart).inDays ~/ 7;
-
-    // Если разница ровно 1 неделя, то это следующая неделя
-    return weekDifference == 1;
+    return startSelectedTime != startWeekStart;
   }
 
   @override
@@ -63,6 +59,8 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
     final TextStyle inputTextStyle = textTheme.titleSmall!.copyWith(
       color: AppColors.primaryColor,
     );
+
+    final DateTime now = DateTime.now();
 
     final UserStore userStore = context.watch();
     final DoctorWorkTime? workTime = widget.workTime;
@@ -172,15 +170,16 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                 onTap: (index) {
                   switch (index) {
                     case 0:
-                      workTime?.setSelectedTime(DateTime.now());
+                      workTime?.setSelectedTime(now);
                     case 1:
-                      workTime?.setSelectedTime(
-                          DateTime.now().add(const Duration(days: 1)));
+                      workTime
+                          ?.setSelectedTime(now.add(const Duration(days: 1)));
                     case 2:
                       showDatePicker(
                           context: context,
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(
+                          initialDate: workTime?.selectedTime,
+                          firstDate: now,
+                          lastDate: now.add(const Duration(
                             days: 30,
                           ))).then((v) {
                         if (v != null) {
@@ -194,13 +193,15 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
             10.h,
             Observer(builder: (_) {
               if ((workTime?.slots?.isEmpty ?? true) ||
-                  isNextWeek(workTime?.weekStart, workTime?.selectedTime)) {
+                  isNotCurrentWeek(
+                      workTime?.weekStart, workTime?.selectedTime)) {
                 return AutoSizeText(
                   t.consultation.noAvailableTime,
                   textAlign: TextAlign.center,
                   style: textTheme.labelMedium,
                 );
               }
+
               return IntrinsicHeight(
                 child: Wrap(
                   spacing: 6,
@@ -231,26 +232,42 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                     child: CustomButton(
                       onTap: isSelected
                           ? () {
+                              final WorkSlot slot = workTime!.intervalSlots
+                                  .firstWhere((v) => v.isSelected);
+
+                              final parts = slot.workSlot.split(' - ');
+                              final startTimeParts = parts[0].split(':');
+                              final endTimeParts = parts[1].split(':');
+
+                              final startTimeLocal = DateTime(
+                                  now.year,
+                                  now.month,
+                                  now.day,
+                                  int.parse(startTimeParts[0]),
+                                  int.parse(startTimeParts[1]));
+
+                              final endTimeLocal = DateTime(
+                                  now.year,
+                                  now.month,
+                                  now.day,
+                                  int.parse(endTimeParts[0]),
+                                  int.parse(endTimeParts[1]));
+
                               store.addConsultation(
                                   doctorId: widget.doctorId,
                                   userId: userStore.user.id ?? '',
                                   comment: _controller.text.trim(),
-                                  slot: workTime?.intervalSlots
-                                          .firstWhere((v) => v.isSelected)
-                                          .workSlot
-                                          .replaceAll(' ', '') ??
-                                      '',
+                                  slot: startTimeLocal
+                                      .toUtc()
+                                      .timeRange(endTimeLocal.toUtc()),
                                   type: switch (_tabController.index) {
                                     1 => ConsultationType.video,
                                     2 => ConsultationType.express,
                                     _ => ConsultationType.chat,
                                   },
                                   weekStart:
-                                      workTime?.weekStart ?? DateTime.now(),
-                                  weekDay: workTime?.selectedTime.weekday ?? 1);
-                              // context.pushNamed(AppViews.webView, extra: {
-                              //   'url': 'https://google.com',
-                              // });
+                                      workTime.weekStart ?? DateTime.now(),
+                                  weekDay: workTime.selectedTime.weekday);
                             }
                           : null,
                       title: isSelected

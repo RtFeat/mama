@@ -47,43 +47,45 @@ class SlotsWidget extends StatelessWidget {
             if (doctorStore.dividedSlots[0].isNotEmpty)
               MeetingsSection(
                 whichSection: 1,
-                meetingsList: doctorStore.dividedSlots[0]
-                    .mapIndexed((i, e) => MeetingBox(
-                        index: i,
-                        consultationId: e.id ?? '',
-                        scheduledTime: e.consultationTime ?? '',
-                        meetingType: switch (e.type) {
-                          ConsultationType.chat => t.home.chat.title,
-                          ConsultationType.video => t.home.video.title,
-                          ConsultationType.express => t.home.express.title,
-                        },
+                meetingsList: doctorStore.dividedSlots[0].mapIndexed((i, e) {
+                  return MeetingBox(
+                      index: i,
+                      consultationId: e.id ?? '',
+                      scheduledTime: e.time,
+                      meetingType: switch (e.type) {
+                        ConsultationType.chat => t.home.chat.title,
+                        ConsultationType.video => t.home.video.title,
+                        ConsultationType.express => t.home.express.title,
+                      },
 
-                        //  e.type.name,
-                        isCancelled: false,
-                        tutorFullName: e.fullName ?? '',
-                        startedAt: e.slotTime(startedAt, true),
-                        whichSection: 1))
-                    .toList(),
+                      //  e.type.name,
+                      isCancelled: false,
+                      tutorFullName: e.fullName ?? '',
+                      startedAt: e.dateTime ?? e.slotTime(startedAt, true),
+                      whichSection: 1);
+                }).toList(),
               ),
             if (doctorStore.dividedSlots[1].isNotEmpty) ...[
               8.h,
               MeetingsSection(
                 whichSection: 2,
-                meetingsList: doctorStore.dividedSlots[1]
-                    .mapIndexed((i, e) => MeetingBox(
-                        index: i,
-                        consultationId: e.id ?? '',
-                        scheduledTime: e.consultationTime ?? '',
-                        meetingType: switch (e.type) {
-                          ConsultationType.chat => t.home.chat.title,
-                          ConsultationType.video => t.home.video.title,
-                          ConsultationType.express => t.home.express.title,
-                        },
-                        isCancelled: false,
-                        tutorFullName: e.fullName ?? '',
-                        startedAt: e.slotTime(startedAt, true),
-                        whichSection: 2))
-                    .toList(),
+                meetingsList: doctorStore.dividedSlots[1].mapIndexed((i, e) {
+                  logger.info('${e.dateTime}', runtimeType: runtimeType);
+
+                  return MeetingBox(
+                      index: i,
+                      consultationId: e.id ?? '',
+                      scheduledTime: e.time,
+                      meetingType: switch (e.type) {
+                        ConsultationType.chat => t.home.chat.title,
+                        ConsultationType.video => t.home.video.title,
+                        ConsultationType.express => t.home.express.title,
+                      },
+                      isCancelled: false,
+                      tutorFullName: e.fullName ?? '',
+                      startedAt: e.dateTime ?? e.slotTime(startedAt, true),
+                      whichSection: 2);
+                }).toList(),
               )
             ]
           ]

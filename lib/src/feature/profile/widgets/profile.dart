@@ -255,7 +255,7 @@ class _MomsProfileState extends State<MomsProfile> {
                     child: BodyGroup(title: t.profile.titleCourses, items: [
                       PaginatedLoadingWidget(
                           padding: EdgeInsets.zero,
-                          shrinkWrap: true,
+                          // shrinkWrap: true,
                           store: widget.homeStore!.coursesStore,
                           itemBuilder: (_, data) => SizedBox(
                               height: 120,

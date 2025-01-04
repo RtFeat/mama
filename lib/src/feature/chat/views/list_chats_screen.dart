@@ -2,18 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
-class ChatsListScreen extends StatefulWidget {
+class ChatsListScreen extends StatelessWidget {
   final CustomAppBar appBar;
   const ChatsListScreen({
     super.key,
     required this.appBar,
   });
 
-  @override
-  State<ChatsListScreen> createState() => _ChatsListScreenState();
-}
-
-class _ChatsListScreenState extends State<ChatsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Provider(
@@ -25,7 +20,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.purpleLighterBackgroundColor,
-          appBar: widget.appBar,
+          appBar: appBar,
           body: SubscribeBlockItem(
               child: ChatsBodyWidget(
             store: store,

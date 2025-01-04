@@ -48,8 +48,10 @@ class SpecialistWorkTimeWidget extends StatelessWidget {
                   initialTime: const TimeOfDay(hour: 8, minute: 0),
                 ).then((v) {
                   if (v != null) {
-                    final start =
-                        '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
+                    final DateTime start =
+                        DateTime(0, 1, 1, v.hour, v.minute).toUtc();
+                    // final start =
+                    //     '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
 
                     if (context.mounted) {
                       showTimePicker(
@@ -57,10 +59,12 @@ class SpecialistWorkTimeWidget extends StatelessWidget {
                               initialTime: const TimeOfDay(hour: 10, minute: 0))
                           .then((v) {
                         if (v != null) {
-                          final end =
-                              '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
+                          final DateTime end =
+                              DateTime(0, 1, 1, v.hour, v.minute).toUtc();
+                          // final end =
+                          //     '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
 
-                          store.updateWorkSlots(start, end);
+                          store.updateWorkSlots(start.timeRange(end));
                         }
                       });
                     }

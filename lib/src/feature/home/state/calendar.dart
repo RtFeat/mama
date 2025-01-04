@@ -47,17 +47,20 @@ abstract class _CalendarStore with Store {
 
         // startedAt: e.slotTime(doctorStore.weekStart, true),
 
-        final DateTime slotTime = slot.slotTime(store.weekStart, true);
+        final DateTime slotTime =
+            slot.dateTime ?? slot.slotTime(store.weekStart, true);
 
         // Создание и добавление события в controller
         controller.add(
           CalendarEventData(
             title: slot.consultationTime ?? '',
-            date: DateTime(slotDate.year, slotDate.month, slotDate.day,
-                slotTime.hour, slotTime.minute),
+            date: slot.dateTime ??
+                DateTime(slotDate.year, slotDate.month, slotDate.day,
+                    slotTime.hour, slotTime.minute),
             description: slot.id,
-            startTime: slot.slotTime(slotDate, true),
-            endTime: slot.slotTime(slotDate, false),
+            startTime:
+                slot.dateTime ?? slot.slotTime(slot.dateTime ?? slotDate, true),
+            endTime: slot.slotTime(slot.dateTime ?? slotDate, false),
             event: slot.fullName ?? 'Доступно', // Или какое-то описание
           ),
         );

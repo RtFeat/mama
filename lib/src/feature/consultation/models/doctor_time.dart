@@ -149,10 +149,8 @@ abstract class _DoctorWorkTime with Store {
         final currentEnd = currentStart.add(Duration(minutes: intervalMinutes));
         if (currentEnd.isAfter(endTime)) break;
 
-        final formattedStart =
-            '${currentStart.hour.toString().padLeft(2, '0')}:${currentStart.minute.toString().padLeft(2, '0')}';
-        final formattedEnd =
-            '${currentEnd.hour.toString().padLeft(2, '0')}:${currentEnd.minute.toString().padLeft(2, '0')}';
+        final formattedStart = currentStart.formattedTime;
+        final formattedEnd = currentEnd.formattedTime;
 
         final newWorkSlot = WorkSlot(
           workSlot: '$formattedStart - $formattedEnd',
@@ -184,6 +182,17 @@ abstract class _DoctorWorkTime with Store {
         6 => saturday?.consultations ?? [],
         7 => sunday?.consultations ?? [],
         _ => [],
+      };
+
+  ObservableList<ConsultationSlot>? consultationByDay(int day) => switch (day) {
+        1 => monday?.consultations,
+        2 => tuesday?.consultations,
+        3 => wednesday?.consultations,
+        4 => thursday?.consultations,
+        5 => friday?.consultations,
+        6 => saturday?.consultations,
+        7 => sunday?.consultations,
+        _ => ObservableList(),
       };
 
   @action

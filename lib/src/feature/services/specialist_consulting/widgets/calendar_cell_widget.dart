@@ -35,10 +35,12 @@ class CalendarCell extends StatelessWidget {
           }
         } else {
           if (event.first.description != null) {
+            logger.info(event.first);
             context.pushNamed(AppViews.consultation, extra: {
               'consultation': Consultation(
                 id: event.first.description,
                 startedAt: event.first.startTime,
+                endedAt: event.first.endTime,
               )
             });
           }

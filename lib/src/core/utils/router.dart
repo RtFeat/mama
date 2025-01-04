@@ -50,6 +50,7 @@ abstract class AppViews {
   static const promoView = 'promoView';
 
   static const chatView = 'chatView';
+  static const pinnedMessagesView = 'pinnedMessagesView';
   static const groupUsers = 'groupUsers';
 
   static const feeding = 'feeding';
@@ -353,6 +354,18 @@ final GoRouter router = GoRouter(
                     groupInfo: groupInfo,
                   );
                 },
+              ),
+              GoRoute(
+                path: _Paths.pinnedMessages,
+                name: AppViews.pinnedMessagesView,
+                builder: (context, state) {
+                  final Map? extra = state.extra as Map?;
+                  final MessagesStore? store =
+                      extra?['store'] as MessagesStore?;
+                  return PinnedMessagesView(
+                    store: store,
+                  );
+                },
               )
             ]),
         GoRoute(
@@ -498,6 +511,7 @@ abstract class _Paths {
   static const promoView = AppViews.promoView;
 
   static const chat = AppViews.chatView;
+  static const pinnedMessages = AppViews.pinnedMessagesView;
   static const groupUsers = AppViews.groupUsers;
 
   static const feeding = AppViews.feeding;

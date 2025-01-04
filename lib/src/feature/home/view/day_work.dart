@@ -19,9 +19,7 @@ class SpecialistDayView extends StatelessWidget {
     final DoctorStore doctorStore = context.watch();
 
     final CalendarStore store = context.watch();
-    // Add 6 hours to the event date
-    // to format to utc correctly
-    final DateTime date = event.first.date.add(Duration(hours: 6));
+    final DateTime date = event.first.date;
 
     return Scaffold(
       appBar: const CustomAppBar(),

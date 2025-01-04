@@ -18,7 +18,7 @@ class SpecialistDaySlot extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          slot.workSlot,
+          slot.startTime.timeRange(slot.endTime),
           style: textTheme.labelLarge?.copyWith(
             color: AppColors.greyBrighterColor,
           ),
@@ -26,10 +26,26 @@ class SpecialistDaySlot extends StatelessWidget {
         MeetingsSection(
             whichSection: 1,
             showDecoration: false,
-            meetingsList: event
-                .where((i) =>
-                    i.startTime?.hour == int.parse(slot.workSlot.split(':')[0]))
-                .mapIndexed((i, e) {
+            meetingsList: event.where((i) {
+              // List<String> split = slot.workSlot.split('-');
+              // List<String> startSplit = split[0].split(':');
+              // List<String> endSplit = split[1].split(':');
+
+              final startSlotHour = slot.startTime.hour;
+              final startSlotMinute = slot.startTime.minute;
+              final endSlotHour = slot.endTime.hour;
+              final endSlotMinute = slot.endTime.minute;
+
+              final start = (i.startTime?.hour ?? 0) > startSlotHour ||
+                  ((i.startTime?.hour ?? 0) == startSlotHour &&
+                      (i.startTime?.minute ?? 0) >= startSlotMinute);
+
+              final end = (i.endTime?.hour ?? 0) < endSlotHour ||
+                  ((i.endTime?.hour ?? 0) == endSlotHour &&
+                      (i.endTime?.minute ?? 0) <= endSlotMinute);
+
+              return start && end;
+            }).mapIndexed((i, e) {
               final bool isLater = e.startTime!.hour > now.hour;
 
               return MeetingBox(

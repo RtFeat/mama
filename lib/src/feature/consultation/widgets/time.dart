@@ -22,8 +22,10 @@ class ConsultationTime extends StatelessWidget {
     final TextTheme textTheme = themeData.textTheme;
 
     int getDifference() {
-      final now = DateTime.now();
-      return now.difference(startDate).inMinutes;
+      final now = DateTime.now(); // Текущее локальное время
+      final localStartDate = startDate.toLocal(); // Переводим в локальное время
+      // Возвращаем разницу (включая отрицательные значения)
+      return localStartDate.difference(now).inMinutes;
     }
 
     final bool isWithTimeBefore = status != null;
@@ -109,13 +111,13 @@ class _Content extends StatelessWidget {
     final TextTheme textTheme = themeData.textTheme;
 
     final bool isWithTimeBefore = status != null;
-    String formatTime() {
-      final dateFormat = DateFormat('H:mm');
+    // String formatTime() {
+    //   final dateFormat = DateFormat('H:mm');
 
-      final String time =
-          '${dateFormat.format(startDate)}–${dateFormat.format(endDate)}';
-      return time;
-    }
+    //   final String time =
+    //       '${dateFormat.format(startDate)}–${dateFormat.format(endDate)}';
+    //   return time;
+    // }
 
     String formatDate() {
       final now = DateTime.now();
@@ -125,8 +127,8 @@ class _Content extends StatelessWidget {
           startDate.day == now.day;
 
       final String text = isToday
-          ? '${t.home.today} ${formatTime()}'
-          : '${startDate.day} ${t.home.monthsData.withNumbers[startDate.month - 1]} ${formatTime()}';
+          ? '${t.home.today} ${startDate.timeRange(endDate)}'
+          : '${startDate.day} ${t.home.monthsData.withNumbers[startDate.month - 1]} ${startDate.timeRange(endDate)}';
 
       if (isWithTimeBefore) {
         return text.replaceFirst(' ', ', ');

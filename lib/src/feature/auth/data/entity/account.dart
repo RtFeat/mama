@@ -39,6 +39,9 @@ class AccountModel extends _AccountModel with _$AccountModel {
       _$AccountModelFromJson(json);
 
   @override
+  Map<String, dynamic> toJson() => _$AccountModelToJson(this);
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AccountModel &&
@@ -80,7 +83,7 @@ abstract class _AccountModel extends BaseModel with Store {
     this.avatarUrl,
     this.email,
     this.profession,
-    this.info,
+    this.info = '',
   });
 
   @observable
@@ -152,7 +155,7 @@ abstract class _AccountModel extends BaseModel with Store {
   String? info;
 
   @action
-  void setInfo(String? value) {
+  void setInfo(String value) {
     info = value;
     isChanged = true;
   }

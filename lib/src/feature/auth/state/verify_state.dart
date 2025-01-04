@@ -103,7 +103,7 @@ abstract class _VerifyStore with Store {
           //   setRole(Role.values.firstWhere((e) => e.name == role));
         }
 
-        if (state == 'ACTIVE') {
+        if (state != null && state != 'UNREGISTERED') {
           isRegistered = true;
         }
         logger.info('isRegistered: $isRegistered');
@@ -120,16 +120,20 @@ abstract class _VerifyStore with Store {
   }) async {
     final OAuth2Token? token = await tokenStorage.token;
 
-    restClient.post(Endpoint().register, headers: {
-      'Refresh-Token': 'Bearer ${token?.refreshToken}',
-    }, body: {
-      'account': data.user.toJson(),
-      'child': data.child.toJson(),
-      if (data.city.isNotEmpty)
-        'user': {
-          'city': data.city,
-        }
-    }).then((v) async {});
+    try {
+      restClient.post(Endpoint().register, headers: {
+        'Refresh-Token': 'Bearer ${token?.refreshToken}',
+      }, body: {
+        'account': data.user.toJson(),
+        'child': data.child.toJson(),
+        if (data.city.isNotEmpty)
+          'user': {
+            'city': data.city,
+          }
+      });
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   void logout() async {

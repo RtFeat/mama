@@ -1,43 +1,3 @@
-// import 'package:mama/src/data.dart';
-// import 'package:mobx/mobx.dart';
-
-// part 'doctor.g.dart';
-
-// class DoctorStore extends _DoctorStore with _$DoctorStore {
-//   DoctorStore({required super.restClient});
-// }
-
-// abstract class _DoctorStore with Store, LoadingDataStoreExtension {
-//   final RestClient restClient;
-
-//   _DoctorStore({required this.restClient});
-
-//   @observable
-//   DoctorModel? doctor;
-
-//   @action
-//   Future fetchAll() async {
-//     return await fetchData(restClient.get(Endpoint().doctorData), (v) {
-//       final data = DoctorData.fromJson(v);
-//       doctor = data.doctor;
-//       return data;
-//     });
-//   }
-// }
-
-// import 'package:mama/src/data.dart';
-
-// class DoctorStore extends SingleDataStore {
-//   DoctorStore({required RestClient restClient})
-//       : super(
-//           fetchFunction: () => restClient.get(Endpoint().doctorData),
-//           transformer: (v) {
-//             if (v == null) return null;
-//             return DoctorData.fromJson(v);
-//           },
-//         );
-// }
-
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
@@ -68,15 +28,41 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
       data?.doctor?.workTime?.slotByDay(weekDay) ?? ObservableList();
 
   @computed
-  List<List<ConsultationSlot>> get weekConsultations => [
-        data?.doctor?.workTime?.monday?.consultations ?? [],
-        data?.doctor?.workTime?.tuesday?.consultations ?? [],
-        data?.doctor?.workTime?.wednesday?.consultations ?? [],
-        data?.doctor?.workTime?.thursday?.consultations ?? [],
-        data?.doctor?.workTime?.friday?.consultations ?? [],
-        data?.doctor?.workTime?.saturday?.consultations ?? [],
-        data?.doctor?.workTime?.sunday?.consultations ?? [],
-      ];
+  List<List<ConsultationSlot>> get weekConsultations {
+    if (data?.doctor?.workTime == null) {
+      return List.generate(7, (_) => <ConsultationSlot>[]);
+    }
+
+    final weekStart = data!.doctor!.workTime!.weekStart!;
+    final adjustedConsultations = List.generate(7, (_) => <ConsultationSlot>[]);
+
+    for (int i = 0; i < 7; i++) {
+      final List<ConsultationSlot> dayConsultations =
+          data!.doctor!.workTime!.consultationByDay(i + 1) ?? [];
+      final currentDay = weekStart.add(Duration(days: i));
+
+      for (final consultation in dayConsultations) {
+        final localTime = consultation.slotTime(currentDay, true);
+        logger.info(
+            'Consultation ID: ${consultation.id}, Local Time: $localTime, Weekday: ${localTime.weekday}');
+        adjustedConsultations[localTime.weekday - 1].add(consultation.copyWith(
+          dateTime: localTime,
+        ));
+      }
+
+      // Сортируем консультации в пределах дня
+      adjustedConsultations[i].sort((a, b) {
+        // final timeA = a.slotTime(currentDay, true);
+        // final timeB = b.slotTime(currentDay, true);
+
+        return a.dateTime!.compareTo(b.dateTime!);
+        //  ??
+        // timeA.compareTo(timeB);
+      });
+    }
+
+    return adjustedConsultations;
+  }
 
   @computed
   List<ObservableList<WorkSlot>> get weekSlots => [
@@ -90,7 +76,8 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
       ];
 
   @computed
-  DateTime get weekStart => data?.doctor?.workTime?.weekStart ?? DateTime.now();
+  DateTime get weekStart =>
+      data?.doctor?.workTime?.weekStart?.toLocal() ?? DateTime.now();
 
   @observable
   int selectedDay = DateTime.now().weekday;
@@ -100,20 +87,22 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
 
   @computed
   ObservableList<List<ConsultationSlot>> get dividedSlots {
-    logger.info('Week consultations: $weekConsultations');
     final now = DateTime.now();
     List<ConsultationSlot> beforeNow = [];
     List<ConsultationSlot> afterNow = [];
 
-    for (var slot in weekConsultations[selectedDay - 1]) {
-      if (slot.slotTime(weekStart, true).isBefore(now)) {
+    final ObservableList<ConsultationSlot> data =
+        ObservableList.of(weekConsultations[selectedDay - 1]);
+
+    for (var slot in data) {
+      final slotTime =
+          slot.slotTime(weekStart.add(Duration(days: selectedDay - 1)), true);
+      if (slotTime.isBefore(now)) {
         beforeNow.add(slot);
       } else {
         afterNow.add(slot);
       }
     }
-
-    logger.info('${[beforeNow, afterNow]}');
 
     return ObservableList.of([beforeNow, afterNow]);
   }

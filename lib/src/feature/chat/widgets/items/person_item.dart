@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 
 class PersonItem extends StatelessWidget {
+  final GroupUsersStore? store;
   final AccountModel person;
-  const PersonItem({super.key, required this.person});
+  const PersonItem({super.key, required this.store, required this.person});
 
   @override
   Widget build(BuildContext context) {
@@ -28,29 +30,20 @@ class PersonItem extends StatelessWidget {
               url: person.avatarUrl,
             ),
             8.w,
-            RichText(
+            SubstringHighlight(
+              text: person.name,
+              textStyle: textTheme.bodyMedium!,
               maxLines: 2,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: person.name,
-                    style: textTheme.bodyMedium,
-                  ),
-                  if (person.profession != null &&
-                      person.profession!.isNotEmpty)
-                    WidgetSpan(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 3.0),
-                        child: ProfessionBox(
-                          profession: person.profession!,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              term: store?.query ?? '',
+              textStyleHighlight: textTheme.bodyMedium!.copyWith(
+                  backgroundColor: AppColors.lightBlueBackgroundStatus),
             ),
+            if (person.profession != null && person.profession!.isNotEmpty)
+              Padding(
+                  padding: const EdgeInsets.only(left: 3.0, bottom: 18),
+                  child: ConsultationBadge(
+                    title: person.profession ?? '',
+                  )),
           ],
         ),
       ),

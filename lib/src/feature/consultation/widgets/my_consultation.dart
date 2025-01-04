@@ -41,8 +41,8 @@ class MyConsultationWidget extends StatelessWidget {
             ),
             ConsultationTime(
                 status: consultation.status,
-                startDate: consultation.startedAt!,
-                endDate: consultation.endedAt!),
+                startDate: consultation.startedAt!.toLocal(),
+                endDate: consultation.endedAt!.toLocal()),
             20.h,
             DecoratedBox(
               decoration: BoxDecoration(
