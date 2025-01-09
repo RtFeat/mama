@@ -27,5 +27,6 @@ class OnlineSchoolCourse extends BaseModel {
   factory OnlineSchoolCourse.fromJson(Map<String, dynamic> json) =>
       _$OnlineSchoolCourseFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$OnlineSchoolCourseToJson(this);
 }

@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
+
+import 'play_btn.dart';
 
 class TrackWidget extends StatelessWidget {
   final TrackModel model;
@@ -10,11 +12,11 @@ class TrackWidget extends StatelessWidget {
     super.key,
     required this.model,
   });
-
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
+    final MusicStore store = context.watch<MusicStore>();
 
     return Row(
       children: [
@@ -23,42 +25,16 @@ class TrackWidget extends StatelessWidget {
           child: Row(
             children: [
               /// #play button
-              GestureDetector(
-                onTap: model.toggleIsPlaying,
-                child: DecoratedBox(
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primaryColor,
-                  ),
-                  child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Center(
-                      child: Observer(
-                          builder: (context) => AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 300),
-                                transitionBuilder: (
-                                  Widget child,
-                                  Animation<double> animation,
-                                ) =>
-                                    FadeTransition(
-                                  opacity: animation,
-                                  child: child,
-                                ),
-                                child: Icon(
-                                  model.isPlaying
-                                      ? AppIcons.pauseFill
-                                      // Assets.icons.icPauseFilled
-                                      : AppIcons.playFill,
-                                  // Assets.icons.icPlayFilled,
-                                  key: ValueKey<bool>(model.isPlaying),
-                                ),
-                              )),
-                    ),
-                  ),
-                ),
+              AudioPlayerWidget(
+                onPause: () {},
+                onPlay: () {
+                  store.setSelectedMusic(model);
+                },
+                source: model.source,
+                player: context.watch(),
+                builder: (isPlaying) => PlayButton(isPlaying: isPlaying),
               ),
-              const SizedBox(width: 8),
+              8.w,
 
               /// #name, author
               Expanded(
@@ -89,7 +65,10 @@ class TrackWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 20),
           child: AutoSizeText(
-            model.duration,
+            model.duration.toMinutes,
+            style: textTheme.titleSmall?.copyWith(
+              fontSize: 14,
+            ),
           ),
         ),
       ],

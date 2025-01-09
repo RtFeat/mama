@@ -39,7 +39,7 @@ class SubscribeBlockItem extends StatelessWidget {
                   //   height: 80,
                   //   Assets.icons.padlock.path,
                   // ),
-                  Icon(AppIcons.lockFill,
+                  const Icon(AppIcons.lockFill,
                       size: 80, color: AppColors.primaryColor),
                   30.h,
                   Container(

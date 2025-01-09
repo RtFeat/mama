@@ -342,7 +342,7 @@ class _MomsProfileState extends State<MomsProfile> {
                           //     Assets.icons.icAddChild.path,
                           //   ),
                           // ),
-                          Icon(
+                          const Icon(
                             AppIcons.plusSquareDashed,
                             color: AppColors.primaryColor,
                           ),

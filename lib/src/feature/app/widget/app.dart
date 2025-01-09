@@ -65,6 +65,10 @@ class App extends StatelessWidget {
             dispose: (context, value) => value.dispose(),
             create: (context) => CalendarStore(store: context.read()),
           ),
+          Provider(
+            create: (context) => AudioPlayerStore(),
+            dispose: (context, value) => value.dispose(),
+          )
         ],
         child: TranslationProvider(child: const MaterialContext()),
       );

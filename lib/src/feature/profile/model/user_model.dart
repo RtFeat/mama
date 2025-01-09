@@ -47,6 +47,7 @@ class UserModel extends BaseModel {
       _$UserModelFromJson(json);
 
   /// Connect the generated [_$UserModelFromJson] function to the `toJson` method.
+  @override
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   @override

@@ -149,7 +149,7 @@ class ChatItemWidget extends StatelessWidget {
                       //   height: 33,
                       // ),
 
-                      Icon(
+                      const Icon(
                         AppIcons.paperclip,
                         size: 33,
                         color: AppColors.greyBrighterColor,

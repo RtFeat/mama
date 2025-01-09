@@ -76,4 +76,6 @@ class Endpoint {
   static const String avatar = 'resources/avatar';
 
   static const String feedback = 'feedback';
+
+  static const String music = 'music/descriptions';
 }

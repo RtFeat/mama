@@ -211,8 +211,8 @@ final GoRouter router = GoRouter(
                 final Map? extra = state.extra as Map?;
                 final int? selectedTab = extra?['selectedTab'] as int?;
 
-                return ServicesSleepMusicView(
-                  index: selectedTab,
+                return SleepMusicView(
+                  index: selectedTab ?? 0,
                 );
               },
             ),

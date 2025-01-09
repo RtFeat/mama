@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:intl/intl.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -14,6 +16,8 @@ final class InitializationProcessor {
 
   Future<Dependencies> _initDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
+
+    await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
 
     final storage = TokenStorageImpl();
 

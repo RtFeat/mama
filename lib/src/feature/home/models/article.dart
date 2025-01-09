@@ -68,5 +68,6 @@ class ArticleModel extends BaseModel {
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
       _$ArticleModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$ArticleModelToJson(this);
 }

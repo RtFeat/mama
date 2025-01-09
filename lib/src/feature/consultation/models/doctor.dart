@@ -50,5 +50,6 @@ class DoctorModel extends BaseModel {
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$DoctorModelToJson(this);
 }

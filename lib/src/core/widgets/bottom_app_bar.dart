@@ -48,11 +48,11 @@ class _BottomBarState extends State<BottomBar> {
   late List<_Item> items = [
     _Item(
         title: t.profile.bottomBarHome,
-        iconPath: Icon(
+        iconPath: const Icon(
           AppIcons.house,
           color: AppColors.greyLighterColor,
         ),
-        iconPathTap: Icon(
+        iconPathTap: const Icon(
           AppIcons.houseFill,
           color: AppColors.primaryColor,
         )
@@ -62,11 +62,11 @@ class _BottomBarState extends State<BottomBar> {
     if (widget.isUser)
       _Item(
         title: t.profile.bottomBarDiaries,
-        iconPath: Icon(
+        iconPath: const Icon(
           AppIcons.chartXyaxisLine,
           color: AppColors.greyLighterColor,
         ),
-        iconPathTap: Icon(
+        iconPathTap: const Icon(
           AppIcons.chartXyaxisLine,
           color: AppColors.primaryColor,
         ),
@@ -76,11 +76,11 @@ class _BottomBarState extends State<BottomBar> {
       ),
     _Item(
         title: t.profile.bottomBarChats,
-        iconPath: Icon(
+        iconPath: const Icon(
           AppIcons.bubbleLeftFill,
           color: AppColors.greyLighterColor,
         ),
-        iconPathTap: Icon(
+        iconPathTap: const Icon(
           AppIcons.bubbleLeftFill,
           color: AppColors.primaryColor,
         )
@@ -89,11 +89,11 @@ class _BottomBarState extends State<BottomBar> {
         ),
     _Item(
         title: t.profile.bottomBarServices,
-        iconPath: Icon(
+        iconPath: const Icon(
           AppIcons.rectanglesGroupFill,
           color: AppColors.greyLighterColor,
         ),
-        iconPathTap: Icon(
+        iconPathTap: const Icon(
           AppIcons.rectanglesGroup,
           color: AppColors.primaryColor,
         )

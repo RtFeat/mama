@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -145,53 +146,45 @@ class ChildBarWidget extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            child.avatarUrl != null
-                ? CircleAvatar(
-                    radius: 64,
-                    backgroundImage: NetworkImage(child.avatarUrl!),
-                  )
-                : CircleAvatar(
-                    radius: 64,
-                    backgroundColor: AppColors.purpleLighterBackgroundColor,
-                    // child: Image.asset(
-                    //   height: 56,
-                    //   Assets.icons.kidNoPhoto.path,
-                    //   color: AppColors.whiteColor,
-                    // ),
-                    child: Icon(
-                      AppIcons.faceDashed,
-                      size: 56,
-                      color: AppColors.whiteColor,
-                    ),
-                  ),
+            Observer(builder: (context) {
+              return child.avatarUrl != null
+                  ? CircleAvatar(
+                      radius: 64,
+                      backgroundImage: NetworkImage(child.avatarUrl!),
+                    )
+                  : const CircleAvatar(
+                      radius: 64,
+                      backgroundColor: AppColors.purpleLighterBackgroundColor,
+                      child: Icon(
+                        AppIcons.faceDashed,
+                        size: 56,
+                        color: AppColors.whiteColor,
+                      ),
+                    );
+            }),
             Positioned(
               bottom: -30,
               right: 16,
               left: 16,
               child: RawMaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  final ImagePicker picker = ImagePicker();
+
+                  picker.pickImage(source: ImageSource.gallery).then((value) {
+                    if (value != null) {
+                      childStore.updateAvatar(file: value, model: child);
+                    }
+                  });
+                },
                 fillColor: AppColors.primaryColor,
                 shape: const CircleBorder(),
-                padding: EdgeInsets.all(16),
-                // child: Image.asset(
-                //   Assets.icons.icPhotoAdd.path,
-                //   alignment: Alignment.center,
-                //   height: 64,
-                // ),
-                child: Icon(
+                padding: const EdgeInsets.all(16),
+                child: const Icon(
                   AppIcons.cameraOnRectangleFill,
                   color: AppColors.whiteColor,
                   size: 32,
                 ),
               ),
-              // child: IconButton(
-              //   icon: Image.asset(
-              //     Assets.icons.icPhotoAdd.path,
-              //     alignment: Alignment.center,
-              //     height: 64,
-              //   ),
-              //   onPressed: () {},
-              // ),
             ),
           ],
         ),

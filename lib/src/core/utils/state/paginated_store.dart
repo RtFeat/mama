@@ -30,6 +30,8 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
 
   @action
   Future<void> loadPage({
+    Future<Map<String, Object?>?> Function(Map<String, dynamic> query)?
+        fetchFunction,
     required Map<String, dynamic> queryParams,
   }) async {
     logger.info('Starting loadPage');
@@ -52,8 +54,12 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
 
     logger.info('Requesting page $currentPage with params: $updatedParams');
 
+    final Future future = fetchFunction != null
+        ? fetchFunction(updatedParams)
+        : this.fetchFunction(updatedParams);
+
     fetchFuture = ObservableFuture(
-      fetchFunction(updatedParams).then((rawData) {
+      future.then((rawData) {
         logger.info('Received rawData: $rawData');
         if (rawData != null) {
           final transformedData = transformer(rawData);

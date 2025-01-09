@@ -50,17 +50,7 @@ class ProfilePhoto extends StatelessWidget {
               child: RawMaterialButton(
                 shape: const CircleBorder(),
                 fillColor: AppColors.primaryColor,
-                padding: EdgeInsets.all(20),
-                child: icon ??
-                    // Image.asset(
-                    //   Assets.icons.icPhotoAdd.path,
-                    //   height: 64,
-                    // ),
-                    const Icon(
-                      AppIcons.cameraOnRectangleFill,
-                      size: 32,
-                      color: AppColors.whiteColor,
-                    ),
+                padding: const EdgeInsets.all(20),
                 onPressed: onIconTap ??
                     () {
                       final ImagePicker picker = ImagePicker();
@@ -73,6 +63,16 @@ class ProfilePhoto extends StatelessWidget {
                         }
                       });
                     },
+                child: icon ??
+                    // Image.asset(
+                    //   Assets.icons.icPhotoAdd.path,
+                    //   height: 64,
+                    // ),
+                    const Icon(
+                      AppIcons.cameraOnRectangleFill,
+                      size: 32,
+                      color: AppColors.whiteColor,
+                    ),
               ),
             ),
           ),

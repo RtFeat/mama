@@ -34,10 +34,10 @@ class AssetsWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           PlatformFile file = files[index];
           return AssetItemWidget(
-            asset: AssetItem(
-                extention: file.extension.toString(),
-                path: file.path.toString(),
-                name: file.name),
+            asset: MessageFile(
+                typeFile: file.extension.toString(),
+                fileUrl: file.path.toString(),
+                filename: file.name),
             onTapDelete: () {
               files.remove(file);
               onTapDelete();

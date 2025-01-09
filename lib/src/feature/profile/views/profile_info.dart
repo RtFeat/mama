@@ -58,19 +58,11 @@ class ProfileInfoView extends StatelessWidget {
                   ProfilePhoto(
                     isShowIcon: role == Role.user,
                     onIconTap: () {},
-                    icon: Material(
-                      shape: const CircleBorder(),
+                    icon: const Material(
+                      shape: CircleBorder(),
                       color: AppColors.primaryColor,
                       child: Padding(
-                        padding: const EdgeInsets.all(4),
-
-                        // child: Image.asset(
-                        //   Assets.icons.icBnChatsTap.path,
-                        //   color: AppColors.whiteColor,
-                        //   width: 32,
-                        //   height: 32,
-                        // ),
-
+                        padding: EdgeInsets.all(4),
                         child: Icon(
                           AppIcons.bubbleLeftFill,
                           size: 32,
@@ -241,78 +233,97 @@ class __BodyState extends State<_Body> {
                       title: t.profile.titleCourses,
                       isDecorated: false,
                       items: [
-                        PaginatedLoadingWidget(
-                            padding: EdgeInsets.zero,
-                            store: widget.store.coursesStore,
-                            // shrinkWrap: true,
-                            itemBuilder: (context, item) => SizedBox(
-                                height: 120,
-                                child: BodyItemDecoration(
-                                    borderRadius: 32.r,
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: BodyItemWidget(
-                                        item: CustomBodyItem(
-                                            bodyAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            title: item.title ?? '',
-                                            titleStyle: textTheme.headlineSmall
-                                                ?.copyWith(
-                                              fontSize: 20,
-                                            ),
-                                            subTitleLines: 2,
-                                            hintStyle: textTheme.titleSmall,
-                                            subTitle:
-                                                item.shortDescription ?? '',
-                                            subTitleWidth: double.infinity,
-                                            body: GestureDetector(
-                                              onTap: () {
-                                                context.pushNamed(
-                                                    AppViews.webView,
-                                                    extra: {
-                                                      'url': item.link,
-                                                    });
-                                              },
-                                              child: SizedBox(
-                                                width: 70,
-                                                child: DecoratedBox(
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors
-                                                          .lightBlueBackgroundStatus,
-                                                      borderRadius: 32.r,
+                        CustomScrollView(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            slivers: [
+                              PaginatedLoadingWidget(
+                                  padding: EdgeInsets.zero,
+                                  store: widget.store.coursesStore,
+                                  // shrinkWrap: true,
+                                  isFewLists: true,
+                                  itemBuilder: (context, item) => SizedBox(
+                                      height: 120,
+                                      child: BodyItemDecoration(
+                                          borderRadius: 32.r,
+                                          padding:
+                                              const EdgeInsets.only(left: 10),
+                                          child: BodyItemWidget(
+                                              item: CustomBodyItem(
+                                                  bodyAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  title: item.title ?? '',
+                                                  titleStyle: textTheme
+                                                      .headlineSmall
+                                                      ?.copyWith(
+                                                    fontSize: 20,
+                                                  ),
+                                                  subTitleLines: 2,
+                                                  hintStyle:
+                                                      textTheme.titleSmall,
+                                                  subTitle:
+                                                      item.shortDescription ??
+                                                          '',
+                                                  subTitleWidth:
+                                                      double.infinity,
+                                                  body: GestureDetector(
+                                                    onTap: () {
+                                                      context.pushNamed(
+                                                          AppViews.webView,
+                                                          extra: {
+                                                            'url': item.link,
+                                                          });
+                                                    },
+                                                    child: SizedBox(
+                                                      width: 70,
+                                                      child: DecoratedBox(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColors
+                                                                .lightBlueBackgroundStatus,
+                                                            borderRadius: 32.r,
+                                                          ),
+                                                          child: Center(
+                                                              child: IconWidget(
+                                                            model: IconModel(
+                                                              icon: Icons
+                                                                  .language,
+                                                              color: AppColors
+                                                                  .primaryColor,
+                                                            ),
+                                                          ))),
                                                     ),
-                                                    child: Center(
-                                                        child: IconWidget(
-                                                      model: IconModel(
-                                                        icon: Icons.language,
-                                                        color: AppColors
-                                                            .primaryColor,
-                                                      ),
-                                                    ))),
-                                              ),
-                                            )))))),
-                        if (widget
-                            .store.ownArticlesStore.listData.isNotEmpty) ...[
-                          30.h,
-                          BodyGroup(title: t.profile.titleArticle, items: [
-                            Padding(
-                                padding: const EdgeInsets.only(left: 16),
-                                child: SizedBox(
-                                    height: 250,
-                                    child: PaginatedLoadingWidget(
-                                      scrollDirection: Axis.horizontal,
-                                      store: widget.store.ownArticlesStore,
-                                      itemBuilder: (context, item) {
-                                        return ArticleBox(
-                                          model: item,
-                                        );
-                                      },
-                                    ))),
-                          ]),
-                        ]
+                                                  )))))),
+                              if (widget.store.ownArticlesStore.listData
+                                  .isNotEmpty) ...[
+                                30.h,
+                                BodyGroup(
+                                    title: t.profile.titleArticle,
+                                    items: [
+                                      Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 16),
+                                          child: SizedBox(
+                                              height: 250,
+                                              child: PaginatedLoadingWidget(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                store: widget
+                                                    .store.ownArticlesStore,
+                                                itemBuilder: (context, item) {
+                                                  return ArticleBox(
+                                                    model: item,
+                                                  );
+                                                },
+                                              ))),
+                                    ]),
+                              ]
+                            ])
                       ])),
         );
       default:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
 }

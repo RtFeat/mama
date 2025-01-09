@@ -37,6 +37,9 @@ class GroupItem extends _GroupItem with _$GroupItem {
       _$GroupItemFromJson(json);
 
   @override
+  Map<String, dynamic> toJson() => _$GroupItemToJson(this);
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is GroupItem &&

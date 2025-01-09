@@ -31,7 +31,7 @@ class CalendarUtils {
                 currentDate, workSlots) // События только для текущего месяца
             : [],
       ));
-      currentDate = currentDate.add(Duration(days: 1));
+      currentDate = currentDate.add(const Duration(days: 1));
     }
 
     // Группировка дней по неделям
@@ -48,8 +48,8 @@ class CalendarUtils {
     final now = DateTime.now();
     final weekStart =
         now.subtract(Duration(days: now.weekday - 1)); // Понедельник
-    final weekEnd = weekStart.add(
-        Duration(days: 6, hours: 23, minutes: 59, seconds: 59)); // Воскресенье
+    final weekEnd = weekStart.add(const Duration(
+        days: 6, hours: 23, minutes: 59, seconds: 59)); // Воскресенье
 
     return workSlots.map((slots) {
       return slots.where((slot) {

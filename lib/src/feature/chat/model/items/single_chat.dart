@@ -47,6 +47,7 @@ class SingleChatItem extends _SingleChatItem with _$SingleChatItem {
   factory SingleChatItem.fromJson(Map<String, dynamic> json) =>
       _$SingleChatItemFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$SingleChatItemToJson(this);
 
   @override

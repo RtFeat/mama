@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
@@ -35,7 +34,7 @@ class CustomBackButton extends StatelessWidget {
             //   width: 12,
             //   height: 20,
             // ),
-            Icon(
+            const Icon(
               AppIcons.chevronBackward,
             ),
             if (isShowTitle) ...[

@@ -1,143 +1,163 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
+
+import 'progress_bar.dart';
 
 class TrackPlayer extends StatelessWidget {
   const TrackPlayer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final phonePadding = MediaQuery.of(context).padding;
+    final MusicStore store = context.watch<MusicStore>();
 
-    return ColoredBox(
-      color: AppColors.whiteColor,
-      child: SizedBox(
-        height: phonePadding.bottom + 100,
-        width: MediaQuery.sizeOf(context).width,
-        child: Column(
-          children: [
-            /// #slider
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  /// #start
-                  const Text(
-                    '1:17',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.greyBrighterColor,
-                    ),
-                  ),
+    return Observer(builder: (context) {
+      if (store.selectedMusic == null) {
+        return const SizedBox.shrink();
+      }
 
-                  /// #slider
-                  Expanded(
-                    child: SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        trackHeight: 8,
-                      ),
-                      child: Slider(
-                        value: 0.3,
-                        onChanged: (value) {},
-                        secondaryActiveColor: Colors.red,
-                        thumbColor: AppColors.blueLighter,
-                        activeColor: AppColors.purpleBrighterBackgroundColor,
-                        inactiveColor: AppColors.purpleLighterBackgroundColor,
-                      ),
-                    ),
-                  ),
+      return const ColoredBox(
+        color: AppColors.whiteColor,
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// #slider
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: ProgressBar(),
+                ),
 
-                  /// #end
-                  const Text(
-                    '4:21',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.greyBrighterColor,
-                    ),
-                  ),
-                ],
-              ),
+                /// #controls
+                Row(
+                  children: [
+                    _PlayPauseButton(),
+                    Expanded(child: _Header()),
+                    _Trailing(),
+                  ],
+                ),
+              ],
             ),
-
-            /// #
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                children: [
-                  /// #pause icon
-                  IconButton(
-                    onPressed: () {},
-                    // icon: SvgPicture.asset(
-                    //   Assets.icons.icPauseFilled,
-                    //   color: AppColors.primaryColor,
-                    //   width: 14,
-                    // ),
-
-                    icon: const Icon(
-                      AppIcons.pauseFill,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-
-                  /// #name, author
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// #name
-                        Text(
-                          t.services.placeholderOne.title,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 17,
-                          ),
-                        ),
-
-                        /// #author
-                        Text(
-                          t.services.placeholderTwo.title,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: AppColors.greyBrighterColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-
-                  /// #infinity icon, music forward icon
-                  Row(
-                    children: [
-                      /// #infinity icon,
-                      IconButton(
-                        onPressed: () {},
-                        // icon: SvgPicture.asset(
-                        //   Assets.icons.icInfinityCircled,
-                        //   width: 22,
-                        // ),
-
-                        icon: const Icon(AppIcons.infinityCircle),
-                      ),
-
-                      /// #music forward icon
-                      IconButton(
-                        // icon: SvgPicture.asset(
-                        //   Assets.icons.icMusicForward,
-                        // ),
-                        icon: const Icon(AppIcons.forwardEndAltFill),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+      );
+    });
+  }
+}
+
+class _PlayPauseButton extends StatelessWidget {
+  const _PlayPauseButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final AudioPlayerStore audioPlayerStore = context.watch();
+
+    return IconButton(
+      onPressed: () {
+        if (audioPlayerStore.isPlaying) {
+          audioPlayerStore.pause();
+        } else {
+          audioPlayerStore.resume();
+        }
+      },
+      icon: Observer(builder: (context) {
+        if (audioPlayerStore.isPlaying) {
+          return const Icon(
+            AppIcons.pauseFill,
+            color: AppColors.primaryColor,
+          );
+        }
+        return const Icon(
+          AppIcons.playFill,
+          color: AppColors.primaryColor,
+        );
+      }),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+    final MusicStore store = context.watch<MusicStore>();
+
+    return Observer(builder: (context) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// #name
+          Text(
+            store.selectedMusic?.title ?? '',
+            overflow: TextOverflow.ellipsis,
+            style: textTheme.titleSmall,
+          ),
+
+          /// #author
+          Text(
+            store.selectedMusic?.author ?? 'author',
+            overflow: TextOverflow.ellipsis,
+            style: textTheme.labelSmall,
+          ),
+        ],
+      );
+    });
+  }
+}
+
+class _Trailing extends StatelessWidget {
+  const _Trailing();
+
+  @override
+  Widget build(BuildContext context) {
+    final MusicStore store = context.watch<MusicStore>();
+    final AudioPlayerStore audioPlayerStore = context.watch();
+
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () {
+            store.toggleIsLooping();
+          },
+          icon: Observer(builder: (context) {
+            return store.isLooping
+                ? const Icon(
+                    AppIcons.infinityCircleFill,
+                    color: AppColors.primaryColor,
+                  )
+                : const Icon(
+                    AppIcons.infinityCircle,
+                  );
+          }),
+        ),
+        Observer(builder: (_) {
+          final bool isPlaying = audioPlayerStore.isPlaying;
+          final bool isHasNext = store.isHasNextMusic;
+
+          return IconButton(
+            icon: isHasNext && isPlaying
+                ? const Icon(AppIcons.forwardEndAltFill)
+                : const Icon(AppIcons.xmark),
+            onPressed: () {
+              if (isHasNext && isPlaying) {
+                store.nextMusic();
+                if (store.selectedMusic != null &&
+                    store.selectedMusic?.source != null) {
+                  audioPlayerStore.play(store.selectedMusic!.source!);
+                }
+              } else {
+                store.setSelectedMusic(null);
+              }
+            },
+          );
+        }),
+      ],
     );
   }
 }

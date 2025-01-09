@@ -1,4 +1,6 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
 part 'track.g.dart';
@@ -15,10 +17,12 @@ class TrackModel extends _TrackModel with _$TrackModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   final String? author;
 
-  final String duration;
+  final double duration;
 
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
+
+  Source? get source => UrlSource('${const Config().apiUrl}music/$id');
 
   TrackModel({
     required this.id,
@@ -37,6 +41,7 @@ class TrackModel extends _TrackModel with _$TrackModel {
 
 abstract class _TrackModel with Store {
   @observable
+  @JsonKey(includeFromJson: false, includeToJson: false)
   bool isPlaying = false;
 
   @action

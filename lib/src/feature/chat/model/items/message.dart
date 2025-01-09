@@ -114,6 +114,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
   factory MessageItem.fromJson(Map<String, dynamic> json) =>
       _$MessageItemFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$MessageItemToJson(this);
 
   MessageItem copyWith({
@@ -123,7 +124,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
     String? filename,
     String? nickname,
     DateTime? readAt,
-    List<MessageFile>? files,
+    ObservableList<MessageFile>? files,
     dynamic reply,
     String? senderId,
     String? text,
@@ -159,8 +160,22 @@ abstract class _MessageItem extends BaseModel with Store {
     this.isAttached = false,
   });
 
-  @JsonKey(name: 'files')
-  List<MessageFile>? files;
+  @JsonKey(name: 'files', fromJson: _filesFromJson, toJson: _filesToJson)
+  @observable
+  ObservableList<MessageFile>? files;
+
+  static List<MessageFile> _filesToJson(v) {
+    return v.toList();
+  }
+
+  static ObservableList<MessageFile> _filesFromJson(List? v) {
+    final workSlots = v?.map((e) => MessageFile.fromJson(e)).toList();
+    return ObservableList.of(workSlots ?? []);
+  }
+
+  @computed
+  bool get hasVoice =>
+      files?.where((e) => e.typeFile == 'm4a').isNotEmpty ?? false;
 
   @JsonKey(name: 'reply', fromJson: _replyFromJson)
   dynamic reply;

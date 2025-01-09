@@ -49,7 +49,7 @@ class AddPumpingScreen extends StatelessWidget {
                     Row(
                       children: [
                         // SvgPicture.asset(Assets.icons.icClock),
-                        Icon(
+                        const Icon(
                           AppIcons.clock,
                           color: AppColors.greyLighterColor,
                         ),
@@ -64,7 +64,7 @@ class AddPumpingScreen extends StatelessWidget {
                     Row(
                       children: [
                         // SvgPicture.asset(Assets.icons.calendar),
-                        Icon(
+                        const Icon(
                           AppIcons.calendar,
                           color: AppColors.primaryColor,
                         ),
