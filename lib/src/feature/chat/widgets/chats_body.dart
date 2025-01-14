@@ -64,7 +64,7 @@ class _GroupsList extends StatelessWidget {
                 PaginatedLoadingWidget(
                   isFewLists: true,
                   store: store.groups,
-                  separator: separator,
+                  separator: (_, __) => separator,
                   itemBuilder: (context, item) {
                     return ChatItemWidget(item: item);
                   },
@@ -118,7 +118,7 @@ class __ChatsListState extends State<_ChatsList> {
             slivers: [
               PaginatedLoadingWidget(
                 isFewLists: true,
-                separator: widget.separator,
+                separator: (_, __) => widget.separator,
                 store: widget.store.chats,
                 listData: () => widget.store.chats.filteredChats,
                 itemBuilder: (context, item) {

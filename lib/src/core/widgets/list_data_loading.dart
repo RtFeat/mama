@@ -18,8 +18,9 @@ class PaginatedLoadingWidget<R> extends StatelessWidget {
   final bool isFewLists;
 
   final EdgeInsets? itemsPadding;
+  final ScrollController? scrollController;
 
-  final Widget? separator;
+  final Widget Function(int index, R item)? separator;
 
   /// Виджет для начальной загрузки (первой страницы)
   final Widget? initialLoadingWidget;
@@ -47,6 +48,7 @@ class PaginatedLoadingWidget<R> extends StatelessWidget {
     this.isFewLists = false,
     this.itemsPadding,
     this.padding,
+    this.scrollController,
     this.separator,
     this.initialLoadingWidget,
     this.additionalLoadingWidget,
@@ -86,6 +88,7 @@ class PaginatedLoadingWidget<R> extends StatelessWidget {
               );
         }
         return _DataWidget<R>(
+          scrollController: scrollController,
           listData: listData == null ? null : listData!(),
           isFewLists: isFewLists,
           itemsPadding: itemsPadding,
@@ -111,13 +114,16 @@ class _DataWidget<R> extends StatelessWidget {
   final EdgeInsets? padding;
   final bool isFewLists;
 
+  final ScrollController? scrollController;
+
   final EdgeInsets? itemsPadding;
 
-  final Widget? separator;
+  final Widget Function(int index, R item)? separator;
 
   final bool isReversed;
 
   const _DataWidget({
+    required this.scrollController,
     required this.listData,
     required this.isFewLists,
     required this.itemsPadding,
@@ -133,7 +139,7 @@ class _DataWidget<R> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final separatorWidget = separator ??
-        Padding(
+        (_, __) => Padding(
             padding: itemsPadding ??
                 EdgeInsets.symmetric(
                     horizontal: scrollDirection == Axis.horizontal ? 8 : 0,
@@ -142,7 +148,8 @@ class _DataWidget<R> extends StatelessWidget {
     if (isFewLists) {
       return SliverInfiniteList(
           isLoading: store.isLoading,
-          separatorBuilder: (context, index) => separatorWidget,
+          separatorBuilder: (context, index) =>
+              separatorWidget(index, listData?[index] ?? store.listData[index]),
           hasReachedMax: !store.hasMore,
           itemCount: listData?.length ?? store.listData.length,
           onFetchData: () => store.loadPage(queryParams: {}),
@@ -154,9 +161,11 @@ class _DataWidget<R> extends StatelessWidget {
       physics: physics,
       scrollDirection: scrollDirection,
       padding: padding,
+      scrollController: scrollController,
       reverse: isReversed,
       isLoading: store.isLoading,
-      separatorBuilder: (context, index) => separatorWidget,
+      separatorBuilder: (context, index) =>
+          separatorWidget(index, listData?[index] ?? store.listData[index]),
       hasReachedMax: !store.hasMore,
       itemCount: listData?.length ?? store.listData.length,
       onFetchData: () => store.loadPage(queryParams: {}),

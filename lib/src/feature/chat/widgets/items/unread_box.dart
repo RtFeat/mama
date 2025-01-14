@@ -9,15 +9,18 @@ class UnreadBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
-    return Container(
+
+    return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: 100.r,
         color: AppColors.primaryColor,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-      child: Text(
-        '$unread',
-        style: textTheme.labelMedium!.copyWith(color: AppColors.whiteColor),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+        child: Text(
+          '$unread',
+          style: textTheme.labelMedium!.copyWith(color: AppColors.whiteColor),
+        ),
       ),
     );
   }

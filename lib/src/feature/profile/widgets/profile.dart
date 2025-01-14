@@ -74,12 +74,11 @@ class _MomsProfileState extends State<MomsProfile> {
     );
 
     return Observer(builder: (context) {
-      return Column(
-        children: [
-          widget.accountModel.avatarUrl == null
-              ? const DashedPhotoProfile()
-              : const ProfilePhoto(),
-          Padding(
+      return Column(children: [
+        widget.accountModel.avatarUrl == null
+            ? const DashedPhotoProfile()
+            : const ProfilePhoto(),
+        Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,42 +123,48 @@ class _MomsProfileState extends State<MomsProfile> {
                         ),
                       ),
                     if (userStore.account.role == Role.doctor)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 30),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  t.profile.titleNameProffession,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.center,
-                                  style: textTheme.labelLarge,
-                                ),
-                              ],
-                            ),
-                            6.h,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                    '${userStore.account.firstName} ${userStore.account.secondName}',
-                                    style: textTheme.displaySmall?.copyWith(
-                                      fontSize: 24,
-                                    ),
-                                    maxLines: 1),
-                                if (userStore.account.profession != null &&
-                                    userStore.account.profession!.isNotEmpty)
-                                  ConsultationBadge(
-                                    title: userStore.account.profession ?? '',
-                                  )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      Observer(builder: (context) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 30),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    t.profile.titleNameProffession,
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.labelLarge,
+                                  ),
+                                ],
+                              ),
+                              6.h,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(userStore.account.name,
+                                      style: textTheme.displaySmall?.copyWith(
+                                        fontSize: 24,
+                                      ),
+                                      maxLines: 1),
+                                  if (userStore.account.profession != null &&
+                                      userStore.account.profession!.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 4, bottom: 10),
+                                      child: ConsultationBadge(
+                                        title:
+                                            userStore.account.profession ?? '',
+                                      ),
+                                    )
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     BodyItemWidget(
                       item: InputItem(
                         controlName: 'phone',
@@ -252,116 +257,115 @@ class _MomsProfileState extends State<MomsProfile> {
                 if (userStore.role == Role.onlineSchool)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: BodyGroup(title: t.profile.titleCourses, items: [
-                      PaginatedLoadingWidget(
-                          padding: EdgeInsets.zero,
-                          // shrinkWrap: true,
-                          store: widget.homeStore!.coursesStore,
-                          itemBuilder: (_, data) => SizedBox(
-                              height: 120,
-                              child: BodyItemDecoration(
-                                  borderRadius: 32.r,
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: BodyItemWidget(
-                                      item: CustomBodyItem(
-                                          bodyAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          title: data.title ?? '',
-                                          titleStyle:
-                                              textTheme.headlineSmall?.copyWith(
-                                            fontSize: 20,
-                                          ),
-                                          subTitleLines: 2,
-                                          hintStyle: textTheme.titleSmall,
-                                          subTitle: data.shortDescription ?? '',
-                                          subTitleWidth: double.infinity,
-                                          body: GestureDetector(
-                                            onTap: () {
-                                              context.pushNamed(
-                                                  AppViews.webView,
-                                                  extra: {
-                                                    'url': data.link ??
-                                                        'https://google.com',
-                                                  });
-                                            },
-                                            child: SizedBox(
-                                              width: 70,
-                                              child: DecoratedBox(
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors
-                                                        .lightBlueBackgroundStatus,
-                                                    borderRadius: 32.r,
-                                                  ),
-                                                  child: Center(
-                                                      child: IconWidget(
-                                                    model: IconModel(
-                                                      icon: Icons.language,
-                                                      color: AppColors
-                                                          .primaryColor,
-                                                    ),
-                                                  ))),
+                    child: BodyGroup(
+                      title: t.profile.titleCourses,
+                      items: [
+                        ...widget.homeStore!.coursesStore.listData.map((item) =>
+                            SizedBox(
+                                height: 120,
+                                child: BodyItemDecoration(
+                                    borderRadius: 32.r,
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: BodyItemWidget(
+                                        item: CustomBodyItem(
+                                            bodyAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            title: item.title ?? '',
+                                            titleStyle: textTheme.headlineSmall
+                                                ?.copyWith(
+                                              fontSize: 20,
                                             ),
-                                          )))))),
-                    ]),
-                  ),
-                if (userStore.role == Role.onlineSchool &&
-                    widget.homeStore!.ownArticlesStore.listData.isNotEmpty) ...[
-                  30.h,
-                  BodyGroup(title: t.profile.titleArticle, items: [
-                    Padding(
-                        padding: const EdgeInsets.only(left: 16),
-                        child: SizedBox(
-                            height: 250,
-                            child: PaginatedLoadingWidget(
-                              scrollDirection: Axis.horizontal,
-                              store: widget.homeStore!.ownArticlesStore,
-                              itemBuilder: (context, item) {
-                                return ArticleBox(
-                                  model: item,
-                                );
+                                            subTitleLines: 2,
+                                            hintStyle: textTheme.titleSmall,
+                                            subTitle:
+                                                item.shortDescription ?? '',
+                                            subTitleWidth: double.infinity,
+                                            body: GestureDetector(
+                                              onTap: () {
+                                                context.pushNamed(
+                                                    AppViews.webView,
+                                                    extra: {
+                                                      'url': item.link,
+                                                    });
+                                              },
+                                              child: SizedBox(
+                                                width: 70,
+                                                child: DecoratedBox(
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors
+                                                          .lightBlueBackgroundStatus,
+                                                      borderRadius: 32.r,
+                                                    ),
+                                                    child: Center(
+                                                        child: IconWidget(
+                                                      model: IconModel(
+                                                        icon: Icons.language,
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                      ),
+                                                    ))),
+                                              ),
+                                            )))))),
+                        if (userStore.role == Role.onlineSchool &&
+                            widget.homeStore!.ownArticlesStore.listData
+                                .isNotEmpty) ...[
+                          30.h,
+                          BodyGroup(title: t.profile.titleArticle, items: [
+                            Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: SizedBox(
+                                    height: 250,
+                                    child: PaginatedLoadingWidget(
+                                      scrollDirection: Axis.horizontal,
+                                      store: widget.homeStore!.ownArticlesStore,
+                                      itemBuilder: (context, item) {
+                                        return ArticleBox(
+                                          model: item,
+                                        );
+                                      },
+                                    ))),
+                          ]),
+                        ],
+                        if (userStore.role == Role.user)
+                          Padding(
+                            padding: const EdgeInsets.all(28.0),
+                            child: InkWell(
+                              onTap: () {
+                                context.pushNamed(AppViews.registerFillBabyName,
+                                    extra: {
+                                      'isNotRegister': true,
+                                    });
                               },
-                            ))),
-                  ]),
-                ],
-                if (userStore.role == Role.user)
-                  Padding(
-                    padding: const EdgeInsets.all(28.0),
-                    child: InkWell(
-                      onTap: () {
-                        context
-                            .pushNamed(AppViews.registerFillBabyName, extra: {
-                          'isNotRegister': true,
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Image(
-                          //   height: 17,
-                          //   image: AssetImage(
-                          //     Assets.icons.icAddChild.path,
-                          //   ),
-                          // ),
-                          const Icon(
-                            AppIcons.plusSquareDashed,
-                            color: AppColors.primaryColor,
-                          ),
-                          16.w,
-                          Text(
-                            t.profile.addChildButtonTitle,
-                            style: widget.titlesColoredStyle?.copyWith(
-                              fontSize: 14,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Image(
+                                  //   height: 17,
+                                  //   image: AssetImage(
+                                  //     Assets.icons.icAddChild.path,
+                                  //   ),
+                                  // ),
+                                  const Icon(
+                                    AppIcons.plusSquareDashed,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                  16.w,
+                                  Text(
+                                    t.profile.addChildButtonTitle,
+                                    style: widget.titlesColoredStyle?.copyWith(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
               ],
-            ),
-          ),
-        ],
-      );
+            ))
+      ]);
     });
   }
 }

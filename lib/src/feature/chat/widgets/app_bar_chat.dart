@@ -68,6 +68,7 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: GestureDetector(
                 onTap: () {
                   store.setIsSearching(!store.isSearching);
+                  store.setQuery('');
                   store.setFilters({
                     'query': (MessageItem e) {
                       return true;
@@ -100,15 +101,17 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
             10.w,
           ],
           bottom: store.attachedMessages.isNotEmpty
-              ? const PreferredSize(
-                  preferredSize: Size.fromHeight(60),
+              ? PreferredSize(
+                  preferredSize: const Size.fromHeight(60),
                   child: Column(
                     children: [
-                      Divider(
+                      const Divider(
                         height: 3,
                         color: AppColors.lavenderBlue,
                       ),
-                      PinnedMessages(),
+                      PinnedMessages(
+                        store: store,
+                      ),
                     ],
                   ))
               : null);

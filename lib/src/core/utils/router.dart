@@ -93,7 +93,9 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: _Paths.startScreen,
       name: AppViews.startScreen,
-      builder: (context, state) => const StartScreen(),
+      builder: (context, state) {
+        return const StartScreen();
+      },
     ),
     GoRoute(
       path: _Paths.register,

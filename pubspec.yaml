@@ -5,12 +5,11 @@ description: >
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 0.2.1+83
+version: 0.2.1+85
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
   flutter: ">=3.10.5 <4.0.0"
-
 
 dependencies:
   # Flutter SDK
@@ -62,8 +61,12 @@ dependencies:
   json_serializable: ^6.8.0
   mask_text_input_formatter: ^2.9.0
   icons_launcher: ^2.1.7
+  url_launcher: ^6.3.1
   flutter_downloader: ^1.11.8
+
+  # -- audio -- #
   audioplayers: ^6.1.0
+  record: ^5.2.0
 
   # -- media -- #
   image_picker: ^1.1.2
@@ -103,7 +106,7 @@ dependencies:
   substring_highlight: ^1.0.33
   marquee: ^2.3.0
   google_fonts: ^6.2.1
-
+  flutter_linkify: ^6.0.0
 
   # -- image -- #
   flutter_svg: ^2.0.10+1

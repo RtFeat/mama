@@ -49,43 +49,45 @@ class ChatItemWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    RichText(
-                      maxLines: 2,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: isChat
-                                ? participant?.name
-                                : (item as GroupItem).groupInfo?.name,
-                            // isChat
-                            //     ? '${(item as SingleChatItem).participant2?.name}'
-                            //     : (item as GroupItem).groupInfo?.name,
-                            style: textTheme.bodyMedium,
-                          ),
-                          if (isChat)
-                            if (participant?.profession != null &&
-                                participant!.profession!.isNotEmpty)
-                              // if ((item as SingleChatItem)
-                              //             .participant2
-                              //             ?.profession !=
-                              //         null &&
-                              //     (item as SingleChatItem)
-                              //         .participant2!
-                              //         .profession!
-                              //         .isNotEmpty)
-                              // if (chatEntity == ChatEntity.singleChat)
-                              //   if (chatItem.profession != null &&
-                              //       chatItem.profession!.isNotEmpty)
-                              WidgetSpan(
-                                child: ProfessionBox(
-                                  profession: (item as SingleChatItem)
-                                      .participant1!
-                                      .profession!,
+                    Expanded(
+                      child: RichText(
+                        maxLines: 2,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: isChat
+                                  ? participant?.name
+                                  : (item as GroupItem).groupInfo?.name,
+                              // isChat
+                              //     ? '${(item as SingleChatItem).participant2?.name}'
+                              //     : (item as GroupItem).groupInfo?.name,
+                              style: textTheme.bodyMedium,
+                            ),
+                            if (isChat)
+                              if (participant?.profession != null &&
+                                  participant!.profession!.isNotEmpty)
+                                // if ((item as SingleChatItem)
+                                //             .participant2
+                                //             ?.profession !=
+                                //         null &&
+                                //     (item as SingleChatItem)
+                                //         .participant2!
+                                //         .profession!
+                                //         .isNotEmpty)
+                                // if (chatEntity == ChatEntity.singleChat)
+                                //   if (chatItem.profession != null &&
+                                //       chatItem.profession!.isNotEmpty)
+                                WidgetSpan(
+                                  child: ProfessionBox(
+                                    profession: (item as SingleChatItem)
+                                        .participant1!
+                                        .profession!,
+                                  ),
                                 ),
-                              ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     if (item.unreadMessages != null && item.unreadMessages! > 0)

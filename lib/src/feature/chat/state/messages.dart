@@ -42,6 +42,29 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
   ObservableList<MessageItem> get messages =>
       ObservableList.of(listData.where((e) => !e.isAttached));
 
+  // need for show date in top
+  @observable
+  MessageItem? currentShowingMessage;
+
+  @action
+  void setCurrentShowingMessage(MessageItem? message) {
+    currentShowingMessage = message;
+  }
+
+  @observable
+  MessageItem? mentionedMessage;
+
+  @action
+  void setMentionedMessage(MessageItem? message) => mentionedMessage = message;
+
+  @observable
+  int selectedPinnedMessageIndex = -1;
+
+  @computed
+  MessageItem? get pinnedMessage => selectedPinnedMessageIndex != -1
+      ? listData[selectedPinnedMessageIndex]
+      : null;
+
   @computed
   ObservableList<MessageItem> get attachedMessages => ObservableList.of([
         MessageItem(
@@ -75,6 +98,7 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
   void setQuery(String value) {
     logger.info('query $value', runtimeType: runtimeType);
     query = value;
+    formGroup.control('search').value = value;
   }
 
   @action
@@ -89,5 +113,6 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   FormGroup formGroup = FormGroup({
     'search': FormControl<String>(),
+    'message': FormControl<String>(),
   });
 }

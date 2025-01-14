@@ -9,3 +9,5 @@ hintSearchParticipant: Find participant
 pinned: Pinned message
 pinnedMessages: Pinned messages
 voice: Voice message
+recording: Recording
+cancelRecording: In left - cancel

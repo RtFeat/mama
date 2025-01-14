@@ -36,7 +36,10 @@ class MessageWidget extends StatelessWidget {
           Expanded(
               flex: 5,
               child: Content(item: item, isOnGroup: isOnGroup, isUser: isUser)),
-          ReplyButton(isUser: isUser),
+          ReplyButton(
+            isUser: isUser,
+            message: item,
+          ),
         ],
       ),
     );

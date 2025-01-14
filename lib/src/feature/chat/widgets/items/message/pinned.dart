@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:provider/provider.dart';
 
 class PinnedMessages extends StatelessWidget {
-  const PinnedMessages({super.key});
+  final MessagesStore store;
+  const PinnedMessages({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
-    final MessagesStore store = context.watch();
 
     return Observer(builder: (_) {
       if (store.attachedMessages.isNotEmpty) {

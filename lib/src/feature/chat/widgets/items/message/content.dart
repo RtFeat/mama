@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
-import 'package:provider/provider.dart';
-import 'package:substring_highlight/substring_highlight.dart';
 
 import 'assets.dart';
 import 'decoration.dart';
 import 'header.dart';
 import 'reply.dart';
+import 'text.dart';
 
 class Content extends StatelessWidget {
   final bool isUser;
@@ -20,11 +19,6 @@ class Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
-
-    final MessagesStore store = context.watch();
-
     return MessageDecorationWidget(
       isUser: isUser,
       child: Column(
@@ -41,19 +35,7 @@ class Content extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: SubstringHighlight(
-                    text: item.text ?? '',
-                    textStyle: textTheme.titleSmall!.copyWith(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                    term: store.query ?? '',
-                    textStyleHighlight: textTheme.titleSmall!.copyWith(
-                      fontSize: 16,
-                      color: Colors.black,
-                      backgroundColor: AppColors.purpleBrighterBackgroundColor,
-                    ),
-                  ),
+                  child: MessageText(item: item),
                 ),
               ],
             ),

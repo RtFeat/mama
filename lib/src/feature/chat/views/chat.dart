@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +55,9 @@ class _Body extends StatefulWidget {
 }
 
 class __BodyState extends State<_Body> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _messageKeys = {};
+
   @override
   void initState() {
     logger.info('${widget.item.runtimeType}');
@@ -72,7 +76,41 @@ class __BodyState extends State<_Body> {
           ? widget.item?.id
           : (widget.item as GroupItem).groupChatId
     });
+
+    _scrollController.addListener(_updateCurrentDate);
+
     super.initState();
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    _scrollController.removeListener(_updateCurrentDate);
+    _scrollController.dispose();
+  }
+
+  void _updateCurrentDate() {
+    if (widget.store.messages.isEmpty) return;
+
+    // Проходим по сообщениям с конца списка (так как reversed)
+    for (int i = widget.store.messages.length - 1; i >= 0; i--) {
+      final key = _messageKeys[i];
+      if (key == null) continue;
+
+      final context = key.currentContext;
+      if (context != null) {
+        final box = context.findRenderObject() as RenderBox?;
+        if (box != null) {
+          final double position = box.localToGlobal(Offset.zero).dy;
+
+          // Проверяем видимость сообщения (находится в нижней части экрана)
+          if (position >= 0 && position <= MediaQuery.of(context).size.height) {
+            widget.store.setCurrentShowingMessage(widget.store.messages[i]);
+            return; // Как только нашли, выходим из метода
+          }
+        }
+      }
+    }
   }
 
   @override
@@ -87,16 +125,136 @@ class __BodyState extends State<_Body> {
                       store: widget.store,
                       groupUsersStore: widget.groupUsersStore)
                   as PreferredSizeWidget,
-          body: PaginatedLoadingWidget(
-            store: widget.store,
-            isReversed: true,
-            listData: () => widget.store.isSearching
-                ? widget.store.filteredMessages
-                : widget.store.messages,
-            itemBuilder: (context, item) {
-              return MessageWidget(item: item);
-            },
-          ));
+          bottomNavigationBar: const ChatBottomBar(),
+          body: Observer(builder: (_) {
+            return Stack(
+              children: [
+                PaginatedLoadingWidget(
+                  scrollController: _scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  store: widget.store,
+                  isReversed: true,
+                  separator: (index, item) {
+                    final previousItem =
+                        index > 0 ? widget.store.messages[index - 1] : null;
+                    final currentDate = (item).createdAt?.toLocal();
+                    final previousDate = previousItem != null
+                        ? (previousItem).createdAt?.toLocal()
+                        : null;
+
+                    // Если это первый элемент или дата отличается, показать дату
+                    if (previousDate == null ||
+                        currentDate?.day != previousDate.day) {
+                      return _Date(
+                          store: widget.store,
+                          scrollController: _scrollController,
+                          date: currentDate!);
+                    }
+                    return const SizedBox(
+                      height: 20,
+                    );
+                  },
+                  listData: () => widget.store.isSearching
+                      ? widget.store.filteredMessages
+                      : widget.store.messages,
+                  itemBuilder: (context, item) {
+                    final index = widget.store.messages.indexOf(item);
+                    _messageKeys[index] = GlobalKey();
+
+                    // Для первого элемента добавляем дату в начало
+                    if (index == widget.store.messages.length - 1) {
+                      final firstDate = (item).createdAt?.toLocal();
+
+                      if (firstDate == null) return const SizedBox.shrink();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _Date(
+                            store: widget.store,
+                            scrollController: _scrollController,
+                            date: firstDate,
+                            padding: const EdgeInsets.only(
+                              bottom: 10,
+                            ),
+                          ),
+                          // Text(
+                          //   DateFormat('dd MMMM yyyy').format(firstDate),
+                          //   style: const TextStyle(color: Colors.grey),
+                          // ),
+                          MessageWidget(key: _messageKeys[index], item: item),
+                        ],
+                      );
+                    }
+                    return MessageWidget(key: _messageKeys[index], item: item);
+                  },
+                ),
+                if (widget.store.currentShowingMessage != null)
+                  _Date(
+                      store: widget.store,
+                      scrollController: _scrollController,
+                      date: widget.store.currentShowingMessage!.createdAt!
+                          .toLocal())
+              ],
+            );
+          }));
     });
+  }
+}
+
+class _Date extends StatelessWidget {
+  final DateTime date;
+  final EdgeInsets? padding;
+  final MessagesStore store;
+  final ScrollController scrollController;
+  const _Date(
+      {required this.date,
+      this.padding,
+      required this.store,
+      required this.scrollController});
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
+
+    final DateTime now = DateTime.now();
+    final bool isToday =
+        date.year == now.year && date.month == now.month && date.day == now.day;
+
+    final bool isTomorrow = date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day + 1;
+
+    final String dateToText = isToday
+        ? t.home.today
+        : isTomorrow
+            ? t.home.tomorrow
+            : DateFormat(
+                'dd MMMM yyyy',
+                TranslationProvider.of(context).flutterLocale.languageCode,
+              ).format(date);
+
+    return Padding(
+        padding: padding ??
+            const EdgeInsets.symmetric(
+              vertical: 10,
+            ),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              color: AppColors.whiteColor,
+              borderRadius: BorderRadius.all(Radius.circular(32)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                dateToText,
+                style: textTheme.titleLarge?.copyWith(
+                  fontSize: 10,
+                ),
+              ),
+            ),
+          )
+        ]));
   }
 }
