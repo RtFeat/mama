@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 class ChatView extends StatelessWidget {
   final ChatItem? item;
@@ -55,7 +55,6 @@ class _Body extends StatefulWidget {
 }
 
 class __BodyState extends State<_Body> {
-  final ScrollController _scrollController = ScrollController();
   final Map<int, GlobalKey> _messageKeys = {};
 
   @override
@@ -64,12 +63,6 @@ class __BodyState extends State<_Body> {
 
     logger.info('${widget.item?.id}');
 
-    // logger.info('${(widget.item as GroupItem).groupChatId}');
-
-    // if (widget.groupUsersStore != null) {
-    //   widget.groupUsersStore?.loadPage(queryParams: {});
-    // }
-
     widget.store.loadPage(queryParams: {
       'limit': '10',
       'chat_id': widget.item is SingleChatItem
@@ -77,7 +70,7 @@ class __BodyState extends State<_Body> {
           : (widget.item as GroupItem).groupChatId
     });
 
-    _scrollController.addListener(_updateCurrentDate);
+    widget.store.scrollController.addListener(_updateCurrentDate);
 
     super.initState();
   }
@@ -85,8 +78,8 @@ class __BodyState extends State<_Body> {
   @override
   dispose() {
     super.dispose();
-    _scrollController.removeListener(_updateCurrentDate);
-    _scrollController.dispose();
+    widget.store.scrollController.removeListener(_updateCurrentDate);
+    widget.store.dispose();
   }
 
   void _updateCurrentDate() {
@@ -119,41 +112,34 @@ class __BodyState extends State<_Body> {
       return Scaffold(
           backgroundColor: AppColors.purpleLighterBackgroundColor,
           appBar: widget.store.isSearching
-              ? ChatSearchBar(store: widget.store)
-              : ChatsAppBar(
+              ? ChatSearchBar(store: widget.store) as PreferredSizeWidget
+              : PreferredSize(
+                  preferredSize: Size.fromHeight(
+                      widget.store.attachedMessages.isNotEmpty
+                          ? kToolbarHeight * 2
+                          : kToolbarHeight),
+                  child: ChatsAppBar(
                       item: widget.item,
+                      scrollController: widget.store.scrollController,
                       store: widget.store,
-                      groupUsersStore: widget.groupUsersStore)
-                  as PreferredSizeWidget,
-          bottomNavigationBar: const ChatBottomBar(),
+                      groupUsersStore: widget.groupUsersStore),
+                ),
+          bottomNavigationBar: ChatBottomBar(
+            store: context.watch(),
+          ),
           body: Observer(builder: (_) {
             return Stack(
               children: [
                 PaginatedLoadingWidget(
-                  scrollController: _scrollController,
+                  scrollController: widget.store.scrollController,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   store: widget.store,
                   isReversed: true,
-                  separator: (index, item) {
-                    final previousItem =
-                        index > 0 ? widget.store.messages[index - 1] : null;
-                    final currentDate = (item).createdAt?.toLocal();
-                    final previousDate = previousItem != null
-                        ? (previousItem).createdAt?.toLocal()
-                        : null;
-
-                    // Если это первый элемент или дата отличается, показать дату
-                    if (previousDate == null ||
-                        currentDate?.day != previousDate.day) {
-                      return _Date(
-                          store: widget.store,
-                          scrollController: _scrollController,
-                          date: currentDate!);
-                    }
-                    return const SizedBox(
-                      height: 20,
-                    );
-                  },
+                  separator: (index, item) => DateSeparatorInChat(
+                      index: index,
+                      item: item,
+                      data: widget.store.messages,
+                      scrollController: widget.store.scrollController),
                   listData: () => widget.store.isSearching
                       ? widget.store.filteredMessages
                       : widget.store.messages,
@@ -169,92 +155,45 @@ class __BodyState extends State<_Body> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Date(
-                            store: widget.store,
-                            scrollController: _scrollController,
+                          ChatDateWidget(
+                            scrollController: widget.store.scrollController,
                             date: firstDate,
                             padding: const EdgeInsets.only(
                               bottom: 10,
                             ),
                           ),
-                          // Text(
-                          //   DateFormat('dd MMMM yyyy').format(firstDate),
-                          //   style: const TextStyle(color: Colors.grey),
-                          // ),
-                          MessageWidget(key: _messageKeys[index], item: item),
+                          AutoScrollTag(
+                            index: index,
+                            controller: widget.store.scrollController,
+                            key: ValueKey(item.id),
+                            child: MessageWidget(
+                              key: _messageKeys[index],
+                              item: item,
+                              store: widget.store,
+                            ),
+                          ),
                         ],
                       );
                     }
-                    return MessageWidget(key: _messageKeys[index], item: item);
+                    return AutoScrollTag(
+                        index: index,
+                        controller: widget.store.scrollController,
+                        key: ValueKey(item.id),
+                        child: MessageWidget(
+                          key: _messageKeys[index],
+                          item: item,
+                          store: widget.store,
+                        ));
                   },
                 ),
                 if (widget.store.currentShowingMessage != null)
-                  _Date(
-                      store: widget.store,
-                      scrollController: _scrollController,
+                  ChatDateWidget(
+                      scrollController: widget.store.scrollController,
                       date: widget.store.currentShowingMessage!.createdAt!
                           .toLocal())
               ],
             );
           }));
     });
-  }
-}
-
-class _Date extends StatelessWidget {
-  final DateTime date;
-  final EdgeInsets? padding;
-  final MessagesStore store;
-  final ScrollController scrollController;
-  const _Date(
-      {required this.date,
-      this.padding,
-      required this.store,
-      required this.scrollController});
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
-
-    final DateTime now = DateTime.now();
-    final bool isToday =
-        date.year == now.year && date.month == now.month && date.day == now.day;
-
-    final bool isTomorrow = date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day + 1;
-
-    final String dateToText = isToday
-        ? t.home.today
-        : isTomorrow
-            ? t.home.tomorrow
-            : DateFormat(
-                'dd MMMM yyyy',
-                TranslationProvider.of(context).flutterLocale.languageCode,
-              ).format(date);
-
-    return Padding(
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              vertical: 10,
-            ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          DecoratedBox(
-            decoration: const BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: BorderRadius.all(Radius.circular(32)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                dateToText,
-                style: textTheme.titleLarge?.copyWith(
-                  fontSize: 10,
-                ),
-              ),
-            ),
-          )
-        ]));
   }
 }

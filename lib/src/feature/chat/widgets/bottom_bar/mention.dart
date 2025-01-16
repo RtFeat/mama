@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
-import 'package:provider/provider.dart';
 
 class MentionWidget extends StatelessWidget {
-  const MentionWidget({super.key});
+  final MessagesStore store;
+  const MentionWidget({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-
-    final MessagesStore store = context.watch();
 
     return Observer(builder: (context) {
       return Row(

@@ -193,4 +193,7 @@ abstract class _MessageItem extends BaseModel with Store {
   @observable
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool isAttached = false;
+
+  @action
+  void setIsAttached(bool value) => isAttached = value;
 }

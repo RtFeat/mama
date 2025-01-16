@@ -63,6 +63,7 @@ dependencies:
   icons_launcher: ^2.1.7
   url_launcher: ^6.3.1
   flutter_downloader: ^1.11.8
+  scroll_to_index: ^3.0.1
 
   # -- audio -- #
   audioplayers: ^6.1.0

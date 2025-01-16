@@ -2,6 +2,7 @@ import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 part 'messages.g.dart';
 
@@ -39,8 +40,7 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
             });
 
   @computed
-  ObservableList<MessageItem> get messages =>
-      ObservableList.of(listData.where((e) => !e.isAttached));
+  ObservableList<MessageItem> get messages => ObservableList.of(listData);
 
   // need for show date in top
   @observable
@@ -62,28 +62,23 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   @computed
   MessageItem? get pinnedMessage => selectedPinnedMessageIndex != -1
-      ? listData[selectedPinnedMessageIndex]
+      ? attachedMessages[selectedPinnedMessageIndex]
       : null;
 
   @computed
-  ObservableList<MessageItem> get attachedMessages => ObservableList.of([
-        MessageItem(
-          id: 'attached',
-          text: 'Attached',
-          isAttached: true,
-        ),
-        MessageItem(
-          id: 'attached',
-          text: 'Attached',
-          isAttached: true,
-        ),
-        MessageItem(
-          id: 'attached',
-          text: 'Attached',
-          isAttached: true,
-        ),
-      ]);
-  // ObservableList.of(listData.where((e) => e.isAttached));
+  ObservableList<MessageItem> get attachedMessages =>
+      ObservableList.of(listData.where((e) => e.isAttached));
+
+  @action
+  void nextPinnedMessage() {
+    if (selectedPinnedMessageIndex < attachedMessages.length - 1) {
+      selectedPinnedMessageIndex += 1;
+    } else {
+      selectedPinnedMessageIndex = 0;
+    }
+    scrollController.scrollToIndex(messages.indexOf(pinnedMessage),
+        preferPosition: AutoScrollPosition.begin);
+  }
 
   @observable
   bool isSearching = false;
@@ -115,4 +110,10 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     'search': FormControl<String>(),
     'message': FormControl<String>(),
   });
+
+  final AutoScrollController scrollController = AutoScrollController();
+
+  void dispose() {
+    scrollController.dispose();
+  }
 }

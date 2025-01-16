@@ -56,8 +56,25 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           avatarUrl: widget.userStore.account.avatarUrl ?? '',
         );
       }),
-      action: const ProfileWidget(
+      action: ProfileWidget(
         isShowText: true,
+        onTapSwitch: () {
+          switch (_tabController.index) {
+            case 2:
+              if (widget.userStore.role == Role.user) {
+                final store =
+                    Provider.of<ChatsViewStore>(context, listen: false);
+
+                store.groups.resetPagination();
+
+                store.loadAllGroups(
+                  widget.userStore.selectedChild?.id,
+                );
+              }
+              break;
+            default:
+          }
+        },
       ),
     );
 

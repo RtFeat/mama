@@ -68,7 +68,12 @@ class App extends StatelessWidget {
           Provider(
             create: (context) => AudioPlayerStore(),
             dispose: (context, value) => value.dispose(),
-          )
+          ),
+          Provider(
+            create: (context) => ChatsViewStore(
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
         ],
         child: TranslationProvider(child: const MaterialContext()),
       );

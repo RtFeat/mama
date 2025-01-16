@@ -27,6 +27,12 @@ abstract class _ChatsViewStore with Store {
               restClient.get(Endpoint().groups, queryParams: params),
         );
 
+  @observable
+  ObservableFuture? fetchFuture;
+
+  @action
+  void setFetchFuture(ObservableFuture? value) => fetchFuture = value;
+
   Future loadAllChats() async {
     await chats.loadPage(queryParams: {});
   }

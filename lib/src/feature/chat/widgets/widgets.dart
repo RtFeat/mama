@@ -7,3 +7,4 @@ export 'finder.dart';
 export 'emoji.dart';
 export 'chats_body.dart';
 export 'bottom_bar/bottom_bar.dart';
+export 'date.dart';

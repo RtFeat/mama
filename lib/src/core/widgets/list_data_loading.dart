@@ -159,6 +159,7 @@ class _DataWidget<R> extends StatelessWidget {
 
     return InfiniteList(
       physics: physics,
+      cacheExtent: 1000,
       scrollDirection: scrollDirection,
       padding: padding,
       scrollController: scrollController,

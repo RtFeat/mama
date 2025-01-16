@@ -6,7 +6,9 @@ import 'package:mama/src/data.dart';
 
 class PinnedMessages extends StatelessWidget {
   final MessagesStore store;
-  const PinnedMessages({super.key, required this.store});
+  final ScrollController scrollController;
+  const PinnedMessages(
+      {super.key, required this.store, required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +21,7 @@ class PinnedMessages extends StatelessWidget {
             color: AppColors.lightPirple,
             child: ListTile(
                 onTap: () {
-                  context.pushNamed(AppViews.pinnedMessagesView, extra: {
-                    'store': store,
-                  });
+                  store.nextPinnedMessage();
                 },
                 dense: true,
                 minLeadingWidth: 1,
@@ -34,7 +34,7 @@ class PinnedMessages extends StatelessWidget {
                   style: textTheme.labelLarge,
                 ),
                 subtitle: Text(
-                  store.attachedMessages[0].text ?? '',
+                  store.pinnedMessage?.text ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.labelSmall?.copyWith(
@@ -42,20 +42,47 @@ class PinnedMessages extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                leading: Column(
-                  children: store.attachedMessages.mapIndexed((index, message) {
-                    if (store.attachedMessages.length <= 3) {
-                      return const Expanded(
-                        child: VerticalDivider(
-                            width: 20, thickness: 2, indent: 2, endIndent: 2),
-                      );
-                    }
+                leading: SizedBox(
+                  width: 20,
+                  child: store.attachedMessages.length <= 3
+                      ? Column(
+                          children: store.attachedMessages.mapIndexed((i, e) {
+                            final bool isSelected =
+                                i == store.selectedPinnedMessageIndex;
 
-                    return const SizedBox.shrink();
-                  }).toList(),
+                            return Expanded(
+                              child: VerticalDivider(
+                                  color: isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.greyLighterColor,
+                                  width: 20,
+                                  thickness: 2,
+                                  indent: 2,
+                                  endIndent: 2),
+                            );
+                          }).toList(),
+                        )
+                      : ListView.builder(
+                          reverse: true,
+                          itemCount: store.attachedMessages.length,
+                          itemBuilder: (context, index) {
+                            final bool isSelected =
+                                index == store.selectedPinnedMessageIndex;
+
+                            return SizedBox(
+                              height: 10,
+                              child: VerticalDivider(
+                                  color: isSelected
+                                      ? AppColors.primaryColor
+                                      : AppColors.greyLighterColor,
+                                  width: 20,
+                                  thickness: 2,
+                                  indent: 2,
+                                  endIndent: 2),
+                            );
+                          },
+                        ),
                 ),
-
-                // onTap: pinnedMessageStore.nextPinnedMessage,
                 trailing:
                     // Padding(
                     //     padding: const EdgeInsets.only(
@@ -84,11 +111,19 @@ class PinnedMessages extends StatelessWidget {
                     //           color: AppColors.greyLighterColor,
                     //         )
                     //       :
-                    const Padding(
+                    Padding(
                   padding: EdgeInsets.only(right: 8),
-                  child: Icon(
-                    AppIcons.pinFill,
-                    color: AppColors.greyLighterColor,
+                  child: IconButton(
+                    onPressed: () {
+                      context.pushNamed(AppViews.pinnedMessagesView, extra: {
+                        'store': store,
+                        'scrollController': scrollController,
+                      });
+                    },
+                    icon: Icon(
+                      AppIcons.pinFill,
+                      color: AppColors.greyLighterColor,
+                    ),
                     // );
                     // }
                   ),

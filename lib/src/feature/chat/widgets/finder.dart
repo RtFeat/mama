@@ -36,6 +36,9 @@ class Finder extends StatelessWidget {
 
     return ReactiveTextField(
       formControlName: formControlName,
+      onTapOutside: (event) {
+        onSearchIconPressed?.call();
+      },
       decoration: InputDecoration(
           border: inputBorder,
           focusedBorder: inputBorder,

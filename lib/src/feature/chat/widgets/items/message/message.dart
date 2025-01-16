@@ -8,9 +8,11 @@ import 'reply.dart';
 
 class MessageWidget extends StatelessWidget {
   final MessageItem item;
+  final MessagesStore? store;
   const MessageWidget({
     super.key,
     required this.item,
+    required this.store,
   });
 
   @override
@@ -35,10 +37,16 @@ class MessageWidget extends StatelessWidget {
           ),
           Expanded(
               flex: 5,
-              child: Content(item: item, isOnGroup: isOnGroup, isUser: isUser)),
+              child: Content(
+                item: item,
+                isOnGroup: isOnGroup,
+                isUser: isUser,
+                store: store,
+              )),
           ReplyButton(
             isUser: isUser,
             message: item,
+            store: store,
           ),
         ],
       ),

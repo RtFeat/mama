@@ -11,3 +11,7 @@ pinnedMessages: Pinned messages
 voice: Voice message
 recording: Recording
 cancelRecording: In left - cancel
+reply: Reply
+pin: Pin
+unpin: Unpin
+delete: Delete

@@ -11,23 +11,16 @@ class ChatsListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (context) => ChatsViewStore(
-        restClient: context.read<Dependencies>().restClient,
-      ),
-      builder: (context, _) {
-        final store = context.watch<ChatsViewStore>();
+    final store = context.watch<ChatsViewStore>();
 
-        return Scaffold(
-          backgroundColor: AppColors.purpleLighterBackgroundColor,
-          appBar: appBar,
-          body: SubscribeBlockItem(
-              child: ChatsBodyWidget(
-            store: store,
-            childId: context.watch<UserStore>().selectedChild?.id,
-          )),
-        );
-      },
+    return Scaffold(
+      backgroundColor: AppColors.purpleLighterBackgroundColor,
+      appBar: appBar,
+      body: SubscribeBlockItem(
+          child: ChatsBodyWidget(
+        store: store,
+        childId: context.watch<UserStore>().selectedChild?.id,
+      )),
     );
   }
 }

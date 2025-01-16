@@ -6,10 +6,12 @@ import 'package:mama/src/feature/chat/chat.dart';
 import 'package:marquee/marquee.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
+class ChatsAppBar extends StatelessWidget {
   final ChatItem? item;
   final MessagesStore store;
   final GroupUsersStore? groupUsersStore;
+
+  final ScrollController scrollController;
 
   final double? height;
 
@@ -19,6 +21,7 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.item,
     required this.store,
     required this.groupUsersStore,
+    required this.scrollController,
   });
 
   @override
@@ -111,18 +114,12 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       PinnedMessages(
                         store: store,
+                        scrollController: scrollController,
                       ),
                     ],
                   ))
               : null);
     });
-  }
-
-  @override
-  Size get preferredSize {
-    final bool hasPinnedMessages = store.attachedMessages.isNotEmpty;
-    return Size.fromHeight(
-        height ?? (hasPinnedMessages ? kToolbarHeight * 2 : kToolbarHeight));
   }
 }
 

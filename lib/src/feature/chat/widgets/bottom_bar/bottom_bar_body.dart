@@ -9,7 +9,9 @@ import 'text_field.dart';
 
 class ChatBottomBarBody extends StatefulWidget {
   final ChatBottomBarStore barStore;
-  const ChatBottomBarBody({super.key, required this.barStore});
+  final MessagesStore? store;
+  const ChatBottomBarBody(
+      {super.key, required this.barStore, required this.store});
 
   @override
   State<ChatBottomBarBody> createState() => _ChatBottomBarBodyState();
@@ -78,7 +80,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
 
   @override
   Widget build(BuildContext context) {
-    final MessagesStore store = context.watch();
+    final MessagesStore? store = widget.store;
     final ChatBottomBarStore barStore = context.watch();
 
     return Stack(
@@ -90,7 +92,9 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
               ? RecordingIndicator(
                   animation: _micScaleAnimation,
                 )
-              : const BottomBarTextField();
+              : BottomBarTextField(
+                  store: widget.store,
+                );
         }),
         Observer(builder: (_) {
           return Positioned(
@@ -101,23 +105,23 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
             top: widget.barStore.isRecording
                 ? -30
                 : widget.barStore.isShowEmojiPanel &&
-                            store.mentionedMessage != null ||
+                            store?.mentionedMessage != null ||
                         barStore.files.isNotEmpty
                     ? 60 +
                         (barStore.files.isNotEmpty
                             ? widget.barStore.isShowEmojiPanel &&
-                                    store.mentionedMessage != null
+                                    store?.mentionedMessage != null
                                 ? 100
                                 : 50
                             : 0)
                     : 12,
-            bottom: store.mentionedMessage != null &&
+            bottom: store?.mentionedMessage != null &&
                     !widget.barStore.isShowEmojiPanel &&
                     barStore.files.isEmpty
                 ? 0
                 : barStore.files.isNotEmpty &&
                         !widget.barStore.isShowEmojiPanel &&
-                        store.mentionedMessage != null
+                        store?.mentionedMessage != null
                     ? 0
                     : null,
             child: ReactiveFormConsumer(builder: (context, form, child) {

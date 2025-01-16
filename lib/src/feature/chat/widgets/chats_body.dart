@@ -23,6 +23,7 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
       widget.childId,
     );
     widget.store.loadAllChats();
+
     super.initState();
   }
 
@@ -62,6 +63,8 @@ class _GroupsList extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 PaginatedLoadingWidget(
+                  additionalLoadingWidget: const SliverToBoxAdapter(),
+                  initialLoadingWidget: const SliverToBoxAdapter(),
                   isFewLists: true,
                   store: store.groups,
                   separator: (_, __) => separator,
@@ -102,11 +105,6 @@ class __ChatsListState extends State<_ChatsList> {
             onTap: (index) {
               widget.store.chats
                   .setChatUserTypeFilter(ChatUserTypeFilter.values[index]);
-              // setState(() {});
-              // setState(() {
-              //   toogleSelected = index;
-              //   filterSingle();
-              // });
             },
             btnWidth: MediaQuery.of(context).size.width / 2.32,
             btnHeight: 38,
@@ -118,6 +116,8 @@ class __ChatsListState extends State<_ChatsList> {
             slivers: [
               PaginatedLoadingWidget(
                 isFewLists: true,
+                additionalLoadingWidget: const SliverToBoxAdapter(),
+                initialLoadingWidget: const SliverToBoxAdapter(),
                 separator: (_, __) => widget.separator,
                 store: widget.store.chats,
                 listData: () => widget.store.chats.filteredChats,

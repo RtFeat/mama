@@ -2,18 +2,24 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:mama/src/data.dart';
-import 'package:provider/provider.dart';
 
 class EmojiWidget extends StatelessWidget {
-  const EmojiWidget({super.key});
+  final MessagesStore store;
+  const EmojiWidget({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
-    final MessagesStore store = context.watch();
     return emoji.EmojiPicker(
       // textEditingController: controller,
       onEmojiSelected: (category, emoji) {
-        store.formGroup.control('message').value += emoji.emoji;
+        final control = store.formGroup.control('message');
+        final String? value = control.value;
+
+        if (value == null) {
+          control.value = emoji.emoji;
+        } else {
+          control.value += emoji.emoji;
+        }
       },
       config: emoji.Config(
         height: 200,

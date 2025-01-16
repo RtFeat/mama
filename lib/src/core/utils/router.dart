@@ -364,8 +364,12 @@ final GoRouter router = GoRouter(
                   final Map? extra = state.extra as Map?;
                   final MessagesStore? store =
                       extra?['store'] as MessagesStore?;
+                  final ScrollController? scrollController =
+                      extra?['scrollController'] as ScrollController?;
+
                   return PinnedMessagesView(
                     store: store,
+                    scrollController: scrollController,
                   );
                 },
               )

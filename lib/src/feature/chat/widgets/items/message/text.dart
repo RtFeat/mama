@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
-import 'package:provider/provider.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MessageText extends StatelessWidget {
   final MessageItem item;
-  const MessageText({super.key, required this.item});
+  final MessagesStore? store;
+  const MessageText({super.key, required this.item, required this.store});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-
-    final MessagesStore store = context.watch();
 
     final TextStyle style = textTheme.titleSmall!.copyWith(
       fontSize: 16,
@@ -23,11 +21,11 @@ class MessageText extends StatelessWidget {
     );
 
     return Observer(builder: (context) {
-      if (store.isSearching) {
+      if (store?.isSearching ?? false) {
         return SubstringHighlight(
           text: item.text ?? '',
           textStyle: style,
-          term: store.query ?? '',
+          term: store?.query ?? '',
           textStyleHighlight: textTheme.titleSmall!.copyWith(
             fontSize: 16,
             color: Colors.black,
@@ -48,8 +46,8 @@ class MessageText extends StatelessWidget {
         onOpen: (link) async {
           if (link.url.startsWith('hashtag:') ||
               link.url.startsWith('mention:')) {
-            store.setQuery(link.url.substring(8));
-            store.setIsSearching(true);
+            store?.setQuery(link.url.substring(8));
+            store?.setIsSearching(true);
             logger.info('Hashtag or mention clicked: ${link.url}');
           } else {
             // Обработка обычных ссылок

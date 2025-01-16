@@ -6,21 +6,24 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'bottom_bar_body.dart';
 
 class ChatBottomBar extends StatelessWidget {
-  const ChatBottomBar({super.key});
+  final MessagesStore store;
+  const ChatBottomBar({
+    super.key,
+    required this.store,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
         color: AppColors.lightPirple,
         child: Provider(
-          create: (context) => ChatBottomBarStore(store: context.read()),
+          create: (context) => ChatBottomBarStore(store: store),
           builder: (context, child) {
-            final MessagesStore store = context.watch();
-
             return ReactiveForm(
               formGroup: store.formGroup,
               child: ChatBottomBarBody(
                 barStore: context.watch(),
+                store: store,
               ),
             );
           },
