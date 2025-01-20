@@ -44,4 +44,13 @@ abstract class _ChatsViewStore with Store {
       if (childId != null) 'child_id': childId,
     });
   }
+
+  @action
+  void deleteChat(String id, String chatType) {
+    if (chatType == 'group') {
+      groups.deleteGroup(id);
+    } else {
+      chats.deleteChat(id);
+    }
+  }
 }

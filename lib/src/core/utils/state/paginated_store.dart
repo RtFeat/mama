@@ -32,7 +32,7 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
   Future<void> loadPage({
     Future<Map<String, Object?>?> Function(Map<String, dynamic> query)?
         fetchFunction,
-    required Map<String, dynamic> queryParams,
+    Map<String, dynamic>? queryParams,
   }) async {
     logger.info('Starting loadPage');
     logger.info('isLoading: $isLoading, hasMore: $hasMore');
@@ -43,7 +43,7 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     }
 
     isLoading = true;
-    this.queryParams = {...this.queryParams, ...queryParams};
+    this.queryParams = {...this.queryParams, ...?queryParams};
 
     final updatedParams = {
       ...this.queryParams,

@@ -33,6 +33,8 @@ class Endpoint {
 
   String get promocode => '$payment/promocode';
 
+  static const String categories = 'category';
+
   static const String consultation = 'consultation';
 
   String get userConsultations => '$consultation/user';

@@ -18,7 +18,7 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     with Store, FilterableDataMixin<MessageItem> {
   _MessagesStore({
     required RestClient restClient,
-    required String chatType,
+    required this.chatType,
     required super.pageSize,
   }) : super(
             fetchFunction: (params) => restClient
@@ -28,16 +28,30 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
                   ?.map((e) => MessageItem.fromJson(e))
                   .toList();
 
-              final List<MessageItem>? attachedMessages = (raw['attached']
-                      as List?)
-                  ?.map(
-                      (e) => MessageItem.fromJson(e).copyWith(isAttached: true))
-                  .toList();
+              final List? attachedMessagesIds = raw['attached'];
 
-              data?.addAll(attachedMessages ?? []);
+              if (data != null && attachedMessagesIds != null) {
+                for (var message in data) {
+                  if (attachedMessagesIds.contains(message.id)) {
+                    message.setIsAttached(true);
+                  }
+                }
+              }
 
               return data ?? [];
             });
+
+  @observable
+  String? chatType;
+
+  @action
+  void setChatType(String? type) => chatType = type;
+
+  @observable
+  String? chatId;
+
+  @action
+  void setChatId(String? id) => chatId = id;
 
   @computed
   ObservableList<MessageItem> get messages => ObservableList.of(listData);
@@ -51,6 +65,16 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     currentShowingMessage = message;
   }
 
+  @action
+  void addMessage(MessageItem message) {
+    listData.insert(0, message);
+  }
+
+  @action
+  void removeMessage(String messageId) {
+    listData.removeWhere((e) => e.id == messageId);
+  }
+
   @observable
   MessageItem? mentionedMessage;
 
@@ -58,10 +82,10 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
   void setMentionedMessage(MessageItem? message) => mentionedMessage = message;
 
   @observable
-  int selectedPinnedMessageIndex = -1;
+  int selectedPinnedMessageIndex = 0;
 
   @computed
-  MessageItem? get pinnedMessage => selectedPinnedMessageIndex != -1
+  MessageItem? get pinnedMessage => attachedMessages.isNotEmpty
       ? attachedMessages[selectedPinnedMessageIndex]
       : null;
 
@@ -76,7 +100,7 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     } else {
       selectedPinnedMessageIndex = 0;
     }
-    scrollController.scrollToIndex(messages.indexOf(pinnedMessage),
+    scrollController?.scrollToIndex(messages.indexOf(pinnedMessage),
         preferPosition: AutoScrollPosition.begin);
   }
 
@@ -111,9 +135,14 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     'message': FormControl<String>(),
   });
 
-  final AutoScrollController scrollController = AutoScrollController();
+  AutoScrollController? scrollController;
+
+  void init() {
+    resetPagination();
+    scrollController = AutoScrollController();
+  }
 
   void dispose() {
-    scrollController.dispose();
+    scrollController?.dispose();
   }
 }

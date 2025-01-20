@@ -17,6 +17,9 @@ class UserServicesBodyWidget extends StatelessWidget {
           MainBox(
             mainText: t.services.knowledgeCenter.title,
             image: Assets.images.hat.path,
+            onTap: () {
+              context.pushNamed(AppViews.serviceKnowlegde);
+            },
           ),
           const SizedBox(height: 8),
 

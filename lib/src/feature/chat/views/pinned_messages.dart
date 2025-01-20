@@ -34,7 +34,8 @@ class PinnedMessagesView extends StatelessWidget {
               separator: (index, item) => DateSeparatorInChat(
                   index: index,
                   item: item,
-                  data: store!.attachedMessages,
+                  isAttachedMessages: true,
+                  store: store!,
                   scrollController: scrollController!),
               itemBuilder: (context, item) {
                 return MessageWidget(

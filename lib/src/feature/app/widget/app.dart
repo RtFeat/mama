@@ -20,6 +20,22 @@ class App extends StatelessWidget {
             create: (context) => result.dependencies,
           ),
           Provider(
+            create: (context) => MessagesStore(
+                restClient: context.read<Dependencies>().restClient,
+                chatType: 'solo'),
+          ),
+          Provider(
+            create: (context) => ChatsViewStore(
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+              create: (context) => ChatSocket(
+                    chatsViewStore: context.read<ChatsViewStore>(),
+                    store: context.read<MessagesStore>(),
+                    tokenStorage: context.read<Dependencies>().tokenStorage,
+                  )),
+          Provider(
               create: (context) => AuthStore(
                     restClient: context.read<Dependencies>().restClient,
                     tokenStorage: context.read<Dependencies>().tokenStorage,
@@ -68,11 +84,6 @@ class App extends StatelessWidget {
           Provider(
             create: (context) => AudioPlayerStore(),
             dispose: (context, value) => value.dispose(),
-          ),
-          Provider(
-            create: (context) => ChatsViewStore(
-              restClient: context.read<Dependencies>().restClient,
-            ),
           ),
         ],
         child: TranslationProvider(child: const MaterialContext()),

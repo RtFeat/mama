@@ -15,6 +15,9 @@ class SpecialistServicesBodyWidget extends StatelessWidget {
             child: MainBox(
               mainText: t.services.knowledgeCenter.title,
               image: Assets.images.hat.path,
+              onTap: () {
+                context.pushNamed(AppViews.serviceKnowlegde);
+              },
             ),
           ),
           12.h,

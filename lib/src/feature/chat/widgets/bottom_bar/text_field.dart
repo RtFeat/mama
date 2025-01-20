@@ -25,8 +25,13 @@ class BottomBarTextField extends StatelessWidget {
             ),
           if (barStore.files.isNotEmpty) const AssetsInBottomWidget(),
           barStore.isShowEmojiPanel
-              ? const _Field()
-              : const SafeArea(child: _Field()),
+              ? _Field(
+                  store: store,
+                )
+              : SafeArea(
+                  child: _Field(
+                  store: store,
+                )),
           if (barStore.isShowEmojiPanel)
             EmojiWidget(
               store: store!,
@@ -38,7 +43,8 @@ class BottomBarTextField extends StatelessWidget {
 }
 
 class _Field extends StatelessWidget {
-  const _Field();
+  final MessagesStore? store;
+  const _Field({required this.store});
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +99,8 @@ class _Field extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 // TODO: send message
+
+                barStore.sendMessage();
               },
               child: const Icon(
                 AppIcons.send,

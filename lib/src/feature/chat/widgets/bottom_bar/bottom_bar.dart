@@ -17,7 +17,10 @@ class ChatBottomBar extends StatelessWidget {
     return ColoredBox(
         color: AppColors.lightPirple,
         child: Provider(
-          create: (context) => ChatBottomBarStore(store: store),
+          create: (context) => ChatBottomBarStore(
+            store: store,
+            socket: context.read<ChatSocket>(),
+          ),
           builder: (context, child) {
             return ReactiveForm(
               formGroup: store.formGroup,

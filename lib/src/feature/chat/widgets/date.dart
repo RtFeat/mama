@@ -1,39 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
-import 'package:mobx/mobx.dart';
 
 class DateSeparatorInChat extends StatelessWidget {
   final int index;
   final MessageItem item;
-  final ObservableList<MessageItem> data;
+  final MessagesStore store;
+  final bool isAttachedMessages;
   final ScrollController scrollController;
   const DateSeparatorInChat({
     super.key,
+    this.isAttachedMessages = false,
     required this.index,
-    required this.data,
+    required this.store,
     required this.item,
     required this.scrollController,
   });
 
   @override
   Widget build(BuildContext context) {
-    final previousItem = index > 0 ? data[index - 1] : null;
-    final firstItem = data[data.length - 1];
-    final currentDate = (item).createdAt?.toLocal();
-    final previousDate =
-        previousItem != null ? (previousItem).createdAt?.toLocal() : null;
+    return Observer(builder: (context) {
+      final messages =
+          isAttachedMessages ? store.attachedMessages : store.messages;
+      final previousItem =
+          index < messages.length - 1 ? messages[index + 1] : null;
+      final currentDate = item.createdAt?.toLocal();
+      final previousDate = previousItem?.createdAt?.toLocal();
 
-    final firstItemDate = (firstItem).createdAt?.toLocal();
-
-    // Если это первый элемент или дата отличается, показать дату
-    if (currentDate != null &&
-        (previousDate == null || currentDate.day != previousDate.day) &&
-        currentDate.day != firstItemDate?.day) {
-      return ChatDateWidget(
-          scrollController: scrollController, date: currentDate);
-    }
-    return 20.h;
+      if (currentDate != null &&
+          (previousDate == null ||
+              currentDate.year != previousDate.year ||
+              currentDate.month != previousDate.month ||
+              currentDate.day != previousDate.day)) {
+        return ChatDateWidget(
+            scrollController: scrollController, date: currentDate);
+      }
+      return 20.h;
+    });
   }
 }
 

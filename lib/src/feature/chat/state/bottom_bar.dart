@@ -13,14 +13,17 @@ part 'bottom_bar.g.dart';
 class ChatBottomBarStore extends _ChatBottomBarStore with _$ChatBottomBarStore {
   ChatBottomBarStore({
     required super.store,
+    required super.socket,
   });
 }
 
 abstract class _ChatBottomBarStore with Store {
   final MessagesStore store;
+  final ChatSocket socket;
+
   final record = AudioRecorder();
 
-  _ChatBottomBarStore({required this.store});
+  _ChatBottomBarStore({required this.store, required this.socket});
 
   Timer? _timer;
 
@@ -50,7 +53,7 @@ abstract class _ChatBottomBarStore with Store {
   double dragOffset = 0;
 
   @observable
-  double maxDragDistance = 200;
+  double maxDragDistance = 120;
 
   @computed
   double get fadeOpacity =>
@@ -69,11 +72,30 @@ abstract class _ChatBottomBarStore with Store {
   }
 
   @action
-  void resetDragOffset() => dragOffset = 0;
+  void resetDragOffset() {
+    dragOffset = 0;
+  }
 
-  Future sendMessage(String? filePath) async {
+  Future sendMessage({String? filePath}) async {
     logger.info('Сообщение отправлено', runtimeType: runtimeType);
+
+    final controller = store.formGroup.control('message');
+
+    final String messageText = controller.value;
+
     // TODO send message
+    if (filePath != null) {
+    } else if (files.isNotEmpty) {
+    } else {
+      socket.sendMessage(
+        messageText: messageText,
+        chatId: store.chatId!,
+        replyMessageId: store.mentionedMessage?.id ?? '',
+      );
+    }
+
+    controller.value = '';
+    store.setMentionedMessage(null);
   }
 
   Future<String> _generateFilePath() async {
@@ -92,6 +114,7 @@ abstract class _ChatBottomBarStore with Store {
 
   @action
   Future startRecording() async {
+    if (isRecording) return;
     final filePath = await _generateFilePath();
 
     if (await record.hasPermission()) {
@@ -134,7 +157,7 @@ abstract class _ChatBottomBarStore with Store {
     }
 
     if (isCanSend) {
-      sendMessage(filePath);
+      sendMessage(filePath: filePath);
     }
 
     setIsRecording(false);
@@ -156,6 +179,7 @@ abstract class _ChatBottomBarStore with Store {
 
   @action
   void _startTimer() {
+    if (_timer != null) return;
     seconds = 0; // Сбрасываем счетчик перед началом записи
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       seconds++;

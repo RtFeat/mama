@@ -13,29 +13,33 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-        providers: [
-          Provider(
-            create: (context) => MessagesStore(
-                restClient: context.read<Dependencies>().restClient,
-                chatType: item is SingleChatItem ? 'solo' : 'group'),
-          ),
-          if (item is GroupItem)
-            Provider(
-                create: (_) => GroupUsersStore(
-                    restClient: context.read<Dependencies>().restClient,
-                    chatId: (item as GroupItem).groupChatId!)),
-        ],
+    if (item is GroupItem) {
+      Provider(
+        create: (_) => GroupUsersStore(
+            restClient: context.read<Dependencies>().restClient,
+            chatId: (item as GroupItem).groupChatId!),
         builder: (context, child) {
           final MessagesStore store = context.watch();
           final GroupUsersStore? groupUsersStore = context.watch();
 
           return _Body(
+            socket: context.watch(),
             store: store,
             item: item,
+            restClient: context.read<Dependencies>().restClient,
             groupUsersStore: groupUsersStore,
           );
-        });
+        },
+      );
+    }
+
+    final MessagesStore store = context.watch();
+
+    return _Body(
+        socket: context.watch(),
+        store: store,
+        item: item,
+        restClient: context.read<Dependencies>().restClient);
   }
 }
 
@@ -43,10 +47,14 @@ class _Body extends StatefulWidget {
   final MessagesStore store;
   final ChatItem? item;
   final GroupUsersStore? groupUsersStore;
+  final RestClient restClient;
+  final ChatSocket socket;
 
   const _Body({
+    required this.socket,
     required this.store,
     required this.item,
+    required this.restClient,
     this.groupUsersStore,
   });
 
@@ -59,18 +67,31 @@ class __BodyState extends State<_Body> {
 
   @override
   void initState() {
+    widget.store.init();
+    widget.socket.iAmActive();
     logger.info('${widget.item.runtimeType}');
+
+    widget.store.setChatId(widget.item is SingleChatItem
+        ? widget.item?.id
+        : (widget.item as GroupItem).groupChatId);
 
     logger.info('${widget.item?.id}');
 
-    widget.store.loadPage(queryParams: {
-      'limit': '10',
-      'chat_id': widget.item is SingleChatItem
-          ? widget.item?.id
-          : (widget.item as GroupItem).groupChatId
-    });
+    widget.store.setChatType(widget.item is SingleChatItem ? 'solo' : 'group');
 
-    widget.store.scrollController.addListener(_updateCurrentDate);
+    widget.store.loadPage(
+      fetchFunction: (query) {
+        return widget.restClient.get(
+            '${Endpoint().messages}/${widget.item is SingleChatItem ? 'solo' : 'group'}',
+            queryParams: {
+              'limit': '10',
+              'chat_id': widget.store.chatId,
+              ...query
+            });
+      },
+    );
+
+    widget.store.scrollController?.addListener(_updateCurrentDate);
 
     super.initState();
   }
@@ -78,7 +99,8 @@ class __BodyState extends State<_Body> {
   @override
   dispose() {
     super.dispose();
-    widget.store.scrollController.removeListener(_updateCurrentDate);
+    _messageKeys.clear();
+    widget.store.scrollController?.removeListener(_updateCurrentDate);
     widget.store.dispose();
   }
 
@@ -120,7 +142,7 @@ class __BodyState extends State<_Body> {
                           : kToolbarHeight),
                   child: ChatsAppBar(
                       item: widget.item,
-                      scrollController: widget.store.scrollController,
+                      scrollController: widget.store.scrollController!,
                       store: widget.store,
                       groupUsersStore: widget.groupUsersStore),
                 ),
@@ -138,8 +160,8 @@ class __BodyState extends State<_Body> {
                   separator: (index, item) => DateSeparatorInChat(
                       index: index,
                       item: item,
-                      data: widget.store.messages,
-                      scrollController: widget.store.scrollController),
+                      store: widget.store,
+                      scrollController: widget.store.scrollController!),
                   listData: () => widget.store.isSearching
                       ? widget.store.filteredMessages
                       : widget.store.messages,
@@ -156,7 +178,7 @@ class __BodyState extends State<_Body> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ChatDateWidget(
-                            scrollController: widget.store.scrollController,
+                            scrollController: widget.store.scrollController!,
                             date: firstDate,
                             padding: const EdgeInsets.only(
                               bottom: 10,
@@ -164,7 +186,7 @@ class __BodyState extends State<_Body> {
                           ),
                           AutoScrollTag(
                             index: index,
-                            controller: widget.store.scrollController,
+                            controller: widget.store.scrollController!,
                             key: ValueKey(item.id),
                             child: MessageWidget(
                               key: _messageKeys[index],
@@ -177,7 +199,7 @@ class __BodyState extends State<_Body> {
                     }
                     return AutoScrollTag(
                         index: index,
-                        controller: widget.store.scrollController,
+                        controller: widget.store.scrollController!,
                         key: ValueKey(item.id),
                         child: MessageWidget(
                           key: _messageKeys[index],
@@ -188,7 +210,7 @@ class __BodyState extends State<_Body> {
                 ),
                 if (widget.store.currentShowingMessage != null)
                   ChatDateWidget(
-                      scrollController: widget.store.scrollController,
+                      scrollController: widget.store.scrollController!,
                       date: widget.store.currentShowingMessage!.createdAt!
                           .toLocal())
               ],

@@ -221,12 +221,12 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: AppViews.serviceKnowlegde,
               path: _Paths.serviceKnowledge,
-              builder: (context, state) => const ServiceKnowledgeScreen(),
+              builder: (context, state) => const KnowledgeView(),
               routes: [
                 GoRoute(
                   name: AppViews.categories,
                   path: _Paths.categories,
-                  builder: (context, state) => const CategoryScreen(),
+                  builder: (context, state) => const CategoriesView(),
                 ),
                 GoRoute(
                   name: AppViews.ages,

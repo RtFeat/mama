@@ -5,7 +5,7 @@ description: >
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 0.2.1+85
+version: 0.2.1+87
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -39,6 +39,7 @@ dependencies:
   fresh_dio: ^0.4.2
   fresh: ^0.4.3
   jwt_decoder: ^2.0.1
+  web_socket_channel: ^2.4.0
 
   # Persisting
   drift: ^2.13.1

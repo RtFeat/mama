@@ -82,6 +82,7 @@ class Content extends StatelessWidget {
     }
 
     final UserStore userStore = context.watch<UserStore>();
+    final ChatSocket socket = context.watch<ChatSocket>();
     final bool isAdmin = userStore.role == Role.admin;
 
     return Observer(builder: (context) {
@@ -98,8 +99,9 @@ class Content extends StatelessWidget {
             label: item.isAttached ? t.chat.unpin : t.chat.pin,
             icon: item.isAttached ? AppIcons.pinSlash : AppIcons.pin,
             onSelected: () {
+              socket.pinMessage(
+                  messageId: item.id!, isAttached: item.isAttached);
               item.setIsAttached(!item.isAttached);
-              // TODO update in server
             },
           ),
         if (isAdmin)
@@ -107,18 +109,14 @@ class Content extends StatelessWidget {
             label: t.chat.delete,
             icon: AppIcons.xmark,
             color: AppColors.redColor,
-            onSelected: () {
-              // TODO delete message
-            },
+            onSelected: () => socket.deleteMessage(messageId: item.id!),
           ),
       ];
 
       return GestureDetector(
         onTapDown: storePosition,
         onSecondaryTapDown: storePosition,
-        onTap: () {
-          MenuShower.show(context, entries, pos);
-        },
+        onTap: () => MenuShower.show(context, entries, pos),
         child: MessageDecorationWidget(
           isUser: isUser,
           child: Column(

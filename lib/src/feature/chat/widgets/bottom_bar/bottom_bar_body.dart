@@ -65,6 +65,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
   }
 
   void _onDragStart(DragStartDetails details) {
+    widget.barStore.setIsRecording(true);
     widget.barStore.resetDragOffset();
     widget.barStore.startRecording();
     _micController.repeat(reverse: true);
@@ -149,6 +150,8 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
                           ? GestureDetector(
                               onTap: () {
                                 // TODO: send message
+
+                                widget.barStore.sendMessage();
                               },
                               child: Icon(
                                 AppIcons.send,

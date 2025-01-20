@@ -10,10 +10,12 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
+    final ChatSocket socket = context.watch<ChatSocket>();
 
     return LoadHomeData(
         userStore: userStore,
         child: _Body(
+          socket: socket,
           userStore: userStore,
           store: context.watch(),
         ));
@@ -22,8 +24,10 @@ class HomeView extends StatelessWidget {
 
 class _Body extends StatefulWidget {
   final UserStore userStore;
+  final ChatSocket socket;
   final HomeViewStore store;
   const _Body({
+    required this.socket,
     required this.userStore,
     required this.store,
   });
@@ -42,6 +46,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     super.initState();
     isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
+    widget.socket.initializeSocket();
   }
 
   @override

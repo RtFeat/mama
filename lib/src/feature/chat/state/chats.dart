@@ -24,6 +24,11 @@ abstract class _ChatsStore extends PaginatedListStore<SingleChatItem>
           return data ?? [];
         });
 
+  @action
+  void deleteChat(String id) {
+    listData.removeWhere((e) => e.id == id);
+  }
+
   @observable
   ChatUserTypeFilter chatUserTypeFilter = ChatUserTypeFilter.all;
 
