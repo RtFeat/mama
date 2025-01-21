@@ -49,7 +49,6 @@ class ChatSocket {
       },
       onDone: () {
         isConnected = false;
-        reconnect();
       },
     );
 
@@ -94,6 +93,7 @@ class ChatSocket {
     required String messageText,
     required String chatId,
     String replyMessageId = '',
+    List<MessageFile>? files,
   }) async {
     await ensureConnection();
     if (store.chatType == 'join') {
@@ -105,6 +105,7 @@ class ChatSocket {
           'message': messageText,
           'chat_id': chatId,
           'reply': replyMessageId,
+          if (files != null) 'upload_data': files
         }
       });
       channel?.sink.add(data);
@@ -126,6 +127,7 @@ class ChatSocket {
           'message': messageText,
           'chat_id': chatId,
           'reply': replyMessageId,
+          if (files != null) 'upload_data': files
         }
       });
       channel?.sink.add(data);

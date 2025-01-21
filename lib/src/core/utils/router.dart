@@ -4,12 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/views/bottle/add_bottle_screen.dart';
 import 'package:mama/src/feature/home/view/day_work.dart';
-import 'package:mama/src/feature/services/knowledge/views/ages_screen.dart';
-import 'package:mama/src/feature/services/knowledge/views/authors_screens.dart';
-import 'package:mama/src/feature/services/knowledge/views/category_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/saved_files_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';
-import 'package:mama/src/feature/services/knowledge/views/service_screen.dart';
 
 abstract class AppViews {
   static const String startScreen = 'startScreen';
@@ -231,13 +227,13 @@ final GoRouter router = GoRouter(
                 GoRoute(
                   name: AppViews.ages,
                   path: _Paths.ages,
-                  builder: (context, state) => const AgesScreen(),
+                  builder: (context, state) => const AgeCategoryView(),
                 ),
-                GoRoute(
-                  name: AppViews.author,
-                  path: _Paths.author,
-                  builder: (context, state) => const AuthorsScreen(),
-                ),
+                // GoRoute(
+                //   name: AppViews.author,
+                //   path: _Paths.author,
+                //   builder: (context, state) => const AuthorsScreen(),
+                // ),
                 GoRoute(
                   name: AppViews.savedFiles,
                   path: _Paths.savedFiles,

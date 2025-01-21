@@ -91,6 +91,15 @@ class MessageItem extends _MessageItem with _$MessageItem {
 
   final String? text;
 
+  @JsonKey(name: 'sender_avatar')
+  final String? senderAvatarUrl;
+
+  @JsonKey(name: 'sender_name')
+  final String? senderName;
+
+  @JsonKey(name: 'sender_surname')
+  final String? senderSurname;
+
   @JsonKey(name: 'type_file')
   final String? typeFile;
 
@@ -103,6 +112,9 @@ class MessageItem extends _MessageItem with _$MessageItem {
     this.readAt,
     super.files,
     super.reply,
+    this.senderAvatarUrl,
+    this.senderName,
+    this.senderSurname,
     this.senderId,
     this.text,
     this.typeFile,
@@ -127,6 +139,9 @@ class MessageItem extends _MessageItem with _$MessageItem {
     ObservableList<MessageFile>? files,
     dynamic reply,
     String? senderId,
+    String? senderAvatarUrl,
+    String? senderName,
+    String? senderSurname,
     String? text,
     String? typeFile,
     DateTime? createdAt,
@@ -143,6 +158,9 @@ class MessageItem extends _MessageItem with _$MessageItem {
         files: files ?? this.files,
         reply: reply ?? this.reply,
         senderId: senderId ?? this.senderId,
+        senderAvatarUrl: senderAvatarUrl ?? this.senderAvatarUrl,
+        senderName: senderName ?? this.senderName,
+        senderSurname: senderSurname ?? this.senderSurname,
         text: text ?? this.text,
         typeFile: typeFile ?? this.typeFile,
         createdAt: createdAt ?? this.createdAt,

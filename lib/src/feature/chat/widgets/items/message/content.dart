@@ -122,7 +122,12 @@ class Content extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (!item.hasVoice) Header(item: item, isOnGroup: isOnGroup),
+              if (!item.hasVoice)
+                Header(
+                  item: item,
+                  isOnGroup: isOnGroup,
+                  isUser: isUser,
+                ),
               if (item.reply != null &&
                   (item.reply?.id != null && item.reply!.id!.isNotEmpty))
                 ReplyContent(

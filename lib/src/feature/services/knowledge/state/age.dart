@@ -2,21 +2,21 @@ import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
 
-part 'categories.g.dart';
+part 'age.g.dart';
 
-class CategoriesStore extends _CategoriesStore with _$CategoriesStore {
-  CategoriesStore({
+class AgeCategoriesStore extends _AgeCategoriesStore with _$AgeCategoriesStore {
+  AgeCategoriesStore({
     required super.restClient,
   });
 }
 
-abstract class _CategoriesStore extends PaginatedListStore<CategoryModel>
+abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
     with Store {
-  _CategoriesStore({
+  _AgeCategoriesStore({
     required RestClient restClient,
   }) : super(
           fetchFunction: (params) =>
-              restClient.get(Endpoint.categories, queryParams: params),
+              restClient.get(Endpoint().ageCaterories, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
                 .map((e) => CategoryModel.fromJson(e))

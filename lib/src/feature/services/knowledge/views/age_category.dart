@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
-class CategoriesView extends StatelessWidget {
-  const CategoriesView({super.key});
+class AgeCategoryView extends StatelessWidget {
+  const AgeCategoryView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final KnowledgeStore knowledgeStore = context.watch();
-    final CategoriesStore store = knowledgeStore.categoriesStore;
-    final AgeCategoriesStore ageCategoriesStore =
-        knowledgeStore.ageCategoriesStore;
+    final CategoriesStore categoriesStore = knowledgeStore.categoriesStore;
+    final AgeCategoriesStore store = knowledgeStore.ageCategoriesStore;
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
@@ -21,7 +20,7 @@ class CategoriesView extends StatelessWidget {
       },
       child: Scaffold(
           appBar: CustomAppBar(
-            title: t.services.categoriesBtn.title,
+            title: t.services.ageBtn.title,
           ),
           body: KnowledgeFilterBody(store: store),
           bottomNavigationBar: FilterBottomBarWidget(
@@ -32,10 +31,9 @@ class CategoriesView extends StatelessWidget {
               store.setConfirmed(true);
               knowledgeStore.resetPagination();
               knowledgeStore.loadPage(queryParams: {
-                'categories': store.selectedItems.map((e) => e.title).toList(),
-                'ages': ageCategoriesStore.selectedItems
-                    .map((e) => e.title)
-                    .toList()
+                'categories':
+                    categoriesStore.selectedItems.map((e) => e.title).toList(),
+                'ages': store.selectedItems.map((e) => e.title).toList()
               });
             },
           )),

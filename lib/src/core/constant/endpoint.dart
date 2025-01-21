@@ -35,6 +35,8 @@ class Endpoint {
 
   static const String categories = 'category';
 
+  String get ageCaterories => '$categories/age';
+
   static const String consultation = 'consultation';
 
   String get userConsultations => '$consultation/user';
@@ -51,6 +53,8 @@ class Endpoint {
 
   String get articles => '$article/list';
 
+  String get allByCategory => '$article/category/all';
+
   String get articleOwn => '$article/file/own';
 
   String get articlesForMe => '$article/for_you';
@@ -58,6 +62,8 @@ class Endpoint {
   String get addArticleToFavorite => '$article/favorite';
 
   static const String chat = 'chat';
+
+  String get uploadFile => '$chat/upload';
 
   String get groups => '$chat/group';
 

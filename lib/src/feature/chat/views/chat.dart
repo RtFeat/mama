@@ -13,33 +13,24 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (item is GroupItem) {
-      Provider(
-        create: (_) => GroupUsersStore(
-            restClient: context.read<Dependencies>().restClient,
-            chatId: (item as GroupItem).groupChatId!),
-        builder: (context, child) {
-          final MessagesStore store = context.watch();
-          final GroupUsersStore? groupUsersStore = context.watch();
+    return Provider(
+      create: (_) => GroupUsersStore(
+          restClient: context.read<Dependencies>().restClient,
+          chatId:
+              (item is GroupItem) ? (item as GroupItem).groupChatId ?? '' : ''),
+      builder: (context, child) {
+        final MessagesStore store = context.watch();
+        final GroupUsersStore? groupUsersStore = context.watch();
 
-          return _Body(
-            socket: context.watch(),
-            store: store,
-            item: item,
-            restClient: context.read<Dependencies>().restClient,
-            groupUsersStore: groupUsersStore,
-          );
-        },
-      );
-    }
-
-    final MessagesStore store = context.watch();
-
-    return _Body(
-        socket: context.watch(),
-        store: store,
-        item: item,
-        restClient: context.read<Dependencies>().restClient);
+        return _Body(
+          socket: context.watch(),
+          store: store,
+          item: item,
+          restClient: context.read<Dependencies>().restClient,
+          groupUsersStore: groupUsersStore,
+        );
+      },
+    );
   }
 }
 

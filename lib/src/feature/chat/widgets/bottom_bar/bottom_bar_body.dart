@@ -84,98 +84,102 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
     final MessagesStore? store = widget.store;
     final ChatBottomBarStore barStore = context.watch();
 
-    return Stack(
-      alignment: Alignment.topRight,
-      clipBehavior: Clip.none,
-      children: [
-        Observer(builder: (_) {
-          return widget.barStore.isRecording
-              ? RecordingIndicator(
-                  animation: _micScaleAnimation,
-                )
-              : BottomBarTextField(
-                  store: widget.store,
-                );
-        }),
-        Observer(builder: (_) {
-          return Positioned(
-            right: widget.barStore.isRecording
-                ? -20 + widget.barStore.dragOffset
-                : 10,
-            // top: widget.barStore.isRecording ? -30 : 12,
-            top: widget.barStore.isRecording
-                ? -30
-                : widget.barStore.isShowEmojiPanel &&
-                            store?.mentionedMessage != null ||
-                        barStore.files.isNotEmpty
-                    ? 60 +
-                        (barStore.files.isNotEmpty
-                            ? widget.barStore.isShowEmojiPanel &&
-                                    store?.mentionedMessage != null
-                                ? 100
-                                : 50
-                            : 0)
-                    : 12,
-            bottom: store?.mentionedMessage != null &&
-                    !widget.barStore.isShowEmojiPanel &&
-                    barStore.files.isEmpty
-                ? 0
-                : barStore.files.isNotEmpty &&
-                        !widget.barStore.isShowEmojiPanel &&
-                        store?.mentionedMessage != null
-                    ? 0
-                    : null,
-            child: ReactiveFormConsumer(builder: (context, form, child) {
-              final String? value = form.control('message').value;
-              final bool isNotEmpty = value != null && value != '';
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Stack(
+        alignment: Alignment.topRight,
+        clipBehavior: Clip.none,
+        children: [
+          Observer(builder: (_) {
+            return widget.barStore.isRecording
+                ? RecordingIndicator(
+                    animation: _micScaleAnimation,
+                  )
+                : BottomBarTextField(
+                    store: widget.store,
+                  );
+          }),
+          Observer(builder: (_) {
+            return Positioned(
+              right: widget.barStore.isRecording
+                  ? -20 + widget.barStore.dragOffset
+                  : 10,
+              // top: widget.barStore.isRecording ? -30 : 12,
+              top: widget.barStore.isRecording
+                  ? -30
+                  : widget.barStore.isShowEmojiPanel &&
+                              store?.mentionedMessage != null ||
+                          barStore.files.isNotEmpty
+                      ? 60 +
+                          (barStore.files.isNotEmpty
+                              ? widget.barStore.isShowEmojiPanel &&
+                                      store?.mentionedMessage != null
+                                  ? 100
+                                  : 50
+                              : 0)
+                      : 12,
+              bottom: store?.mentionedMessage != null &&
+                      !widget.barStore.isShowEmojiPanel &&
+                      barStore.files.isEmpty
+                  ? 0
+                  : barStore.files.isNotEmpty &&
+                          !widget.barStore.isShowEmojiPanel &&
+                          store?.mentionedMessage != null
+                      ? 0
+                      : null,
+              child: ReactiveFormConsumer(builder: (context, form, child) {
+                final String? value = form.control('message').value;
+                final bool isNotEmpty = value != null && value != '';
 
-              if (isNotEmpty) {
-                return const SizedBox.shrink();
-              }
+                if (isNotEmpty) {
+                  return const SizedBox.shrink();
+                }
 
-              return GestureDetector(
-                onHorizontalDragStart: _onDragStart,
-                onHorizontalDragUpdate: _onDragUpdate,
-                onHorizontalDragEnd: _onDragEnd,
-                child: Row(
-                  children: [
-                    if (widget.barStore.isRecording)
-                      Opacity(
-                        opacity: widget.barStore.fadeOpacity,
-                        child: RecordingText(animation: _textOffsetAnimation),
-                      ),
-                    10.w,
-                    if (!widget.barStore.isRecording) ...[
-                      widget.barStore.files.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                // TODO: send message
+                return GestureDetector(
+                  onHorizontalDragStart: _onDragStart,
+                  onHorizontalDragUpdate: _onDragUpdate,
+                  onHorizontalDragEnd: _onDragEnd,
+                  child: Row(
+                    children: [
+                      if (widget.barStore.isRecording)
+                        Opacity(
+                          opacity: widget.barStore.fadeOpacity,
+                          child: RecordingText(animation: _textOffsetAnimation),
+                        ),
+                      10.w,
+                      if (!widget.barStore.isRecording) ...[
+                        widget.barStore.files.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () {
+                                  // TODO: send message
 
-                                widget.barStore.sendMessage();
-                              },
-                              child: Icon(
-                                AppIcons.send,
-                                color: AppColors.primaryColor,
-                              ),
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                widget.barStore.getAttach();
-                              },
-                              child: const Icon(
-                                AppIcons.paperclip,
-                                color: AppColors.greyLighterColor,
-                              )),
-                      20.w,
+                                  widget.barStore.sendMessage();
+                                },
+                                child: Icon(
+                                  AppIcons.send,
+                                  color: AppColors.primaryColor,
+                                ),
+                              )
+                            : GestureDetector(
+                                onTap: () {
+                                  widget.barStore.getAttach();
+                                },
+                                child: const Icon(
+                                  AppIcons.paperclip,
+                                  color: AppColors.greyLighterColor,
+                                )),
+                        20.w,
+                      ],
+                      MicButton(animation: _micScaleAnimation),
                     ],
-                    MicButton(animation: _micScaleAnimation),
-                  ],
-                ),
-              );
-            }),
-          );
-        }),
-      ],
+                  ),
+                );
+              }),
+            );
+          }),
+        ],
+      ),
     );
   }
 }

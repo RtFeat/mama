@@ -22,8 +22,8 @@ class CategoryModel extends _CategoryModel with _$CategoryModel {
 abstract class _CategoryModel with Store {
   @observable
   @JsonKey(includeFromJson: false, includeToJson: false)
-  bool selected = false;
+  bool isSelected = false;
 
   @action
-  void setSelected(bool value) => selected = value;
+  void setSelected(bool value) => isSelected = value;
 }

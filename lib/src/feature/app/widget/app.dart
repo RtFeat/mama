@@ -85,6 +85,15 @@ class App extends StatelessWidget {
             create: (context) => AudioPlayerStore(),
             dispose: (context, value) => value.dispose(),
           ),
+          Provider(
+            create: (context) => KnowledgeStore(
+              categoriesStore: CategoriesStore(
+                  restClient: context.read<Dependencies>().restClient),
+              ageCategoriesStore: AgeCategoriesStore(
+                  restClient: context.read<Dependencies>().restClient),
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
         ],
         child: TranslationProvider(child: const MaterialContext()),
       );

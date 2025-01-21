@@ -34,6 +34,7 @@ class AssetsInBottomWidget extends StatelessWidget {
               asset: MessageFile(
                   typeFile: file.extension.toString(),
                   fileUrl: file.path.toString(),
+                  filePath: file.path.toString(),
                   filename: file.name),
               onTapDelete: () {
                 barStore.files.remove(file);

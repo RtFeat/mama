@@ -67,5 +67,7 @@ childDevelopment:
 sixMonth:
   title: 6 months of age
 
-toSave: 
-  title: Favorites  
+toSave:
+  title: Favorites
+
+clear: Clear

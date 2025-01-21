@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -73,16 +75,23 @@ class _Asset extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (asset.typeFile) {
-      case 'jpg' || 'png':
+      case 'jpg' || 'jpeg' || 'png':
         return ClipRRect(
             borderRadius: 6.r,
-            child: CachedNetworkImage(
-              imageUrl:
-                  '${const Config().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}',
-              height: size,
-              width: size,
-              fit: BoxFit.cover,
-            ));
+            child: asset.filePath != null
+                ? Image.file(
+                    File(asset.filePath!),
+                    height: size,
+                    width: size,
+                    fit: BoxFit.cover,
+                  )
+                : CachedNetworkImage(
+                    imageUrl:
+                        '${const Config().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}',
+                    height: size,
+                    width: size,
+                    fit: BoxFit.cover,
+                  ));
       default:
         return _FileAsset(size: size, asset: asset);
     }

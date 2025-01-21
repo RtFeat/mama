@@ -72,6 +72,8 @@ class _Field extends StatelessWidget {
           ),
         ),
         Expanded(
+            child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 200),
           child: ReactiveTextField(
             formControlName: 'message',
             keyboardType: TextInputType.multiline,
@@ -85,7 +87,7 @@ class _Field extends StatelessWidget {
                   .copyWith(color: AppColors.greyBrighterColor),
             ),
           ),
-        ),
+        )),
         ReactiveFormConsumer(builder: (context, form, child) {
           final String? value = form.control('message').value;
           final bool isNotEmpty = value != null && value != '';
@@ -98,8 +100,6 @@ class _Field extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: GestureDetector(
               onTap: () {
-                // TODO: send message
-
                 barStore.sendMessage();
               },
               child: const Icon(

@@ -4,8 +4,10 @@ import 'package:mama/src/data.dart';
 class Header extends StatelessWidget {
   final MessageItem item;
   final bool isOnGroup;
+  final bool isUser;
   const Header({
     super.key,
+    required this.isUser,
     required this.item,
     required this.isOnGroup,
   });
@@ -19,10 +21,10 @@ class Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (isOnGroup) ...[
+        if (isOnGroup && !isUser) ...[
           Expanded(
             child: Text(
-              item.senderId ?? '',
+              '${item.senderName} ${item.senderSurname != null && item.senderSurname!.isNotEmpty ? '${item.senderSurname}' : ''}',
               maxLines: 2,
               style: textTheme.titleSmall?.copyWith(
                 fontSize: 16,

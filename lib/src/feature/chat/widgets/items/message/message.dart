@@ -22,7 +22,7 @@ class MessageWidget extends StatelessWidget {
 
     final GroupUsersStore? groupUsersStore = context.watch();
 
-    final bool isOnGroup = groupUsersStore != null;
+    final bool isOnGroup = groupUsersStore?.chatId.isNotEmpty ?? false;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -34,6 +34,7 @@ class MessageWidget extends StatelessWidget {
           MessageAvatar(
             isOnGroup: isOnGroup,
             isUser: isUser,
+            avatarUrl: item.senderAvatarUrl,
           ),
           Expanded(
               flex: 5,

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 import 'package:record/record.dart';
 
 part 'bottom_bar.g.dart';
@@ -13,6 +15,7 @@ part 'bottom_bar.g.dart';
 class ChatBottomBarStore extends _ChatBottomBarStore with _$ChatBottomBarStore {
   ChatBottomBarStore({
     required super.store,
+    required super.restClient,
     required super.socket,
   });
 }
@@ -20,10 +23,12 @@ class ChatBottomBarStore extends _ChatBottomBarStore with _$ChatBottomBarStore {
 abstract class _ChatBottomBarStore with Store {
   final MessagesStore store;
   final ChatSocket socket;
+  final RestClient restClient;
 
   final record = AudioRecorder();
 
-  _ChatBottomBarStore({required this.store, required this.socket});
+  _ChatBottomBarStore(
+      {required this.store, required this.restClient, required this.socket});
 
   Timer? _timer;
 
@@ -76,26 +81,68 @@ abstract class _ChatBottomBarStore with Store {
     dragOffset = 0;
   }
 
+  @computed
+  AbstractControl get _messageController => store.formGroup.control('message');
+
+  @computed
+  String get _messageText => _messageController.value ?? '';
+
   Future sendMessage({String? filePath}) async {
     logger.info('Сообщение отправлено', runtimeType: runtimeType);
 
-    final controller = store.formGroup.control('message');
+    final String messageText = _messageText;
 
-    final String messageText = controller.value;
+    List<MessageFile> uploadedFiles = [];
 
-    // TODO send message
+    // Если есть файл для загрузки
     if (filePath != null) {
-    } else if (files.isNotEmpty) {
-    } else {
-      socket.sendMessage(
-        messageText: messageText,
-        chatId: store.chatId!,
-        replyMessageId: store.mentionedMessage?.id ?? '',
+      uploadedFiles = await _uploadFiles(
+        files: [filePath],
+        restClient: restClient,
+      );
+    }
+    // Если есть список файлов для загрузки
+    else if (files.isNotEmpty) {
+      final List<String> filePaths = files.map((file) => file.path!).toList();
+      uploadedFiles = await _uploadFiles(
+        files: filePaths,
+        restClient: restClient,
       );
     }
 
-    controller.value = '';
+    socket.sendMessage(
+      files: uploadedFiles,
+      messageText: messageText,
+      chatId: store.chatId!,
+      replyMessageId: store.mentionedMessage?.id ?? '',
+    );
+
+    _messageController.value = '';
     store.setMentionedMessage(null);
+    files.clear();
+  }
+
+  Future<List<MessageFile>> _uploadFiles({
+    required List<String> files,
+    required RestClient restClient,
+  }) async {
+    final List<MultipartFile> multipartFiles = await Future.wait(
+      files.map((path) => MultipartFile.fromFile(path)),
+    );
+
+    FormData formData = FormData.fromMap({
+      'file': multipartFiles,
+    });
+
+    final response =
+        await restClient.post(Endpoint().uploadFile, body: formData);
+
+    if (response != null) {
+      final List data = response['messages'] as List? ?? [];
+      return data.map((e) => MessageFile.fromJson(e)).toList();
+    }
+
+    return [];
   }
 
   Future<String> _generateFilePath() async {
@@ -114,7 +161,6 @@ abstract class _ChatBottomBarStore with Store {
 
   @action
   Future startRecording() async {
-    if (isRecording) return;
     final filePath = await _generateFilePath();
 
     if (await record.hasPermission()) {
