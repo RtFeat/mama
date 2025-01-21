@@ -6,20 +6,25 @@ import 'decoration.dart';
 
 class BodyGroup extends StatelessWidget {
   final String title;
+  final EdgeInsets? titlePadding;
   final TextStyle? titleStyle;
   final List<Widget> items;
   // final List<BodyItemWidget> items;
   final FormGroup? formGroup;
   final EdgeInsets? padding;
   final bool isDecorated;
+  final BorderRadius? backgroundBorderRadius;
+
   const BodyGroup({
     super.key,
     required this.title,
+    this.titlePadding,
     this.titleStyle,
     required this.items,
     this.formGroup,
     this.padding,
     this.isDecorated = false,
+    this.backgroundBorderRadius,
   });
 
   @override
@@ -36,11 +41,25 @@ class BodyGroup extends StatelessWidget {
       })
     ];
 
+    final Widget itemsWidget = items.length >= 10
+        ? ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return items[index];
+            },
+          )
+        : Column(
+            children: items,
+          );
+
     final Widget child = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: titlePadding ?? const EdgeInsets.symmetric(horizontal: 8.0),
           child: Text(
             title,
             style: titleStyle,
@@ -48,9 +67,10 @@ class BodyGroup extends StatelessWidget {
         ),
         4.h,
         if (isDecorated)
-          BodyItemDecoration(child: Column(children: items))
+          BodyItemDecoration(
+              borderRadius: backgroundBorderRadius, child: itemsWidget)
         else
-          ...items
+          itemsWidget
       ],
     );
 

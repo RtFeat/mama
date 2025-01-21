@@ -23,10 +23,10 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
   @override
   Widget build(BuildContext context) {
     return PaginatedLoadingWidget(
+        emptyData: const SizedBox.shrink(),
         store: widget.store.recordsState,
-        itemBuilder: (context, index) {
-          final Consultation? consultation =
-              widget.store.recordsState.listData[index];
+        itemBuilder: (context, item) {
+          final Consultation? consultation = item;
 
           return ConsultationItem(
               onTap: () {
@@ -39,8 +39,9 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ConsultationTime(
-                    startDate: consultation?.startedAt ?? DateTime.now(),
-                    endDate: consultation?.endedAt ?? DateTime.now(),
+                    startDate:
+                        consultation?.startedAt?.toLocal() ?? DateTime.now(),
+                    endDate: consultation?.endedAt?.toLocal() ?? DateTime.now(),
                   ),
                   ConsultationItemTitle(
                       name:
@@ -48,6 +49,7 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
                       badgeTitle: consultation?.doctor?.profession),
                   ConsultationTypeWidget(
                     type: consultation?.type ?? ConsultationType.chat,
+                    iconColor: AppColors.primaryColor,
                   ),
                 ],
               ));

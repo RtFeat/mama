@@ -6,9 +6,11 @@ class ConsultationTypeWidget extends StatelessWidget {
   final ConsultationType type;
   final MainAxisAlignment mainAxisAlignment;
   final TextStyle? textStyle;
+  final Color? iconColor;
   const ConsultationTypeWidget(
       {super.key,
       required this.type,
+      this.iconColor,
       this.textStyle,
       this.mainAxisAlignment = MainAxisAlignment.start});
 
@@ -17,21 +19,28 @@ class ConsultationTypeWidget extends StatelessWidget {
     switch (type) {
       case ConsultationType.chat:
         return _Widget(
-          iconPath: Assets.icons.chatIcon,
+          iconColor: iconColor,
+          iconPath: AppIcons.messageCircleFill,
+
+          // iconPath: Assets.icons.chatIcon,
           title: t.consultation.type.chat,
           mainAxisAlignment: mainAxisAlignment,
           textStyle: textStyle,
         );
       case ConsultationType.video:
         return _Widget(
-          iconPath: Assets.icons.videoIcon,
+          iconColor: iconColor,
+          // iconPath: Assets.icons.videoIcon,
+          iconPath: AppIcons.videoCircleFill,
           title: t.consultation.type.video,
           mainAxisAlignment: mainAxisAlignment,
           textStyle: textStyle,
         );
       case ConsultationType.express:
         return _Widget(
-          iconPath: Assets.icons.videoIcon,
+          iconColor: iconColor,
+          // iconPath: Assets.icons.videoIcon,
+          iconPath: AppIcons.videoCircleFill,
           title: t.consultation.type.express,
           textStyle: textStyle,
           mainAxisAlignment: mainAxisAlignment,
@@ -43,11 +52,13 @@ class ConsultationTypeWidget extends StatelessWidget {
 }
 
 class _Widget extends StatelessWidget {
-  final String iconPath;
+  final IconData iconPath;
   final String title;
   final TextStyle? textStyle;
+  final Color? iconColor;
   final MainAxisAlignment mainAxisAlignment;
   const _Widget({
+    required this.iconColor,
     required this.iconPath,
     required this.textStyle,
     required this.title,
@@ -62,10 +73,7 @@ class _Widget extends StatelessWidget {
     return Row(
       mainAxisAlignment: mainAxisAlignment,
       children: [
-        IconWidget(
-            model: IconModel(
-          iconPath: iconPath,
-        )),
+        IconWidget(model: IconModel(icon: iconPath, color: iconColor)),
         2.w,
         SizedBox(
             height: 20,

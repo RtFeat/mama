@@ -3,3 +3,4 @@ export 'records.dart';
 export 'specialists.dart';
 export 'schools.dart';
 export 'consultation.dart';
+export 'specialist_consultations.dart';

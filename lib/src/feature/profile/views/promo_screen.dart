@@ -28,13 +28,13 @@ class _PromoScreenState extends State<PromoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<PromoItem> items = [
-      PromoItem(
-        title: 'ПОДАРОЧНЫЙ',
-        subtitle: 'Месяц бесплатной подписки',
-        onTap: () {},
-      )
-    ];
+    // final List<PromoItem> items = [
+    //   PromoItem(
+    //     title: 'ПОДАРОЧНЫЙ',
+    //     subtitle: 'Месяц бесплатной подписки',
+    //     onTap: () {},
+    //   )
+    // ];
 
     Future<void> onTapButton() async {
       DialogItem giftDialog = DialogItem(
@@ -90,20 +90,21 @@ class _PromoScreenState extends State<PromoScreen> {
               padding: const EdgeInsets.all(8.0),
               child: ReactiveForm(
                 formGroup: form,
-                child: Column(children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: items.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return PromoCodeWidget(
-                          item: items[index],
-                          onTap: () {
-                            onTapButton();
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                child:
+                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: items.length,
+                  //     itemBuilder: (BuildContext context, int index) {
+                  //       return PromoCodeWidget(
+                  //         item: items[index],
+                  //         onTap: () {
+                  //           onTapButton();
+                  //         },
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   ReactiveValueListenableBuilder(
                       formControlName: 'code',
                       builder: (context, control, child) {

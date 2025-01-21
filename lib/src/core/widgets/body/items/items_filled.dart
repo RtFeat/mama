@@ -92,7 +92,7 @@ class ItemsNeedToFill extends StatelessWidget {
                   children: missingFieldsTextSpans,
                 ),
               )
-            : SizedBox.shrink();
+            : const SizedBox.shrink();
       },
     );
   }

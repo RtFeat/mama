@@ -8,12 +8,14 @@ part 'user.g.dart';
 class UserStore extends _UserStore with _$UserStore {
   UserStore({
     required super.restClient,
+    required super.verifyStore,
   });
 }
 
 abstract class _UserStore with Store {
   final RestClient restClient;
-  _UserStore({required this.restClient});
+  final VerifyStore verifyStore;
+  _UserStore({required this.restClient, required this.verifyStore});
 
   @observable
   ObservableFuture<UserData> fetchUserDataFuture = emptyResponse;
@@ -29,6 +31,7 @@ abstract class _UserStore with Store {
 
   @computed
   bool get isPro =>
+      // kDebugMode ||
       account.status == Status.trial || account.status == Status.subscribed;
 
   @computed
@@ -97,13 +100,18 @@ abstract class _UserStore with Store {
     String? secondName,
     String? email,
     String? info,
+    String? profession,
   }) {
-    restClient.patch('${Endpoint.user}/', body: {
+    final bool isDoctor = role == Role.doctor;
+
+    restClient
+        .patch(isDoctor ? '${Endpoint.doctor}/' : '${Endpoint.user}/', body: {
       if (city != null) 'city': city,
       if (firstName != null) 'first_name': firstName,
       if (secondName != null) 'second_name': secondName,
       if (email != null) 'email': email,
       if (info != null) 'info': info,
+      if (profession != null) 'profession': profession,
     }).then((v) {
       account.setIsChanged(false);
     });
@@ -115,9 +123,13 @@ abstract class _UserStore with Store {
         restClient.get(Endpoint().userData).then((v) {
       if (v != null) {
         final data = UserData.fromJson(v);
-        selectedChild = data.childs?.first;
-        children = ObservableList.of(data.childs ?? []);
-        return data;
+        if (data.account != null) {
+          selectedChild = data.childs?.first;
+          children = ObservableList.of(data.childs ?? []);
+          return data;
+        } else {
+          verifyStore.logout();
+        }
       }
       return emptyResponse;
     });
@@ -134,7 +146,8 @@ abstract class _UserStore with Store {
     });
 
     restClient.put(Endpoint().accountAvatar, body: formData).then((v) {
-      account.setAvatar('${Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+      account.setAvatar(
+          '${const Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
     });
   }
 

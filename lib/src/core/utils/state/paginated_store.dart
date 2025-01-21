@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+
 import 'extensions/extensions.dart';
 
 abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
@@ -16,6 +17,9 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
   });
 
   @observable
+  Map<String, dynamic> queryParams = {};
+
+  @observable
   int currentPage = 1;
 
   @observable
@@ -26,7 +30,9 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
 
   @action
   Future<void> loadPage({
-    required Map<String, dynamic> queryParams,
+    Future<Map<String, Object?>?> Function(Map<String, dynamic> query)?
+        fetchFunction,
+    Map<String, dynamic>? queryParams,
   }) async {
     logger.info('Starting loadPage');
     logger.info('isLoading: $isLoading, hasMore: $hasMore');
@@ -37,27 +43,57 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     }
 
     isLoading = true;
-    final updatedParams = {...queryParams, 'page': '$currentPage'};
+    this.queryParams = {...this.queryParams, ...?queryParams};
+
+    final updatedParams = {
+      ...this.queryParams,
+      'page': '$currentPage',
+      'page_size': '$pageSize',
+      'offset': '${pageSize * (currentPage - 1)}'
+    };
+
+    logger.info('Requesting page $currentPage with params: $updatedParams');
+
+    final Future future = fetchFunction != null
+        ? fetchFunction(updatedParams)
+        : this.fetchFunction(updatedParams);
 
     fetchFuture = ObservableFuture(
-      fetchFunction(updatedParams).then((rawData) {
+      future.then((rawData) {
         logger.info('Received rawData: $rawData');
         if (rawData != null) {
           final transformedData = transformer(rawData);
           logger.info('Transformed data length: ${transformedData?.length}');
+
           if (transformedData != null && transformedData.isNotEmpty) {
-            // Если количество данных меньше, чем страница, но данные есть
-            if (transformedData.length <= pageSize) {
-              hasMore = false; // Мы считаем, что это последняя страница
-              listData.addAll(transformedData);
-              logger.info('Less data than expected, hasMore set to false');
+            final previousLength = listData.length;
+
+            final uniqueData = transformedData.where((element) {
+              final isUnique = !listData.contains(element);
+              if (!isUnique) {
+                logger.info('Duplicate data detected: $element');
+              }
+              return isUnique;
+            }).toList();
+
+            listData.addAll(uniqueData);
+
+            logger.info(
+                'Added ${uniqueData.length} unique items. Updated listData length: ${listData.length}, previous length: $previousLength');
+
+            // Если уникальных данных меньше pageSize или список не увеличился
+            if (uniqueData.isEmpty || uniqueData.length < pageSize) {
+              hasMore = false;
+              logger.info(
+                  'No more unique data found or less than pageSize. Stopping pagination.');
             } else {
-              currentPage++; // Если данные есть, увеличиваем страницу
-              listData.addAll(transformedData);
-              logger.info('Data loaded, currentPage: $currentPage');
+              currentPage++;
+              hasMore = true;
+              logger
+                  .info('Data loaded, currentPage incremented to $currentPage');
             }
           } else {
-            hasMore = false; // Нет данных, ставим hasMore в false
+            hasMore = false;
             logger.info('No data received, hasMore set to false');
           }
         } else {
@@ -67,6 +103,7 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
       }).catchError((e) {
         logger.error('Error in loadPage: $e');
         hasMore = false;
+        throw Exception(e);
       }).whenComplete(() {
         isLoading = false;
         logger.info('LoadPage completed');
@@ -80,6 +117,6 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
   void resetPagination() {
     currentPage = 1;
     hasMore = true;
-    listData.clear();
+    listData.clear(); // Очищаем старые данные при сбросе пагинации
   }
 }

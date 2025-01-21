@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mama/src/data.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
-class UserModel {
+class UserModel extends BaseModel {
   @JsonKey(includeToJson: false)
   final String? id;
 
@@ -46,6 +47,7 @@ class UserModel {
       _$UserModelFromJson(json);
 
   /// Connect the generated [_$UserModelFromJson] function to the `toJson` method.
+  @override
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   @override

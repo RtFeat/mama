@@ -133,9 +133,11 @@ class DiapersView extends StatelessWidget {
                     child: CustomButton(
                       title: t.trackers.findOutMore.title,
                       onTap: () {},
-                      icon: IconModel(
-                        iconPath: Assets.icons.icGraduationCapFilled,
-                      ),
+                      // icon: IconModel(
+                      //   iconPath: Assets.icons.icGraduationCapFilled,
+                      // ),
+
+                      icon: AppIcons.graduationcapFill,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       type: CustomButtonType.outline,
@@ -151,9 +153,10 @@ class DiapersView extends StatelessWidget {
                     child: CustomButton(
                       title: t.trackers.pdf.title,
                       onTap: () {},
-                      icon: IconModel(
-                        iconPath: Assets.icons.icArrowDownFilled,
-                      ),
+                      icon: AppIcons.arrowDownToLineCompact,
+                      // icon: IconModel(
+                      //   iconPath: Assets.icons.icArrowDownFilled,
+                      // ),
                       type: CustomButtonType.outline,
                     ),
                   ),
@@ -166,9 +169,10 @@ class DiapersView extends StatelessWidget {
                       onTap: () {
                         context.pushNamed(AppViews.addDiaper);
                       },
-                      icon: IconModel(
-                        iconPath: Assets.icons.icThermometer,
-                      ),
+                      icon: AppIcons.thermometer,
+                      // icon: IconModel(
+                      //   iconPath: Assets.icons.icThermometer,
+                      // ),
                     ),
                   )
                 ],

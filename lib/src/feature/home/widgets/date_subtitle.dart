@@ -19,7 +19,7 @@ class DateSubtitle extends StatelessWidget {
     String day = DateFormat.d(locale).format(today);
 
     return AutoSizeText(
-      '${t.home.today} $dayOfWeek $day ${t.home.monthsData[today.month]}',
+      '${t.home.today} $dayOfWeek $day ${t.home.monthsData.withNumbers[today.month - 1]}',
       style: textTheme.titleSmall,
       maxLines: 1,
     );

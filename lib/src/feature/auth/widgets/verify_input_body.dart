@@ -66,9 +66,10 @@ class _VerifyInputBodyState extends State<VerifyInputBody> {
               height: 48,
               onTap: widget.store.isValid
                   ? () {
-                      context.pushNamed(widget.store.isRegistered
-                          ? AppViews.welcomeScreen
-                          : AppViews.congratsScreen);
+                      context.pushNamed(
+                          widget.store.isRegistered || !widget.store.isUser
+                              ? AppViews.welcomeScreen
+                              : AppViews.congratsScreen);
                     }
                   : null,
               textStyle: textTheme.titleMedium!.copyWith(

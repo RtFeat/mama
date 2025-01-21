@@ -108,9 +108,11 @@ class FeedingStateContainer extends StatelessWidget {
                       height: 48,
                       width: double.infinity,
                       type: CustomButtonType.outline,
-                      icon: IconModel(
-                          color: AppColors.primaryColor,
-                          iconPath: Assets.icons.icPencilFilled),
+                      iconColor: AppColors.primaryColor,
+                      icon: AppIcons.pencil,
+                      // IconModel(
+                      //     color: AppColors.primaryColor,
+                      //     iconPath: Assets.icons.icPencilFilled),
                       title: "Заметка",
                       onTap: () {},
                     ),

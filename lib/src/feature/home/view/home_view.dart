@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -8,22 +10,27 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
+    final ChatSocket socket = context.watch<ChatSocket>();
 
-    return Provider(
-      create: (context) => HomeViewStore(
-          restClient: context.read<Dependencies>().restClient,
-          userId: userStore.user.id),
-      builder: (context, _) {
-        return LoadHomeData(
-            userStore: userStore, child: _Body(userStore: userStore));
-      },
-    );
+    return LoadHomeData(
+        userStore: userStore,
+        child: _Body(
+          socket: socket,
+          userStore: userStore,
+          store: context.watch(),
+        ));
   }
 }
 
 class _Body extends StatefulWidget {
   final UserStore userStore;
-  const _Body({required this.userStore});
+  final ChatSocket socket;
+  final HomeViewStore store;
+  const _Body({
+    required this.socket,
+    required this.userStore,
+    required this.store,
+  });
 
   @override
   State<_Body> createState() => __BodyState();
@@ -39,31 +46,43 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     super.initState();
     isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
+    widget.socket.initializeSocket();
   }
-
-  late final Widget leadingWidget = ProfileWidget(
-    onTap: () {
-      router.pushNamed(AppViews.profile);
-    },
-    alignment: Alignment.centerLeft,
-    avatarUrl: widget.userStore.account.avatarUrl ?? '',
-  );
-
-  late CustomAppBar appBar = CustomAppBar(
-    leading: ProfileWidget(
-      onTap: () {
-        router.pushNamed(AppViews.profile);
-      },
-      alignment: Alignment.centerLeft,
-      avatarUrl: widget.userStore.account.avatarUrl ?? '',
-    ),
-    action: const ProfileWidget(
-      isShowText: true,
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
+    final CustomAppBar appBar = CustomAppBar(
+      leading: Observer(builder: (context) {
+        return ProfileWidget(
+          onTap: () {
+            router.pushNamed(AppViews.profile);
+          },
+          alignment: Alignment.centerLeft,
+          avatarUrl: widget.userStore.account.avatarUrl ?? '',
+        );
+      }),
+      action: ProfileWidget(
+        isShowText: true,
+        onTapSwitch: () {
+          switch (_tabController.index) {
+            case 2:
+              if (widget.userStore.role == Role.user) {
+                final store =
+                    Provider.of<ChatsViewStore>(context, listen: false);
+
+                store.groups.resetPagination();
+
+                store.loadAllGroups(
+                  widget.userStore.selectedChild?.id,
+                );
+              }
+              break;
+            default:
+          }
+        },
+      ),
+    );
+
     return Scaffold(
         body: TabBarView(
           controller: _tabController,
@@ -71,14 +90,24 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
             HomeBodyWidget(
               tabController: _tabController,
               appBar: CustomAppBar(
-                leading: leadingWidget,
+                leading: Observer(builder: (context) {
+                  return ProfileWidget(
+                    onTap: () {
+                      router.pushNamed(AppViews.profile);
+                    },
+                    alignment: Alignment.centerLeft,
+                    avatarUrl: widget.userStore.account.avatarUrl ?? '',
+                  );
+                }),
                 action: switch (widget.userStore.role) {
                   Role.user => ProfileWidget(
                       isShowText: true,
                       onTapSwitch: () {},
                     ),
                   Role.doctor => TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.pushNamed(AppViews.specializedConsultations);
+                      },
                       child: Text(t.consultation.title),
                     ),
                   _ => null,

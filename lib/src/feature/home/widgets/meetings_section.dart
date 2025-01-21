@@ -1,11 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
 class MeetingsSection extends StatelessWidget {
   final int whichSection;
-  final List<MeetingBox> meetingsList;
+  final List<MeetingBox>? meetingsList;
+  final bool showDecoration;
   const MeetingsSection({
     super.key,
+    this.showDecoration = true,
     required this.whichSection,
     required this.meetingsList,
   });
@@ -17,11 +20,13 @@ class MeetingsSection extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(24)),
-          border: Border.all(
-            color: whichSection == 1
-                ? AppColors.greenLighterBackgroundColor
-                : AppColors.purpleLighterBackgroundColor,
-          ),
+          border: showDecoration
+              ? Border.all(
+                  color: whichSection == 1
+                      ? AppColors.greenLighterBackgroundColor
+                      : AppColors.purpleLighterBackgroundColor,
+                )
+              : null,
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -29,7 +34,7 @@ class MeetingsSection extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.start,
-            children: meetingsList.map((e) => e).toList(),
+            children: meetingsList!.mapIndexed((i, e) => e).toList(),
           ),
         ),
       ),

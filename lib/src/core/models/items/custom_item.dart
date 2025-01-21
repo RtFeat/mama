@@ -5,6 +5,9 @@ class CustomBodyItem extends BodyItem {
   final String title;
   final Widget? body;
   final String? subTitle;
+  final double? subTitleWidth;
+  final int? subTitleLines;
+  final MainAxisAlignment? bodyAlignment;
 
   CustomBodyItem({
     required this.title,
@@ -14,5 +17,8 @@ class CustomBodyItem extends BodyItem {
     super.titleStyle,
     super.hintStyle,
     super.maxLines,
+    this.subTitleWidth,
+    this.subTitleLines,
+    this.bodyAlignment,
   });
 }

@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/trackers/views/health/add_medicine.dart';
 import 'package:mama/src/feature/trackers/widgets/big_find_out_more_button.dart';
@@ -78,11 +77,12 @@ class Medicine extends StatelessWidget {
                               width: 100,
                               height: 100,
                               child: Center(
-                                child: SvgPicture.asset(
-                                  Assets.icons.icPillsFilled,
-                                  width: 28,
-                                  height: 28,
-                                ),
+                                child: Icon(AppIcons.pillsFill),
+                                // child: SvgPicture.asset(
+                                //   Assets.icons.icPillsFilled,
+                                //   width: 28,
+                                //   height: 28,
+                                // ),
                               ),
                             ),
                           ),
@@ -180,9 +180,10 @@ class Medicine extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryColor,
                         ),
-                        icon: IconModel(
-                          iconPath: Assets.icons.icGraduationCapFilled,
-                        ),
+                        icon: AppIcons.graduationcapFill,
+                        // icon: IconModel(
+                        //   iconPath: Assets.icons.icGraduationCapFilled,
+                        // ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
@@ -204,9 +205,10 @@ class Medicine extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryColor,
                         ),
-                        icon: IconModel(
-                          iconPath: Assets.icons.icArrowDownFilled,
-                        ),
+                        // icon: IconModel(
+                        //   iconPath: Assets.icons.icArrowDownFilled,
+                        // ),
+                        icon: AppIcons.arrowDownToLineCompact,
                         type: CustomButtonType.outline,
                       ),
                     ),
@@ -219,9 +221,10 @@ class Medicine extends StatelessWidget {
                         title: t.trackers.add.title,
                         backgroundColor: AppColors.purpleLighterBackgroundColor,
                         onTap: () => _navigateToAddMedicineView(context),
-                        icon: IconModel(
-                          iconPath: Assets.icons.icPillsFilled,
-                        ),
+                        // icon: IconModel(
+                        //   iconPath: Assets.icons.icPillsFilled,
+                        // ),
+                        icon: AppIcons.pillsFill,
                       ),
                     )
                   ],

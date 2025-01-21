@@ -58,9 +58,11 @@ class AddManuallyScreen extends StatelessWidget {
               height: 48,
               width: double.infinity,
               type: CustomButtonType.outline,
-              icon: IconModel(
-                  color: AppColors.primaryColor,
-                  iconPath: Assets.icons.icPencilFilled),
+              // icon: IconModel(
+              //     color: AppColors.primaryColor,
+              //     iconPath: Assets.icons.icPencilFilled),
+              icon: AppIcons.pencil,
+              iconColor: AppColors.primaryColor,
               title: t.feeding.note,
               onTap: () {},
             ),

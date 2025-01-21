@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../core/core.dart';
+import 'package:mama/src/data.dart';
 
 class PlayerButton extends StatefulWidget {
   final Function() onTap;
@@ -72,7 +71,7 @@ class _PlayerButtonState extends State<PlayerButton>
                         ).animate(_animation).value,
                         shape: BoxShape.circle,
                       ),
-                      child: Text(''),
+                      child: const Text(''),
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -85,13 +84,22 @@ class _PlayerButtonState extends State<PlayerButton>
                       child: Container(
                         padding: const EdgeInsets.all(48),
                         child: Center(
-                          child: SvgPicture.asset(
-                            widget.isStart
-                                ? Assets.icons.icPauseFilled
-                                : Assets.icons.icPlayer,
-                            colorFilter: const ColorFilter.mode(
-                                AppColors.primaryColor, BlendMode.srcIn),
-                          ),
+                          // child: SvgPicture.asset(
+                          //   widget.isStart
+                          //       ? Assets.icons.icPauseFilled
+                          //       : Assets.icons.icPlayer,
+                          //   colorFilter: const ColorFilter.mode(
+                          //       AppColors.primaryColor, BlendMode.srcIn),
+                          // ),
+                          child: widget.isStart
+                              ? const Icon(
+                                  AppIcons.pauseFill,
+                                  color: AppColors.primaryColor,
+                                )
+                              : const Icon(
+                                  AppIcons.playFill,
+                                  color: AppColors.primaryColor,
+                                ),
                         ),
                       ),
                     ),

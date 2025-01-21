@@ -26,14 +26,16 @@ class CustomBodyItemWidget extends StatelessWidget {
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: item.bodyAlignment ?? MainAxisAlignment.start,
           children: [
             Row(
               children: [
                 Expanded(
                   child: AutoSizeText(
                     item.title,
-                    style: textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w400),
+                    style: item.titleStyle ??
+                        textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w400),
                   ),
                 ),
                 5.w,
@@ -41,14 +43,14 @@ class CustomBodyItemWidget extends StatelessWidget {
             ),
             if (item.subTitle != null)
               SizedBox(
-                width: 50,
+                width: item.subTitleWidth ?? 50,
                 child: Row(
                   children: [
                     Expanded(
                       child: AutoSizeText(
                         item.subTitle!,
                         style: item.hintStyle ?? helpersStyle,
-                        maxLines: 1,
+                        maxLines: item.subTitleLines ?? 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

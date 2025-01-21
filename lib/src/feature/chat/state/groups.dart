@@ -1,7 +1,16 @@
 import 'package:mama/src/data.dart';
+import 'package:mobx/mobx.dart';
 
-class GroupsStore extends PaginatedListStore<GroupItem> {
-  GroupsStore({required super.fetchFunction})
+part 'groups.g.dart';
+
+class GroupsStore extends _GroupsStore with _$GroupsStore {
+  GroupsStore({
+    required super.fetchFunction,
+  });
+}
+
+abstract class _GroupsStore extends PaginatedListStore<GroupItem> with Store {
+  _GroupsStore({required super.fetchFunction})
       : super(transformer: (raw) {
           // final data =  ChatsData.fromJson(raw);
 
@@ -10,4 +19,9 @@ class GroupsStore extends PaginatedListStore<GroupItem> {
               .toList();
           return data ?? [];
         });
+
+  @action
+  void deleteGroup(String id) {
+    listData.removeWhere((e) => e.id == id);
+  }
 }

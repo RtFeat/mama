@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/chat/chat.dart';
+import 'package:marquee/marquee.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
-class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
+class ChatsAppBar extends StatelessWidget {
+  final ChatItem? item;
+  final MessagesStore store;
+  final GroupUsersStore? groupUsersStore;
+
+  final ScrollController scrollController;
+
   final double? height;
-  final String title;
-  final String subTitle;
-  final String? profession;
-  final String? avatarUrl;
-  final Widget? action;
-  final VoidCallback onTapSearch;
-  final VoidCallback? onTapAvatar;
-  final TabController? tabController;
-  final List<String>? tabs;
 
   const ChatsAppBar({
     super.key,
-    required this.title,
     this.height,
-    this.tabs,
-    this.tabController,
-    this.action,
-    required this.subTitle,
-    this.avatarUrl,
-    this.profession,
-    required this.onTapSearch,
-    this.onTapAvatar,
+    required this.item,
+    required this.store,
+    required this.groupUsersStore,
+    required this.scrollController,
   });
 
   @override
@@ -35,95 +29,149 @@ class ChatsAppBar extends StatelessWidget implements PreferredSizeWidget {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
-    return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            context.pop();
-                          },
-                          child: SvgPicture.asset(
-                            Assets.icons.icArrowLeftFilled,
-                            width: 12,
-                            height: 20,
-                          ),
-                        ),
-                        16.w,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            profession != null
-                                ? Row(
-                                    children: [
-                                      Text(
-                                        title,
-                                        style: textTheme.bodyMedium,
-                                      ),
-                                      3.w,
-                                      if (profession != null)
-                                        ProfessionBox(profession: profession!)
-                                    ],
-                                  )
-                                : Text(
-                                    title,
-                                    style: textTheme.bodyMedium,
-                                  ),
-                            Text(
-                              subTitle,
-                              style: textTheme.labelSmall,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              onTapSearch();
-                            },
-                            child: Image.asset(
-                              height: 28,
-                              Assets.icons.magnifier.path,
-                            ),
-                          ),
-                          8.w,
-                          if (avatarUrl != null)
-                            GestureDetector(
-                              onTap: () {
-                                onTapAvatar!();
-                              },
-                              child: CircleAvatar(
-                                radius: 23,
-                                backgroundImage: AssetImage(
-                                  avatarUrl!,
-                                ),
-                              ),
-                            ),
-                        ],
-                      )),
-                ],
-              )),
-        ],
+    return Observer(builder: (context) {
+      return AppBar(
+          backgroundColor: AppColors.lightPirple,
+          surfaceTintColor: AppColors.lightPirple,
+          centerTitle: false,
+          titleSpacing: 0,
+          leading: GestureDetector(
+            onTap: () {
+              context.pop();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.iconColor,
+            ),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: kToolbarHeight / 2,
+                child: Marquee(
+                  text: (item is SingleChatItem
+                          ? (item as SingleChatItem).participant2?.name
+                          : (item as GroupItem).groupInfo?.name) ??
+                      '',
+                  velocity: 30,
+                  blankSpace: 10,
+                  style: textTheme.bodyMedium?.copyWith(letterSpacing: .01),
+                ),
+              ),
+              Text(
+                'sdfdsf',
+                style: textTheme.labelSmall,
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GestureDetector(
+                onTap: () {
+                  store.setIsSearching(!store.isSearching);
+                  store.setQuery('');
+                  store.setFilters({
+                    'query': (MessageItem e) {
+                      return true;
+                    }
+                  });
+                },
+                child: const Icon(Icons.search, color: AppColors.primaryColor),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (groupUsersStore != null) {
+                  context.pushNamed(AppViews.groupUsers, extra: {
+                    'store': groupUsersStore,
+                    'groupInfo': (item as GroupItem).groupInfo,
+                  });
+                } else if (item is SingleChatItem) {
+                  context.pushNamed(AppViews.profileInfo, extra: {
+                    'model': (item as SingleChatItem).participant2,
+                  });
+                }
+              },
+              child: AvatarWidget(
+                  url: item is SingleChatItem
+                      ? (item as SingleChatItem).participant2?.avatarUrl
+                      : (item as GroupItem).groupInfo?.avatarUrl,
+                  size: const Size(50, 50),
+                  radius: 25),
+            ),
+            10.w,
+          ],
+          bottom: store.attachedMessages.isNotEmpty
+              ? PreferredSize(
+                  preferredSize: const Size.fromHeight(60),
+                  child: Column(
+                    children: [
+                      const Divider(
+                        height: 3,
+                        color: AppColors.lavenderBlue,
+                      ),
+                      PinnedMessages(
+                        store: store,
+                        scrollController: scrollController,
+                      ),
+                    ],
+                  ))
+              : null);
+    });
+  }
+}
+
+class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
+  final MessagesStore store;
+  const ChatSearchBar({
+    super.key,
+    required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      leadingWidth: 0,
+      backgroundColor: AppColors.lightPirple,
+      surfaceTintColor: AppColors.lightPirple,
+      leading: const SizedBox.shrink(),
+      title: ReactiveForm(
+        formGroup: store.formGroup,
+        child: Observer(builder: (_) {
+          return Finder(
+              value: store.query,
+              onSearchIconPressed: () => store.setIsSearching(false),
+              inputBorder: const OutlineInputBorder(
+                borderSide: BorderSide.none,
+              ),
+              onChanged: (v) {
+                store.setQuery(v);
+                store.setFilters({
+                  'query': (MessageItem e) {
+                    if (v.isEmpty) return true;
+
+                    return e.text?.contains(v) ?? true;
+                  }
+                });
+              },
+              onPressedClear: () {
+                store.formGroup.control('search').value = '';
+                store.setQuery('');
+                store.setFilters({
+                  'query': (MessageItem e) {
+                    return true;
+                  }
+                });
+              },
+              formControlName: 'search',
+              hintText: t.chat.hintSearchChat);
+        }),
       ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(height ?? kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

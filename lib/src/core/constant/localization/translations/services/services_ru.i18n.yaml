@@ -59,13 +59,15 @@ authorBtn:
   title: Автор
 
 obstetrician:
-   title: Акушер  
+  title: Акушер
 
 childDevelopment:
   title: Развитие ребенка в 6 месяцев
 
-sixMonth: 
-   title: 6 месяцев
+sixMonth:
+  title: 6 месяцев
 
-toSave: 
+toSave:
   title: В избранное
+
+clear: Очистить

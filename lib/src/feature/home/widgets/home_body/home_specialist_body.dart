@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/home/home.dart';
+import 'package:mama/src/feature/home/widgets/calendar/calendar.dart';
 
 class HomeSpecialistBody extends StatefulWidget {
   final HomeViewStore homeViewStore;
@@ -31,28 +32,6 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
-    final meetingsListOne = [
-      for (int i = 0; i < 5; i++)
-        MeetingBox(
-          scheduledTime: t.home.timeScheduleOne.title,
-          meetingType: t.home.chat.title,
-          isCancelled: i == 2 ? true : false,
-          tutorFullName: t.home.tutorFullNameOne.title,
-          whichSection: 1,
-        ),
-    ];
-
-    final meetingsListTwo = [
-      for (int i = 0; i < 7; i++)
-        MeetingBox(
-          scheduledTime: t.home.timeScheduleOne.title,
-          meetingType: t.home.chat.title,
-          isCancelled: false,
-          tutorFullName: t.home.tutorFullNameOne.title,
-          whichSection: 2,
-        ),
-    ];
-
     return LoadingWidget(
       future: widget.doctorStore.fetchFuture,
       builder: (data) => Observer(builder: (context) {
@@ -71,35 +50,8 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
 
             16.h,
 
-            /// #meetings
-            CustomBackground(
-              padding: 16,
-              height: null,
-              child: Column(
-                children: [
-                  /// #switch section
-                  DateSwitchSection(
-                    leftButtonOnPressed: () {},
-                    rightButtonOnPressed: () {},
-                    calendarButtonOnPressed: () {},
-                  ),
-                  const SizedBox(height: 8),
+            const SpecialistCalendarWidget(),
 
-                  /// #meetings section one
-                  MeetingsSection(
-                    whichSection: 1,
-                    meetingsList: meetingsListOne,
-                  ),
-                  8.h,
-
-                  /// #meetings section two
-                  MeetingsSection(
-                    whichSection: 2,
-                    meetingsList: meetingsListTwo,
-                  ),
-                ],
-              ),
-            ),
             16.h,
             if (widget.homeViewStore.ownArticlesStore.listData.isNotEmpty)
 
@@ -131,7 +83,7 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
                             height: 250,
                             child: PaginatedLoadingWidget(
                               scrollDirection: Axis.horizontal,
-                              store: widget.homeViewStore.allArticlesStore,
+                              store: widget.homeViewStore.ownArticlesStore,
                               itemBuilder: (context, item) {
                                 return ArticleBox(
                                   model: item,

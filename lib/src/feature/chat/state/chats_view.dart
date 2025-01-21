@@ -1,14 +1,23 @@
 import 'package:mama/src/data.dart';
+import 'package:mobx/mobx.dart';
 
 import 'chats.dart';
 import 'groups.dart';
 
-class ChatsViewStore {
+part 'chats_view.g.dart';
+
+class ChatsViewStore extends _ChatsViewStore with _$ChatsViewStore {
+  ChatsViewStore({
+    required super.restClient,
+  });
+}
+
+abstract class _ChatsViewStore with Store {
   final ChatsStore chats;
 
   final GroupsStore groups;
 
-  ChatsViewStore({
+  _ChatsViewStore({
     required RestClient restClient,
   })  : chats = ChatsStore(
             fetchFunction: (params) =>
@@ -18,76 +27,30 @@ class ChatsViewStore {
               restClient.get(Endpoint().groups, queryParams: params),
         );
 
+  @observable
+  ObservableFuture? fetchFuture;
+
+  @action
+  void setFetchFuture(ObservableFuture? value) => fetchFuture = value;
+
   Future loadAllChats() async {
-    await chats.loadPage(queryParams: {
-      'page_size': '10',
-    });
+    await chats.loadPage(queryParams: {});
   }
 
   Future loadAllGroups(
     String? childId,
   ) async {
     await groups.loadPage(queryParams: {
-      'page_size': '10',
       if (childId != null) 'child_id': childId,
     });
   }
+
+  @action
+  void deleteChat(String id, String chatType) {
+    if (chatType == 'group') {
+      groups.deleteGroup(id);
+    } else {
+      chats.deleteChat(id);
+    }
+  }
 }
-
-// class ChatsViewStore extends _ChatsViewStore with _$ChatsViewStore {
-//   ChatsViewStore({
-//     required super.restClient,
-//     required super.userStore,
-//   });
-// }
-
-// abstract class _ChatsViewStore with Store {
-//   _ChatsViewStore({
-//     required this.restClient,
-//     required this.userStore,
-//   });
-
-//   final RestClient restClient;
-//   final UserStore userStore;
-
-//   @observable
-//   ObservableFuture<ChatsData> fetchChatsFuture = emptyResponse;
-
-//   @observable
-//   ChatsData? chatsData;
-
-//   @observable
-//   ObservableList<ChatModelSingle>? chats = ObservableList();
-
-//   @observable
-//   ObservableList<ChatModelGroup>? groups = ObservableList();
-
-//   @computed
-//   bool get hasResults =>
-//       fetchChatsFuture != emptyResponse &&
-//       fetchChatsFuture.status == FutureStatus.fulfilled;
-
-//   Future<ChatsData> fetchChats() async {
-//     final Future<ChatsData> future =
-//         restClient.get(Endpoint().chats, queryParams: {
-//       'child_id': userStore.selectedChild?.id,
-//     }).then((v) {
-//       if (v != null) {
-//         final data = ChatsData.fromJson(v);
-//         chats = ObservableList.of(data.chats ?? []);
-//         groups = ObservableList.of(data.groupChat ?? []);
-//         return data;
-//       }
-//       return emptyResponse;
-//     });
-//     fetchChatsFuture = ObservableFuture(future);
-
-//     return chatsData = await future;
-//   }
-
-//   static ObservableFuture<ChatsData> emptyResponse =
-//       ObservableFuture.value(ChatsData(
-//     chats: [],
-//     groupChat: [],
-//   ));
-// }

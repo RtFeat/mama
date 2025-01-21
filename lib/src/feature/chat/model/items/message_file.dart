@@ -12,10 +12,14 @@ class MessageFile {
   @JsonKey(name: 'type_file')
   final String? typeFile;
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final String? filePath;
+
   MessageFile({
     this.fileUrl,
     this.filename,
     this.typeFile,
+    this.filePath,
   });
 
   factory MessageFile.fromJson(Map<String, dynamic> json) =>

@@ -3,8 +3,7 @@ import 'package:mobx/mobx.dart';
 import 'extensions/extensions.dart';
 
 abstract class SingleDataStore<T> with Store, LoadingDataStoreExtension<T> {
-  final Future<Map<String, Object?>?> Function()
-      fetchFunction; // id стал необязательным
+  final Future<Map<String, Object?>?> Function(String? id) fetchFunction;
   final T Function(Map<String, dynamic>?) transformer;
 
   SingleDataStore({
@@ -13,10 +12,9 @@ abstract class SingleDataStore<T> with Store, LoadingDataStoreExtension<T> {
   });
 
   @action
-  Future<void> loadData() async {
-    // id как необязательный параметр
+  Future<void> loadData({String? id}) async {
     await super.fetchData(
-      () => fetchFunction(), // Передаем id (может быть null)
+      () => fetchFunction(id),
       (raw) => transformer(raw),
     );
   }
