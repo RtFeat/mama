@@ -38,6 +38,22 @@ titlePlayButtonSleep: Timer sleep
 min: m
 sec: s
 
+ifEditNotCompleteSleep:
+  title: У вас запущен сон
+  text: Если вы измените значения вручную, запущенный сон не сохранится
+
+addNewManualSleep:
+  title: Добавить сон
+  text: Укажите, когда малыш заснул, и когда проснулся
+
+ifEditNotCompleteCry:
+  title: У вас запущен счетчик плача
+  text: Если вы измените значения вручную, запущенный плач не сохранится
+
+addNewManualCry:
+  title: Добавить плач
+  text: Укажите, когда малыш начал и закончил плакать
+
 infoManuallyContainerButtonBackAndContinue: Вернуться и продолжить
 infoManuallyContainerButtonNote: Заметка
 infoManuallyContainerSaveFeeding: 
@@ -214,3 +230,5 @@ dirty:
   diarrhea: Diarrhea
 
 diaperforday: 6 diapers a day on average
+
+list_of_weeks: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]

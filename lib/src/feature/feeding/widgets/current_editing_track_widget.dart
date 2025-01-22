@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
 
 class CurrentEditingTrackWidget extends StatelessWidget {
   final String title;
   final String noteTitle;
   final String noteText;
+  final bool isTimerStarted;
   final DateTime timerStart;
   final DateTime? timerEnd;
   final VoidCallback onPressNote;
@@ -23,19 +22,11 @@ class CurrentEditingTrackWidget extends StatelessWidget {
       required this.onPressCancel,
       required this.onPressManually,
       required this.timerStart,
-      required this.timerEnd});
+      required this.timerEnd,
+      required this.isTimerStarted});
 
   @override
   Widget build(BuildContext context) {
-    String timeStart = DateFormat('hh:mm').format(timerStart);
-    var infinity = String.fromCharCodes(Runes('\u221E'));
-    String timeEnd =
-        timerEnd == null ? infinity : DateFormat('hh:mm').format(timerEnd!);
-    String timeTotal = timerEnd == null
-        ? infinity
-        : DateFormat(
-                '${timerEnd!.difference(timerStart).inMinutes}${t.trackers.min} ${timerEnd!.difference(timerStart).inSeconds}${t.trackers.sec}')
-            .format(DateTime.now());
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
     return Column(
@@ -47,32 +38,10 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               textTheme.titleLarge?.copyWith(color: Colors.black, fontSize: 20),
         ),
         20.h,
-        Row(
-          children: [
-            Expanded(
-                child: DetailContainer(
-              title: t.trackers.currentEditTrackStart,
-              text: timeStart,
-              detail: t.trackers.currentEditTrackButtonChange,
-              filled: true,
-            )),
-            10.w,
-            Expanded(
-                child: DetailContainer(
-              title: t.trackers.currentEditTrackFinish,
-              text: timeEnd,
-              detail: t.trackers.currentEditTrackButtonTimerStart,
-              filled: false,
-            )),
-            10.w,
-            Expanded(
-                child: DetailContainer(
-              title: t.trackers.currentEditTrackAll,
-              text: timeTotal,
-              detail: '',
-              filled: false,
-            )),
-          ],
+        EditTimeRow(
+          timerStart: timerStart,
+          timerEnd: timerEnd,
+          isTimerStarted: isTimerStarted,
         ),
         20.h,
         Row(

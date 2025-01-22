@@ -19,3 +19,13 @@ class DetailTimeSleepCry {
     required this.time,
   });
 }
+
+class SleepCryModel {
+  final String date;
+  final List<DetailTimeSleepCry> listOfData;
+
+  SleepCryModel({
+    required this.date,
+    required this.listOfData,
+  });
+}

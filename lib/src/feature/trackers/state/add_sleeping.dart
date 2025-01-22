@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
 part 'add_sleeping.g.dart';
@@ -20,10 +21,35 @@ abstract class _AddSleeping with Store {
   bool isSleepCanceled = false;
 
   @observable
+  DateTime manualStartTime = DateTime.now();
+
+  @observable
+  DateTime manualEndTime = DateTime.now();
+
+  @observable
   DateTime timerStartTime = DateTime.now();
 
   @observable
   DateTime? timerEndTime;
+
+  @action
+  setTimeStartManually(String value) {
+    DateFormat format = DateFormat('HH:mm');
+    if (value.length == 5) {
+      manualStartTime = format.parse(value);
+    }
+  }
+
+  @action
+  setTimeEndManually(String value) {
+    DateFormat format = DateFormat('HH:mm');
+    if (value.length == 5) {
+      manualStartTime = format.parse(value);
+    }
+  }
+
+  @action
+  confirmButtonManuallyPressed() {}
 
   @action
   changeStatusTimer() {

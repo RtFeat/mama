@@ -69,14 +69,19 @@ class AddFeedingWidget extends StatelessWidget {
                       noteText: t.trackers.currentEditTrackCountTextFeed,
                       onPressNote: () {},
                       onPressSubmit: () {
-                        // addFeeding.confirmButtonPressed();
+                        addFeeding.confirmButtonPressed();
                       },
                       onPressCancel: () {
-                        // addFeeding.cancelFeeding();
+                        addFeeding.cancelFeeding();
                       },
                       onPressManually: () {},
                       timerStart: addFeeding.timerStartTime,
                       timerEnd: addFeeding.timerEndTime,
+                      isTimerStarted: addFeeding.isRightSideStart == true
+                          ? true
+                          : addFeeding.isLeftSideStart == true
+                              ? true
+                              : false,
                     )
                   : Column(
                       children: [

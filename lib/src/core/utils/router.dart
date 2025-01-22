@@ -51,6 +51,7 @@ abstract class AppViews {
   static const feeding = 'feeding';
   static const sleeping = 'sleeping';
   static const addManually = 'addManually';
+  static const addSleeping = 'addSleeping';
   static const addPumping = 'addPumping';
   static const addLure = 'addLure';
   static const addBottle = 'addBottle';
@@ -248,11 +249,11 @@ final GoRouter router = GoRouter(
           name: AppViews.sleeping,
           builder: (context, state) => const SleepingScreen(),
           routes: [
-            // GoRoute(
-            //   name: AppViews.addManually,
-            //   path: _Paths.addManually,
-            //   builder: (context, state) => const AddManuallyScreen(),
-            // ),
+            GoRoute(
+              name: AppViews.addSleeping,
+              path: _Paths.addSleeping,
+              builder: (context, state) => const AddSleepingScreenManually(),
+            ),
             //   GoRoute(
             //     name: AppViews.addPumping,
             //     path: _Paths.addPumping,
@@ -468,6 +469,7 @@ abstract class _Paths {
   static const addDiapers = AppViews.addDiaper;
 
   static const addManually = AppViews.addManually;
+  static const addSleeping = AppViews.addSleeping;
   static const addPumping = AppViews.addPumping;
   static const addLure = AppViews.addLure;
   static const addBottle = AppViews.addBottle;

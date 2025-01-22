@@ -34,6 +34,7 @@ class AddManuallyScreen extends StatelessWidget {
                   text: '16:35',
                   detail: t.feeding.change,
                   filled: true,
+                  isEdited: true,
                 )),
                 10.w,
                 Expanded(
@@ -42,6 +43,7 @@ class AddManuallyScreen extends StatelessWidget {
                   text: '16:35',
                   detail: t.feeding.timerStarted,
                   filled: true,
+                  isEdited: true,
                 )),
                 10.w,
                 Expanded(
@@ -50,6 +52,7 @@ class AddManuallyScreen extends StatelessWidget {
                   text: '0м 0с',
                   detail: '',
                   filled: false,
+                  isEdited: true,
                 )),
               ],
             ),
