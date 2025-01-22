@@ -70,7 +70,8 @@ class ChildStatusWidget extends StatelessWidget {
                               children: [
                                 IconWidget(
                                     model: IconModel(
-                                  iconPath: Assets.icons.icBnServicesTap.path,
+                                  icon: AppIcons.rectanglesGroup,
+                                  // iconPath: Assets.icons.icBnServicesTap.path,
                                   size: const Size(32, 32),
                                 )),
                                 8.w,

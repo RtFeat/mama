@@ -5,7 +5,7 @@ class EditingButtons extends StatelessWidget {
   final String addBtnText;
   final Function() learnMoreTap;
   final Function() addButtonTap;
-  final String? iconAsset;
+  final IconData? iconAsset;
 
   const EditingButtons(
       {super.key,
@@ -25,7 +25,9 @@ class EditingButtons extends StatelessWidget {
           child: CustomButton(
             type: CustomButtonType.outline,
             onTap: learnMoreTap,
-            icon: IconModel(iconPath: Assets.icons.icLearnMore),
+            // icon: IconModel(iconPath: Assets.icons.icLearnMore),
+            icon: AppIcons.graduationcapFill,
+            iconColor: AppColors.primaryColor,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             textStyle: textTheme.titleLarge?.copyWith(fontSize: 10),
@@ -39,7 +41,7 @@ class EditingButtons extends StatelessWidget {
             backgroundColor: AppColors.purpleLighterBackgroundColor,
             onTap: addButtonTap,
             title: addBtnText,
-            icon: iconAsset == null ? null : IconModel(iconPath: iconAsset),
+            icon: iconAsset,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
             textStyle: textTheme.bodyMedium

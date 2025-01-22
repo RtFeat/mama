@@ -57,10 +57,13 @@ class CancelRecordWidget extends StatelessWidget {
                         color: AppColors.redColor,
                       ),
                       backgroundColor: AppColors.redLighterBackgroundColor,
-                      icon: IconModel(
-                        icon: Icons.language,
-                        color: AppColors.redColor,
-                      ),
+                      // icon: IconModel(
+                      //   icon: Icons.language,
+                      //   color: AppColors.redColor,
+                      // ),
+
+                      icon: AppIcons.globe,
+                      iconColor: AppColors.redColor,
                       onTap: () {
                         context.pop();
                         context.pushNamed(AppViews.webView,

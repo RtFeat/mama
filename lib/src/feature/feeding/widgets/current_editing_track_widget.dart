@@ -90,7 +90,9 @@ class CurrentEditingTrackWidget extends StatelessWidget {
                 onTap: () {
                   onPressCancel();
                 },
-                icon: IconModel(iconPath: Assets.icons.icClose),
+                // icon: IconModel(iconPath: Assets.icons.icClose),
+                icon: AppIcons.xmark,
+                iconColor: AppColors.redColor,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(

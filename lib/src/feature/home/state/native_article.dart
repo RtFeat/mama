@@ -6,7 +6,7 @@ class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
     required this.restClient,
     required String? id,
   }) : super(
-          fetchFunction: () => restClient.get('${Endpoint.article}/$id'),
+          fetchFunction: (_) => restClient.get('${Endpoint.article}/$id'),
           transformer: (raw) {
             final data = ArticleModel.fromJson(raw?['article']);
 

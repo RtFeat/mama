@@ -1,3 +1,5 @@
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
@@ -57,34 +59,68 @@ class _FeedbackWidgetState extends State<FeedbackWidget> {
                           controller.clear();
                           if (context.mounted) {
                             context.pop();
-                            showDialog(
-                              context: context,
+                            DelightToastBar(
+                              autoDismiss: true,
                               builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    t.profile.feedback.success.title,
-                                    style: textTheme.displaySmall?.copyWith(
-                                        color: AppColors
-                                            .greenBrighterBackgroundColor),
-                                  ),
-                                  content: Text(
-                                    t.profile.feedback.success.desc,
-                                    style: textTheme.bodyMedium?.copyWith(
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          if (context.mounted) {
-                                            context.pop();
-                                          }
-                                        },
-                                        child:
-                                            Text(t.profile.feedback.success.ok))
-                                  ],
-                                );
+                                return ToastCard(
+                                    title: Text(
+                                  t.profile.feedback.success.desc,
+                                  style: textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.normal),
+                                ));
                               },
-                            );
+                            ).show(context);
+                            // showDialog(
+                            //     context: context,
+                            //     builder: (context) {
+                            //       return AlertDialog(
+                            //         title: Row(
+                            //           mainAxisAlignment:
+                            //               MainAxisAlignment.center,
+                            //           children: [
+                            //             DecoratedBox(
+                            //                 decoration: BoxDecoration(
+                            //                   borderRadius: 4.r,
+                            //                   color: AppColors
+                            //                       .greenBrighterBackgroundColor,
+                            //                 ),
+                            //                 child: const Padding(
+                            //                   padding: EdgeInsets.all(8.0),
+                            //                   child: Icon(
+                            //                     Icons.done,
+                            //                     color: AppColors.whiteColor,
+                            //                   ),
+                            //                 )),
+                            //           ],
+                            //         ),
+                            //         content: Column(
+                            //           mainAxisSize: MainAxisSize.min,
+                            //           crossAxisAlignment:
+                            //               CrossAxisAlignment.center,
+                            //           children: [
+                            //             Text(
+                            //               t.profile.feedback.success.desc,
+                            //               style: textTheme.bodyMedium?.copyWith(
+                            //                   fontWeight: FontWeight.normal),
+                            //             ),
+                            //             Text(
+                            //               t.home.thanksForReachingOut,
+                            //               textAlign: TextAlign.center,
+                            //             ),
+                            //           ],
+                            //         ),
+                            //         actions: [
+                            //           TextButton(
+                            //               onPressed: () {
+                            //                 if (context.mounted) {
+                            //                   context.pop();
+                            //                 }
+                            //               },
+                            //               child: Text(
+                            //                   t.profile.feedback.success.ok))
+                            //         ],
+                            //       );
+                            //     });
                           }
                         });
                       },

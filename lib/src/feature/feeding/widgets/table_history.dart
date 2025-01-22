@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/feeding/data/entity/history_of_feeding.dart';
 
@@ -59,7 +58,8 @@ class TableHistory extends StatelessWidget {
                           CustomButton(
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
-                            icon: IconModel(iconPath: Assets.icons.icUpload),
+                            // icon: IconModel(iconPath: Assets.icons.icUpload),
+                            icon: AppIcons.arrowDownToLineCompact,
                             title: "ПДФ",
                             height: 26,
                             width: 70,
@@ -84,7 +84,8 @@ class TableHistory extends StatelessWidget {
               ? Column(
                   children: [
                     Text(t.feeding.wholeStory, style: textTheme.labelLarge),
-                    SvgPicture.asset(Assets.icons.icArrowDown),
+                    // SvgPicture.asset(Assets.icons.icArrowDown),
+                    const Icon(AppIcons.chevronCompactDown)
                   ],
                 )
               : const SizedBox.shrink(),

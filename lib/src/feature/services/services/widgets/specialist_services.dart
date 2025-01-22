@@ -15,6 +15,9 @@ class SpecialistServicesBodyWidget extends StatelessWidget {
             child: MainBox(
               mainText: t.services.knowledgeCenter.title,
               image: Assets.images.hat.path,
+              onTap: () {
+                context.pushNamed(AppViews.serviceKnowlegde);
+              },
             ),
           ),
           12.h,
@@ -22,6 +25,9 @@ class SpecialistServicesBodyWidget extends StatelessWidget {
             child: MainBox(
               mainText: t.home.onlineConsultation.title,
               image: Assets.images.chatVideo.path,
+              onTap: () {
+                context.pushNamed(AppViews.specialistConsultations);
+              },
             ),
           ),
         ],

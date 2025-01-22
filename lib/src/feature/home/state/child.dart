@@ -60,9 +60,8 @@ abstract class _ChildStore with Store {
     });
 
     restClient.put('${Endpoint().childAvatar}/', body: formData).then((v) {
-      userStore.children
-          .firstWhere((v) => v.id == model.id)
-          .setAvatar('${Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+      userStore.children.firstWhere((v) => v.id == model.id).setAvatar(
+          '${const Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
     });
   }
 

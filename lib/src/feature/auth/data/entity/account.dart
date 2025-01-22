@@ -38,10 +38,44 @@ class AccountModel extends _AccountModel with _$AccountModel {
   factory AccountModel.fromJson(Map<String, dynamic> json) =>
       _$AccountModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$AccountModelToJson(this);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AccountModel &&
+          id == other.id &&
+          fcmToken == other.fcmToken &&
+          gender == other.gender &&
+          role == other.role &&
+          status == other.status &&
+          runtimeType == other.runtimeType &&
+          firstName == other.firstName &&
+          secondName == other.secondName &&
+          phone == other.phone &&
+          avatarUrl == other.avatarUrl &&
+          email == other.email &&
+          profession == other.profession &&
+          info == other.info;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      fcmToken.hashCode ^
+      gender.hashCode ^
+      role.hashCode ^
+      status.hashCode ^
+      firstName.hashCode ^
+      secondName.hashCode ^
+      phone.hashCode ^
+      avatarUrl.hashCode ^
+      email.hashCode ^
+      profession.hashCode ^
+      info.hashCode;
 }
 
-abstract class _AccountModel with Store {
+abstract class _AccountModel extends BaseModel with Store {
   _AccountModel({
     required this.firstName,
     required this.secondName,
@@ -49,7 +83,7 @@ abstract class _AccountModel with Store {
     this.avatarUrl,
     this.email,
     this.profession,
-    this.info,
+    this.info = '',
   });
 
   @observable
@@ -71,6 +105,9 @@ abstract class _AccountModel with Store {
     secondName = value;
     isChanged = true;
   }
+
+  @computed
+  String get name => '$firstName ${secondName != null ? secondName! : ''}';
 
   @observable
   @JsonKey(name: 'profession', includeIfNull: false, includeToJson: false)
@@ -118,7 +155,7 @@ abstract class _AccountModel with Store {
   String? info;
 
   @action
-  void setInfo(String? value) {
+  void setInfo(String value) {
     info = value;
     isChanged = true;
   }

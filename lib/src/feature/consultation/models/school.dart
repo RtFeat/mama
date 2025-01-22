@@ -29,5 +29,6 @@ class SchoolModel extends BaseModel {
   factory SchoolModel.fromJson(Map<String, dynamic> json) =>
       _$SchoolModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$SchoolModelToJson(this);
 }

@@ -10,8 +10,7 @@ enum CustomButtonType {
 class CustomButton extends StatelessWidget {
   final Function()? onTap;
   final String? title;
-  final Widget? titleWidget;
-  final IconModel? icon;
+  final IconData? icon;
 
   final EdgeInsets? contentPadding;
   final EdgeInsets? padding;
@@ -51,8 +50,7 @@ class CustomButton extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.type = CustomButtonType.filled,
     this.iconColor,
-    this.titleWidget,
-  });
+  }) : assert(title != null);
 
   Color _getDarkerColor(Color color) {
     final HSLColor hsl = HSLColor.fromColor(color);
@@ -105,27 +103,30 @@ class CustomButton extends StatelessWidget {
           mainAxisAlignment: mainAxisAlignment,
           children: [
             if (icon != null) ...[
-              IconWidget(
-                model: icon!.copyWith(
-                  color: iconColor,
-                ),
+              Icon(
+                icon,
+                color: iconColor,
               ),
+              // IconWidget(
+              //   model: icon!.copyWith(
+              //     color: iconColor,
+              //   ),
+              // ),
               8.w,
             ],
             Flexible(
-              child: titleWidget ??
-                  AutoSizeText(
-                    title!,
-                    style: textStyle ??
-                        textTheme.titleMedium!.copyWith(
-                          color: textColor,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2,
-                        ),
-                    maxLines: maxLines ?? 2,
-                    minFontSize: 8,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              child: AutoSizeText(
+                title!,
+                style: textStyle ??
+                    textTheme.titleMedium!.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                    ),
+                maxLines: maxLines ?? 2,
+                minFontSize: 8,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

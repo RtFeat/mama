@@ -105,7 +105,7 @@ abstract base class Logger {
   void warning(Object message);
 
   /// Logs the info to the console
-  void info(Object message);
+  void info(Object message, {Type? runtimeType});
 
   /// Logs the debug to the console
   void debug(Object message);
@@ -152,7 +152,7 @@ abstract base class Logger {
 
 /// Default logger using logging package
 final class LoggerLogging extends Logger {
-  final _logger = logging.Logger('SizzleLogger');
+  final _logger = logging.Logger('AppLogger');
 
   @override
   void debug(Object message) => _logger.fine(message);
@@ -162,7 +162,8 @@ final class LoggerLogging extends Logger {
       _logger.severe(message, error, stackTrace);
 
   @override
-  void info(Object message) => _logger.info(message);
+  void info(Object message, {Type? runtimeType}) =>
+      _logger.info('${runtimeType != null ? '\n$runtimeType:\n' : ''}$message');
 
   @override
   void verbose(Object message) => _logger.finest(message);
@@ -183,7 +184,7 @@ final class LoggerLogging extends Logger {
     logging.hierarchicalLoggingEnabled = true;
 
     _logger.onRecord
-        .where((event) => event.loggerName == 'SizzleLogger')
+        .where((event) => event.loggerName == 'AppLogger')
         .listen((event) {
       final logMessage = event.toLogMessage();
       final message = options.formatter?.call(logMessage, options) ??

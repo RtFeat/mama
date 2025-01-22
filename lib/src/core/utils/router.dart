@@ -1,13 +1,11 @@
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/feeding/views/bottle/add_bottle_screen.dart';
-import 'package:mama/src/feature/services/knowledge/views/ages_screen.dart';
-import 'package:mama/src/feature/services/knowledge/views/authors_screens.dart';
-import 'package:mama/src/feature/services/knowledge/views/category_screen.dart';
+import 'package:mama/src/feature/home/view/day_work.dart';
 import 'package:mama/src/feature/services/knowledge/views/saved_files_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';
-import 'package:mama/src/feature/services/knowledge/views/service_screen.dart';
 
 abstract class AppViews {
   static const String startScreen = 'startScreen';
@@ -44,9 +42,12 @@ abstract class AppViews {
   static const addHeadView = 'addHeadView';
 
   static const profile = 'profile';
+  static const profileInfo = 'profileInfo';
   static const promoView = 'promoView';
 
   static const chatView = 'chatView';
+  static const pinnedMessagesView = 'pinnedMessagesView';
+  static const groupUsers = 'groupUsers';
 
   static const feeding = 'feeding';
   static const sleeping = 'sleeping';
@@ -64,6 +65,10 @@ abstract class AppViews {
 
   static const consultation = 'consultation';
   static const consultations = 'consultations';
+  static const specializedConsultations = 'specializedConsultations';
+
+  static const specialistConsultations = 'specialistConsultations';
+  static const specialistSlots = 'specialistSlots';
 
   static const webView = 'webView';
   static const pdfView = 'pdfView';
@@ -86,7 +91,9 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: _Paths.startScreen,
       name: AppViews.startScreen,
-      builder: (context, state) => const StartScreen(),
+      builder: (context, state) {
+        return const StartScreen();
+      },
     ),
     GoRoute(
       path: _Paths.register,
@@ -172,9 +179,12 @@ final GoRouter router = GoRouter(
                       final Consultation? consultation =
                           extra?['consultation'] as Consultation?;
 
+                      final int? selectedTab = extra?['selectedTab'] as int?;
+
                       return ConsultationView(
                         consultation: consultation,
                         doctor: doctor,
+                        selectedTab: selectedTab,
                       );
                     },
                   )
@@ -188,37 +198,44 @@ final GoRouter router = GoRouter(
                   );
                 }),
             GoRoute(
+              path: _Paths.specializedConsultations,
+              name: AppViews.specializedConsultations,
+              builder: (context, state) {
+                return const SpecialistConsultingScreen();
+              },
+            ),
+            GoRoute(
               name: AppViews.servicesSleepMusicView,
               path: _Paths.servicesSleepMusicPath,
               builder: (context, state) {
                 final Map? extra = state.extra as Map?;
                 final int? selectedTab = extra?['selectedTab'] as int?;
 
-                return ServicesSleepMusicView(
-                  index: selectedTab,
+                return SleepMusicView(
+                  index: selectedTab ?? 0,
                 );
               },
             ),
             GoRoute(
               name: AppViews.serviceKnowlegde,
               path: _Paths.serviceKnowledge,
-              builder: (context, state) => const ServiceKnowledgeScreen(),
+              builder: (context, state) => const KnowledgeView(),
               routes: [
                 GoRoute(
                   name: AppViews.categories,
                   path: _Paths.categories,
-                  builder: (context, state) => const CategoryScreen(),
+                  builder: (context, state) => const CategoriesView(),
                 ),
                 GoRoute(
                   name: AppViews.ages,
                   path: _Paths.ages,
-                  builder: (context, state) => const AgesScreen(),
+                  builder: (context, state) => const AgeCategoryView(),
                 ),
-                GoRoute(
-                  name: AppViews.author,
-                  path: _Paths.author,
-                  builder: (context, state) => const AuthorsScreen(),
-                ),
+                // GoRoute(
+                //   name: AppViews.author,
+                //   path: _Paths.author,
+                //   builder: (context, state) => const AuthorsScreen(),
+                // ),
                 GoRoute(
                   name: AppViews.savedFiles,
                   path: _Paths.savedFiles,
@@ -231,6 +248,25 @@ final GoRouter router = GoRouter(
                 ),
               ],
             ),
+            GoRoute(
+                path: _Paths.specialistConsultations,
+                name: AppViews.specialistConsultations,
+                routes: [
+                  GoRoute(
+                    path: _Paths.specialistSlots,
+                    name: AppViews.specialistSlots,
+                    builder: (context, state) {
+                      final Map? extra = state.extra as Map?;
+                      final List<CalendarEventData<Object?>> event =
+                          extra?['event'] as List<CalendarEventData<Object?>>;
+                      return SpecialistDayView(
+                        event: event,
+                      );
+                    },
+                  )
+                ],
+                builder: (context, state) =>
+                    const SpecialistConsultationsView()),
           ],
         ),
         GoRoute(
@@ -321,17 +357,48 @@ final GoRouter router = GoRouter(
                   builder: (context, state) => const AddDiaper())
             ]),
         GoRoute(
-          path: _Paths.chat,
-          name: AppViews.chatView,
-          builder: (context, state) {
-            final Map? extra = state.extra as Map?;
-            final item = extra?['item'];
+            path: _Paths.chat,
+            name: AppViews.chatView,
+            builder: (context, state) {
+              final Map? extra = state.extra as Map?;
+              final item = extra?['item'];
 
-            return ChatView(
-              item: item,
-            );
-          },
-        ),
+              return ChatView(
+                item: item,
+              );
+            },
+            routes: [
+              GoRoute(
+                path: _Paths.groupUsers,
+                name: AppViews.groupUsers,
+                builder: (context, state) {
+                  final Map? extra = state.extra as Map?;
+                  final GroupUsersStore? store =
+                      extra?['store'] as GroupUsersStore?;
+                  final GroupChatInfo? groupInfo = extra?['groupInfo'];
+                  return GroupUsersView(
+                    store: store,
+                    groupInfo: groupInfo,
+                  );
+                },
+              ),
+              GoRoute(
+                path: _Paths.pinnedMessages,
+                name: AppViews.pinnedMessagesView,
+                builder: (context, state) {
+                  final Map? extra = state.extra as Map?;
+                  final MessagesStore? store =
+                      extra?['store'] as MessagesStore?;
+                  final ScrollController? scrollController =
+                      extra?['scrollController'] as ScrollController?;
+
+                  return PinnedMessagesView(
+                    store: store,
+                    scrollController: scrollController,
+                  );
+                },
+              )
+            ]),
         GoRoute(
           path: _Paths.profile,
           name: AppViews.profile,
@@ -344,6 +411,18 @@ final GoRouter router = GoRouter(
             )
           ],
         ),
+        GoRoute(
+          path: _Paths.profileInfo,
+          name: AppViews.profileInfo,
+          builder: (context, state) {
+            final Map? extra = state.extra as Map?;
+            final BaseModel? model = extra?['model'] as BaseModel?;
+
+            return ProfileInfoView(
+              model: model!,
+            );
+          },
+        )
       ],
     ),
     GoRoute(
@@ -459,9 +538,12 @@ abstract class _Paths {
   // static const addHeadView = AppViews.addHeadView;
 
   static const profile = AppViews.profile;
+  static const profileInfo = AppViews.profileInfo;
   static const promoView = AppViews.promoView;
 
   static const chat = AppViews.chatView;
+  static const pinnedMessages = AppViews.pinnedMessagesView;
+  static const groupUsers = AppViews.groupUsers;
 
   static const feeding = AppViews.feeding;
   static const sleeping = AppViews.sleeping;
@@ -478,6 +560,11 @@ abstract class _Paths {
 
   static const consultation = AppViews.consultation;
   static const consultations = AppViews.consultations;
+  static const specializedConsultations = AppViews.specializedConsultations;
+
+  static const specialistConsultations = AppViews.specialistConsultations;
+
+  static const specialistSlots = AppViews.specialistSlots;
 
   static const webView = '/${AppViews.webView}';
   static const pdfView = '/${AppViews.pdfView}';

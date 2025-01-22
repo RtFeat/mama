@@ -139,10 +139,8 @@ class TrackerStateContainer extends StatelessWidget {
                       height: 48,
                       width: double.infinity,
                       type: CustomButtonType.outline,
-                      icon: IconModel(
-                          color: AppColors.primaryColor,
-                          iconPath: Assets.icons.icPencilFilled),
-                      title: t.trackers.infoManuallyContainerButtonNote,
+                      iconColor: AppColors.primaryColor,
+                      icon: AppIcons.pencil,
                       onTap: () {
                         onTapNote!();
                       },

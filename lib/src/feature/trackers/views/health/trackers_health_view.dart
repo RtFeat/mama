@@ -168,9 +168,11 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
                     child: CustomButton(
                       title: t.trackers.knowMoreText.title,
                       onTap: () {},
-                      icon: IconModel(
-                        iconPath: Assets.icons.icGraduationCapFilled,
-                      ),
+                      // icon: IconModel(
+                      //   iconPath: Assets.icons.icGraduationCapFilled,
+                      // ),
+
+                      icon: AppIcons.graduationcapFill,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       type: CustomButtonType.outline,
@@ -186,9 +188,11 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
                     child: CustomButton(
                       title: t.trackers.pdf.title,
                       onTap: () {},
-                      icon: IconModel(
-                        iconPath: Assets.icons.icArrowDownFilled,
-                      ),
+                      // icon: IconModel(
+                      //   iconPath: Assets.icons.icArrowDownFilled,
+                      // ),
+
+                      icon: AppIcons.arrowDownToLineCompact,
                       type: CustomButtonType.outline,
                     ),
                   ),
@@ -199,9 +203,10 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
                     child: CustomButton(
                       title: t.trackers.add.title,
                       onTap: () {},
-                      icon: IconModel(
-                        iconPath: Assets.icons.icThermometer,
-                      ),
+                      // icon: IconModel(
+                      //   iconPath: Assets.icons.icThermometer,
+                      // ),
+                      icon: AppIcons.thermometer,
                     ),
                   )
                 ],

@@ -1,14 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/consultation/widgets/paragraph.dart';
+import 'package:provider/provider.dart';
 
 class NewConsultationWidget extends StatefulWidget {
+  final String doctorId;
   final DoctorWorkTime? workTime;
   const NewConsultationWidget({
     super.key,
+    required this.doctorId,
     required this.workTime,
   });
 
@@ -35,6 +37,20 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
     super.dispose();
   }
 
+  bool isNotCurrentWeek(DateTime? weekStart, DateTime? selectedTime) {
+    if (weekStart == null || selectedTime == null) return true;
+
+    DateTime startOfWeek(DateTime date) {
+      return DateTime.utc(date.year, date.month, date.day)
+          .subtract(Duration(days: date.weekday - 1));
+    }
+
+    DateTime startSelectedTime = startOfWeek(selectedTime);
+    DateTime startWeekStart = startOfWeek(weekStart);
+
+    return startSelectedTime != startWeekStart;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -44,37 +60,11 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
       color: AppColors.primaryColor,
     );
 
-    final DoctorWorkTime? workTime = widget.workTime;
+    final DateTime now = DateTime.now();
 
-    // final DoctorWorkTime workTime = DoctorWorkTime(
-    //   id: '',
-    //   monday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   tuesday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   wednesday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   thursday: WeekDay(isWork: true, workSlots: [
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: false, workSlot: '10:00'),
-    //     WorkSlot(isBusy: false, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //     WorkSlot(isBusy: true, workSlot: '10:00'),
-    //   ]),
-    //   friday: WeekDay(
-    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
-    //   saturday: WeekDay(
-    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
-    //   sunday: WeekDay(
-    //       isWork: true, workSlots: [WorkSlot(isBusy: true, workSlot: '10:00')]),
-    // );
+    final UserStore userStore = context.watch();
+    final DoctorWorkTime? workTime = widget.workTime;
+    final ConsultationStore store = context.watch<ConsultationStore>();
 
     return Column(
       children: [
@@ -85,16 +75,29 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                 items: [
                   ToggleButtonItem(
                       text: t.consultation.type_short.chat.title,
-                      icon: IconModel(iconPath: Assets.icons.chatIcon)),
+                      icon: IconModel(
+                        // iconPath: Assets.icons.chatIcon
+                        icon: AppIcons.messageCircleFill,
+                        color: AppColors.primaryColor,
+                      )),
                   ToggleButtonItem(
                       text: t.consultation.type_short.video.title,
-                      icon: IconModel(iconPath: Assets.icons.videoIcon)),
+                      icon: IconModel(
+                        // iconPath: Assets.icons.videoIcon
+                        icon: AppIcons.videoCircleFill,
+                        color: AppColors.primaryColor,
+                      )),
                   ToggleButtonItem(
                       text: t.consultation.type_short.express.title,
-                      icon: IconModel(iconPath: Assets.icons.videoIcon)),
+                      icon: IconModel(
+                        // iconPath: Assets.icons.videoIcon,
+                        icon: AppIcons.videoCircleFill,
+                        color: AppColors.primaryColor,
+                      )),
                 ],
                 onTap: (index) {
                   _tabController.animateTo(index);
+                  workTime?.setSelectedConsultationType(index);
                 },
                 btnWidth: MediaQuery.of(context).size.width * .3,
                 btnHeight: 48),
@@ -128,6 +131,7 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
             TextField(
               controller: _controller,
               style: inputTextStyle,
+              maxLines: null,
               onTapOutside: (event) => FocusScope.of(context).unfocus(),
               decoration: InputDecoration(
                   fillColor: AppColors.lavenderBlue.withOpacity(.5),
@@ -158,24 +162,29 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                   ToggleButtonItem(
                       text: t.consultation.select,
                       icon: IconModel(
-                        iconPath: Assets.icons.calendar,
+                        icon: AppIcons.calendar,
+                        color: AppColors.greyLighterColor,
+                        // iconPath: Assets.icons.calendar,
                       )),
                 ],
                 onTap: (index) {
                   switch (index) {
                     case 0:
-                      workTime?.setSelectedTime(DateTime.now());
+                      workTime?.setSelectedTime(now);
                     case 1:
-                      workTime?.setSelectedTime(
-                          DateTime.now().add(const Duration(days: 1)));
+                      workTime
+                          ?.setSelectedTime(now.add(const Duration(days: 1)));
                     case 2:
                       showDatePicker(
                           context: context,
-                          firstDate: DateTime.now(),
-                          lastDate: DateTime.now().add(const Duration(
+                          initialDate: workTime?.selectedTime,
+                          firstDate: now,
+                          lastDate: now.add(const Duration(
                             days: 30,
                           ))).then((v) {
-                        workTime?.setSelectedTime(v!);
+                        if (v != null) {
+                          workTime?.setSelectedTime(v);
+                        }
                       });
                   }
                 },
@@ -183,20 +192,22 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                 btnHeight: 48),
             10.h,
             Observer(builder: (_) {
-              if ((workTime == null || workTime.slots == null) &&
-                  !(workTime?.isWork ?? false)) {
+              if ((workTime?.slots?.isEmpty ?? true) ||
+                  isNotCurrentWeek(
+                      workTime?.weekStart, workTime?.selectedTime)) {
                 return AutoSizeText(
                   t.consultation.noAvailableTime,
                   textAlign: TextAlign.center,
                   style: textTheme.labelMedium,
                 );
               }
+
               return IntrinsicHeight(
                 child: Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: workTime!.slots!.map((e) {
-                    if (e.isBusy) {
+                  children: workTime!.intervalSlots.map((e) {
+                    if (e.isBusy ?? false) {
                       return const SizedBox.shrink();
                     }
 
@@ -221,19 +232,47 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
                     child: CustomButton(
                       onTap: isSelected
                           ? () {
-                              context.pushNamed(AppViews.webView, extra: {
-                                'url': 'https://google.com',
-                              });
+                              final WorkSlot slot = workTime!.intervalSlots
+                                  .firstWhere((v) => v.isSelected);
+
+                              final parts = slot.workSlot.split(' - ');
+                              final startTimeParts = parts[0].split(':');
+                              final endTimeParts = parts[1].split(':');
+
+                              final startTimeLocal = DateTime(
+                                  now.year,
+                                  now.month,
+                                  now.day,
+                                  int.parse(startTimeParts[0]),
+                                  int.parse(startTimeParts[1]));
+
+                              final endTimeLocal = DateTime(
+                                  now.year,
+                                  now.month,
+                                  now.day,
+                                  int.parse(endTimeParts[0]),
+                                  int.parse(endTimeParts[1]));
+
+                              store.addConsultation(
+                                  doctorId: widget.doctorId,
+                                  userId: userStore.user.id ?? '',
+                                  comment: _controller.text.trim(),
+                                  slot: startTimeLocal
+                                      .toUtc()
+                                      .timeRange(endTimeLocal.toUtc()),
+                                  type: switch (_tabController.index) {
+                                    1 => ConsultationType.video,
+                                    2 => ConsultationType.express,
+                                    _ => ConsultationType.chat,
+                                  },
+                                  weekStart:
+                                      workTime.weekStart ?? DateTime.now(),
+                                  weekDay: workTime.selectedTime.weekday);
                             }
                           : null,
                       title: isSelected
-                          ? t.consultation.signUpOnline
+                          ? t.consultation.makeAnAppointment
                           : t.consultation.selectTime,
-                      icon: isSelected
-                          ? IconModel(
-                              icon: Icons.language,
-                            )
-                          : null,
                     ),
                   ),
                 ],

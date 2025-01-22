@@ -20,6 +20,22 @@ class App extends StatelessWidget {
             create: (context) => result.dependencies,
           ),
           Provider(
+            create: (context) => MessagesStore(
+                restClient: context.read<Dependencies>().restClient,
+                chatType: 'solo'),
+          ),
+          Provider(
+            create: (context) => ChatsViewStore(
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+              create: (context) => ChatSocket(
+                    chatsViewStore: context.read<ChatsViewStore>(),
+                    store: context.read<MessagesStore>(),
+                    tokenStorage: context.read<Dependencies>().tokenStorage,
+                  )),
+          Provider(
               create: (context) => AuthStore(
                     restClient: context.read<Dependencies>().restClient,
                     tokenStorage: context.read<Dependencies>().tokenStorage,
@@ -35,12 +51,46 @@ class App extends StatelessWidget {
                   )),
           Provider(
             create: (context) => UserStore(
-              restClient: context.read<Dependencies>().restClient,
-            ),
+                restClient: context.read<Dependencies>().restClient,
+                verifyStore: context.read()),
           ),
           Provider(
             create: (context) => ChildStore(
               userStore: context.read<UserStore>(),
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+            create: (context) => DoctorStore(
+                restClient: context.read<Dependencies>().restClient),
+          ),
+          Provider(
+              create: (context) => SchoolStore(
+                  restClient: context.read<Dependencies>().restClient)),
+          Provider(
+            create: (context) => HomeViewStore(
+                restClient: context.read<Dependencies>().restClient,
+                userId: context.read<UserStore>().user.id),
+          ),
+          Provider(
+            create: (context) => ScheduleViewStore(
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+            dispose: (context, value) => value.dispose(),
+            create: (context) => CalendarStore(store: context.read()),
+          ),
+          Provider(
+            create: (context) => AudioPlayerStore(),
+            dispose: (context, value) => value.dispose(),
+          ),
+          Provider(
+            create: (context) => KnowledgeStore(
+              categoriesStore: CategoriesStore(
+                  restClient: context.read<Dependencies>().restClient),
+              ageCategoriesStore: AgeCategoriesStore(
+                  restClient: context.read<Dependencies>().restClient),
               restClient: context.read<Dependencies>().restClient,
             ),
           ),

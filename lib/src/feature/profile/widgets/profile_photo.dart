@@ -6,7 +6,17 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePhoto extends StatelessWidget {
-  const ProfilePhoto({super.key});
+  final String? photoUrl;
+  final Function()? onIconTap;
+  final Widget? icon;
+  final bool isShowIcon;
+  const ProfilePhoto({
+    super.key,
+    this.photoUrl,
+    this.onIconTap,
+    this.icon,
+    this.isShowIcon = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,34 +35,47 @@ class ProfilePhoto extends StatelessWidget {
               ),
               image: DecorationImage(
                   image: NetworkImage(
-                    userStore.account.avatarUrl!,
+                    photoUrl ?? userStore.account.avatarUrl ?? '',
                   ),
                   fit: BoxFit.cover),
             ),
           );
         }),
-        Positioned.fill(
-          bottom: -32,
-          right: 32,
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: IconButton(
-              icon: Image.asset(
-                Assets.icons.icPhotoAdd.path,
-                height: 64,
-              ),
-              onPressed: () {
-                final ImagePicker picker = ImagePicker();
+        if (isShowIcon)
+          Positioned.fill(
+            bottom: -32,
+            right: 32,
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: RawMaterialButton(
+                shape: const CircleBorder(),
+                fillColor: AppColors.primaryColor,
+                padding: const EdgeInsets.all(20),
+                onPressed: onIconTap ??
+                    () {
+                      final ImagePicker picker = ImagePicker();
 
-                picker.pickImage(source: ImageSource.gallery).then((value) {
-                  if (value != null) {
-                    userStore.updateAvatar(value);
-                  }
-                });
-              },
+                      picker
+                          .pickImage(source: ImageSource.gallery)
+                          .then((value) {
+                        if (value != null) {
+                          userStore.updateAvatar(value);
+                        }
+                      });
+                    },
+                child: icon ??
+                    // Image.asset(
+                    //   Assets.icons.icPhotoAdd.path,
+                    //   height: 64,
+                    // ),
+                    const Icon(
+                      AppIcons.cameraOnRectangleFill,
+                      size: 32,
+                      color: AppColors.whiteColor,
+                    ),
+              ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -63,35 +86,52 @@ class DashedPhotoProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 390,
-      decoration: const BoxDecoration(
-        color: AppColors.purpleLighterBackgroundColor,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+    final UserStore userStore = context.watch();
+    return GestureDetector(
+      onTap: () {
+        final ImagePicker picker = ImagePicker();
+
+        picker.pickImage(source: ImageSource.gallery).then((value) {
+          if (value != null) {
+            userStore.updateAvatar(value);
+          }
+        });
+      },
+      child: Container(
+        height: 390,
+        decoration: const BoxDecoration(
+          color: AppColors.purpleLighterBackgroundColor,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(32),
+            bottomRight: Radius.circular(32),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 1.0, left: 1.0, right: 1.0),
-        child: DottedBorder(
-          strokeWidth: 1.5,
-          color: AppColors.primaryColor,
-          borderType: BorderType.RRect,
-          dashPattern: const [10, 7],
-          radius: const Radius.circular(32),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image(
-                  height: 64,
-                  image: AssetImage(
-                    Assets.icons.icPhotoAdd.path,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 1.0, left: 1.0, right: 1.0),
+          child: DottedBorder(
+            strokeWidth: 1.5,
+            color: AppColors.primaryColor,
+            borderType: BorderType.RRect,
+            dashPattern: const [10, 7],
+            radius: const Radius.circular(32),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    AppIcons.cameraOnRectangle,
+                    size: 64,
+                    color: AppColors.primaryColor,
                   ),
-                ),
-                Text(t.profile.addPhotoTitle),
-              ],
+                  // Image(
+                  //   height: 64,
+                  //   image: AssetImage(
+                  //     Assets.icons.icPhotoAdd.path,
+                  //   ),
+                  // ),
+                  Text(t.profile.addPhotoTitle),
+                ],
+              ),
             ),
           ),
         ),

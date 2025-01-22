@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
 class SchoolsView extends StatefulWidget {
@@ -32,6 +33,14 @@ class _SchoolsViewState extends State<SchoolsView> {
 
           return ConsultationItem(
               url: schoolModel?.account?.avatarUrl,
+              onTap: () {
+                context.pushNamed(
+                  AppViews.profileInfo,
+                  extra: {
+                    'model': schoolModel,
+                  },
+                );
+              },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
 class SchoolServicesBodyWidget extends StatelessWidget {
@@ -14,6 +15,9 @@ class SchoolServicesBodyWidget extends StatelessWidget {
             child: MainBox(
               mainText: t.services.knowledgeCenter.title,
               image: Assets.images.hat.path,
+              onTap: () {
+                context.pushNamed(AppViews.serviceKnowlegde);
+              },
             ),
           ),
         ],

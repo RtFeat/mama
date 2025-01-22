@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 abstract class AppColors {
+  AppColors._();
+
   static const Color primaryColor = Color(0xFF4D4DE8);
 
   static const Color whiteColor = Colors.white;
@@ -38,6 +40,11 @@ abstract class AppColors {
   static const Color greyButton = Color(0xFFF8FAFF);
   static const Color blueBrightTextColor = Color(0xFF447CF3);
   static const Color greenTextColor = Color(0xFF2C9C2A);
+
+  static const Color greenLightTextColor = Color(0xFF059613);
+
+  // static const Color greenLighterBackgroundColor = Color(0xFFDEF8E0);
+
   static const Color orangeTextColor = Color(0xFFE29520);
   static const Color purpleLighterBackgroundColor = Color(0xFFE1E6FF);
   static const Color purpleBrighterBackgroundColor = Color(0xFFB1BEFF);
@@ -67,4 +74,5 @@ abstract class AppColors {
   static const Color diapersBackroundColor = Color(0xFFE8F8F3);
 
   static const Color trackerColor = Color(0xFF11424B);
+  static const Color trackerColor2 = Color(0xFF382357);
 }

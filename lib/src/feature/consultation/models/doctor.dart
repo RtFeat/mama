@@ -18,8 +18,10 @@ class DoctorModel extends BaseModel {
   @JsonKey(name: 'profession')
   final String? profession;
 
+  @JsonKey(name: 'first_name')
   final String? firstName;
 
+  @JsonKey(name: 'last_name')
   final String? lastName;
 
   @JsonKey(name: 'time_work')
@@ -27,6 +29,9 @@ class DoctorModel extends BaseModel {
 
   @JsonKey(name: 'count_articles')
   final int? countArticles;
+
+  String get fullName =>
+      '$firstName ${lastName != null && lastName!.isNotEmpty ? lastName : ''}';
 
   DoctorModel({
     this.id,
@@ -45,5 +50,6 @@ class DoctorModel extends BaseModel {
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$DoctorModelToJson(this);
 }

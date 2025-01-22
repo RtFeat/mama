@@ -46,7 +46,8 @@ class LearnMoreWidget extends StatelessWidget {
               isSmall: false,
               type: CustomButtonType.outline,
               onTap: () => onPressButton(),
-              icon: IconModel(iconPath: Assets.icons.icLearnMore),
+              icon: AppIcons.graduationcapFill,
+              iconColor: AppColors.primaryColor,
               title: t.trackers.learnMoreBtn,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

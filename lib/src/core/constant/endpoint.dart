@@ -33,17 +33,27 @@ class Endpoint {
 
   String get promocode => '$payment/promocode';
 
+  static const String categories = 'category';
+
+  String get ageCaterories => '$categories/age';
+
   static const String consultation = 'consultation';
 
   String get userConsultations => '$consultation/user';
+
+  String get addConsultation => '$consultation/set';
 
   static const String school = 'online-school';
 
   String get schools => '$school/all';
 
+  String get schoolCourses => '$school/course/all';
+
   static const String article = 'article';
 
   String get articles => '$article/list';
+
+  String get allByCategory => '$article/category/all';
 
   String get articleOwn => '$article/file/own';
 
@@ -53,7 +63,11 @@ class Endpoint {
 
   static const String chat = 'chat';
 
+  String get uploadFile => '$chat/upload';
+
   String get groups => '$chat/group';
+
+  String get groupUsers => '${groups}s/all';
 
   String get messages => '$chat/message';
 
@@ -61,7 +75,15 @@ class Endpoint {
 
   String get doctorData => '$doctor/me';
 
+  String get doctorHoliday => '$doctor/holiday';
+
+  String get doctorCancelConsultations => '$doctor/cancel_consultations';
+
+  String get updateDoctorWorkTime => '$doctor/update_work_time';
+
   static const String avatar = 'resources/avatar';
 
   static const String feedback = 'feedback';
+
+  static const String music = 'music/descriptions';
 }

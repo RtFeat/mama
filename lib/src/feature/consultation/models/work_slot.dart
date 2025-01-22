@@ -6,14 +6,23 @@ part 'work_slot.g.dart';
 @JsonSerializable()
 class WorkSlot extends _WorkSlot with _$WorkSlot {
   @JsonKey(name: 'is_busy')
-  final bool isBusy;
+  final bool? isBusy;
 
-  @JsonKey(name: 'work_slot')
-  final String workSlot;
+  @JsonKey(name: 'consultation_id')
+  final String? consultationId;
+
+  @JsonKey(name: 'consultation_type')
+  final String? consultationType;
+
+  @JsonKey(name: 'patient_full_name')
+  final String? patientFullName;
 
   WorkSlot({
-    required this.isBusy,
-    required this.workSlot,
+    this.isBusy,
+    super.workSlot,
+    this.consultationId,
+    this.consultationType,
+    this.patientFullName,
   });
 
   factory WorkSlot.fromJson(Map<String, dynamic> json) =>
@@ -23,10 +32,37 @@ class WorkSlot extends _WorkSlot with _$WorkSlot {
 }
 
 abstract class _WorkSlot with Store {
+  _WorkSlot({this.workSlot = ''});
+
+  @JsonKey(name: 'work_slot')
+  @observable
+  String workSlot = '';
+
+  @action
+  void setWorkSlot(String value) => workSlot = value;
+
   @observable
   @JsonKey(includeToJson: false, includeFromJson: false)
   bool isSelected = false;
 
   @action
   void select(bool value) => isSelected = value;
+
+  DateTime get startTime {
+    final parts = workSlot.split(' - ');
+    final timeParts = parts[0].split(':');
+    final now = DateTime.now().toLocal();
+    return DateTime.utc(now.year, now.month, now.day, int.parse(timeParts[0]),
+            int.parse(timeParts[1]))
+        .toLocal();
+  }
+
+  DateTime get endTime {
+    final parts = workSlot.split(' - ');
+    final timeParts = parts[1].split(':');
+    final now = DateTime.now().toLocal();
+    return DateTime.utc(now.year, now.month, now.day, int.parse(timeParts[0]),
+            int.parse(timeParts[1]))
+        .toLocal();
+  }
 }

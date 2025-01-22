@@ -125,12 +125,14 @@ class _CitySearchBodyState extends State<CitySearchBody> {
                                       // context.goNamed(AppViews.welcomeScreen);
                                     }
                                   : null,
-                              icon: selectedCity != null
-                                  ? IconModel(
-                                      icon: Icons.check,
-                                      color: AppColors.greenTextColor,
-                                    )
-                                  : null,
+                              // icon: selectedCity != null
+                              //     ? IconModel(
+                              //         icon: Icons.check,
+                              //         color: AppColors.greenTextColor,
+                              //       )
+                              //     : null,
+                              icon: selectedCity != null ? Icons.check : null,
+                              iconColor: AppColors.greenTextColor,
                               title: t.register.complete,
                               backgroundColor: selectedCity != null
                                   ? AppColors.greenLighterBackgroundColor

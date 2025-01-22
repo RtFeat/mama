@@ -32,17 +32,14 @@ class HomeBodyWidget extends StatelessWidget {
               tabController: tabController,
             );
           case Role.doctor:
-            return Provider(
-              create: (context) => DoctorStore(
-                  restClient: context.read<Dependencies>().restClient),
-              builder: (context, child) => HomeSpecialistBody(
-                homeViewStore: homeViewStore,
-                userStore: userStore,
-                doctorStore: context.watch<DoctorStore>(),
-              ),
+            return HomeSpecialistBody(
+              homeViewStore: homeViewStore,
+              userStore: userStore,
+              doctorStore: context.watch<DoctorStore>(),
             );
           case Role.onlineSchool:
             return HomeSchoolBody(
+              schoolStore: context.watch<SchoolStore>(),
               homeViewStore: homeViewStore,
               userStore: userStore,
             );

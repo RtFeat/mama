@@ -174,8 +174,13 @@ weeks:
 
 
 today: Today
+tomorrow: Tomorrow
 
-monthsData: [january, february, march, april, may, june, july, august, september, october, november, december]
+yesterday: Yesterday
+
+monthsData: 
+  withNumbers: [january, february, march, april, may, june, july, august, september, october, november, december]
+  title: [january, february, march, april, may, june, july, august, september, october, november, december]
 
 clickToSeeMore: Click to see more
 
@@ -187,3 +192,14 @@ ageCategory:
   year: 6-12 months
   twoYear: 1-2 years
   older: ">2 years"
+
+
+list_of_weeks: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+
+
+no_work: There are no scheduled counseling sessions yet
+
+
+backToToday: Back to today
+
+thanksForReachingOut: Thanks for\n reaching out
