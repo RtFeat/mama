@@ -17,14 +17,18 @@ head:
 
 table: Table
 
+edit: Edit
+
 health:
   title: Health
 
 temperature:
   title: Temperature
+  add: Add temperature
 
 medicines:
   title: Medicines
+  add: Add medicines
 
 doctorsAppointment:
   title: Doctor's appointment
@@ -133,9 +137,6 @@ pdf:
 add:
   title: Add
 
-addTemperature:
-  title: Add Temperature
-
 now:
   title: Now
 
@@ -232,3 +233,22 @@ dirty:
 diaperforday: 6 diapers a day on average
 
 list_of_weeks: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
+save: save
+
+name:
+  title: Name
+  subTitle: Click to enter drug name
+
+dateStart:
+  title: Date start
+  subTitle: Click to enter your start date
+
+dose: 
+  title: Dose
+  subTitle: Click to enter dose. It will be immediately visible on the medication screen
+
+comment:
+  title: Comment
+  subTitle: Click to add comments
+
+dailyreminders: Daily reminders

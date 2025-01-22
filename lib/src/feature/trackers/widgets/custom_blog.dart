@@ -54,55 +54,65 @@ class _CustomBlogState extends State<CustomBlog> {
               // КГ / Г кнопки (вертикально)
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(1),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColors.purpleLighterBackgroundColor,
-                    ),
-                    child: ToggleButtons(
-                      constraints: const BoxConstraints(
-                        minHeight: 30, // минимальная высота
-                        minWidth: 60, // минимальная ширина
-                      ),
-                      direction: Axis.vertical,
-                      isSelected: isSelected,
-                      borderRadius: BorderRadius.circular(8),
-                      fillColor: AppColors.whiteColor,
-                      selectedColor: AppColors.whiteColor,
-                      color: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      children: [
-                        Text(
-                          t.trackers.kg.title,
-                          style: TextStyle(
-                            color: isSelected[0]
-                                ? AppColors.primaryColor
-                                : AppColors.greyBrighterColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                  widget.kgOrCm == '' && widget.gOrM == ''
+                      ? Container(
+                          padding: const EdgeInsets.all(1),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.purpleLighterBackgroundColor,
+                          ),
+                          child: ToggleButtons(
+                            constraints: const BoxConstraints(
+                              minHeight: 30, // минимальная высота
+                              minWidth: 60, // минимальная ширина
+                            ),
+                            direction: Axis.vertical,
+                            isSelected: isSelected,
+                            borderRadius: BorderRadius.circular(8),
+                            fillColor: AppColors.whiteColor,
+                            selectedColor: AppColors.whiteColor,
+                            color: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            children: [
+                              Text(
+                                widget.kgOrCm ?? '',
+                                style: TextStyle(
+                                  color: isSelected[0]
+                                      ? AppColors.primaryColor
+                                      : AppColors.greyBrighterColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              Text(
+                                widget.gOrM ?? '',
+                                style: TextStyle(
+                                  color: isSelected[1]
+                                      ? AppColors.primaryColor
+                                      : AppColors.greyBrighterColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                            onPressed: (int index) {
+                              setState(() {
+                                for (int i = 0; i < isSelected.length; i++) {
+                                  isSelected[i] = i == index;
+                                }
+                              });
+                            },
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            '°С',
+                            style: AppTextStyles.f14w700.copyWith(
+                              color: AppColors.primaryColor,
+                            ),
                           ),
                         ),
-                        Text(
-                          t.trackers.g.title,
-                          style: TextStyle(
-                            color: isSelected[1]
-                                ? AppColors.primaryColor
-                                : AppColors.greyBrighterColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                      onPressed: (int index) {
-                        setState(() {
-                          for (int i = 0; i < isSelected.length; i++) {
-                            isSelected[i] = i == index;
-                          }
-                        });
-                      },
-                    ),
-                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextFormField(

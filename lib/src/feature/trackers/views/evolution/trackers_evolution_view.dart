@@ -1,10 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/trackers/widgets/widgets.dart';
+import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/views/evolution/table_view.dart';
+import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
 
-class Growth extends StatelessWidget {
-  const Growth({super.key});
+class EvolutionView extends StatefulWidget {
+  const EvolutionView({super.key});
+
+  @override
+  State<EvolutionView> createState() => _EvolutionViewState();
+}
+
+class _EvolutionViewState extends State<EvolutionView>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final EvolutionCategory evolutionCategory = EvolutionCategory.weight;
+
+  @override
+  void initState() {
+    _tabController = TabController(
+      length: EvolutionCategory.values.length,
+      vsync: this,
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.blueLighter1,
+      appBar: CustomAppBar(
+        height: 120,
+        title: t.trackers.evolution,
+        tabController: _tabController,
+        action: const ProfileWidget(),
+        tabs: EvolutionCategory.values.map((e) => e.title).toList(),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: EvolutionCategory.values.map((trackerType) {
+          if (trackerType == EvolutionCategory.table) {
+            return TablePage(trackerType: trackerType);
+          }
+          return WeightT(trackerType: trackerType);
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class WeightT extends StatelessWidget {
+  const WeightT({super.key, required this.trackerType});
+  final EvolutionCategory trackerType;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,39 +64,43 @@ class Growth extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ToKnowMoreContainer(
-                title1: t.trackers.knowMoreOne.title,
-                title2: t.trackers.knowMoreTwo.title,
+                title1: trackerType.knowMoreTitle,
+                title2: trackerType.knowMoreTitle,
               ),
             ),
 
             /// Current and Dynamic Container
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: CurrentAndDymanicContainer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: CurrentAndDymanicContainer(
+                trackerType: trackerType,
+              ),
             ),
 
-            /// СМ Or М Container
+            /// KG Or gramm Container
             Padding(
               padding: const EdgeInsets.only(
-                  left: 16, right: 16, bottom: 5, top: 16),
+                left: 16,
+                right: 16,
+                bottom: 5,
+                top: 16,
+              ),
               child: Row(
                 children: [
                   SwitchContainer(
-                    title1: t.trackers.cm.title,
-                    title2: t.trackers.m.title,
+                    title1: t.trackers.kg.title,
+                    title2: t.trackers.g.title,
                   ),
                 ],
               ),
             ),
 
             /// Grafic
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 16, right: 16, bottom: 16, top: 0),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 16, top: 0),
               child: SizedBox(
-                width: MediaQuery.of(context).size.width,
                 height: 278,
-                child: const FlProgressChart(),
+                child: FlProgressChart(),
               ),
             ),
 
@@ -61,9 +113,9 @@ class Growth extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   AddButton(
-                    title: t.trackers.growth.add,
+                    title: trackerType.addButtonTitle,
                     onTap: () {
-                      context.pushNamed(AppViews.addGrowthView);
+                      context.pushNamed(trackerType.route);
                     },
                   ),
                 ],
@@ -94,10 +146,12 @@ class Growth extends StatelessWidget {
                     title2: t.trackers.old.title,
                     // isTrue: false,
                   ),
-                  SwitchContainer(
-                    title1: t.trackers.cm.title,
-                    title2: t.trackers.m.title,
-                  ),
+                  trackerType.title == EvolutionCategory.head.title
+                      ? const SizedBox()
+                      : SwitchContainer(
+                          title1: t.trackers.kg.title,
+                          title2: t.trackers.g.title,
+                        ),
                 ],
               ),
             ),
@@ -107,24 +161,24 @@ class Growth extends StatelessWidget {
               child: RowStroriesData(
                 data: t.trackers.date.title,
                 week: t.trackers.weeks.title,
-                weight: t.trackers.growth.title,
+                growth: trackerType.storiesValueTitle,
                 style: AppTextStyles.f10w700.copyWith(
                   color: AppColors.greyBrighterColor,
                 ),
               ),
             ),
             const SizedBox(height: 8),
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                itemCount: 8,
-                itemBuilder: (context, index) {
+
+            Column(
+              children: List.generate(
+                5,
+                (index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: RowStroriesData(
                       data: '01 сентября',
                       week: '17',
-                      weight: '6,25',
+                      weight: trackerType.storiesValue,
                       style: AppTextStyles.f17w400,
                     ),
                   );

@@ -278,6 +278,16 @@ final GoRouter router = GoRouter(
                 name: AppViews.addWeightView,
                 path: _Paths.addWeightView,
                 builder: (context, state) => const AddWeight(),
+              ),
+              GoRoute(
+                name: AppViews.addGrowthView,
+                path: _Paths.addGrowthView,
+                builder: (context, state) => const AddGrowth(),
+              ),
+              GoRoute(
+                name: AppViews.addHeadView,
+                path: _Paths.addHeadView,
+                builder: (context, state) => const AddHead(),
               )
             ]),
         GoRoute(
@@ -342,7 +352,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: AppViews.trackersHealthAddMedicineView,
               path: _Paths.trackersHealthAddTemperaturePath,
-              builder: (context, state) => const TrackersHealthAddTemperature(),
+              builder: (context, state) => const AddTemperature(),
             )
           ],
         ),
@@ -534,8 +544,8 @@ abstract class _Paths {
   static const evolutionView = AppViews.evolutionView;
 
   static const addWeightView = AppViews.addWeightView;
-  // static const addGrowthView = AppViews.addGrowthView;
-  // static const addHeadView = AppViews.addHeadView;
+  static const addGrowthView = AppViews.addGrowthView;
+  static const addHeadView = AppViews.addHeadView;
 
   static const profile = AppViews.profile;
   static const profileInfo = AppViews.profileInfo;

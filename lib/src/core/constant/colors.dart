@@ -4,6 +4,8 @@ abstract class AppColors {
   AppColors._();
 
   static const Color primaryColor = Color(0xFF4D4DE8);
+  static const Color primaryColorBrighter = Color(0xFFE1E6FF);
+  static const Color primaryColorBright = Color(0xFFF8FAFF);
 
   static const Color whiteColor = Colors.white;
 

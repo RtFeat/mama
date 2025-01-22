@@ -17,14 +17,18 @@ head:
 
 table: Таблица
 
+edit: Редактировать
+
 health:
   title: Здоровье
 
 temperature:
   title: Температура
+  add: Добавить температуру
 
 medicines:
   title: Лекарства
+  add: Добавить лекарство
 
 doctorsAppointment:
   title: Прием врача
@@ -134,9 +138,6 @@ pdf:
 add:
   title: Добавить
 
-addTemperature:
-  title: Добавить температуру
-
 now:
   title: Сейчас
 
@@ -233,3 +234,22 @@ dirty:
 diaperforday: 6 подгузников в день в среднем
 
 list_of_weeks: [Пн, Вт, Ср, Чт, Пт, Сб, Вс]
+save: Сохранить
+
+name:
+  title: Название
+  subTitle: Нажмите, чтобы ввести название лекарства
+
+dateStart:
+  title: Дата начала приема
+  subTitle: Нажмите, чтобы указать дату начала приема
+
+dose: 
+  title: Доза
+  subTitle: Нажмите, чтобы указать дозу. Она будет сразу видна на экране лекарств
+
+comment:
+  title: Комментарии
+  subTitle: Нажмите, чтобы добавить комментарии
+
+dailyreminders: Ежедневные напоминания
