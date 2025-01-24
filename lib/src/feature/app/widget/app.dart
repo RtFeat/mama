@@ -120,11 +120,11 @@ class App extends StatelessWidget {
             create: (context) => skit.AudioPlayerStore(),
             dispose: (context, value) => value.dispose(),
           ),
-          // Provider(
-          //   create: (_) => FavoriteArticlesStore(
-          //     apiClient: context.read<Dependencies>().apiClient,
-          //   ),
-          // ),
+          Provider(
+            create: (_) => FavoriteArticlesStore(
+              apiClient: context.read<Dependencies>().apiClient,
+            ),
+          ),
           Provider(
             create: (context) => KnowledgeStore(
               authorsStore: AuthorsStore(
