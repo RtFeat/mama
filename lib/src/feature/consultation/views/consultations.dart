@@ -32,7 +32,7 @@ class _ConsultationsViewState extends State<ConsultationsView>
         return Scaffold(
             appBar: CustomAppBar(
               title: t.consultation.title,
-              height: 108,
+              height: 114,
               action: const ProfileWidget(),
               tabController: controller,
               tabs: [

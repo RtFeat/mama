@@ -5,9 +5,11 @@ import 'package:mobx/mobx.dart';
 
 part 'track.g.dart';
 
+enum TrackCategory { story, music, whiteNoise }
+
 @JsonSerializable()
 class TrackModel extends _TrackModel with _$TrackModel {
-  @JsonKey(name: 'name')
+  @JsonKey(name: 'id')
   final String id;
 
   final String title;

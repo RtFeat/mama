@@ -57,7 +57,7 @@ class KnowledgeView extends StatelessWidget {
               .copyWith(color: AppColors.primaryColor, fontSize: 20),
           action: IconButton(
               onPressed: () {
-                context.pushNamed(AppViews.favArticles);
+                context.pushNamed(AppViews.favoriteArticles);
               },
               icon: const Icon(
                 AppIcons.bookmark,
@@ -116,23 +116,20 @@ class __BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: PaginatedLoadingWidget(
-        emptyData: const SizedBox.shrink(),
-        store: widget.knowledgeStore,
-        separator: (index, item) {
-          return const Divider(
-            color: AppColors.greyColor,
-          );
-        },
-        padding: EdgeInsets.zero,
-        itemBuilder: (context, item) {
-          return ArticleWidget(
-            article: item,
-          );
-        },
-      ),
+    return PaginatedLoadingWidget(
+      emptyData: const SizedBox.shrink(),
+      store: widget.knowledgeStore,
+      separator: (index, item) {
+        return const Divider(
+          height: 1,
+          color: AppColors.greyColor,
+        );
+      },
+      itemBuilder: (context, item) {
+        return ArticleWidget(
+          article: item,
+        );
+      },
     );
   }
 }

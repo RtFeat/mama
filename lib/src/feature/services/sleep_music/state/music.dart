@@ -16,10 +16,11 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
   final AudioPlayerStore audioPlayerStore;
   _MusicStore({
     required this.audioPlayerStore,
-    required RestClient restClient,
+    required super.restClient,
   }) : super(
-          fetchFunction: (params) =>
-              restClient.get('${Endpoint.music}/music', queryParams: params),
+          basePath: Endpoint.music,
+          fetchFunction: (params, path) =>
+              restClient.get('$path/music', queryParams: params),
           transformer: (raw) {
             final List<TrackModel>? data = (raw['music'] as List?)
                 ?.map((e) => TrackModel.fromJson(e))

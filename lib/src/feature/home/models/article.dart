@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 
+import 'package:mobx/mobx.dart';
+
 part 'article.g.dart';
 
 enum AgeCategory {
@@ -15,7 +17,7 @@ enum AgeCategory {
 }
 
 @JsonSerializable()
-class ArticleModel extends BaseModel {
+class ArticleModel extends _ArticleModel with _$ArticleModel {
   @JsonKey(name: 'id')
   final String? id;
 
@@ -63,6 +65,9 @@ class ArticleModel extends BaseModel {
     this.articles,
     this.ageCategory,
     this.countArticlesAuthor,
+    super.updatedAt,
+    super.createdAt,
+    super.isFavorite = false,
   });
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
@@ -70,4 +75,19 @@ class ArticleModel extends BaseModel {
 
   @override
   Map<String, dynamic> toJson() => _$ArticleModelToJson(this);
+}
+
+abstract class _ArticleModel extends BaseModel with Store {
+  _ArticleModel({
+    super.updatedAt,
+    super.createdAt,
+    this.isFavorite = false,
+  });
+
+  @observable
+  @JsonKey(name: 'is_favorite')
+  bool? isFavorite;
+
+  @action
+  void setFavorite(bool v) => isFavorite = v;
 }

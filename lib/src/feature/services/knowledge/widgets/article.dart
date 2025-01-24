@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
+import '../../../home/widgets/category.dart';
+
 class ArticleWidget extends StatelessWidget {
-  final ArticleModel article;
-  const ArticleWidget({super.key, required this.article});
+  final ArticleModel? article;
+  final FavoriteArticle? favoriteArticle;
+  final FavoriteArticlesStore? store;
+  const ArticleWidget(
+      {super.key, this.store, this.article, this.favoriteArticle})
+      : assert(article != null || favoriteArticle != null);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +19,10 @@ class ArticleWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        context.pushNamed(AppViews.article, extra: {'id': article.id});
+        context.pushNamed(AppViews.article, extra: {
+          'id': favoriteArticle?.id ?? article!.id,
+          'store': store,
+        });
       },
       child: DecoratedBox(
         decoration: const BoxDecoration(
@@ -38,7 +47,8 @@ class ArticleWidget extends StatelessWidget {
                           child: Row(
                             children: [
                               AvatarWidget(
-                                  url: article.author?.avatarUrl,
+                                  url: favoriteArticle?.avatarUrl ??
+                                      article!.author?.avatarUrl,
                                   size: const Size(50, 50),
                                   radius: 100),
                               8.w,
@@ -46,15 +56,19 @@ class ArticleWidget extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    article.author?.name ?? '',
+                                    favoriteArticle?.author ??
+                                        article?.author?.name ??
+                                        '',
                                     style: textTheme.labelMedium?.copyWith(
                                       fontSize: 14,
                                     ),
                                   ),
-                                  if (article.author?.profession != null &&
-                                      article.author?.profession != '')
+                                  if (favoriteArticle?.profession != null ||
+                                      article?.author?.profession != null)
                                     ConsultationBadge(
-                                      title: article.author!.profession ?? '',
+                                      title: favoriteArticle?.profession ??
+                                          article?.author!.profession ??
+                                          '',
                                     ),
                                 ],
                               ),
@@ -66,7 +80,7 @@ class ArticleWidget extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                article.title ?? '',
+                                favoriteArticle?.title ?? article?.title ?? '',
                                 style: textTheme.headlineSmall?.copyWith(
                                   fontSize: 20,
                                 ),
@@ -76,7 +90,8 @@ class ArticleWidget extends StatelessWidget {
                             ),
                           ],
                         ),
-                        if (article.tags != null) ...[
+                        if (favoriteArticle?.ageCategory != null ||
+                            article?.tags != null) ...[
                           8.h,
                           Row(
                             children: [
@@ -86,27 +101,47 @@ class ArticleWidget extends StatelessWidget {
                                   crossAxisAlignment: WrapCrossAlignment.start,
                                   spacing: 4,
                                   runSpacing: 4,
-                                  children: article.tags!.map((e) {
-                                    return Chip(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      color: const WidgetStatePropertyAll(
-                                          AppColors.whiteDarkerButtonColor),
-                                      label: Text(
-                                        e,
-                                        style: textTheme.labelSmall?.copyWith(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.greyBrighterColor,
-                                        ),
-                                      ),
-                                      visualDensity: VisualDensity.compact,
-                                      side: BorderSide.none,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                    );
-                                  }).toList(),
+                                  children: favoriteArticle?.ageCategory != null
+                                      ? favoriteArticle!.ageCategory!.map((e) {
+                                          return CategoryWidget(
+                                            title: switch (e) {
+                                              AgeCategory.halfYear =>
+                                                t.home.ageCategory.halfYear,
+                                              AgeCategory.year =>
+                                                t.home.ageCategory.year,
+                                              AgeCategory.twoYear =>
+                                                t.home.ageCategory.twoYear,
+                                              AgeCategory.older =>
+                                                t.home.ageCategory.older,
+                                              _ => '',
+                                            },
+                                          );
+                                        }).toList()
+                                      : article!.tags!.map((e) {
+                                          return Chip(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            color: const WidgetStatePropertyAll(
+                                                AppColors
+                                                    .whiteDarkerButtonColor),
+                                            label: Text(
+                                              e,
+                                              style: textTheme.labelSmall
+                                                  ?.copyWith(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            side: BorderSide.none,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                          );
+                                        }).toList(),
                                 ),
                               ),
                             ],
@@ -119,7 +154,7 @@ class ArticleWidget extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
                   child: AvatarWidget(
-                    url: article.photo,
+                    url: favoriteArticle?.articlePhotoUrl ?? article?.photo,
                     size: const Size(100, 100),
                     radius: 24,
                   ),

@@ -26,7 +26,6 @@ class ChatView extends StatelessWidget {
           socket: context.watch(),
           store: store,
           item: item,
-          restClient: context.read<Dependencies>().restClient,
           groupUsersStore: groupUsersStore,
         );
       },
@@ -38,14 +37,12 @@ class _Body extends StatefulWidget {
   final MessagesStore store;
   final ChatItem? item;
   final GroupUsersStore? groupUsersStore;
-  final RestClient restClient;
   final ChatSocket socket;
 
   const _Body({
     required this.socket,
     required this.store,
     required this.item,
-    required this.restClient,
     this.groupUsersStore,
   });
 
@@ -54,7 +51,7 @@ class _Body extends StatefulWidget {
 }
 
 class __BodyState extends State<_Body> {
-  final Map<int, GlobalKey> _messageKeys = {};
+  // final Map<int, GlobalKey> _messageKeys = {};
 
   @override
   void initState() {
@@ -71,8 +68,8 @@ class __BodyState extends State<_Body> {
     widget.store.setChatType(widget.item is SingleChatItem ? 'solo' : 'group');
 
     widget.store.loadPage(
-      fetchFunction: (query) {
-        return widget.restClient.get(
+      fetchFunction: (query, restClient, path) {
+        return restClient.get(
             '${Endpoint().messages}/${widget.item is SingleChatItem ? 'solo' : 'group'}',
             queryParams: {
               'limit': '10',
@@ -82,7 +79,7 @@ class __BodyState extends State<_Body> {
       },
     );
 
-    widget.store.scrollController?.addListener(_updateCurrentDate);
+    // widget.store.scrollController?.addListener(_updateCurrentDate);
 
     super.initState();
   }
@@ -90,34 +87,34 @@ class __BodyState extends State<_Body> {
   @override
   dispose() {
     super.dispose();
-    _messageKeys.clear();
-    widget.store.scrollController?.removeListener(_updateCurrentDate);
+    // _messageKeys.clear();
+    // widget.store.scrollController?.removeListener(_updateCurrentDate);
     widget.store.dispose();
   }
 
-  void _updateCurrentDate() {
-    if (widget.store.messages.isEmpty) return;
+  // void _updateCurrentDate() {
+  //   if (widget.store.messages.isEmpty) return;
 
-    // Проходим по сообщениям с конца списка (так как reversed)
-    for (int i = widget.store.messages.length - 1; i >= 0; i--) {
-      final key = _messageKeys[i];
-      if (key == null) continue;
+  //   // Проходим по сообщениям с конца списка (так как reversed)
+  //   for (int i = widget.store.messages.length - 1; i >= 0; i--) {
+  //     final key = _messageKeys[i];
+  //     if (key == null) continue;
 
-      final context = key.currentContext;
-      if (context != null) {
-        final box = context.findRenderObject() as RenderBox?;
-        if (box != null) {
-          final double position = box.localToGlobal(Offset.zero).dy;
+  //     final context = key.currentContext;
+  //     if (context != null) {
+  //       final box = context.findRenderObject() as RenderBox?;
+  //       if (box != null) {
+  //         final double position = box.localToGlobal(Offset.zero).dy;
 
-          // Проверяем видимость сообщения (находится в нижней части экрана)
-          if (position >= 0 && position <= MediaQuery.of(context).size.height) {
-            widget.store.setCurrentShowingMessage(widget.store.messages[i]);
-            return; // Как только нашли, выходим из метода
-          }
-        }
-      }
-    }
-  }
+  //         // Проверяем видимость сообщения (находится в нижней части экрана)
+  //         if (position >= 0 && position <= MediaQuery.of(context).size.height) {
+  //           widget.store.setCurrentShowingMessage(widget.store.messages[i]);
+  //           return; // Как только нашли, выходим из метода
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +155,7 @@ class __BodyState extends State<_Body> {
                       : widget.store.messages,
                   itemBuilder: (context, item) {
                     final index = widget.store.messages.indexOf(item);
-                    _messageKeys[index] = GlobalKey();
+                    // _messageKeys[index] = GlobalKey();
 
                     // Для первого элемента добавляем дату в начало
                     if (index == widget.store.messages.length - 1) {
@@ -180,7 +177,7 @@ class __BodyState extends State<_Body> {
                             controller: widget.store.scrollController!,
                             key: ValueKey(item.id),
                             child: MessageWidget(
-                              key: _messageKeys[index],
+                              // key: _messageKeys[index],
                               item: item,
                               store: widget.store,
                             ),
@@ -193,7 +190,7 @@ class __BodyState extends State<_Body> {
                         controller: widget.store.scrollController!,
                         key: ValueKey(item.id),
                         child: MessageWidget(
-                          key: _messageKeys[index],
+                          // key: _messageKeys[index],
                           item: item,
                           store: widget.store,
                         ));

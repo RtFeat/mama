@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/views/feeding/bottle/add_bottle_screen.dart';
 import 'package:mama/src/feature/home/view/day_work.dart';
-import 'package:mama/src/feature/services/knowledge/views/favorite_articles_screen.dart';
-import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';
 
 abstract class AppViews {
   static const String startScreen = 'startScreen';
@@ -74,12 +72,13 @@ abstract class AppViews {
   static const pdfView = 'pdfView';
 
   static const article = 'article';
+  static const favoriteArticles = 'favoriteArticles';
   static const serviceKnowlegde = 'serviceKnowlegde';
   static const serviceKnowledgeInfo = 'serviceKnowledgeInfo';
   static const categories = 'categories';
   static const ages = 'ages';
   static const author = 'author';
-  static const favArticles = 'savedFiles';
+  static const savedFiles = 'savedFiles';
 }
 
 final GlobalKey<NavigatorState> navKey = GlobalKey();
@@ -231,21 +230,11 @@ final GoRouter router = GoRouter(
                   path: _Paths.ages,
                   builder: (context, state) => const AgeCategoryView(),
                 ),
-                // GoRoute(
-                //   name: AppViews.author,
-                //   path: _Paths.author,
-                //   builder: (context, state) => const AuthorsScreen(),
-                // ),
                 GoRoute(
-                  name: AppViews.favArticles,
                   path: _Paths.favoriteArticles,
-                  builder: (context, state) => const FavoriteArticlesScreen(),
-                ),
-                GoRoute(
-                  name: AppViews.serviceKnowledgeInfo,
-                  path: _Paths.serviceKnowledgeInfo,
-                  builder: (context, state) => const ServiceInfoScreen(),
-                ),
+                  name: AppViews.favoriteArticles,
+                  builder: (context, state) => const FavoriteArticlesView(),
+                )
               ],
             ),
             GoRoute(
@@ -581,9 +570,7 @@ abstract class _Paths {
   static const docsView = '/${AppViews.docs}';
 
   static const article = AppViews.article;
-  static const serviceKnowledgeInfo = AppViews.serviceKnowledgeInfo;
+  static const favoriteArticles = AppViews.favoriteArticles;
   static const categories = AppViews.categories;
   static const ages = AppViews.ages;
-  static const author = AppViews.author;
-  static const favoriteArticles = AppViews.favArticles;
 }

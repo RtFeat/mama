@@ -20,11 +20,13 @@ abstract class _ChatsViewStore with Store {
   _ChatsViewStore({
     required RestClient restClient,
   })  : chats = ChatsStore(
-            fetchFunction: (params) =>
-                restClient.get(Endpoint.chat, queryParams: params)),
+            restClient: restClient,
+            fetchFunction: (params, path) =>
+                restClient.get(path, queryParams: params)),
         groups = GroupsStore(
-          fetchFunction: (params) =>
-              restClient.get(Endpoint().groups, queryParams: params),
+          restClient: restClient,
+          fetchFunction: (params, path) =>
+              restClient.get(path, queryParams: params),
         );
 
   @observable

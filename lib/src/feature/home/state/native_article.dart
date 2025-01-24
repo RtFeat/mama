@@ -16,9 +16,15 @@ class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
 
   final RestClient restClient;
 
-  Future addToFavorite(String id) async {
-    return await restClient
-        .put('${Endpoint().addArticleToFavorite}/$id', body: {});
+  Future toggleFavorite(String id) async {
+    if (data?.isFavorite ?? false) {
+      await restClient.delete(Endpoint().articleToggleFavorite, body: {
+        'article_id': id,
+      });
+    } else {
+      await restClient.put('${Endpoint().articleToggleFavorite}/$id', body: {});
+    }
+    data?.setFavorite(!(data?.isFavorite ?? false));
   }
 }
 

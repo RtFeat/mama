@@ -16,6 +16,7 @@ export 'custom_popup_widget.dart';
 export 'build_grid_item.dart';
 export 'build_day_section.dart';
 export 'bar_item.dart';
+export 'table.dart';
 export 'add_feeding_breast_manually.dart';
 export 'add_sleep.dart';
 export 'helper_play_button.dart';

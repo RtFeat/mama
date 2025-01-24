@@ -11,14 +11,16 @@ class HomeViewStore {
     required RestClient restClient,
     required String? userId,
   })  : allArticlesStore = ArticlesStore(
-          fetchFunction: (params) => restClient.get(
-            Endpoint().articles,
+          restClient: restClient,
+          fetchFunction: (params, path) => restClient.get(
+            path,
             queryParams: params,
           ),
         ),
         forMeArticlesStore = ArticlesStore(
-          fetchFunction: (params) => restClient.get(
-            Endpoint().articles,
+          restClient: restClient,
+          fetchFunction: (params, path) => restClient.get(
+            path,
             queryParams: {
               ...params,
               if (userId != null) 'user_id': userId,
@@ -26,14 +28,16 @@ class HomeViewStore {
           ),
         ),
         ownArticlesStore = ArticlesStore(
-          fetchFunction: (params) => restClient.get(
+          restClient: restClient,
+          fetchFunction: (params, path) => restClient.get(
             Endpoint().articleOwn,
             queryParams: params,
           ),
         ),
         coursesStore = CoursesStore(
-          fetchFunction: (params) => restClient.get(
-            Endpoint().schoolCourses,
+          restClient: restClient,
+          fetchFunction: (params, path) => restClient.get(
+            path,
             queryParams: params,
           ),
         );

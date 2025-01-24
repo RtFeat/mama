@@ -99,7 +99,8 @@ base class LogMessage {
 /// Logger interface
 abstract base class Logger {
   /// Logs the error to the console
-  void error(Object message, {Object? error, StackTrace? stackTrace});
+  void error(Object message,
+      {Object? error, StackTrace? stackTrace, Type? runtimeType});
 
   /// Logs the warning to the console
   void warning(Object message);
@@ -158,8 +159,12 @@ final class LoggerLogging extends Logger {
   void debug(Object message) => _logger.fine(message);
 
   @override
-  void error(Object message, {Object? error, StackTrace? stackTrace}) =>
-      _logger.severe(message, error, stackTrace);
+  void error(Object message,
+          {Object? error, StackTrace? stackTrace, Type? runtimeType}) =>
+      _logger.severe(
+          '${runtimeType != null ? '\n$runtimeType:\n' : ''}$message',
+          error,
+          stackTrace);
 
   @override
   void info(Object message, {Type? runtimeType}) =>

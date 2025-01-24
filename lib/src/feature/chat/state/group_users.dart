@@ -13,15 +13,15 @@ class GroupUsersStore extends _GroupUsersStore with _$GroupUsersStore {
 
 abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
     with Store, FilterableDataMixin<AccountModel> {
-  final RestClient restClient;
   final String chatId;
 
   _GroupUsersStore({
-    required this.restClient,
+    required super.restClient,
     required this.chatId,
   }) : super(
-            fetchFunction: (params) => restClient
-                .get('${Endpoint().groupUsers}/$chatId', queryParams: params),
+            basePath: Endpoint().groupUsers,
+            fetchFunction: (params, path) =>
+                restClient.get('$path/$chatId', queryParams: params),
             transformer: (raw) {
               final List<AccountModel>? data = (raw['account'] as List?)
                   ?.map((e) => AccountModel.fromJson(e))

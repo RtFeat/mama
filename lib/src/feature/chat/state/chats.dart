@@ -11,18 +11,23 @@ enum ChatUserTypeFilter {
 }
 
 class ChatsStore extends _ChatsStore with _$ChatsStore {
-  ChatsStore({required super.fetchFunction});
+  ChatsStore({
+    required super.fetchFunction,
+    required super.restClient,
+  });
 }
 
 abstract class _ChatsStore extends PaginatedListStore<SingleChatItem>
     with Store {
-  _ChatsStore({required super.fetchFunction})
-      : super(transformer: (raw) {
-          final List<SingleChatItem>? data = (raw['chats'] as List?)
-              ?.map((e) => SingleChatItem.fromJson(e))
-              .toList();
-          return data ?? [];
-        });
+  _ChatsStore({required super.restClient, required super.fetchFunction})
+      : super(
+            basePath: Endpoint.chat,
+            transformer: (raw) {
+              final List<SingleChatItem>? data = (raw['chats'] as List?)
+                  ?.map((e) => SingleChatItem.fromJson(e))
+                  .toList();
+              return data ?? [];
+            });
 
   @action
   void deleteChat(String id) {

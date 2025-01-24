@@ -3,9 +3,11 @@ import 'package:mama/src/data.dart';
 
 class MusicViewBody extends StatefulWidget {
   final MusicStore store;
+  final TrackCategory category;
   const MusicViewBody({
     super.key,
     required this.store,
+    required this.category,
   });
 
   @override
@@ -15,7 +17,17 @@ class MusicViewBody extends StatefulWidget {
 class _MusicViewBodyState extends State<MusicViewBody> {
   @override
   void initState() {
-    widget.store.loadPage(queryParams: {});
+    widget.store.resetPagination();
+    widget.store.loadPage(
+      fetchFunction: (query, client, path) {
+        final filterPath = switch (widget.category) {
+          TrackCategory.music => TrackCategory.music.name,
+          TrackCategory.whiteNoise => TrackCategory.whiteNoise.name,
+          TrackCategory.story => TrackCategory.story.name,
+        };
+        return client.get('$path/$filterPath', queryParams: query);
+      },
+    );
     super.initState();
   }
 

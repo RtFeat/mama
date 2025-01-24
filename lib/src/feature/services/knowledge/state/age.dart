@@ -13,10 +13,11 @@ class AgeCategoriesStore extends _AgeCategoriesStore with _$AgeCategoriesStore {
 abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
     with Store {
   _AgeCategoriesStore({
-    required RestClient restClient,
+    required super.restClient,
   }) : super(
-          fetchFunction: (params) =>
-              restClient.get(Endpoint().ageCaterories, queryParams: params),
+          basePath: Endpoint().ageCaterories,
+          fetchFunction: (params, path) =>
+              restClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
                 .map((e) => CategoryModel.fromJson(e))

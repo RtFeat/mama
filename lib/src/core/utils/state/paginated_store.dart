@@ -6,12 +6,18 @@ import 'extensions/extensions.dart';
 abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
   final int pageSize;
 
-  final Future<Map<String, Object?>?> Function(Map<String, dynamic>)
-      fetchFunction;
+  final String basePath;
+
+  final RestClient restClient;
+
+  final Future<Map<String, Object?>?> Function(
+      Map<String, dynamic> query, String basePath) fetchFunction;
   final List<R>? Function(Map<String, dynamic>) transformer;
 
   PaginatedListStore({
     this.pageSize = 10,
+    required this.basePath,
+    required this.restClient,
     required this.fetchFunction,
     required this.transformer,
   });
@@ -30,7 +36,8 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
 
   @action
   Future<void> loadPage({
-    Future<Map<String, Object?>?> Function(Map<String, dynamic> query)?
+    Future<Map<String, Object?>?> Function(
+            Map<String, dynamic> query, RestClient client, String basePath)?
         fetchFunction,
     Map<String, dynamic>? queryParams,
   }) async {
@@ -55,8 +62,8 @@ abstract class PaginatedListStore<R> with Store, LoadingDataStoreExtension<R> {
     logger.info('Requesting page $currentPage with params: $updatedParams');
 
     final Future future = fetchFunction != null
-        ? fetchFunction(updatedParams)
-        : this.fetchFunction(updatedParams);
+        ? fetchFunction(updatedParams, restClient, basePath)
+        : this.fetchFunction(updatedParams, basePath);
 
     fetchFuture = ObservableFuture(
       future.then((rawData) {

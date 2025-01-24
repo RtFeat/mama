@@ -79,6 +79,7 @@ class MainBoxWithButtons extends StatelessWidget {
                               isSmall: false,
                               title: button.title,
                               onTap: button.onTap,
+                              maxLines: 1,
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 16),
                               mainAxisAlignment: MainAxisAlignment.start,

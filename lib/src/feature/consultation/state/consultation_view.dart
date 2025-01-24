@@ -8,20 +8,23 @@ class ConsultationViewStore {
   ConsultationViewStore({
     required RestClient restClient,
   })  : recordsState = ConsultationRecordsState(
-          fetchFunction: (params) => restClient.get(
-            Endpoint().userConsultations,
+          restClient: restClient,
+          fetchFunction: (params, path) => restClient.get(
+            path,
             queryParams: params,
           ),
         ),
         doctorsState = DoctorsState(
-          fetchFunction: (params) => restClient.get(
-            Endpoint.doctor,
+          restClient: restClient,
+          fetchFunction: (params, path) => restClient.get(
+            path,
             queryParams: params,
           ),
         ),
         schoolsState = SchoolsStore(
-            fetchFunction: (params) => restClient.get(
-                  Endpoint().schools,
+            restClient: restClient,
+            fetchFunction: (params, path) => restClient.get(
+                  path,
                   queryParams: params,
                 ));
 

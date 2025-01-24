@@ -117,7 +117,9 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                 CustomServiceBoxTwo(
                   imagePath: Assets.images.hat.path,
                   text: t.home.knowledgeCenter.title,
-                  onTap: () {},
+                  onTap: () {
+                    context.pushNamed(AppViews.serviceKnowlegde);
+                  },
                 ),
               ],
             ),

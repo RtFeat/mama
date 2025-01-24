@@ -6,19 +6,24 @@ part 'groups.g.dart';
 class GroupsStore extends _GroupsStore with _$GroupsStore {
   GroupsStore({
     required super.fetchFunction,
+    required super.restClient,
   });
 }
 
 abstract class _GroupsStore extends PaginatedListStore<GroupItem> with Store {
-  _GroupsStore({required super.fetchFunction})
-      : super(transformer: (raw) {
-          // final data =  ChatsData.fromJson(raw);
+  _GroupsStore({
+    required super.fetchFunction,
+    required super.restClient,
+  }) : super(
+            basePath: Endpoint().groups,
+            transformer: (raw) {
+              // final data =  ChatsData.fromJson(raw);
 
-          final List<GroupItem>? data = (raw['chats'] as List?)
-              ?.map((e) => GroupItem.fromJson(e))
-              .toList();
-          return data ?? [];
-        });
+              final List<GroupItem>? data = (raw['chats'] as List?)
+                  ?.map((e) => GroupItem.fromJson(e))
+                  .toList();
+              return data ?? [];
+            });
 
   @action
   void deleteGroup(String id) {

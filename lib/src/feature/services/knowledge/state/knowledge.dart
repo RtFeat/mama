@@ -17,12 +17,13 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
   final AgeCategoriesStore ageCategoriesStore;
 
   _KnowledgeStore({
-    required RestClient restClient,
+    required super.restClient,
     required this.categoriesStore,
     required this.ageCategoriesStore,
   }) : super(
-          fetchFunction: (params) =>
-              restClient.get(Endpoint().allByCategory, queryParams: params),
+          basePath: Endpoint().allByCategory,
+          fetchFunction: (params, path) =>
+              restClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['articles'] ?? [])
                 .map((e) => ArticleModel.fromJson(e))

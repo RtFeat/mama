@@ -53,13 +53,15 @@ class Endpoint {
 
   String get articles => '$article/list';
 
+  String get favoriteArticles => '$article/favorite';
+
   String get allByCategory => '$article/category/all';
 
   String get articleOwn => '$article/file/own';
 
   String get articlesForMe => '$article/for_you';
 
-  String get addArticleToFavorite => '$article/favorite';
+  String get articleToggleFavorite => '$article/favorite';
 
   static const String chat = 'chat';
 

@@ -17,12 +17,13 @@ class MessagesStore extends _MessagesStore with _$MessagesStore {
 abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     with Store, FilterableDataMixin<MessageItem> {
   _MessagesStore({
-    required RestClient restClient,
+    required super.restClient,
     required this.chatType,
     required super.pageSize,
   }) : super(
-            fetchFunction: (params) => restClient
-                .get('${Endpoint().messages}/$chatType', queryParams: params),
+            basePath: Endpoint().messages,
+            fetchFunction: (params, path) =>
+                restClient.get('$path/$chatType', queryParams: params),
             transformer: (raw) {
               final List<MessageItem>? data = (raw['messages'] as List?)
                   ?.map((e) => MessageItem.fromJson(e))

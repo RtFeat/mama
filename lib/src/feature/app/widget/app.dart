@@ -101,6 +101,11 @@ class App extends StatelessWidget {
             create: (context) => AudioPlayerStore(),
             dispose: (context, value) => value.dispose(),
           ),
+          // Provider(
+          //   create: (_) => FavoriteArticlesStore(
+          //     restClient: context.read<Dependencies>().restClient,
+          //   ),
+          // ),
           Provider(
               create: (context) => KnowledgeStore(
                     categoriesStore: CategoriesStore(
