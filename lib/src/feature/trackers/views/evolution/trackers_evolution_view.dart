@@ -130,8 +130,8 @@ class WeightT extends StatelessWidget {
             trackerType.title == EvolutionCategory.head.title
                 ? const SizedBox()
                 : SwitchContainer(
-                    title1: t.trackers.kg.title,
-                    title2: t.trackers.g.title,
+                    title1: trackerType.switchContainerTitle1,
+                    title2: trackerType.switchContainerTitle2,
                   ),
           ],
         ),

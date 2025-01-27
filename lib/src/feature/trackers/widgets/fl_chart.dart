@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:mama/src/data.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class WeightData {
@@ -15,44 +18,49 @@ class FlProgressChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<WeightData> chartData = [
-      WeightData('Январь', 2.35, '5.35\n17.07'),
-      WeightData('Февраль', 3.25, '6.25\n31.08'),
-      WeightData('Март', 5.25, '6.25\n31.08'),
-      WeightData('Апрель', 4.25, '6.25\n31.08'),
-      WeightData('Май', 6.25, '6.25\n31.08'),
-      WeightData('Июнь', 6.25, '6.25\n31.08'),
-      WeightData('Июль', 3.7, '3.7\n13.05'),
-      WeightData('Август', 4.9, '4.9\n03.07'),
-      WeightData('Сентябрь', 5.35, '5.35\n17.07'),
-      WeightData('Октябрь', 6.25, '6.25\n31.08'),
-      WeightData('Ноябрь', 3.7, '3.7\n13.05'),
-      WeightData('Декабрь', 4.9, '4.9\n03.07'),
+      WeightData('Январь', 2.35, '17.07'),
+      WeightData('Февраль', 3.25, '31.08'),
+      WeightData('Март', 5.25, '31.08'),
+      WeightData('Апрель', 4.25, '31.08'),
+      WeightData('Май', 6.25, '31.08'),
+      WeightData('Июнь', 6.25, '31.08'),
+      WeightData('Июль', 3.7, '13.05'),
+      WeightData('Август', 4.9, '03.07'),
+      WeightData('Сентябрь', 5.35, '17.07'),
+      WeightData('Октябрь', 6.25, '31.08'),
+      WeightData('Ноябрь', 3.7, '13.05'),
+      WeightData('Декабрь', 4.9, '03.07'),
     ];
 
     return SfCartesianChart(
       plotAreaBackgroundColor: Colors.transparent,
+      enableAxisAnimation: true,
       zoomPanBehavior: ZoomPanBehavior(
         enablePanning: true,
         enableDoubleTapZooming: true,
       ),
-      primaryXAxis: const CategoryAxis(
-        axisLine: AxisLine(color: Colors.transparent),
+      primaryXAxis: CategoryAxis(
+        labelPlacement: LabelPlacement.onTicks,
+        axisLine: const AxisLine(color: Colors.transparent),
         initialVisibleMaximum: 5,
+        labelStyle: Theme.of(context)
+            .textTheme
+            .labelSmall!
+            .copyWith(fontWeight: FontWeight.w400),
       ),
-      primaryYAxis: const NumericAxis(
+      primaryYAxis: NumericAxis(
+        majorGridLines: const MajorGridLines(
+          color: Colors.transparent,
+        ),
         minimum: 2,
         maximum: 9,
         interval: 1,
+        labelStyle: Theme.of(context)
+            .textTheme
+            .labelSmall!
+            .copyWith(fontWeight: FontWeight.w400),
       ),
       series: [
-        LineSeries<WeightData, String>(
-          dataSource: chartData,
-          xValueMapper: (WeightData data, _) => data.month,
-          yValueMapper: (WeightData data, _) => data.weight,
-          dataLabelSettings: const DataLabelSettings(isVisible: true),
-          markerSettings: const MarkerSettings(isVisible: true),
-          color: Colors.blue,
-        ),
         SplineAreaSeries<WeightData, String>(
           dataSource: chartData,
           color: Colors.white,
@@ -68,6 +76,53 @@ class FlProgressChart extends StatelessWidget {
           ),
           borderColor: Colors.green.withOpacity(0.3),
           borderWidth: 30,
+        ),
+        LineSeries<WeightData, String>(
+          dataSource: chartData,
+          xValueMapper: (WeightData data, _) => data.month,
+          yValueMapper: (WeightData data, _) => data.weight,
+          dataLabelSettings: DataLabelSettings(
+              isVisible: true,
+              labelAlignment: ChartDataLabelAlignment.top,
+              builder: (dynamic data, dynamic point, dynamic series,
+                  int pointIndex, int seriesIndex) {
+                return SizedBox(
+                  height: 30,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${point.y}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall!
+                            .copyWith(color: AppColors.blackColor),
+                      ),
+                      Text(
+                        '${data.label}',
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall!
+                            .copyWith(fontWeight: FontWeight.w400, fontSize: 8),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              textStyle: Theme.of(context)
+                  .textTheme
+                  .labelSmall!
+                  .copyWith(color: AppColors.blackColor)),
+          markerSettings: const MarkerSettings(
+            height: 9,
+            width: 9,
+            isVisible: true,
+            borderColor: AppColors.greyColor,
+            color: Colors.white,
+          ),
+          color: AppColors.primaryColor,
+          width: 3,
         ),
       ],
       tooltipBehavior: TooltipBehavior(enable: true),

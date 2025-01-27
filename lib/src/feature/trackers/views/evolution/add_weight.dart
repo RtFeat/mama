@@ -7,7 +7,13 @@ class AddWeight extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
-      appBar: CustomAppBar(title: t.trackers.weight.add),
+      appBar: CustomAppBar(
+        title: t.trackers.weight.add,
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(color: AppColors.trackerColor, fontSize: 17),
+      ),
       body: ListView(
         children: [
           FixedCenterIndicator(
