@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/core.dart';
 
 class PlayerButton extends StatefulWidget {
@@ -128,12 +127,11 @@ class _PlayerButtonState extends State<PlayerButton>
                           shape: BoxShape.circle,
                         ),
                         child: Center(
-                          child: SvgPicture.asset(
+                          child: Icon(
                             widget.isStart
-                                ? Assets.icons.icPauseFilled
-                                : Assets.icons.icPlayer,
-                            colorFilter: const ColorFilter.mode(
-                                AppColors.primaryColor, BlendMode.srcIn),
+                                ? AppIcons.pauseFill
+                                : AppIcons.playFill,
+                            color: AppColors.primaryColor,
                           ),
                         ),
                       ),

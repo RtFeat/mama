@@ -164,10 +164,8 @@ class _AddMedicineState extends State<AddMedicine> {
                             title: t.trackers.add.title,
                             textStyle: AppTextStyles.f17w400
                                 .copyWith(color: AppColors.primaryColor),
-                            icon: IconModel(
-                              iconPath: Assets.icons.icClock,
-                              color: AppColors.primaryColor,
-                            ),
+                            icon: AppIcons.clock,
+                            iconColor: AppColors.primaryColor,
                             onTap: () async {
                               await widget.store.pickTime(context);
                             },
@@ -199,10 +197,8 @@ class _AddMedicineState extends State<AddMedicine> {
                       );
                       widget.medicineStore.postData(model: model);
                     },
-                    icon: IconModel(
-                      iconPath: Assets.icons.icPillsFilled,
-                      color: AppColors.primaryColor,
-                    ),
+                    icon: AppIcons.pillsFill,
+                    iconColor: AppColors.primaryColor,
                   ),
                 ),
               ],

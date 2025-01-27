@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:mama/src/data.dart';
 
 class HelperPlayButtonWidget extends StatelessWidget {
@@ -17,7 +16,7 @@ class HelperPlayButtonWidget extends StatelessWidget {
         style: textTheme.titleLarge
             ?.copyWith(color: AppColors.greyBrighterColor, fontSize: 20),
         children: [
-          WidgetSpan(
+          const WidgetSpan(
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
               child: SizedBox(height: 20)),
@@ -27,7 +26,7 @@ class HelperPlayButtonWidget extends StatelessWidget {
                 fontWeight: FontWeight.w400,
                 color: AppColors.greyBrighterColor),
           ),
-          WidgetSpan(
+          const WidgetSpan(
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
               child: SizedBox(width: 5)),
@@ -35,21 +34,20 @@ class HelperPlayButtonWidget extends StatelessWidget {
             child: Container(
               height: 18,
               width: 18,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.purpleLighterBackgroundColor,
                 shape: BoxShape.circle,
               ),
-              child: Center(
-                child: SvgPicture.asset(
-                  height: 12,
-                  Assets.icons.icPlayer,
-                  colorFilter: const ColorFilter.mode(
-                      AppColors.primaryColor, BlendMode.srcIn),
+              child: const Center(
+                child: Icon(
+                  AppIcons.playFill,
+                  size: 15,
+                  color: AppColors.primaryColor,
                 ),
               ),
             ),
           ),
-          WidgetSpan(
+          const WidgetSpan(
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
               child: SizedBox(width: 5)),

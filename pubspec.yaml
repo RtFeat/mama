@@ -31,7 +31,7 @@ dependencies:
   flutter_mobx: ^2.2.0+2
 
   # -- codegen -- #
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
 
   # -- networking -- #
   dio: ^5.3.3

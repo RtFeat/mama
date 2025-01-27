@@ -15,22 +15,24 @@ class TrackerBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ListView(
-          children: [
-            16.h,
-            LearnMoreWidget(
-              onPressClose: () {},
-              onPressButton: () {},
-              title: learnMoreWidgetText,
-            ),
-            Column(
-              children: children,
-            )
-          ],
+      body: Stack(children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ListView(
+            children: [
+              16.h,
+              LearnMoreWidget(
+                onPressClose: () {},
+                onPressButton: () {},
+                title: learnMoreWidgetText,
+              ),
+              Column(
+                children: children,
+              )
+            ],
+          ),
         ),
-      ),
+      ]),
       bottomNavigationBar: bottomNavigatorBar,
     );
   }

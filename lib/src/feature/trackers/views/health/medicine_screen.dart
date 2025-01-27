@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/widgets/big_find_out_more_button.dart';
 import 'package:provider/provider.dart';
 
 class MedicineScreen extends StatelessWidget {
@@ -30,9 +29,10 @@ class MedicineScreen extends StatelessWidget {
               child: Column(
                 children: [
                   /// #big find out more button
-                  BigFindOutMoreButton(
-                    closeButtonOnPressed: () {},
-                    findOutMoreButtonOnPressed: () {},
+                  LearnMoreWidget(
+                    onPressClose: () {},
+                    onPressButton: () {},
+                    title: t.trackers.findOutMoreTextTemp,
                   ),
                   14.h,
 
@@ -75,11 +75,9 @@ class MedicineScreen extends StatelessWidget {
                     /// #find out more button
                     Expanded(
                       child: CustomButton(
-                        title: t.trackers.findOutMore.title,
+                        title: t.trackers.knowMoreText.title,
                         onTap: () {},
-                        icon: IconModel(
-                          iconPath: Assets.icons.icGraduationCapFilled,
-                        ),
+                        icon: AppIcons.graduationcapFill,
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         type: CustomButtonType.outline,
@@ -95,9 +93,7 @@ class MedicineScreen extends StatelessWidget {
                       child: CustomButton(
                         title: t.trackers.pdf.title,
                         onTap: () {},
-                        icon: IconModel(
-                          iconPath: Assets.icons.icArrowDownFilled,
-                        ),
+                        icon: AppIcons.arrowDownToLineCompact,
                         type: CustomButtonType.outline,
                       ),
                     ),
@@ -131,9 +127,7 @@ class MedicineScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              icon: IconModel(
-                                iconPath: Assets.icons.icPillsFilled,
-                              ),
+                              icon: AppIcons.pillsFill,
                             );
                           }),
                     )

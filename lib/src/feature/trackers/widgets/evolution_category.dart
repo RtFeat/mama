@@ -28,11 +28,11 @@ extension EvolutionKnowMore on EvolutionCategory {
   String get knowMoreTitle {
     switch (this) {
       case EvolutionCategory.weight:
-        return 'Find out more about these standards and learn how to measure weight correctly in our Knowledge Center;';
+        return t.trackers.findOutMoreTextWeight;
       case EvolutionCategory.growth:
-        return 'Find out more about these standards and learn how to measure weight correctly in our Knowledge Center;';
+        return t.trackers.findOutMoreTextHeight;
       case EvolutionCategory.head:
-        return 'Find out more about these standards and learn how to measure weight correctly in our Knowledge Center;';
+        return t.trackers.findOutMoreTextHead;
       default:
         return '';
     }
@@ -63,6 +63,34 @@ extension DynamicLabel on EvolutionCategory {
         return '+9 см';
       case EvolutionCategory.head:
         return '+3,5 см';
+      default:
+        return '';
+    }
+  }
+}
+
+extension SwitchContainerTitle on EvolutionCategory {
+  String get switchContainerTitle1 {
+    switch (this) {
+      case EvolutionCategory.weight:
+        return t.trackers.kg.title;
+      case EvolutionCategory.growth:
+        return t.trackers.cm.title.toUpperCase();
+      case EvolutionCategory.head:
+        return t.trackers.cm.title.toUpperCase();
+      default:
+        return '';
+    }
+  }
+
+  String get switchContainerTitle2 {
+    switch (this) {
+      case EvolutionCategory.weight:
+        return t.trackers.g.title;
+      case EvolutionCategory.growth:
+        return t.trackers.m.title.toUpperCase();
+      case EvolutionCategory.head:
+        return t.trackers.m.title.toUpperCase();
       default:
         return '';
     }

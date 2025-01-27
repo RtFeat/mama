@@ -38,7 +38,7 @@ class CustomBackButton extends StatelessWidget {
               AppIcons.chevronBackward,
             ),
             if (isShowTitle) ...[
-              const SizedBox(width: 12),
+              const SizedBox(width: 5),
               Text(
                 t.services.back.title,
                 style: textTheme.bodySmall,

@@ -51,11 +51,15 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
     return Scaffold(
       backgroundColor: AppColors.e8ddf9,
       appBar: CustomAppBar(
-        height: 120,
+        height: 108,
         title: t.trackers.health.title,
         tabs: tabs,
         action: const ProfileWidget(),
         tabController: _tabController,
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(color: AppColors.trackerColor, fontSize: 20),
       ),
       body: TabBarView(
         controller: _tabController,

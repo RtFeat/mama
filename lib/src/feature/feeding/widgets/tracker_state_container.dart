@@ -59,7 +59,8 @@ class TrackerStateContainer extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border.all(
-              color: type == ContainerType.feedingSaved
+              color: type == ContainerType.feedingSaved ||
+                      type == ContainerType.sleepingSaved
                   ? AppColors.greenTextColor
                   : AppColors.redColor,
               width: 1),
@@ -86,7 +87,8 @@ class TrackerStateContainer extends StatelessWidget {
                         style: textTheme.headlineSmall?.copyWith(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
-                            color: type == ContainerType.feedingCanceled
+                            color: type == ContainerType.feedingCanceled ||
+                                    type == ContainerType.sleepingCanceled
                                 ? AppColors.redColor
                                 : AppColors.greenTextColor),
                       ),
@@ -133,7 +135,8 @@ class TrackerStateContainer extends StatelessWidget {
                 },
               ),
               10.h,
-              type == ContainerType.feedingCanceled
+              type == ContainerType.feedingCanceled ||
+                      type == ContainerType.sleepingCanceled
                   ? const SizedBox()
                   : CustomButton(
                       height: 48,
@@ -141,6 +144,7 @@ class TrackerStateContainer extends StatelessWidget {
                       type: CustomButtonType.outline,
                       iconColor: AppColors.primaryColor,
                       icon: AppIcons.pencil,
+                      title: t.trackers.note.title,
                       onTap: () {
                         onTapNote!();
                       },

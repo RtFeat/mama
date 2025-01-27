@@ -34,9 +34,7 @@ class _TablePageState extends State<TablePage> {
                   CustomButton(
                     title: t.trackers.pdf.title,
                     onTap: () {},
-                    icon: IconModel(
-                      iconPath: Assets.icons.icArrowDownFilled,
-                    ),
+                    icon: AppIcons.arrowDownToLineCompact,
                     // type: CustomButtonType.outline,
                   ),
                 ],

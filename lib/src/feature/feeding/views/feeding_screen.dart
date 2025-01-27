@@ -45,6 +45,10 @@ class _FeedingScreenState extends State<FeedingScreen>
         action: const CircleAvatar(
           radius: 20,
         ),
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(color: AppColors.trackerColor, fontSize: 20),
       ),
       body: TabBarView(
         controller: _tabController,

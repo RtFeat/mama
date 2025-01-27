@@ -90,7 +90,7 @@ class AddFeedingWidget extends StatelessWidget {
                         ),
                         30.h,
                         EditingButtons(
-                            iconAsset: Assets.icons.icCalendar,
+                            iconAsset: AppIcons.calendar,
                             addBtnText: t.feeding.addManually,
                             learnMoreTap: () {},
                             addButtonTap: () {

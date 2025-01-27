@@ -48,7 +48,7 @@ class _AddSleepingWidgetState extends State<AddSleepingWidget> {
                     DateFormat('HH:mm').format(addSleeping.timerEndTime!)
                 : null;
             final confirmButtonPressed = addSleeping.confirmSleepTimer;
-            final isFeedingCanceled = addSleeping.isSleepCanceled;
+            final isSleepingCanceled = addSleeping.isSleepCanceled;
             return Column(
               children: [
                 30.h,
@@ -87,7 +87,7 @@ class _AddSleepingWidgetState extends State<AddSleepingWidget> {
                             MaterialPageRoute(builder: (context) {
                               return Provider<AddSleeping>.value(
                                   value: addSleeping,
-                                  child: AddSleepingScreenManually());
+                                  child: const AddSleepingScreenManually());
                             }),
                           );
                         },
@@ -102,7 +102,7 @@ class _AddSleepingWidgetState extends State<AddSleepingWidget> {
                           ),
                           30.h,
                           EditingButtons(
-                              iconAsset: Assets.icons.icCalendar,
+                              iconAsset: AppIcons.calendar,
                               addBtnText: t.feeding.addManually,
                               learnMoreTap: () {},
                               addButtonTap: () {
@@ -110,7 +110,8 @@ class _AddSleepingWidgetState extends State<AddSleepingWidget> {
                                   MaterialPageRoute(builder: (context) {
                                     return Provider<AddSleeping>.value(
                                         value: addSleeping,
-                                        child: AddSleepingScreenManually());
+                                        child:
+                                            const AddSleepingScreenManually());
                                   }),
                                 );
                               }),
@@ -119,12 +120,14 @@ class _AddSleepingWidgetState extends State<AddSleepingWidget> {
                 confirmButtonPressed
                     ? TrackerStateContainer(
                         type: ContainerType.sleepingSaved,
-                        onTapClose: () {},
+                        onTapClose: () {
+                          addSleeping.confirmSleepTimer = false;
+                        },
                         onTapGoBack: () {},
                         onTapNote: () {},
                       )
                     : const SizedBox(),
-                isFeedingCanceled
+                isSleepingCanceled
                     ? TrackerStateContainer(
                         type: ContainerType.sleepingCanceled,
                         onTapClose: () {},

@@ -18,7 +18,13 @@ class DiapersView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.diapersBackroundColor,
-      appBar: CustomAppBar(title: t.trackers.diapers),
+      appBar: CustomAppBar(
+        title: t.trackers.diapers,
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(color: AppColors.trackerColor, fontSize: 20),
+      ),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [

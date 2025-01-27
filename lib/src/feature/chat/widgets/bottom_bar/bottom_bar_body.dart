@@ -156,7 +156,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
 
                                   widget.barStore.sendMessage();
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   AppIcons.send,
                                   color: AppColors.primaryColor,
                                 ),

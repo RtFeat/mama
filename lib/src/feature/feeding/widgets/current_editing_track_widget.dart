@@ -50,10 +50,11 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               flex: 1,
               child: CustomButton(
                 type: CustomButtonType.outline,
+                maxLines: 1,
                 onTap: () {
                   onPressNote();
                 },
-                icon: IconModel(iconPath: Assets.icons.icPencilFilled),
+                icon: AppIcons.pencil, //TODO иконка под вопросом
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(
@@ -109,7 +110,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
                   onPressManually();
                 },
                 title: t.trackers.currentEditTrackButtonManually,
-                icon: IconModel(iconPath: Assets.icons.icCalendar),
+                icon: AppIcons.calendar,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 textStyle: textTheme.bodyMedium

@@ -16,8 +16,8 @@ class SleepScreen extends StatelessWidget {
 
     return TrackerBody(
         learnMoreWidgetText: t.trackers.findOutMoreTextSleep,
-        children: [
-          const AddSleepingWidget(),
+        children: const [
+          AddSleepingWidget(),
           CalendarSleeping(),
           TableWidgetSleepCry(),
           // TableHistory(
@@ -81,7 +81,7 @@ class TableWidgetSleepCry extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: const [
               Text(
                 'Начало',
               ),

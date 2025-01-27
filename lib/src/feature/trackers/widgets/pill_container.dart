@@ -20,8 +20,8 @@ class PillContainer extends StatelessWidget {
         child: Row(
           children: [
             /// #pill image
-            DecoratedBox(
-              decoration: const BoxDecoration(
+            const DecoratedBox(
+              decoration: BoxDecoration(
                 color: AppColors.purpleLighterBackgroundColor,
                 borderRadius: BorderRadius.all(Radius.circular(16)),
               ),
@@ -29,11 +29,7 @@ class PillContainer extends StatelessWidget {
                 width: 120,
                 height: 120,
                 child: Center(
-                  child: SvgPicture.asset(
-                    Assets.icons.icPillsFilled,
-                    width: 28,
-                    height: 28,
-                  ),
+                  child: Icon(AppIcons.pillsFill),
                 ),
               ),
             ),

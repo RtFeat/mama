@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/widgets/big_find_out_more_button.dart';
 
 class TemperatureView extends StatelessWidget {
   const TemperatureView({
@@ -37,11 +36,12 @@ class TemperatureView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 16),
                 children: [
                   /// #find out more box
-                  BigFindOutMoreButton(
-                    closeButtonOnPressed: () {},
-                    findOutMoreButtonOnPressed: () {},
+                  LearnMoreWidget(
+                    onPressClose: () {},
+                    onPressButton: () {},
+                    title: t.trackers.findOutMoreTextTemp,
                   ),
-                  const SizedBox(height: 16),
+                  14.h,
 
                   /// #tabel header
                   Row(
@@ -118,11 +118,9 @@ class TemperatureView extends StatelessWidget {
                 /// #find out more button
                 Expanded(
                   child: CustomButton(
-                    title: t.trackers.findOutMore.title,
+                    title: t.trackers.knowMoreText.title,
                     onTap: () {},
-                    icon: IconModel(
-                      iconPath: Assets.icons.icGraduationCapFilled,
-                    ),
+                    icon: AppIcons.graduationcapFill,
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     type: CustomButtonType.outline,
@@ -138,9 +136,7 @@ class TemperatureView extends StatelessWidget {
                   child: CustomButton(
                     title: t.trackers.pdf.title,
                     onTap: () {},
-                    icon: IconModel(
-                      iconPath: Assets.icons.icArrowDownFilled,
-                    ),
+                    icon: AppIcons.arrowDownToLineCompact,
                     type: CustomButtonType.outline,
                   ),
                 ),
@@ -153,9 +149,7 @@ class TemperatureView extends StatelessWidget {
                     onTap: () {
                       context.pushNamed(AppViews.trackersHealthAddMedicineView);
                     },
-                    icon: IconModel(
-                      iconPath: Assets.icons.icThermometer,
-                    ),
+                    icon: AppIcons.thermometer,
                   ),
                 )
               ],
