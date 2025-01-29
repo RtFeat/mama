@@ -3,18 +3,23 @@ import 'package:mama/src/data.dart';
 
 class TrackerBody extends StatelessWidget {
   final List<Widget> children;
+  final PreferredSizeWidget? appBar;
+  final Widget? stackWidget;
   final String learnMoreWidgetText;
   final Widget? bottomNavigatorBar;
   const TrackerBody(
       {super.key,
       required this.children,
       this.bottomNavigatorBar,
-      required this.learnMoreWidgetText});
+      required this.learnMoreWidgetText,
+      this.stackWidget,
+      this.appBar});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: appBar ?? null,
       body: Stack(children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -32,6 +37,7 @@ class TrackerBody extends StatelessWidget {
             ],
           ),
         ),
+        stackWidget ?? Container(),
       ]),
       bottomNavigationBar: bottomNavigatorBar,
     );

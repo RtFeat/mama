@@ -52,10 +52,20 @@ class _AddDiaperState extends State<AddDiaper> {
                 16.h,
                 Row(
                   children: [
-                    Expanded(
-                      child: OutlinButtonWidget(
-                        onPressedOutlined: () {},
-                      ),
+                    CustomButton(
+                      type: CustomButtonType.outline,
+                      onTap: () {},
+                      maxLines: 1,
+                      title: t.trackers.note.title,
+                      icon: AppIcons.pencil,
+                      iconColor: AppColors.primaryColor,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 12),
+                      textStyle:
+                          Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
+                              ),
                     ),
                   ],
                 ),

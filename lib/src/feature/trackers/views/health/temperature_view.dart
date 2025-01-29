@@ -106,55 +106,13 @@ class TemperatureView extends StatelessWidget {
         ),
 
         /// #bottom buttons
-        ColoredBox(
-          color: AppColors.whiteColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
-              top: 8,
-              bottom: phonePadding.bottom + 16,
-            ),
-            child: Row(
-              children: [
-                /// #find out more button
-                Expanded(
-                  child: CustomButton(
-                    title: t.trackers.knowMoreText.title,
-                    onTap: () {},
-                    icon: AppIcons.graduationcapFill,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    type: CustomButtonType.outline,
-                    textStyle: textTheme.titleMedium!.copyWith(
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                8.w,
-
-                /// #pdf button
-                Expanded(
-                  child: CustomButton(
-                    title: t.trackers.pdf.title,
-                    onTap: () {},
-                    icon: AppIcons.arrowDownToLineCompact,
-                    type: CustomButtonType.outline,
-                  ),
-                ),
-                8.w,
-
-                /// #add temperature button
-                Expanded(
-                  child: CustomButton(
-                    title: t.trackers.add.title,
-                    onTap: () {
-                      context.pushNamed(AppViews.trackersHealthAddMedicineView);
-                    },
-                    icon: AppIcons.thermometer,
-                  ),
-                )
-              ],
-            ),
-          ),
+        ButtonsLearnPdfAdd(
+          onTapLearnMore: () {},
+          onTapPDF: () {},
+          onTapAdd: () {
+            context.pushNamed(AppViews.trackersHealthAddMedicineView);
+          },
+          iconAddButton: AppIcons.thermometer,
         ),
       ],
     );
