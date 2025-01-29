@@ -25,7 +25,6 @@ class EditingButtons extends StatelessWidget {
           child: CustomButton(
             type: CustomButtonType.outline,
             onTap: learnMoreTap,
-            // icon: IconModel(iconPath: Assets.icons.icLearnMore),
             icon: AppIcons.graduationcapFill,
             iconColor: AppColors.primaryColor,
             contentPadding:

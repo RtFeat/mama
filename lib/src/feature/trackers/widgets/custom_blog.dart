@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/constant/constant.dart';
+import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/widgets/widgets.dart';
 
 class CustomBlog extends StatefulWidget {
@@ -31,6 +32,8 @@ class _CustomBlogState extends State<CustomBlog> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData themeData = Theme.of(context);
+    final TextTheme textTheme = themeData.textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
@@ -54,8 +57,17 @@ class _CustomBlogState extends State<CustomBlog> {
               // КГ / Г кнопки (вертикально)
               Row(
                 children: [
-                  widget.kgOrCm == '' && widget.gOrM == ''
-                      ? Container(
+                  widget.kgOrCm == null && widget.gOrM == null
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            '°С',
+                            style: AppTextStyles.f14w700.copyWith(
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        )
+                      : Container(
                           padding: const EdgeInsets.all(1),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -69,29 +81,56 @@ class _CustomBlogState extends State<CustomBlog> {
                             direction: Axis.vertical,
                             isSelected: isSelected,
                             borderRadius: BorderRadius.circular(8),
-                            fillColor: AppColors.whiteColor,
-                            selectedColor: AppColors.whiteColor,
-                            color: Colors.transparent,
+                            fillColor: AppColors.purpleLighterBackgroundColor,
+                            selectedColor: Colors.transparent,
+                            borderColor: AppColors.purpleLighterBackgroundColor,
+                            selectedBorderColor:
+                                AppColors.purpleLighterBackgroundColor,
+                            color: AppColors.purpleLighterBackgroundColor,
                             splashColor: Colors.transparent,
                             children: [
-                              Text(
-                                widget.kgOrCm ?? '',
-                                style: TextStyle(
+                              Container(
+                                height: 30,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
                                   color: isSelected[0]
-                                      ? AppColors.primaryColor
-                                      : AppColors.greyBrighterColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
+                                      ? AppColors.whiteColor
+                                      : Colors.transparent,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.kgOrCm ?? '',
+                                    style: TextStyle(
+                                      color: isSelected[0]
+                                          ? AppColors.primaryColor
+                                          : AppColors.greyBrighterColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ),
                               ),
-                              Text(
-                                widget.gOrM ?? '',
-                                style: TextStyle(
+                              Container(
+                                height: 30,
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
                                   color: isSelected[1]
-                                      ? AppColors.primaryColor
-                                      : AppColors.greyBrighterColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
+                                      ? AppColors.whiteColor
+                                      : Colors.transparent,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    widget.gOrM ?? '',
+                                    style: TextStyle(
+                                      color: isSelected[1]
+                                          ? AppColors.primaryColor
+                                          : AppColors.greyBrighterColor,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -102,15 +141,6 @@ class _CustomBlogState extends State<CustomBlog> {
                                 }
                               });
                             },
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            '°С',
-                            style: AppTextStyles.f14w700.copyWith(
-                              color: AppColors.primaryColor,
-                            ),
                           ),
                         ),
                   const SizedBox(width: 8),
@@ -140,19 +170,37 @@ class _CustomBlogState extends State<CustomBlog> {
 
               // кнопки "Заметка" и "Добавить"
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
                     flex: 2,
-                    child: OutlinButtonWidget(
-                      onPressedOutlined: widget.onPressedOutlined,
+                    child: CustomButton(
+                      type: CustomButtonType.outline,
+                      onTap: widget.onPressedOutlined,
+                      maxLines: 1,
+                      title: t.trackers.note.title,
+                      icon: AppIcons.pencil,
+                      iconColor: AppColors.primaryColor,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 12),
+                      textStyle: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  10.w,
                   Expanded(
                     flex: 3,
-                    child: ElevateButtonWidget(
-                      onPressedElevated: widget.onPressedElevated,
+                    child: CustomButton(
+                      backgroundColor: AppColors.purpleLighterBackgroundColor,
+                      onTap: widget.onPressedElevated,
+                      title: t.trackers.add.title,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 12),
+                      textStyle: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17,
+                      ),
                     ),
                   ),
                 ],
