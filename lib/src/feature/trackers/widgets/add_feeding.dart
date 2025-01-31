@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mama/src/core/core.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/state/add_feeding.dart';
-import 'package:mama/src/feature/feeding/widgets/editing_buttons.dart';
-import 'package:mama/src/feature/feeding/widgets/tracker_state_container.dart';
-import 'package:mama/src/feature/feeding/widgets/current_editing_track_widget.dart';
-import 'package:mama/src/feature/feeding/widgets/play_button.dart';
+import 'package:mama/src/feature/trackers/state/add_feeding.dart';
 import 'package:provider/provider.dart';
 
 class AddFeedingWidget extends StatelessWidget {

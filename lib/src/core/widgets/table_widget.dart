@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/feeding/data/entity/history_of_feeding.dart';
+import 'package:mama/src/feature/trackers/data/entity/history_of_feeding.dart';
 
 enum RowTextType { title, text, titleText, columnTitle }
 
@@ -34,39 +34,39 @@ class TableWidget extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: item.fourthColumnText == null ? [
-                        _RowText(
-                          text: item.firstColumnText,
-                          type: RowTextType.title,
-                        ),
-                        _RowText(
-                          text: item.secondColumnText,
-                          type: RowTextType.titleText,
-                        ),
-                        _RowText(
-                          text: item.thirdColumnText,
-                          type: RowTextType.titleText,
-                        ),
-
-                      ]
+                      children: item.fourthColumnText == null
+                          ? [
+                              _RowText(
+                                text: item.firstColumnText,
+                                type: RowTextType.title,
+                              ),
+                              _RowText(
+                                text: item.secondColumnText,
+                                type: RowTextType.titleText,
+                              ),
+                              _RowText(
+                                text: item.thirdColumnText,
+                                type: RowTextType.titleText,
+                              ),
+                            ]
                           : [
-                        _RowText(
-                          text: item.firstColumnText,
-                          type: RowTextType.title,
-                        ),
-                        _RowText(
-                          text: item.secondColumnText,
-                          type: RowTextType.titleText,
-                        ),
-                        _RowText(
-                          text: item.thirdColumnText,
-                          type: RowTextType.titleText,
-                        ),
-                        _RowText(
-                          text: item.fourthColumnText ?? '',
-                          type: RowTextType.titleText,
-                        ),
-                      ],
+                              _RowText(
+                                text: item.firstColumnText,
+                                type: RowTextType.title,
+                              ),
+                              _RowText(
+                                text: item.secondColumnText,
+                                type: RowTextType.titleText,
+                              ),
+                              _RowText(
+                                text: item.thirdColumnText,
+                                type: RowTextType.titleText,
+                              ),
+                              _RowText(
+                                text: item.fourthColumnText ?? '',
+                                type: RowTextType.titleText,
+                              ),
+                            ],
                     ),
                     5.h,
                     SizedBox(

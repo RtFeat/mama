@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/state/add_pumping.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
+import 'package:mama/src/feature/trackers/state/add_pumping.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';

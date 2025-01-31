@@ -35,9 +35,11 @@ class AddPhoto extends StatelessWidget {
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset('assets/icons/add_photo_ic.png',
-                            height: 32),
-                        const SizedBox(height: 8),
+                        const Icon(
+                          AppIcons.cameraOnRectangle,
+                          color: AppColors.primaryColor,
+                          size: 27,
+                        ),
                         Text(
                           'Добавить фото',
                           style: AppTextStyles.f17w400

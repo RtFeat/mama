@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
 
 class DiapersView extends StatelessWidget {
   const DiapersView({
@@ -43,11 +42,13 @@ class DiapersView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.primaryColor,
+            IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.primaryColor,
+              ),
+              onPressed: () {},
             ),
-            20.w,
             Column(
               children: [
                 Text(
@@ -60,10 +61,12 @@ class DiapersView extends StatelessWidget {
                 ),
               ],
             ),
-            20.w,
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: AppColors.primaryColor,
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.primaryColor,
+              ),
             ),
           ],
         ),

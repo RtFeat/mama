@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
+import 'package:mama/src/data.dart';
 
 class AddManuallyScreen extends StatelessWidget {
   const AddManuallyScreen({super.key});
@@ -14,7 +13,8 @@ class AddManuallyScreen extends StatelessWidget {
       appBar: CustomAppBar(
         height: 55,
         titleWidget: Text(t.feeding.addManually,
-            style: textTheme.titleMedium?.copyWith(color: Color(0xFF163C63))),
+            style: textTheme.titleMedium
+                ?.copyWith(color: const Color(0xFF163C63))),
       ),
       body: Container(
         color: Colors.white,

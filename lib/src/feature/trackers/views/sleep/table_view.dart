@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
-import 'package:mama/src/feature/feeding/widgets/table_history.dart';
+import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
+import 'package:mama/src/feature/trackers/widgets/table_history.dart';
 
 class TableScreen extends StatelessWidget {
   const TableScreen({super.key});

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mama/src/feature/feeding/data/repository/feeding_repository.dart';
-import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
-
-import '../../../../core/core.dart';
+import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/data/repository/feeding_repository.dart';
+import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
 
 class BottleScreen extends StatelessWidget {
   const BottleScreen({super.key});

@@ -2,7 +2,7 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/views/bottle/add_bottle_screen.dart';
+import 'package:mama/src/feature/trackers/views/feeding/bottle/add_bottle_screen.dart';
 import 'package:mama/src/feature/home/view/day_work.dart';
 import 'package:mama/src/feature/services/knowledge/views/saved_files_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';

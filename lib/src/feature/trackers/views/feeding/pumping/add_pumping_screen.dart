@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/feeding/widgets/add_pumping_input.dart';
+import 'package:mama/src/feature/trackers/widgets/add_pumping_input.dart';
 
 class AddPumpingScreen extends StatelessWidget {
   const AddPumpingScreen({super.key});

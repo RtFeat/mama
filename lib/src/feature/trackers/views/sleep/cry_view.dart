@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
+import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
 
 class CryScreen extends StatelessWidget {
   const CryScreen({super.key});

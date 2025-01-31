@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mama/src/core/core.dart';
-import 'package:mama/src/core/utils/router.dart';
-import 'package:mama/src/feature/feeding/data/repository/history_repository.dart';
-import 'package:mama/src/feature/feeding/widgets/widget.dart';
+import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
 
 class LureScreen extends StatefulWidget {
   const LureScreen({super.key});

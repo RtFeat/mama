@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/feeding/data/entity/pumping_data.dart';
+import 'package:mama/src/feature/trackers/data/entity/pumping_data.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class GraphicWidget extends StatelessWidget {

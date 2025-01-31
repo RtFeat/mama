@@ -21,42 +21,18 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
   String selectedOption = '';
   List<String> options = [];
 
-  // Опции для отображения
-  final List<String> options0 = [
-    'Твердый',
-    'Мягкий',
-    'Жидкий',
-  ];
-
-  final List<String> options1 = [
-    'Твердый',
-    'Мягкий',
-    'Жидкий',
-    'Плотный',
-    'Липкий',
-    'Зернистый',
-    'Диарея'
-  ];
-
-  final List<String> options2 = [
-    'Твердый',
-    'Мягкий',
-  ];
-
   @override
   Widget build(BuildContext context) {
     widget.selectedIndex == 0
-        ? options = options0
-        : widget.selectedIndex == 1
-            ? options = options1
-            : options = options2;
+        ? options = [...t.trackers.list_of_wet]
+        : options = [...t.trackers.list_of_mixed];
     return Stack(
       children: [
         Column(
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -74,7 +50,6 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
                 children: [
                   Wrap(
                     spacing: 5,
-                    runSpacing: 3,
                     children: [
                       // Кнопка закрытия
                       Padding(
