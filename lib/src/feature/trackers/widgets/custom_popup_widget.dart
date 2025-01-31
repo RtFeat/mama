@@ -19,6 +19,7 @@ class CustomPopupWidget extends StatefulWidget {
 class _CustomPopupWidgetState extends State<CustomPopupWidget> {
   // Состояние для отслеживания выбранного элемента
   String selectedOption = '';
+  List<String> options = [];
 
   // Опции для отображения
   final List<String> options0 = [
@@ -44,11 +45,17 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
 
   @override
   Widget build(BuildContext context) {
+    widget.selectedIndex == 0
+        ? options = options0
+        : widget.selectedIndex == 1
+            ? options = options1
+            : options = options2;
     return Stack(
       children: [
         Column(
           children: [
             Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -65,88 +72,52 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
+                  Wrap(
+                    spacing: 5,
+                    runSpacing: 3,
                     children: [
                       // Кнопка закрытия
-                      IconButton(
-                          icon: const Icon(Icons.close),
-                          color: AppColors.primaryColor,
-                          onPressed: widget.closeButton),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: InkWell(
+                          onTap: widget.closeButton,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      for (var option in options)
+                        ChoiceChip(
+                          label: Text(option),
+                          labelStyle: AppTextStyles.f17w400.copyWith(
+                            color: AppColors.primaryColor,
+                          ),
+                          selected: selectedOption == option,
+                          selectedColor: AppColors.primaryColor,
+                          color: const WidgetStatePropertyAll(
+                              AppColors.whiteColor),
+                          onSelected: (bool selected) {
+                            setState(() {
+                              selectedOption = selected ? option : '';
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                            side:
+                                const BorderSide(color: AppColors.primaryColor),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        )
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: widget.selectedIndex == 0
-                        ? options0.map((option) {
-                            return ChoiceChip(
-                              label: Text(option),
-                              labelStyle: AppTextStyles.f17w400.copyWith(
-                                color: AppColors.primaryColor,
-                              ),
-                              selected: selectedOption == option,
-                              selectedColor: AppColors.primaryColor,
-                              color: const WidgetStatePropertyAll(
-                                  AppColors.whiteColor),
-                              onSelected: (bool selected) {
-                                setState(() {
-                                  selectedOption = selected ? option : '';
-                                });
-                              },
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: AppColors.primaryColor),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            );
-                          }).toList()
-                        : widget.selectedIndex == 1
-                            ? options1.map((option) {
-                                return ChoiceChip(
-                                  label: Text(option),
-                                  labelStyle: AppTextStyles.f17w400.copyWith(
-                                    color: AppColors.primaryColor,
-                                  ),
-                                  selected: selectedOption == option,
-                                  selectedColor: AppColors.primaryColor,
-                                  color: const WidgetStatePropertyAll(
-                                      AppColors.whiteColor),
-                                  onSelected: (bool selected) {
-                                    setState(() {
-                                      selectedOption = selected ? option : '';
-                                    });
-                                  },
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        color: AppColors.primaryColor),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                );
-                              }).toList()
-                            : options2.map((option) {
-                                return ChoiceChip(
-                                  label: Text(option),
-                                  labelStyle: AppTextStyles.f17w400.copyWith(
-                                    color: AppColors.primaryColor,
-                                  ),
-                                  selected: selectedOption == option,
-                                  selectedColor: AppColors.primaryColor,
-                                  color: const WidgetStatePropertyAll(
-                                      AppColors.whiteColor),
-                                  onSelected: (bool selected) {
-                                    setState(() {
-                                      selectedOption = selected ? option : '';
-                                    });
-                                  },
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        color: AppColors.primaryColor),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                );
-                              }).toList(),
-                  ),
                 ],
               ),
             ),
@@ -157,10 +128,10 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
         Positioned(
           bottom: 0,
           right: widget.selectedIndex == 0
-              ? 320
+              ? MediaQuery.of(context).size.width * 0.75
               : widget.selectedIndex == 1
-                  ? 190
-                  : 55,
+                  ? MediaQuery.of(context).size.width * 0.45
+                  : MediaQuery.of(context).size.width * 0.12,
           child: CustomPaint(
             size: const Size(20, 15),
             painter: TrianglePainter(),

@@ -33,6 +33,7 @@ class _SleepingScreenState extends State<SleepingScreen>
       backgroundColor: AppColors.pirpleSleeping,
       appBar: CustomAppBar(
         isScrollable: false,
+        padding: const EdgeInsets.only(right: 8),
         height: 100,
         tabController: _tabController,
         title: t.sleep.title,

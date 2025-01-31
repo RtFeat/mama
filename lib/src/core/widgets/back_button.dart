@@ -25,23 +25,19 @@ class CustomBackButton extends StatelessWidget {
           : context.pop,
       borderRadius: const BorderRadius.all(Radius.circular(4)),
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.only(right: 8),
         child: Row(
           children: [
             /// #arrow left
-            // SvgPicture.asset(
-            //   Assets.icons.icArrowLeftFilled,
-            //   width: 12,
-            //   height: 20,
-            // ),
             const Icon(
               AppIcons.chevronBackward,
+              size: 35,
             ),
             if (isShowTitle) ...[
-              const SizedBox(width: 5),
+              // const SizedBox(width: 5),
               Text(
                 t.services.back.title,
-                style: textTheme.bodySmall,
+                style: textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
               ),
             ]
           ],

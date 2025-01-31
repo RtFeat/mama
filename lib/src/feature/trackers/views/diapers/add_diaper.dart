@@ -29,7 +29,14 @@ class _AddDiaperState extends State<AddDiaper> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.diapersBackroundColor,
-      appBar: CustomAppBar(title: t.trackers.diaper.add),
+      appBar: CustomAppBar(
+        title: t.trackers.diaper.add,
+        padding: const EdgeInsets.only(right: 8),
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .headlineSmall!
+            .copyWith(color: AppColors.trackerColor, fontSize: 17),
+      ),
       body: DecoratedBox(
         decoration: const BoxDecoration(color: AppColors.whiteColor),
         child: SafeArea(
@@ -52,20 +59,22 @@ class _AddDiaperState extends State<AddDiaper> {
                 16.h,
                 Row(
                   children: [
-                    CustomButton(
-                      type: CustomButtonType.outline,
-                      onTap: () {},
-                      maxLines: 1,
-                      title: t.trackers.note.title,
-                      icon: AppIcons.pencil,
-                      iconColor: AppColors.primaryColor,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 12),
-                      textStyle:
-                          Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 17,
-                              ),
+                    Expanded(
+                      child: CustomButton(
+                        type: CustomButtonType.outline,
+                        onTap: () {},
+                        maxLines: 1,
+                        title: t.trackers.note.title,
+                        icon: AppIcons.pencil,
+                        iconColor: AppColors.primaryColor,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 12),
+                        textStyle:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                ),
+                      ),
                     ),
                   ],
                 ),

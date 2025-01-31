@@ -55,6 +55,7 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
         title: t.trackers.health.title,
         tabs: tabs,
         action: const ProfileWidget(),
+        padding: const EdgeInsets.only(right: 8),
         tabController: _tabController,
         titleTextStyle: Theme.of(context)
             .textTheme

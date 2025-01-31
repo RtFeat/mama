@@ -9,6 +9,7 @@ class AddWeight extends StatelessWidget {
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
         title: t.trackers.weight.add,
+        padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context)
             .textTheme
             .headlineSmall!

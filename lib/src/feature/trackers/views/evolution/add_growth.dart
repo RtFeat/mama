@@ -9,6 +9,7 @@ class AddGrowth extends StatelessWidget {
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
         title: t.trackers.growth.add,
+        padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context)
             .textTheme
             .headlineSmall!

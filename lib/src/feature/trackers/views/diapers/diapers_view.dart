@@ -17,6 +17,7 @@ class DiapersView extends StatelessWidget {
       learnMoreWidgetText: t.trackers.findOutMoreTextDiapers,
       appBar: CustomAppBar(
         title: t.trackers.diapers,
+        padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context)
             .textTheme
             .headlineSmall!

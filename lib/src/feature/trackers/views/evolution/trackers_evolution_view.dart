@@ -32,9 +32,11 @@ class _EvolutionViewState extends State<EvolutionView>
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
         height: 110,
+        isScrollable: false,
         title: t.trackers.evolution,
         tabController: _tabController,
         action: const ProfileWidget(),
+        padding: const EdgeInsets.only(right: 8),
         tabs: EvolutionCategory.values.map((e) => e.title).toList(),
         titleTextStyle: Theme.of(context)
             .textTheme

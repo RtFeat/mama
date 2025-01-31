@@ -35,6 +35,7 @@ class _FeedingScreenState extends State<FeedingScreen>
         height: 98,
         tabController: _tabController,
         title: t.feeding.feeding,
+        padding: const EdgeInsets.only(right: 8),
         tabs: [
           t.feeding.breast,
           t.feeding.pumping,

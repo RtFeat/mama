@@ -102,7 +102,7 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
           Container(
             height: 35,
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.69,
+              maxWidth: MediaQuery.of(context).size.width * 0.66,
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -123,7 +123,8 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.access_alarms_outlined,
+                          AppIcons.clock,
+                          size: 28,
                           color: isSelected[1]
                               ? AppColors.blueLighter
                               : AppColors.greyBrighterColor,
@@ -150,7 +151,8 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.calendar_month,
+                          AppIcons.calendar,
+                          size: 28,
                           color: isSelected[1]
                               ? AppColors.blueLighter
                               : AppColors.greyBrighterColor,
