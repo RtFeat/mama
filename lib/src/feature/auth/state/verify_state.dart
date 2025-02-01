@@ -2,22 +2,23 @@ import 'package:flutter/foundation.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'verify_state.g.dart';
 
 class VerifyStore extends _VerifyStore with _$VerifyStore {
   VerifyStore({
-    required super.restClient,
+    required super.apiClient,
     required super.tokenStorage,
   });
 }
 
 abstract class _VerifyStore with Store {
-  final RestClient restClient;
+  final ApiClient apiClient;
   final Fresh tokenStorage;
 
   _VerifyStore({
-    required this.restClient,
+    required this.apiClient,
     required this.tokenStorage,
   });
 
@@ -44,7 +45,7 @@ abstract class _VerifyStore with Store {
 
   @action
   void sendCode() {
-    restClient.post(
+    apiClient.post(
       Endpoint().sendCode,
       body: {
         'phone': phoneNumber,
@@ -79,7 +80,7 @@ abstract class _VerifyStore with Store {
     String code, {
     RegisterData? data,
   }) {
-    restClient.post(Endpoint().login, body: {
+    apiClient.post(Endpoint().login, body: {
       'code': code,
       'phone': phoneNumber,
       'fcm_token': '' // TODO: add fcm token
@@ -121,7 +122,7 @@ abstract class _VerifyStore with Store {
     final OAuth2Token? token = await tokenStorage.token;
 
     try {
-      restClient.post(Endpoint().register, headers: {
+      apiClient.post(Endpoint().register, headers: {
         'Refresh-Token': 'Bearer ${token?.refreshToken}',
       }, body: {
         'account': data.user.toJson(),
@@ -139,7 +140,7 @@ abstract class _VerifyStore with Store {
   void logout() async {
     // await tokenStorage.clearTokenPair();
 
-    restClient.get(Endpoint().logout).then((_) async {
+    apiClient.get(Endpoint().logout).then((_) async {
       await tokenStorage.setToken(null);
       router.pushReplacementNamed(AppViews.startScreen);
     });

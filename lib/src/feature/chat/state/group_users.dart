@@ -1,12 +1,13 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 part 'group_users.g.dart';
 
 class GroupUsersStore extends _GroupUsersStore with _$GroupUsersStore {
   GroupUsersStore({
-    required super.restClient,
+    required super.apiClient,
     required super.chatId,
   });
 }
@@ -16,12 +17,12 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
   final String chatId;
 
   _GroupUsersStore({
-    required super.restClient,
+    required super.apiClient,
     required this.chatId,
   }) : super(
             basePath: Endpoint().groupUsers,
             fetchFunction: (params, path) =>
-                restClient.get('$path/$chatId', queryParams: params),
+                apiClient.get('$path/$chatId', queryParams: params),
             transformer: (raw) {
               final List<AccountModel>? data = (raw['account'] as List?)
                   ?.map((e) => AccountModel.fromJson(e))

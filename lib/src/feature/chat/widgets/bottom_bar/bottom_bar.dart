@@ -20,7 +20,7 @@ class ChatBottomBar extends StatelessWidget {
           create: (context) => ChatBottomBarStore(
             store: store,
             socket: context.read<ChatSocket>(),
-            restClient: context.read<Dependencies>().restClient,
+            apiClient: context.read<Dependencies>().apiClient,
           ),
           builder: (context, child) {
             return ReactiveForm(

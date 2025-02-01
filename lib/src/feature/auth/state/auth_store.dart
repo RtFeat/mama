@@ -1,23 +1,23 @@
 import 'package:fresh_dio/fresh_dio.dart';
-import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'auth_store.g.dart';
 
 class AuthStore extends _AuthStore with _$AuthStore {
   AuthStore({
     required super.tokenStorage,
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _AuthStore with Store {
   final Fresh tokenStorage;
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   _AuthStore({
     required this.tokenStorage,
-    required this.restClient,
+    required this.apiClient,
   }) : super() {
     status = ObservableStream(tokenStorage.authenticationStatus);
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 class PersonItem extends StatelessWidget {

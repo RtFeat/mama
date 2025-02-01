@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 import 'package:url_launcher/url_launcher.dart';
 

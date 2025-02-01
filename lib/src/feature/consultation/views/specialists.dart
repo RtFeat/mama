@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class SpecialistsView extends StatefulWidget {
   final ConsultationViewStore store;
@@ -28,7 +29,7 @@ class _SpecialistsViewState extends State<SpecialistsView> {
 
     return PaginatedLoadingWidget(
         store: widget.store.doctorsState,
-        itemBuilder: (context, item) {
+        itemBuilder: (context, item, _) {
           final DoctorModel? doctor = item;
 
           return ConsultationItem(

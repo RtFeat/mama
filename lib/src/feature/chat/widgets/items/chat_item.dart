@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/feature.dart';
+import 'package:skit/skit.dart';
 
 class ChatItemWidget extends StatelessWidget {
   final ChatItem item;

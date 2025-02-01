@@ -26,7 +26,7 @@ class MessageAssets extends StatelessWidget {
             children: [
               AudioPlayerWidget(
                 source: UrlSource(
-                    '${const Config().apiUrl}chat/message/file/${file.fileUrl}.${file.typeFile}'),
+                    '${const AppConfig().apiUrl}chat/message/file/${file.fileUrl}.${file.typeFile}'),
                 player: context.watch(),
                 builder: (isPlaying) {
                   return PlayButton(isPlaying: isPlaying);

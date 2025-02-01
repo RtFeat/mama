@@ -1,20 +1,21 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'search_city.g.dart';
 
 class SearchCityStore extends _SearchCityStore with _$SearchCityStore {
   SearchCityStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _SearchCityStore with Store {
   _SearchCityStore({
-    required this.restClient,
+    required this.apiClient,
   });
 
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   @observable
   ObservableFuture<List<City>> fetchCitiesFuture = emptyResponse;
@@ -33,7 +34,7 @@ abstract class _SearchCityStore with Store {
 
   @action
   Future<List<City>> searchCity() async {
-    final future = restClient.get(Endpoint().cities, queryParams: {
+    final future = apiClient.get(Endpoint().cities, queryParams: {
       'q': query.capitalizeFirstLetter(),
       'limit': '20',
       'country_id': '1',

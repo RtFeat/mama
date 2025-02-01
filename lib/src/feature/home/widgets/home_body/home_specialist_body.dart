@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/home/home.dart';
 import 'package:mama/src/feature/home/widgets/calendar/calendar.dart';
+import 'package:skit/skit.dart';
 
 class HomeSpecialistBody extends StatefulWidget {
   final HomeViewStore homeViewStore;
@@ -84,7 +85,7 @@ class _HomeSpecialistBodyState extends State<HomeSpecialistBody> {
                             child: PaginatedLoadingWidget(
                               scrollDirection: Axis.horizontal,
                               store: widget.homeViewStore.ownArticlesStore,
-                              itemBuilder: (context, item) {
+                              itemBuilder: (context, item, _) {
                                 return ArticleBox(
                                   model: item,
                                 );

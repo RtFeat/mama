@@ -1,4 +1,5 @@
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class HomeViewStore {
   final ArticlesStore allArticlesStore;
@@ -8,18 +9,18 @@ class HomeViewStore {
   final CoursesStore coursesStore;
 
   HomeViewStore({
-    required RestClient restClient,
+    required ApiClient apiClient,
     required String? userId,
   })  : allArticlesStore = ArticlesStore(
-          restClient: restClient,
-          fetchFunction: (params, path) => restClient.get(
+          apiClient: apiClient,
+          fetchFunction: (params, path) => apiClient.get(
             path,
             queryParams: params,
           ),
         ),
         forMeArticlesStore = ArticlesStore(
-          restClient: restClient,
-          fetchFunction: (params, path) => restClient.get(
+          apiClient: apiClient,
+          fetchFunction: (params, path) => apiClient.get(
             path,
             queryParams: {
               ...params,
@@ -28,15 +29,15 @@ class HomeViewStore {
           ),
         ),
         ownArticlesStore = ArticlesStore(
-          restClient: restClient,
-          fetchFunction: (params, path) => restClient.get(
+          apiClient: apiClient,
+          fetchFunction: (params, path) => apiClient.get(
             Endpoint().articleOwn,
             queryParams: params,
           ),
         ),
         coursesStore = CoursesStore(
-          restClient: restClient,
-          fetchFunction: (params, path) => restClient.get(
+          apiClient: apiClient,
+          fetchFunction: (params, path) => apiClient.get(
             path,
             queryParams: params,
           ),

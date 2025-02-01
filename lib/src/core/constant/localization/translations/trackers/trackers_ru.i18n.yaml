@@ -5,15 +5,18 @@ trackersName:
   health: Здоровье
   diapers: Подгузники
 
+sleep: Сон
+crying: Плач
+
 weight:
   title: Вес
   add: Добавить вес
 
-growth: 
+growth:
   title: Рост
   add: Добавить рост
 
-head: 
+head:
   title: Голова
   add: Добавить окружность
 
@@ -57,7 +60,7 @@ vaccines:
   vaccinesListTitle1: Прививка
   vaccinesListTitle2: Возраст
   vaccinesListTitle3: Отметка о прививке
-  recommendedAge: 'Рекомендованный возраст: '
+  recommendedAge: "Рекомендованный возраст: "
   addNewVacAppBarTitle: Другая прививка
   addFromListVacAppBarTitle: Добавить прививку
   addNewVacField1Title: Название прививки
@@ -75,9 +78,9 @@ vaccines:
   calendarViewVOZ: Всемирная Организация Здравоохранения (ВОЗ)
   pdf: ПДФ
 
-finishMedicine: 
+finishMedicine:
   title: Завершить прием лекарства
-  dateTitle: 'Укажите дату завершения приема:'
+  dateTitle: "Укажите дату завершения приема:"
   comment1: Если вы снова начнете курс, добавьте это лекарство как новое
   comment2: Это позволит вам в любой момент восстановить всю историю лечения
 
@@ -111,28 +114,27 @@ addNewManualCry:
 
 infoManuallyContainerButtonBackAndContinue: Вернуться и продолжить
 infoManuallyContainerButtonNote: Заметка
-infoManuallyContainerSaveFeeding: 
+infoManuallyContainerSaveFeeding:
   title: Cохранено
   text1: Кормление сохранено.
-  text2: 'Если нужно продолжить это кормление, нажмите на кнопку:'
-infoManuallyContainerCancellFeeding: 
+  text2: "Если нужно продолжить это кормление, нажмите на кнопку:"
+infoManuallyContainerCancellFeeding:
   title: Кормление отменено
   text1: Отмененное кормление не будет сохранено.
-  text2: 'Чтобы продолжить отмененное кормление, нажмите на кнопку:'
-infoManuallyContainerSaveSleeping: 
+  text2: "Чтобы продолжить отмененное кормление, нажмите на кнопку:"
+infoManuallyContainerSaveSleeping:
   title: Cохранено
   text1: Сон сохранен.
-  text2: 'Если нужно продолжить этот сон, нажмите на кнопку:'
-infoManuallyContainerCancellSleeping: 
+  text2: "Если нужно продолжить этот сон, нажмите на кнопку:"
+infoManuallyContainerCancellSleeping:
   title: Сон отменен
   text1: Отмененный сон не будет сохранен.
-  text2: 'Чтобы продолжить отмененный сон, нажмите на кнопку:'
-
+  text2: "Чтобы продолжить отмененный сон, нажмите на кнопку:"
 
 helperPlayButtonFeed: Добавьте кормление\n
 helperPlayButtonCry: Добавьте плач\n
 helperPlayButtonSleep: Добавьте сон\n
-helperPlayButtonText: 
+helperPlayButtonText:
   first: Нажмите на
   second: или добавьте вручную
 
@@ -166,7 +168,7 @@ findOutMoreTextWeight: Здесь вы можете следить за весо
 
 findOutMoreTextHeight: Здесь вы можете следить за ростом своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять рост в нашем Центре Знаний
 
-findOutMoreTextHead: Здесь вы можете следить за изменениями окружности головы своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять окружность головы в нашем Центре Знаний 
+findOutMoreTextHead: Здесь вы можете следить за изменениями окружности головы своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять окружность головы в нашем Центре Знаний
 
 findOutMoreTextBrist: Здесь вы можете отслеживать, как проходит кормление грудью.\n\nУзнайте больше про процесс грудного вскармливания в нашем Центре Знаний
 
@@ -254,9 +256,9 @@ pillRemainingTimeOne:
 
 addPhoto: Добавить фото
 
-cm: 
+cm:
   title: см
-m: 
+m:
   title: м
 
 diaper:
@@ -282,7 +284,7 @@ mixed:
   grainy: Зернистый
   diarrhea: Диарея
 
-dirty: 
+dirty:
   dirty: Грязный
   solid: Твердый
   soft: Мягкий
@@ -305,7 +307,7 @@ dateStart:
   title: Дата начала приема
   subTitle: Нажмите, чтобы указать дату начала приема
 
-dose: 
+dose:
   title: Доза
   subTitle: Нажмите, чтобы указать дозу. Она будет сразу видна на экране лекарств
 

@@ -25,7 +25,7 @@ class _KnowledgeFilterBodyState extends State<KnowledgeFilterBody> {
     return PaginatedLoadingWidget(
       store: widget.store,
       itemsPadding: EdgeInsets.zero,
-      itemBuilder: (context, item) {
+      itemBuilder: (context, item, _) {
         return Observer(builder: (_) {
           return CheckboxListTile(
             title: Text(

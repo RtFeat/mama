@@ -3,12 +3,13 @@ import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:skit/skit.dart';
 
 part 'messages.g.dart';
 
 class MessagesStore extends _MessagesStore with _$MessagesStore {
   MessagesStore({
-    required super.restClient,
+    required super.apiClient,
     required super.chatType,
     super.pageSize = 20,
   });
@@ -17,13 +18,13 @@ class MessagesStore extends _MessagesStore with _$MessagesStore {
 abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     with Store, FilterableDataMixin<MessageItem> {
   _MessagesStore({
-    required super.restClient,
+    required super.apiClient,
     required this.chatType,
     required super.pageSize,
   }) : super(
             basePath: Endpoint().messages,
             fetchFunction: (params, path) =>
-                restClient.get('$path/$chatType', queryParams: params),
+                apiClient.get('$path/$chatType', queryParams: params),
             transformer: (raw) {
               final List<MessageItem>? data = (raw['messages'] as List?)
                   ?.map((e) => MessageItem.fromJson(e))

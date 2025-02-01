@@ -22,12 +22,12 @@ class App extends StatelessWidget {
           ),
           Provider(
             create: (context) => MessagesStore(
-                restClient: context.read<Dependencies>().restClient,
+                apiClient: context.read<Dependencies>().apiClient,
                 chatType: 'solo'),
           ),
           Provider(
             create: (context) => ChatsViewStore(
-              restClient: context.read<Dependencies>().restClient,
+              apiClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
@@ -38,7 +38,7 @@ class App extends StatelessWidget {
                   )),
           Provider(
               create: (context) => AuthStore(
-                    restClient: context.read<Dependencies>().restClient,
+                    apiClient: context.read<Dependencies>().apiClient,
                     tokenStorage: context.read<Dependencies>().tokenStorage,
                   )),
           Provider(
@@ -47,50 +47,65 @@ class App extends StatelessWidget {
           ),
           Provider(
               create: (context) => VerifyStore(
-                    restClient: context.read<Dependencies>().restClient,
+                    apiClient: context.read<Dependencies>().apiClient,
                     tokenStorage: context.read<Dependencies>().tokenStorage,
                   )),
           Provider(
             create: (context) => UserStore(
-                restClient: context.read<Dependencies>().restClient,
+                apiClient: context.read<Dependencies>().apiClient,
                 verifyStore: context.read()),
           ),
           Provider(
             create: (context) => ChildStore(
               userStore: context.read<UserStore>(),
-              restClient: context.read<Dependencies>().restClient,
+              apiClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
             create: (context) => MedicineStore(
-              restClient: context.read<Dependencies>().restClient,
+              restClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
             create: (context) => DoctorVisitStore(
-              restClient: context.read<Dependencies>().restClient,
+              restClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
             create: (context) => VaccinesStore(
-              restClient: context.read<Dependencies>().restClient,
+              restClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
-            create: (context) => DoctorStore(
-                restClient: context.read<Dependencies>().restClient),
+            create: (context) => MedicineStore(
+              restClient: context.read<Dependencies>().apiClient,
+            ),
+          ),
+          Provider(
+            create: (context) => DoctorVisitStore(
+              restClient: context.read<Dependencies>().apiClient,
+            ),
+          ),
+          Provider(
+            create: (context) => VaccinesStore(
+              restClient: context.read<Dependencies>().apiClient,
+            ),
+          ),
+          Provider(
+            create: (context) =>
+                DoctorStore(apiClient: context.read<Dependencies>().apiClient),
           ),
           Provider(
               create: (context) => SchoolStore(
-                  restClient: context.read<Dependencies>().restClient)),
+                  apiClient: context.read<Dependencies>().apiClient)),
           Provider(
             create: (context) => HomeViewStore(
-                restClient: context.read<Dependencies>().restClient,
+                apiClient: context.read<Dependencies>().apiClient,
                 userId: context.read<UserStore>().user.id),
           ),
           Provider(
             create: (context) => ScheduleViewStore(
-              restClient: context.read<Dependencies>().restClient,
+              apiClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
@@ -103,16 +118,16 @@ class App extends StatelessWidget {
           ),
           // Provider(
           //   create: (_) => FavoriteArticlesStore(
-          //     restClient: context.read<Dependencies>().restClient,
+          //     apiClient: context.read<Dependencies>().apiClient,
           //   ),
           // ),
           Provider(
               create: (context) => KnowledgeStore(
+                    apiClient: context.read<Dependencies>().apiClient,
                     categoriesStore: CategoriesStore(
-                        restClient: context.read<Dependencies>().restClient),
+                        apiClient: context.read<Dependencies>().apiClient),
                     ageCategoriesStore: AgeCategoriesStore(
-                        restClient: context.read<Dependencies>().restClient),
-                    restClient: context.read<Dependencies>().restClient,
+                        apiClient: context.read<Dependencies>().apiClient),
                   )),
         ],
         child: TranslationProvider(child: const MaterialContext()),

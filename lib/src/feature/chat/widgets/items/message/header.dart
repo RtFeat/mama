@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class Header extends StatelessWidget {
   final MessageItem item;
@@ -33,13 +34,14 @@ class Header extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          //  if (person.profession != null && person.profession!.isNotEmpty)
-          const Padding(
-              padding: EdgeInsets.only(left: 3.0, bottom: 18),
-              child: ConsultationBadge(
-                title: 'sdf',
-                // title: item.senderId.profession ?? '',
-              )),
+          if (item.senderProfession != null &&
+              item.senderProfession!.isNotEmpty)
+            Padding(
+                padding: const EdgeInsets.only(left: 3.0, bottom: 18),
+                child: ConsultationBadge(
+                  title: item.senderProfession!,
+                  // title: item.senderId.profession ?? '',
+                )),
         ],
         10.w,
         Text(

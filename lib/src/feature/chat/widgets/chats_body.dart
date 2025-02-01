@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/chat/state/chats.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 class ChatsBodyWidget extends StatefulWidget {
   final ChatsViewStore store;
@@ -68,7 +69,7 @@ class _GroupsList extends StatelessWidget {
                   isFewLists: true,
                   store: store.groups,
                   separator: (_, __) => separator,
-                  itemBuilder: (context, item) {
+                  itemBuilder: (context, item, _) {
                     return ChatItemWidget(item: item);
                   },
                 ),
@@ -121,7 +122,7 @@ class __ChatsListState extends State<_ChatsList> {
                 separator: (_, __) => widget.separator,
                 store: widget.store.chats,
                 listData: () => widget.store.chats.filteredChats,
-                itemBuilder: (context, item) {
+                itemBuilder: (context, item, _) {
                   return ChatItemWidget(item: item);
                 },
               ),

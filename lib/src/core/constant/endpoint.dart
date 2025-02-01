@@ -88,6 +88,10 @@ class Endpoint {
   static const String feedback = 'feedback';
 
   static const String music = 'music/descriptions';
+
+  static const String sleepCry = 'sleep_cry';
+
+  String get sleepCryTable => '$sleepCry/table';
   static const String health = 'health';
 
   static const String medicine = 'health/drug';

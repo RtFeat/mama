@@ -318,7 +318,7 @@ class _MomsProfileState extends State<MomsProfile> {
                                     child: PaginatedLoadingWidget(
                                       scrollDirection: Axis.horizontal,
                                       store: widget.homeStore!.ownArticlesStore,
-                                      itemBuilder: (context, item) {
+                                      itemBuilder: (context, item, _) {
                                         return ArticleBox(
                                           model: item,
                                         );

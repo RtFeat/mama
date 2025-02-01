@@ -5,15 +5,18 @@ trackersName:
   health: Health
   diapers: Diapers
 
+sleep: Sleep
+crying: Crying
+
 weight:
   title: Weight
   add: Add weight
 
-growth: 
+growth:
   title: Growth
   add: Add growth
 
-head: 
+head:
   title: Head
   add: Add head
 
@@ -36,9 +39,9 @@ medicines:
   finish: End medication
   resume: Resume medication
 
-finishMedicine: 
+finishMedicine:
   title: End medication
-  dateTitle: 'Specify end date:'
+  dateTitle: "Specify end date:"
   comment1: If you start the course again, add this medicine as new
   comment2: This will allow you to restore the entire treatment history at any time
 
@@ -63,7 +66,7 @@ vaccines:
   vaccinesListTitle1: Inoculation
   vaccinesListTitle2: Age
   vaccinesListTitle3: Vaccination mark
-  recommendedAge: 'Recommended age:'
+  recommendedAge: "Recommended age:"
   addNewVacAppBarTitle: Other inoculation
   addFromListVacAppBarTitle: Add inoculation
   addNewVacField1Title: Vaccination name
@@ -114,19 +117,19 @@ infoManuallyContainerButtonNote: Note
 infoManuallyContainerSaveFeeding:
   title: Saved
   text1: Feeding saved.
-  text2: 'If you want to continue this feeding, press the button:'
+  text2: "If you want to continue this feeding, press the button:"
 infoManuallyContainerCancellFeeding:
   title: Feeding cancelled
   text1: Cancelled feeding will not be saved.
-  text2: 'To continue the cancelled feeding, press the button:'
+  text2: "To continue the cancelled feeding, press the button:"
 infoManuallyContainerSaveSleeping:
   title: Saved
   text1: Sleep saved.
-  text2: 'If you want to continue this dream, press the button:'
+  text2: "If you want to continue this dream, press the button:"
 infoManuallyContainerCancellSleeping:
   title: Sleep cancelled
   text1: Canceled sleep will not be saved.
-  text2: 'To continue canceled sleep, click on the button:'
+  text2: "To continue canceled sleep, click on the button:"
 
 helperPlayButtonFeed: Add feeding\n
 helperPlayButtonCry: Add crying\n
@@ -253,9 +256,9 @@ pillRemainingTimeOne:
 
 addPhoto: Add Photo
 
-cm:  
+cm:
   title: cm
-m: 
+m:
   title: m
 
 diaper:
@@ -281,7 +284,7 @@ mixed:
   grainy: Grainy
   diarrhea: Diarrhea
 
-dirty: 
+dirty:
   dirty: Dirty
   solid: Solid
   soft: Soft
@@ -304,7 +307,7 @@ dateStart:
   title: Date start
   subTitle: Click to enter your start date
 
-dose: 
+dose:
   title: Dose
   subTitle: Click to enter dose. It will be immediately visible on the medication screen
 

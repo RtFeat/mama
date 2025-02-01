@@ -7,6 +7,7 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_date_time_picker/reactive_date_time_picker.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart' as skit;
 
 class ChildBarWidget extends StatelessWidget {
   final ChildModel child;

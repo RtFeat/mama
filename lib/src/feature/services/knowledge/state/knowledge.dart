@@ -5,7 +5,7 @@ part 'knowledge.g.dart';
 
 class KnowledgeStore extends _KnowledgeStore with _$KnowledgeStore {
   KnowledgeStore({
-    required super.restClient,
+    required super.apiClient,
     required super.categoriesStore,
     required super.ageCategoriesStore,
   });
@@ -17,13 +17,13 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
   final AgeCategoriesStore ageCategoriesStore;
 
   _KnowledgeStore({
-    required super.restClient,
+    required super.apiClient,
     required this.categoriesStore,
     required this.ageCategoriesStore,
   }) : super(
           basePath: Endpoint().allByCategory,
           fetchFunction: (params, path) =>
-              restClient.get(path, queryParams: params),
+              ApiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['articles'] ?? [])
                 .map((e) => ArticleModel.fromJson(e))

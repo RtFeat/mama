@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'child.g.dart';
 

@@ -6,18 +6,18 @@ part 'age.g.dart';
 
 class AgeCategoriesStore extends _AgeCategoriesStore with _$AgeCategoriesStore {
   AgeCategoriesStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
     with Store {
   _AgeCategoriesStore({
-    required super.restClient,
+    required super.apiClient,
   }) : super(
           basePath: Endpoint().ageCaterories,
           fetchFunction: (params, path) =>
-              restClient.get(path, queryParams: params),
+              ApiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
                 .map((e) => CategoryModel.fromJson(e))

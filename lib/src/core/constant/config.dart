@@ -1,9 +1,10 @@
 import 'package:mama/src/feature/initialization/model/environment.dart';
+import 'package:skit/skit.dart';
 
-/// Application configuration
-class Config {
-  /// Creates a new [Config] instance.
-  const Config();
+/// Application AppConfiguration
+class AppConfig extends Config {
+  /// Creates a new [AppConfig] instance.
+  const AppConfig();
 
   /// The current environment.
   Environment get environment {
@@ -25,5 +26,6 @@ class Config {
   bool get enableSentry => sentryDsn.isNotEmpty;
 
   /// The API URL.
+  @override
   String get apiUrl => const String.fromEnvironment('API_URL');
 }

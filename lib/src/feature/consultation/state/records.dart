@@ -1,8 +1,9 @@
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class ConsultationRecordsState extends PaginatedListStore {
   ConsultationRecordsState({
-    required super.restClient,
+    required super.apiClient,
     required super.fetchFunction,
   }) : super(
           basePath: Endpoint().userConsultations,

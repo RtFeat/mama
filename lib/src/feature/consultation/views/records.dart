@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class ConsultationRecords extends StatefulWidget {
   final ConsultationViewStore store;
@@ -25,7 +26,7 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
     return PaginatedLoadingWidget(
         emptyData: const SizedBox.shrink(),
         store: widget.store.recordsState,
-        itemBuilder: (context, item) {
+        itemBuilder: (context, item, _) {
           final Consultation? consultation = item;
 
           return ConsultationItem(

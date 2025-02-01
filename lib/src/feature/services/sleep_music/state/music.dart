@@ -8,7 +8,7 @@ part 'music.g.dart';
 class MusicStore extends _MusicStore with _$MusicStore {
   MusicStore({
     required super.audioPlayerStore,
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
@@ -16,11 +16,11 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
   final AudioPlayerStore audioPlayerStore;
   _MusicStore({
     required this.audioPlayerStore,
-    required super.restClient,
+    required super.apiClient,
   }) : super(
           basePath: Endpoint.music,
           fetchFunction: (params, path) =>
-              restClient.get('$path/music', queryParams: params),
+              ApiClient.get('$path/music', queryParams: params),
           transformer: (raw) {
             final List<TrackModel>? data = (raw['music'] as List?)
                 ?.map((e) => TrackModel.fromJson(e))

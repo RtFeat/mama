@@ -8,15 +8,15 @@ part 'schedule.g.dart';
 
 class ScheduleViewStore extends _ScheduleViewStore with _$ScheduleViewStore {
   ScheduleViewStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _ScheduleViewStore with Store {
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   _ScheduleViewStore({
-    required this.restClient,
+    required super.apiClient,
   });
 
   @observable
@@ -149,7 +149,7 @@ abstract class _ScheduleViewStore with Store {
     );
 
     // Выполняем запрос
-    restClient.patch(Endpoint().updateDoctorWorkTime, body: {
+    ApiClient.patch(Endpoint().updateDoctorWorkTime, body: {
       'monday': weeks[0],
       'tuesday': weeks[1],
       'wednesday': weeks[2],

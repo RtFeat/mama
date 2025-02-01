@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class ConsultationView extends StatelessWidget {
   final DoctorModel? doctor;
@@ -23,7 +24,7 @@ class ConsultationView extends StatelessWidget {
 
     return Provider(
       create: (context) => ConsultationStore(
-        restClient: context.read<Dependencies>().restClient,
+        apiClient: context.read<Dependencies>().apiClient,
       ),
       builder: (context, child) => _Body(
         doctor: doctor,

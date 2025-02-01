@@ -2,23 +2,24 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'child.g.dart';
 
 class ChildStore extends _ChildStore with _$ChildStore {
   ChildStore({
-    required super.restClient,
+    required super.apiClient,
     required super.userStore,
   });
 }
 
 abstract class _ChildStore with Store {
   _ChildStore({
-    required this.restClient,
+    required this.apiClient,
     required this.userStore,
   });
 
-  final RestClient restClient;
+  final ApiClient apiClient;
   final UserStore userStore;
 
   void add({
@@ -28,7 +29,7 @@ abstract class _ChildStore with Store {
     // required double height,
     // required double headCirc,
   }) {
-    restClient
+    apiClient
         .post(
       '${Endpoint.child}/', body: model.toJson(),
 
@@ -45,7 +46,7 @@ abstract class _ChildStore with Store {
   }
 
   void update({required ChildModel model}) {
-    restClient.patch('${Endpoint.child}/', body: model.toJson()).then((v) {
+    apiClient.patch('${Endpoint.child}/', body: model.toJson()).then((v) {
       model.setIsChanged(false);
       userStore.children
           .firstWhere((v) => v.id == model.id)
@@ -59,21 +60,21 @@ abstract class _ChildStore with Store {
       'avatar': MultipartFile.fromFileSync(file.path, filename: file.name),
     });
 
-    restClient.put('${Endpoint().childAvatar}/', body: formData).then((v) {
+    apiClient.put('${Endpoint().childAvatar}/', body: formData).then((v) {
       userStore.children.firstWhere((v) => v.id == model.id).setAvatar(
-          '${const Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+          '${const AppConfig().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
     });
   }
 
   void deleteAvatar({required String id}) {
-    restClient.delete(Endpoint().childAvatar, body: {
+    apiClient.delete(Endpoint().childAvatar, body: {
       'child_id': id,
     });
   }
 
   @action
   void delete({required String id}) {
-    restClient.delete('${Endpoint.child}/', body: {'child_id': id}).then((v) {
+    apiClient.delete('${Endpoint.child}/', body: {'child_id': id}).then((v) {
       userStore.children.removeWhere((element) => element.id == id);
     });
   }

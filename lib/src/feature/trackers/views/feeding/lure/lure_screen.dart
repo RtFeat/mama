@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
+import 'package:skit/skit.dart';
 
 class LureScreen extends StatefulWidget {
   const LureScreen({super.key});
@@ -69,11 +70,12 @@ class _LureScreenState extends State<LureScreen> {
           ],
         ),
         15.h,
-        TableWidget(columnTitles: [
-          t.feeding.time,
-          t.feeding.food,
-          t.feeding.quantityAndReaction
-        ], listOfData: historyOfLure)
+        // TableWidget(
+        //     columnTitles: [
+        //       t.feeding.time,
+        //       t.feeding.food,
+        //       t.feeding.quantityAndReaction
+        //     ], listOfData: historyOfLure)
       ],
     );
   }

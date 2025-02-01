@@ -67,7 +67,7 @@ class _PromoScreenState extends State<PromoScreen> {
 
     return Provider(
       create: (context) =>
-          PromoViewStore(restClient: context.read<Dependencies>().restClient),
+          PromoViewStore(ApiClient: context.read<Dependencies>().apiClient),
       builder: (context, child) {
         final promoViewStore = context.watch<PromoViewStore>();
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/trackers/data/entity/history_of_feeding.dart';
+import 'package:skit/skit.dart';
 
 class TableHistory extends StatelessWidget {
   final List<HistoryOfFeeding> listOfData;
@@ -71,15 +72,15 @@ class TableHistory extends StatelessWidget {
             ],
           ),
           15.h,
-          TableWidget(
-            columnTitles: [
-              firstColumnName,
-              secondColumnName,
-              thirdColumnName,
-              fourthColumnName
-            ],
-            listOfData: listOfData,
-          ),
+          // TableWidget(
+          //   columnTitles: [
+          //     firstColumnName,
+          //     secondColumnName,
+          //     thirdColumnName,
+          //     fourthColumnName
+          //   ],
+          //   listOfData: listOfData,
+          // ),
           showTitle
               ? Column(
                   children: [

@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class ArticleView extends StatelessWidget {
   final String? id;
@@ -12,7 +13,7 @@ class ArticleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       create: (context) => NativeArticleStore(
-          id: id, restClient: context.read<Dependencies>().restClient),
+          id: id, apiClient: context.read<Dependencies>().apiClient),
       builder: (context, _) {
         final NativeArticleStore store = context.watch();
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mama/src/data.dart';
+import 'package:mama/src/data.dart' as p;
+import 'package:skit/skit.dart';
 
 /// A class which is responsible for initialization and running the app.
 final class AppRunner {
@@ -9,7 +10,7 @@ final class AppRunner {
   /// Start the initialization and in case of success run application
   Future<void> initializeAndRun() async {
     final binding = WidgetsFlutterBinding.ensureInitialized();
-    LocaleSettings.useDeviceLocale();
+    p.LocaleSettings.useDeviceLocale();
     // LocaleSettings.setLocaleRaw('ru');
 
     // Preserve splash screen
@@ -20,19 +21,19 @@ final class AppRunner {
     WidgetsBinding.instance.platformDispatcher.onError =
         logger.logPlatformDispatcherError;
 
-    const config = Config();
-    const initializationProcessor = InitializationProcessor(config);
+    const appConfig = p.AppConfig();
+    const initializationProcessor = p.InitializationProcessor(appConfig);
 
     Future<void> initializeAndRun() async {
       try {
         final result = await initializationProcessor.initialize();
 
         // Attach this widget to the root of the tree.
-        runApp(App(result: result));
+        runApp(p.App(result: result));
       } catch (e, stackTrace) {
         logger.error('Initialization failed', error: e, stackTrace: stackTrace);
         runApp(
-          InitializationFailedApp(
+          p.InitializationFailedApp(
             error: e,
             stackTrace: stackTrace,
             retryInitialization: initializeAndRun,

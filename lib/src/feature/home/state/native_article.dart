@@ -1,12 +1,13 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
   NativeArticleStore({
-    required this.restClient,
+    required this.apiClient,
     required String? id,
   }) : super(
-          fetchFunction: (_) => restClient.get('${Endpoint.article}/$id'),
+          fetchFunction: (_) => apiClient.get('${Endpoint.article}/$id'),
           transformer: (raw) {
             final data = ArticleModel.fromJson(raw?['article']);
 
@@ -14,32 +15,32 @@ class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
           },
         );
 
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   Future toggleFavorite(String id) async {
     if (data?.isFavorite ?? false) {
-      await restClient.delete(Endpoint().articleToggleFavorite, body: {
+      await apiClient.delete(Endpoint().articleToggleFavorite, body: {
         'article_id': id,
       });
     } else {
-      await restClient.put('${Endpoint().articleToggleFavorite}/$id', body: {});
+      await apiClient.put('${Endpoint().articleToggleFavorite}/$id', body: {});
     }
     data?.setFavorite(!(data?.isFavorite ?? false));
   }
 }
 
 // class NativeArticleStore extends _NativeArticleStore with _$NativeArticleStore {
-//   NativeArticleStore({required super.restClient});
+//   NativeArticleStore({required super.apiClient});
 // }
 
 // abstract class _NativeArticleStore
 //     with Store, LoadingDataStoreExtension<ArticleModel> {
-//   final RestClient restClient;
+//   final ApiClient apiClient;
 
-//   _NativeArticleStore({required this.restClient});
+//   _NativeArticleStore({required super.apiClient});
 
 //   Future getData(String id) async {
-//     return await fetchData(restClient.get('${Endpoint.article}/$id'), (v) {
+//     return await fetchData(ApiClient.get('${Endpoint.article}/$id'), (v) {
 //       final data = ArticleModel.fromJson(v['article']);
 
 //       author = data.author;
@@ -61,7 +62,7 @@ class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
 //   int? countArticlesAuthor;
 
 //   Future addToFavorite(String id) async {
-//     return await restClient
+//     return await ApiClient
 //         .put('${Endpoint().addArticleToFavorite}/$id', body: {});
 //   }
 // }

@@ -2,6 +2,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/auth/data/repository/on_board_data.dart';
+import 'package:skit/skit.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class WelcomeScreen extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'chats.g.dart';
 
@@ -13,13 +14,13 @@ enum ChatUserTypeFilter {
 class ChatsStore extends _ChatsStore with _$ChatsStore {
   ChatsStore({
     required super.fetchFunction,
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _ChatsStore extends PaginatedListStore<SingleChatItem>
     with Store {
-  _ChatsStore({required super.restClient, required super.fetchFunction})
+  _ChatsStore({required super.apiClient, required super.fetchFunction})
       : super(
             basePath: Endpoint.chat,
             transformer: (raw) {
@@ -57,7 +58,6 @@ abstract class _ChatsStore extends PaginatedListStore<SingleChatItem>
         }).toList(),
       );
 }
-
 
 // class ChatsStore extends PaginatedListStore<SingleChatItem> {
 //   ChatsStore({required super.fetchFunction})

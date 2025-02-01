@@ -125,7 +125,7 @@ class __BodyState extends State<_Body> {
           color: AppColors.greyColor,
         );
       },
-      itemBuilder: (context, item) {
+      itemBuilder: (context, item, _) {
         return ArticleWidget(
           article: item,
         );

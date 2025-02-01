@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:skit/skit.dart';
 
 class ChatView extends StatelessWidget {
   final ChatItem? item;
@@ -15,7 +16,7 @@ class ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       create: (_) => GroupUsersStore(
-          restClient: context.read<Dependencies>().restClient,
+          apiClient: context.read<Dependencies>().apiClient,
           chatId:
               (item is GroupItem) ? (item as GroupItem).groupChatId ?? '' : ''),
       builder: (context, child) {
@@ -68,8 +69,8 @@ class __BodyState extends State<_Body> {
     widget.store.setChatType(widget.item is SingleChatItem ? 'solo' : 'group');
 
     widget.store.loadPage(
-      fetchFunction: (query, restClient, path) {
-        return restClient.get(
+      fetchFunction: (query, ApiClient, path) {
+        return ApiClient.get(
             '${Endpoint().messages}/${widget.item is SingleChatItem ? 'solo' : 'group'}',
             queryParams: {
               'limit': '10',
@@ -153,7 +154,7 @@ class __BodyState extends State<_Body> {
                   listData: () => widget.store.isSearching
                       ? widget.store.filteredMessages
                       : widget.store.messages,
-                  itemBuilder: (context, item) {
+                  itemBuilder: (context, item, _) {
                     final index = widget.store.messages.indexOf(item);
                     // _messageKeys[index] = GlobalKey();
 

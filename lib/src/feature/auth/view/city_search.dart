@@ -14,7 +14,7 @@ class CitySearchView extends StatelessWidget {
 
     return Provider(
       create: (context) => SearchCityStore(
-        restClient: context.read<Dependencies>().restClient,
+        apiClient: context.read<Dependencies>().apiClient,
       ),
       builder: (context, child) {
         final SearchCityStore store = Provider.of<SearchCityStore>(context);

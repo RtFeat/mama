@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class HomeUserBody extends StatefulWidget {
   final HomeViewStore homeViewStore;
@@ -158,7 +159,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                           child: PaginatedLoadingWidget(
                             scrollDirection: Axis.horizontal,
                             store: widget.homeViewStore.allArticlesStore,
-                            itemBuilder: (context, item) {
+                            itemBuilder: (context, item, _) {
                               return ArticleBox(
                                 model: item,
                               );
@@ -209,7 +210,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                             child: PaginatedLoadingWidget(
                               scrollDirection: Axis.horizontal,
                               store: widget.homeViewStore.forMeArticlesStore,
-                              itemBuilder: (context, item) {
+                              itemBuilder: (context, item, _) {
                                 return ArticleBox(
                                   model: item,
                                 );

@@ -36,7 +36,7 @@ class _MusicViewBodyState extends State<MusicViewBody> {
     return PaginatedLoadingWidget(
       store: widget.store,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      itemBuilder: (context, item) {
+      itemBuilder: (context, item, _) {
         return TrackWidget(model: item);
       },
     );

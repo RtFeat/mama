@@ -1,19 +1,20 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'doctor.g.dart';
 
 class DoctorStore extends _DoctorStore with _$DoctorStore {
   DoctorStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
-  final RestClient restClient;
-  _DoctorStore({required this.restClient})
+  final ApiClient apiClient;
+  _DoctorStore({required this.apiClient})
       : super(
-          fetchFunction: (_) => restClient.get(Endpoint().doctorData),
+          fetchFunction: (_) => apiClient.get(Endpoint().doctorData),
           transformer: (v) {
             if (v == null) return DoctorData();
             return DoctorData.fromJson(v);
@@ -109,7 +110,7 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
 
   @action
   void setDayHoliday({required DateTime day}) {
-    restClient.post(Endpoint().doctorHoliday, body: {
+    apiClient.post(Endpoint().doctorHoliday, body: {
       'date': day.toUtc().toIso8601String(),
     }).then((v) {
       data?.doctor?.workTime?.updateConsultations(day.weekday, []);
@@ -118,7 +119,7 @@ abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
 
   @action
   void cancelConsultations({required DateTime day}) {
-    restClient.post(Endpoint().doctorCancelConsultations, body: {
+    apiClient.post(Endpoint().doctorCancelConsultations, body: {
       'date': day.toUtc().toIso8601String(),
     }).then((v) {
       data?.doctor?.workTime?.updateConsultations(day.weekday, []);

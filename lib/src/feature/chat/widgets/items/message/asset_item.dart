@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class AssetItemWidget extends StatelessWidget {
   final MessageFile asset;
@@ -87,7 +88,7 @@ class _Asset extends StatelessWidget {
                   )
                 : CachedNetworkImage(
                     imageUrl:
-                        '${const Config().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}',
+                        '${const AppConfig().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}',
                     height: size,
                     width: size,
                     fit: BoxFit.cover,

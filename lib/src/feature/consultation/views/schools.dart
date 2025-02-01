@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class SchoolsView extends StatefulWidget {
   final ConsultationViewStore store;
@@ -28,7 +29,7 @@ class _SchoolsViewState extends State<SchoolsView> {
 
     return PaginatedLoadingWidget(
         store: widget.store.schoolsState,
-        itemBuilder: (context, item) {
+        itemBuilder: (context, item, _) {
           final SchoolModel? schoolModel = item;
 
           return ConsultationItem(

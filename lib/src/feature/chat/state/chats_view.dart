@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 import 'chats.dart';
 import 'groups.dart';
@@ -8,7 +9,7 @@ part 'chats_view.g.dart';
 
 class ChatsViewStore extends _ChatsViewStore with _$ChatsViewStore {
   ChatsViewStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
@@ -18,15 +19,15 @@ abstract class _ChatsViewStore with Store {
   final GroupsStore groups;
 
   _ChatsViewStore({
-    required RestClient restClient,
+    required ApiClient apiClient,
   })  : chats = ChatsStore(
-            restClient: restClient,
+            apiClient: apiClient,
             fetchFunction: (params, path) =>
-                restClient.get(path, queryParams: params)),
+                apiClient.get(path, queryParams: params)),
         groups = GroupsStore(
-          restClient: restClient,
+          apiClient: apiClient,
           fetchFunction: (params, path) =>
-              restClient.get(path, queryParams: params),
+              apiClient.get(path, queryParams: params),
         );
 
   @observable

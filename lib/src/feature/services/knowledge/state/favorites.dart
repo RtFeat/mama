@@ -6,18 +6,18 @@ part 'favorites.g.dart';
 class FavoriteArticlesStore extends _FavoriteArticlesStore
     with _$FavoriteArticlesStore {
   FavoriteArticlesStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _FavoriteArticlesStore
     extends PaginatedListStore<FavoriteArticle> with Store {
   _FavoriteArticlesStore({
-    required super.restClient,
+    required super.apiClient,
   }) : super(
           basePath: Endpoint().favoriteArticles,
           fetchFunction: (params, path) =>
-              restClient.get(path, queryParams: params),
+              ApiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['articles'] ?? [])
                 .map((e) => FavoriteArticle.fromJson(e))

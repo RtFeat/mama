@@ -288,7 +288,7 @@ class __BodyState extends State<_Body> {
                                     child: PaginatedLoadingWidget(
                                       scrollDirection: Axis.horizontal,
                                       store: widget.store.ownArticlesStore,
-                                      itemBuilder: (context, item) {
+                                      itemBuilder: (context, item, _) {
                                         return ArticleBox(
                                           model: item,
                                         );

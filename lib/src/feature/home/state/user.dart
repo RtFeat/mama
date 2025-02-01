@@ -2,20 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'user.g.dart';
 
 class UserStore extends _UserStore with _$UserStore {
   UserStore({
-    required super.restClient,
+    required super.apiClient,
     required super.verifyStore,
   });
 }
 
 abstract class _UserStore with Store {
-  final RestClient restClient;
+  final ApiClient apiClient;
   final VerifyStore verifyStore;
-  _UserStore({required this.restClient, required this.verifyStore});
+  _UserStore({required this.apiClient, required this.verifyStore});
 
   @observable
   ObservableFuture<UserData> fetchUserDataFuture = emptyResponse;
@@ -104,7 +105,7 @@ abstract class _UserStore with Store {
   }) {
     final bool isDoctor = role == Role.doctor;
 
-    restClient
+    apiClient
         .patch(isDoctor ? '${Endpoint.doctor}/' : '${Endpoint.user}/', body: {
       if (city != null) 'city': city,
       if (firstName != null) 'first_name': firstName,
@@ -120,7 +121,7 @@ abstract class _UserStore with Store {
   @action
   Future<UserData> getData() async {
     final Future<UserData> future =
-        restClient.get(Endpoint().userData).then((v) {
+        apiClient.get(Endpoint().userData).then((v) {
       if (v != null) {
         final data = UserData.fromJson(v);
         if (data.account != null) {
@@ -145,9 +146,9 @@ abstract class _UserStore with Store {
       'avatar': MultipartFile.fromFileSync(file.path, filename: file.name),
     });
 
-    restClient.put(Endpoint().accountAvatar, body: formData).then((v) {
+    apiClient.put(Endpoint().accountAvatar, body: formData).then((v) {
       account.setAvatar(
-          '${const Config().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
+          '${const AppConfig().apiUrl}${Endpoint.avatar}/${v?['avatar']}');
     });
   }
 

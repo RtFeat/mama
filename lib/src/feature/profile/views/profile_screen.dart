@@ -40,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
     return Provider(
         create: (context) => ProfileViewStore(
             model: userStore.account,
-            restClient: context.read<Dependencies>().restClient),
+            ApiClient: context.read<Dependencies>().apiClient),
         builder: (context, _) {
           final ProfileViewStore store = context.watch();
 

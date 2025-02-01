@@ -1,4 +1,5 @@
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class ConsultationViewStore {
   final DoctorsState doctorsState;
@@ -6,24 +7,24 @@ class ConsultationViewStore {
   final SchoolsStore schoolsState;
 
   ConsultationViewStore({
-    required RestClient restClient,
+    required ApiClient apiClient,
   })  : recordsState = ConsultationRecordsState(
-          restClient: restClient,
-          fetchFunction: (params, path) => restClient.get(
+          apiClient: apiClient,
+          fetchFunction: (params, path) => apiClient.get(
             path,
             queryParams: params,
           ),
         ),
         doctorsState = DoctorsState(
-          restClient: restClient,
-          fetchFunction: (params, path) => restClient.get(
+          apiClient: apiClient,
+          fetchFunction: (params, path) => apiClient.get(
             path,
             queryParams: params,
           ),
         ),
         schoolsState = SchoolsStore(
-            restClient: restClient,
-            fetchFunction: (params, path) => restClient.get(
+            apiClient: apiClient,
+            fetchFunction: (params, path) => apiClient.get(
                   path,
                   queryParams: params,
                 ));

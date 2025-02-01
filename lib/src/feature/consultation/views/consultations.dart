@@ -25,7 +25,7 @@ class _ConsultationsViewState extends State<ConsultationsView>
   Widget build(BuildContext context) {
     return Provider(
       create: (context) => ConsultationViewStore(
-          restClient: context.read<Dependencies>().restClient),
+          apiClient: context.read<Dependencies>().apiClient),
       builder: (context, _) {
         final ConsultationViewStore store = context.watch();
 

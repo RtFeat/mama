@@ -2,31 +2,33 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:intl/intl.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 final class InitializationProcessor {
-  const InitializationProcessor(this.config);
+  const InitializationProcessor(this.appConfig);
 
-  /// Application configuration
-  final Config config;
+  /// Application AppConfiguration
+  final AppConfig appConfig;
 
   Future<Dependencies> _initDependencies() async {
     final sharedPreferences = await SharedPreferences.getInstance();
 
     await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
 
-    final storage = TokenStorageImpl();
+    final storage = AuthStorageImpl(storage: const FlutterSecureStorage());
 
     final tokenStorage = Fresh.oAuth2(
         tokenStorage: storage,
         refreshToken: (token, client) async {
           return await client
               .get(
-            '${const Config().apiUrl}${Endpoint().accessToken}',
+            '${const AppConfig().apiUrl}${Endpoint().accessToken}',
             options: Options(
               headers: {'Refresh-Token': 'Bearer ${token?.refreshToken}'},
               followRedirects: true,
@@ -41,7 +43,7 @@ final class InitializationProcessor {
           });
         });
 
-    final restClient = await _initRestClient(tokenStorage);
+    final apiClient = await _initApiClient(tokenStorage);
     final errorTrackingManager = await _initErrorTrackingManager();
     final settingsStore = await _initSettingsStore(sharedPreferences);
 
@@ -49,7 +51,7 @@ final class InitializationProcessor {
       sharedPreferences: sharedPreferences,
       settingsStore: settingsStore,
       errorTrackingManager: errorTrackingManager,
-      restClient: restClient,
+      apiClient: apiClient,
       tokenStorage: tokenStorage,
     );
   }
@@ -57,11 +59,11 @@ final class InitializationProcessor {
   Future<ErrorTrackingManager> _initErrorTrackingManager() async {
     final errorTrackingManager = SentryTrackingManager(
       logger,
-      sentryDsn: config.sentryDsn,
-      environment: config.environment.value,
+      sentryDsn: AppConfig.sentryDsn,
+      environment: AppConfig.environment.value,
     );
 
-    if (config.enableSentry) {
+    if (AppConfig.enableSentry) {
       await errorTrackingManager.enableReporting();
     }
 
@@ -95,9 +97,9 @@ final class InitializationProcessor {
 
   // Initializes the REST client with the provided FlutterSecureStorage.
 
-  Future<RestClient> _initRestClient(Fresh storage) async {
+  Future<ApiClient> _initApiClient(Fresh storage) async {
     final dio = Dio(BaseOptions(
-      baseUrl: const Config().apiUrl,
+      baseUrl: const AppConfig().apiUrl,
       followRedirects: true,
     ));
     dio.interceptors.add(PrettyDioLogger(
@@ -107,7 +109,7 @@ final class InitializationProcessor {
         requestHeader: true));
     dio.interceptors.add(storage);
 
-    return RestClientDio(baseUrl: config.apiUrl, dio: dio);
+    return ApiClientDio(baseUrl: AppConfig.apiUrl, dio: dio);
   }
 
   /// Initializes dependencies and returns the result of the initialization.

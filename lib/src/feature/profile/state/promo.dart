@@ -5,18 +5,18 @@ part 'promo.g.dart';
 
 class PromoViewStore extends _PromoViewStore with _$PromoViewStore {
   PromoViewStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _PromoViewStore with Store {
   _PromoViewStore({
-    required this.restClient,
+    required super.apiClient,
   });
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   Future<bool> activatePromo(String promocode) async {
-    return restClient.post(Endpoint().promocode, queryParams: {
+    return ApiClient.post(Endpoint().promocode, queryParams: {
       'promocode': promocode,
     }, body: {}).then((v) {
       logger.info('Promo data: $v');

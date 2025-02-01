@@ -9,7 +9,7 @@ class FavoriteArticlesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
         create: (_) => FavoriteArticlesStore(
-              restClient: context.read<Dependencies>().restClient,
+              ApiClient: context.read<Dependencies>().apiClient,
             ),
         builder: (context, child) {
           final FavoriteArticlesStore store = context.watch();
@@ -61,7 +61,7 @@ class __BodyState extends State<_Body> {
           color: AppColors.greyColor,
         );
       },
-      itemBuilder: (context, item) {
+      itemBuilder: (context, item, _) {
         return ArticleWidget(
           favoriteArticle: item,
         );

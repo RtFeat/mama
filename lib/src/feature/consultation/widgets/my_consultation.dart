@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/consultation/widgets/paragraph.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class MyConsultationWidget extends StatelessWidget {
   final Consultation consultation;

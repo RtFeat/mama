@@ -4,22 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
+import 'package:skit/skit.dart';
+
 part 'consultation.g.dart';
 
 class ConsultationStore extends _ConsultationStore with _$ConsultationStore {
   ConsultationStore({
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _ConsultationStore extends SingleDataStore<Consultation>
     with Store {
-  final RestClient restClient;
+  final ApiClient apiClient;
 
-  _ConsultationStore({required this.restClient})
+  _ConsultationStore({required this.apiClient})
       : super(
             fetchFunction: (id) =>
-                restClient.get('${Endpoint.consultation}/$id'),
+                apiClient.get('${Endpoint.consultation}/$id'),
             transformer: (raw) {
               if (raw?['consultation'] != null) {
                 final data = Consultation.fromJson(raw?['consultation']);
@@ -37,7 +39,7 @@ abstract class _ConsultationStore extends SingleDataStore<Consultation>
     required DateTime weekStart,
     required int weekDay,
   }) {
-    restClient.post(Endpoint().addConsultation, body: {
+    apiClient.post(Endpoint().addConsultation, body: {
       'comment': comment,
       'day': switch (weekDay) {
         1 => 'monday',

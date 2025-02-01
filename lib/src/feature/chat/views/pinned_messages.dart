@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class PinnedMessagesView extends StatelessWidget {
   final MessagesStore? store;
@@ -37,7 +38,7 @@ class PinnedMessagesView extends StatelessWidget {
                   isAttachedMessages: true,
                   store: store!,
                   scrollController: scrollController!),
-              itemBuilder: (context, item) {
+              itemBuilder: (context, item, _) {
                 return MessageWidget(
                   item: item,
                   store: store,

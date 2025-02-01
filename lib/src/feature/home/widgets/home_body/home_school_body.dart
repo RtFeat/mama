@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class HomeSchoolBody extends StatefulWidget {
   final UserStore userStore;
@@ -86,7 +87,7 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
                           child: PaginatedLoadingWidget(
                             scrollDirection: Axis.horizontal,
                             store: widget.homeViewStore.ownArticlesStore,
-                            itemBuilder: (context, item) {
+                            itemBuilder: (context, item, _) {
                               return ArticleBox(
                                 model: item,
                               );

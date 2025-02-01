@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class InputPlace extends StatelessWidget {
   final Widget child;
@@ -17,12 +17,12 @@ class InputPlace extends StatelessWidget {
             color: AppColors.whiteColor,
             boxShadow: [
               BoxShadow(
-                  color: AppColors.skyBlue.withOpacity(0.15),
+                  color: AppColors.skyBlue.withValues(alpha: 0.15),
                   blurRadius: 8,
                   spreadRadius: 0,
                   offset: const Offset(0, 3)),
               BoxShadow(
-                  color: AppColors.deepBlue.withOpacity(0.10),
+                  color: AppColors.deepBlue.withValues(alpha: 0.1),
                   blurRadius: 1,
                   spreadRadius: 0,
                   offset: const Offset(0, 2)),

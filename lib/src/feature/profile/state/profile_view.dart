@@ -7,17 +7,17 @@ part 'profile_view.g.dart';
 class ProfileViewStore extends _ProfileViewStore with _$ProfileViewStore {
   ProfileViewStore({
     required super.model,
-    required super.restClient,
+    required super.apiClient,
   });
 }
 
 abstract class _ProfileViewStore with Store {
   final AccountModel model;
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   _ProfileViewStore({
     required this.model,
-    required this.restClient,
+    required super.apiClient,
   });
 
   late final FormGroup formGroup;
@@ -96,11 +96,8 @@ abstract class _ProfileViewStore with Store {
   }
 
   Future sendFeedback(String text) async {
-    restClient
-        .post('${Endpoint.feedback}/', body: {
-          'text': text,
-        })
-        .then((value) {})
-        .catchError((error) {});
+    ApiClient.post('${Endpoint.feedback}/', body: {
+      'text': text,
+    }).then((value) {}).catchError((error) {});
   }
 }

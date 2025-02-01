@@ -24,7 +24,7 @@ class TrackModel extends _TrackModel with _$TrackModel {
   @JsonKey(name: 'created_at')
   final DateTime createdAt;
 
-  Source? get source => UrlSource('${const Config().apiUrl}music/$id');
+  Source? get source => UrlSource('${const AppConfig().apiUrl}music/$id');
 
   TrackModel({
     required this.id,

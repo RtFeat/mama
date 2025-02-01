@@ -9,13 +9,14 @@ import 'package:mobx/mobx.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:record/record.dart';
+import 'package:skit/skit.dart';
 
 part 'bottom_bar.g.dart';
 
 class ChatBottomBarStore extends _ChatBottomBarStore with _$ChatBottomBarStore {
   ChatBottomBarStore({
     required super.store,
-    required super.restClient,
+    required super.apiClient,
     required super.socket,
   });
 }
@@ -23,12 +24,12 @@ class ChatBottomBarStore extends _ChatBottomBarStore with _$ChatBottomBarStore {
 abstract class _ChatBottomBarStore with Store {
   final MessagesStore store;
   final ChatSocket socket;
-  final RestClient restClient;
+  final ApiClient apiClient;
 
   final record = AudioRecorder();
 
   _ChatBottomBarStore(
-      {required this.store, required this.restClient, required this.socket});
+      {required this.store, required this.apiClient, required this.socket});
 
   Timer? _timer;
 
@@ -98,7 +99,7 @@ abstract class _ChatBottomBarStore with Store {
     if (filePath != null) {
       uploadedFiles = await _uploadFiles(
         files: [filePath],
-        restClient: restClient,
+        apiClient: apiClient,
       );
     }
     // Если есть список файлов для загрузки
@@ -106,7 +107,7 @@ abstract class _ChatBottomBarStore with Store {
       final List<String> filePaths = files.map((file) => file.path!).toList();
       uploadedFiles = await _uploadFiles(
         files: filePaths,
-        restClient: restClient,
+        apiClient: apiClient,
       );
     }
 
@@ -124,7 +125,7 @@ abstract class _ChatBottomBarStore with Store {
 
   Future<List<MessageFile>> _uploadFiles({
     required List<String> files,
-    required RestClient restClient,
+    required ApiClient apiClient,
   }) async {
     final List<MultipartFile> multipartFiles = await Future.wait(
       files.map((path) => MultipartFile.fromFile(path)),
@@ -135,7 +136,7 @@ abstract class _ChatBottomBarStore with Store {
     });
 
     final response =
-        await restClient.post(Endpoint().uploadFile, body: formData);
+        await apiClient.post(Endpoint().uploadFile, body: formData);
 
     if (response != null) {
       final List data = response['messages'] as List? ?? [];
@@ -165,7 +166,7 @@ abstract class _ChatBottomBarStore with Store {
 
     if (await record.hasPermission()) {
       await record.start(
-        const RecordConfig(),
+        const RecordAppConfig(),
         path: filePath,
       );
 

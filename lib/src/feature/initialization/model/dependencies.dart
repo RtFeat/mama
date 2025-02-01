@@ -1,16 +1,15 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 /// Dependencies container
 base class Dependencies {
   const Dependencies({
     required this.sharedPreferences,
     required this.settingsStore,
-    required this.errorTrackingManager,
-    required this.restClient,
+    // required this.errorTrackingManager,
+    required this.apiClient,
     required this.tokenStorage,
   });
 
@@ -23,11 +22,11 @@ base class Dependencies {
   /// [FlutterSecureStorage] instance, used to store tokens.
   final Fresh<OAuth2Token> tokenStorage;
 
-  /// [ErrorTrackingManager] instance, used to report errors.
-  final ErrorTrackingManager errorTrackingManager;
+  // /// [ErrorTrackingManager] instance, used to report errors.
+  // final ErrorTrackingManager errorTrackingManager;
 
-  /// [RestClient] instance, used to make requests.
-  final RestClient restClient;
+  /// [ApiClient] instance, used to make requests.
+  final ApiClient apiClient;
 }
 
 /// Result of initialization

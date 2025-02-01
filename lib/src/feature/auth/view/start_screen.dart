@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({

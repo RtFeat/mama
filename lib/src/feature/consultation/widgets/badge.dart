@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class ConsultationBadge extends StatelessWidget {
   final String title;
