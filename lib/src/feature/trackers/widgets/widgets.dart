@@ -43,4 +43,3 @@ export 'reminder_item.dart';
 export 'vaccine_container.dart';
 export 'calendar_vaccines_container.dart';
 export 'vertical_toogle.dart';
-export 'table.dart';

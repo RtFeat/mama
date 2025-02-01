@@ -1,5 +1,5 @@
 import 'package:mama/src/data.dart';
-import 'package:mobx/mobx.dart' as m;
+import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
 part 'favorites.g.dart';
@@ -12,7 +12,7 @@ class FavoriteArticlesStore extends _FavoriteArticlesStore
 }
 
 abstract class _FavoriteArticlesStore
-    extends PaginatedListStore<FavoriteArticle> with m.Store {
+    extends PaginatedListStore<FavoriteArticle> with Store {
   _FavoriteArticlesStore({
     required super.apiClient,
   }) : super(
