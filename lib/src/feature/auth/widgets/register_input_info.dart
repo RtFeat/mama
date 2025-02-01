@@ -31,12 +31,12 @@ class RegisterInputInfo extends StatelessWidget {
                     blurRadius: 1,
                     offset: const Offset(0, 3),
                     spreadRadius: 0,
-                    color: const Color(0xFF340589).withOpacity(0.1)),
+                    color: const Color(0xFF340589).withValues(alpha: 0.1)),
                 BoxShadow(
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                     spreadRadius: 0,
-                    color: const Color(0xFF2B0F60).withOpacity(0.15)),
+                    color: const Color(0xFF2B0F60).withValues(alpha: 0.15)),
               ]),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

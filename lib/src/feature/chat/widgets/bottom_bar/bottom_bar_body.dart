@@ -153,8 +153,6 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
                         widget.barStore.files.isNotEmpty
                             ? GestureDetector(
                                 onTap: () {
-                                  // TODO: send message
-
                                   widget.barStore.sendMessage();
                                 },
                                 child: const Icon(

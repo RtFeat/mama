@@ -14,7 +14,7 @@ class AddLureScreen extends StatelessWidget {
         height: 55,
         titleWidget: Text(t.feeding.addComplementaryFood,
             style: textTheme.titleMedium
-                ?.copyWith(color: const Color(0xFF163C63))),
+                ?.copyWith(color: AppColors.darkSlateBlue)),
       ),
     );
   }

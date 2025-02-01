@@ -46,8 +46,6 @@ class ConsultationTypeWidget extends StatelessWidget {
           textStyle: textStyle,
           mainAxisAlignment: mainAxisAlignment,
         );
-      default:
-        return const SizedBox.shrink();
     }
   }
 }

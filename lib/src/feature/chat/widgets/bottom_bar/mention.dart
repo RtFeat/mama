@@ -24,7 +24,7 @@ class MentionWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Mentioned',
+                  '${store.mentionedMessage?.senderName} ${store.mentionedMessage?.senderSurname != null ? store.mentionedMessage!.senderSurname! : ''}',
                   style: textTheme.labelLarge?.copyWith(
                     color: AppColors.blackColor,
                   ),

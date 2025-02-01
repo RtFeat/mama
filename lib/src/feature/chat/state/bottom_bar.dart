@@ -166,7 +166,7 @@ abstract class _ChatBottomBarStore with Store {
 
     if (await record.hasPermission()) {
       await record.start(
-        const RecordAppConfig(),
+        const RecordConfig(),
         path: filePath,
       );
 

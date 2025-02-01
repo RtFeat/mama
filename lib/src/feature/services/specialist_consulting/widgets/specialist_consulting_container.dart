@@ -15,12 +15,12 @@ class SpecialistConsultingContainer extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                  color: AppColors.deepBlue.withOpacity(0.1),
+                  color: AppColors.deepBlue.withValues(alpha: 0.1),
                   offset: const Offset(0, 2),
                   blurRadius: 1,
                   spreadRadius: 0),
               BoxShadow(
-                  color: AppColors.skyBlue.withOpacity(0.15),
+                  color: AppColors.skyBlue.withValues(alpha: 0.15),
                   offset: const Offset(0, 3),
                   blurRadius: 8,
                   spreadRadius: 0),

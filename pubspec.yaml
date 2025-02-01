@@ -120,6 +120,7 @@ dependencies:
   skit:
     git:
       url: https://github.com/nikondrat/skit.git
+      ref: main
 
 dev_dependencies:
   # -- testing -- #

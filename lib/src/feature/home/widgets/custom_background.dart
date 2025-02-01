@@ -25,12 +25,12 @@ class CustomBackground extends StatelessWidget {
             BoxShadow(
               blurRadius: 1,
               offset: const Offset(0, 2),
-              color: AppColors.deepBlue.withOpacity(0.1),
+              color: AppColors.deepBlue.withValues(alpha: 0.1),
             ),
             BoxShadow(
               blurRadius: 8,
               offset: const Offset(0, 3),
-              color: AppColors.skyBlue.withOpacity(0.15),
+              color: AppColors.skyBlue.withValues(alpha: 0.15),
             ),
           ],
         ),

@@ -21,7 +21,7 @@ class CustomAvatar extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryColor.withOpacity(.1), // Цвет тени
+              color: AppColors.primaryColor.withValues(alpha: .1), // Цвет тени
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 3),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class FavoriteArticlesView extends StatelessWidget {
   const FavoriteArticlesView({super.key});
@@ -9,7 +10,7 @@ class FavoriteArticlesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
         create: (_) => FavoriteArticlesStore(
-              ApiClient: context.read<Dependencies>().apiClient,
+              apiClient: context.read<Dependencies>().apiClient,
             ),
         builder: (context, child) {
           final FavoriteArticlesStore store = context.watch();

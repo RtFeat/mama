@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'promo.g.dart';
 
@@ -11,12 +12,12 @@ class PromoViewStore extends _PromoViewStore with _$PromoViewStore {
 
 abstract class _PromoViewStore with Store {
   _PromoViewStore({
-    required super.apiClient,
+    required this.apiClient,
   });
   final ApiClient apiClient;
 
   Future<bool> activatePromo(String promocode) async {
-    return ApiClient.post(Endpoint().promocode, queryParams: {
+    return apiClient.post(Endpoint().promocode, queryParams: {
       'promocode': promocode,
     }, body: {}).then((v) {
       logger.info('Promo data: $v');

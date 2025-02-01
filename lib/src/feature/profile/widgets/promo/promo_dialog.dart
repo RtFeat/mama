@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
+import 'package:skit/skit.dart';
 
 class DialogWidget extends StatelessWidget {
   final bool? errorDialog;

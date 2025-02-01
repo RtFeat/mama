@@ -3,6 +3,7 @@ import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/services/knowledge/widgets/common_medic_card.dart';
 import 'package:mama/src/feature/services/knowledge/widgets/common_service_info_screen_widgets.dart';
 import 'package:mama/src/feature/services/utils/text_helper.dart';
+import 'package:skit/skit.dart';
 
 class ServiceInfoScreen extends StatelessWidget {
   const ServiceInfoScreen({super.key});

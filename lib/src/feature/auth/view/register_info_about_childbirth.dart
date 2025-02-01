@@ -61,7 +61,7 @@ class RegisterInfoAboutChildbirth extends StatelessWidget {
                   const Spacer(),
                   Observer(builder: (context) {
                     return CupertinoSwitch(
-                        activeColor: AppColors.primaryColor,
+                        activeTrackColor: AppColors.primaryColor,
                         value: store.child.childBirthWithComplications,
                         onChanged: (value) {
                           store.child.setChildbirthWithComplications(value);

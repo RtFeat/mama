@@ -27,7 +27,7 @@ class BodyItemDecoration extends StatelessWidget {
           boxShadow: shadow!
               ? [
                   BoxShadow(
-                    color: AppColors.deepBlue.withOpacity(0.1), //New
+                    color: AppColors.deepBlue.withValues(alpha: 0.1), //New
                     blurRadius: 1.0,
                     offset: const Offset(
                       0,
@@ -35,7 +35,7 @@ class BodyItemDecoration extends StatelessWidget {
                     ),
                   ),
                   BoxShadow(
-                    color: AppColors.skyBlue.withOpacity(0.15), //New
+                    color: AppColors.skyBlue.withValues(alpha: 0.15), //New
                     blurRadius: 8.0,
                     offset: const Offset(
                       0,

@@ -3,6 +3,7 @@ import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'schedule.g.dart';
 
@@ -16,7 +17,7 @@ abstract class _ScheduleViewStore with Store {
   final ApiClient apiClient;
 
   _ScheduleViewStore({
-    required super.apiClient,
+    required this.apiClient,
   });
 
   @observable
@@ -149,7 +150,7 @@ abstract class _ScheduleViewStore with Store {
     );
 
     // Выполняем запрос
-    ApiClient.patch(Endpoint().updateDoctorWorkTime, body: {
+    apiClient.patch(Endpoint().updateDoctorWorkTime, body: {
       'monday': weeks[0],
       'tuesday': weeks[1],
       'wednesday': weeks[2],

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 class PromoScreen extends StatefulWidget {
   const PromoScreen({super.key});
@@ -67,7 +68,7 @@ class _PromoScreenState extends State<PromoScreen> {
 
     return Provider(
       create: (context) =>
-          PromoViewStore(ApiClient: context.read<Dependencies>().apiClient),
+          PromoViewStore(apiClient: context.read<Dependencies>().apiClient),
       builder: (context, child) {
         final promoViewStore = context.watch<PromoViewStore>();
 

@@ -23,7 +23,7 @@ class ArticleBox extends StatelessWidget {
       },
       child: DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.blackColor.withOpacity(0.1),
+            color: AppColors.blackColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(

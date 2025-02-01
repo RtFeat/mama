@@ -104,8 +104,6 @@ class ArticleBody extends StatelessWidget {
                                       ],
                                     )))),
                           );
-                        default:
-                          return const SizedBox.shrink();
                       }
                     }),
               ],

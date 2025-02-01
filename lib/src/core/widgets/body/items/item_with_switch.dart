@@ -53,8 +53,8 @@ class ItemWithSwitchWidget extends StatelessWidget {
         ),
         CupertinoSwitch(
           value: item.value,
-          activeColor: AppColors.primaryColor,
-          trackColor: AppColors.greyColor,
+          activeTrackColor: AppColors.primaryColor,
+          inactiveTrackColor: AppColors.greyColor,
           onChanged: (value) {
             if (item.onChanged != null) {
               item.onChanged!(value);

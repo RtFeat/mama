@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'knowledge.g.dart';
 
@@ -23,7 +24,7 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
   }) : super(
           basePath: Endpoint().allByCategory,
           fetchFunction: (params, path) =>
-              ApiClient.get(path, queryParams: params),
+              apiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['articles'] ?? [])
                 .map((e) => ArticleModel.fromJson(e))

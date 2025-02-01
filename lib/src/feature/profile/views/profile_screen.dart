@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({
@@ -40,7 +41,7 @@ class ProfileScreen extends StatelessWidget {
     return Provider(
         create: (context) => ProfileViewStore(
             model: userStore.account,
-            ApiClient: context.read<Dependencies>().apiClient),
+            apiClient: context.read<Dependencies>().apiClient),
         builder: (context, _) {
           final ProfileViewStore store = context.watch();
 

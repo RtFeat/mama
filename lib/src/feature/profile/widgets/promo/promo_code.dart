@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/profile/model/model.dart';
+import 'package:skit/skit.dart';
 
 class PromoCodeWidget extends StatelessWidget {
   final PromoItem item;

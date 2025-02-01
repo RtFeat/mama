@@ -69,8 +69,8 @@ class __BodyState extends State<_Body> {
     widget.store.setChatType(widget.item is SingleChatItem ? 'solo' : 'group');
 
     widget.store.loadPage(
-      fetchFunction: (query, ApiClient, path) {
-        return ApiClient.get(
+      fetchFunction: (query, apiClient, path) {
+        return apiClient.get(
             '${Endpoint().messages}/${widget.item is SingleChatItem ? 'solo' : 'group'}',
             queryParams: {
               'limit': '10',

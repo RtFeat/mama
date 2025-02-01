@@ -36,7 +36,6 @@ abstract class _UserStore with Store {
       account.status == Status.trial || account.status == Status.subscribed;
 
   @computed
-  // TODO: change this in production
   Role get role => account.role ?? Role.user;
   // Role get role => Role.doctor;
 

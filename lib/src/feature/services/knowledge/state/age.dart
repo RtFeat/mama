@@ -1,6 +1,7 @@
 import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'age.g.dart';
 
@@ -17,7 +18,7 @@ abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
   }) : super(
           basePath: Endpoint().ageCaterories,
           fetchFunction: (params, path) =>
-              ApiClient.get(path, queryParams: params),
+              apiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
                 .map((e) => CategoryModel.fromJson(e))

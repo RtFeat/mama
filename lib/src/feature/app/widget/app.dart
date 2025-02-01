@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/feature/trackers/state/medicine.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart' as skit;
 
 /// [App] is an entry point to the application.
 ///
@@ -113,7 +114,7 @@ class App extends StatelessWidget {
             create: (context) => CalendarStore(store: context.read()),
           ),
           Provider(
-            create: (context) => AudioPlayerStore(),
+            create: (context) => skit.AudioPlayerStore(),
             dispose: (context, value) => value.dispose(),
           ),
           // Provider(

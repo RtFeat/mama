@@ -1,6 +1,7 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 part 'profile_view.g.dart';
 
@@ -17,7 +18,7 @@ abstract class _ProfileViewStore with Store {
 
   _ProfileViewStore({
     required this.model,
-    required super.apiClient,
+    required this.apiClient,
   });
 
   late final FormGroup formGroup;
@@ -96,8 +97,11 @@ abstract class _ProfileViewStore with Store {
   }
 
   Future sendFeedback(String text) async {
-    ApiClient.post('${Endpoint.feedback}/', body: {
-      'text': text,
-    }).then((value) {}).catchError((error) {});
+    apiClient
+        .post('${Endpoint.feedback}/', body: {
+          'text': text,
+        })
+        .then((value) {})
+        .catchError((error) {});
   }
 }

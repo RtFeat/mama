@@ -66,13 +66,13 @@ class FlProgressChart extends StatelessWidget {
           yValueMapper: (WeightData data, _) => data.weight,
           gradient: LinearGradient(
             colors: [
-              Colors.green.withOpacity(0.1),
-              Colors.green.withOpacity(0.3),
+              Colors.green.withValues(alpha: 0.1),
+              Colors.green.withValues(alpha: 0.3),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
-          borderColor: Colors.green.withOpacity(0.3),
+          borderColor: Colors.green.withValues(alpha: 0.3),
           borderWidth: 30,
         ),
         LineSeries<WeightData, String>(

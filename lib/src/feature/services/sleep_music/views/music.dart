@@ -11,7 +11,7 @@ class SleepMusicView extends StatelessWidget {
     return Provider(
       create: (context) => MusicStore(
         audioPlayerStore: context.read(),
-        ApiClient: context.read<Dependencies>().apiClient,
+        apiClient: context.read<Dependencies>().apiClient,
       ),
       builder: (context, child) {
         final MusicStore store = context.watch<MusicStore>();

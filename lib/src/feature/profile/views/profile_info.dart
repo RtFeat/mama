@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/widgets/body/decoration.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class ProfileInfoView extends StatelessWidget {
   final BaseModel model;

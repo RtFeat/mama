@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'favorites.g.dart';
 
@@ -17,7 +18,7 @@ abstract class _FavoriteArticlesStore
   }) : super(
           basePath: Endpoint().favoriteArticles,
           fetchFunction: (params, path) =>
-              ApiClient.get(path, queryParams: params),
+              apiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['articles'] ?? [])
                 .map((e) => FavoriteArticle.fromJson(e))

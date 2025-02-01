@@ -38,7 +38,7 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryColor.withOpacity(0.5),
+                    color: AppColors.primaryColor.withValues(alpha: 0.5),
                     spreadRadius: 1,
                     blurRadius: 4,
                     offset: const Offset(0, 2), // Смещение тени

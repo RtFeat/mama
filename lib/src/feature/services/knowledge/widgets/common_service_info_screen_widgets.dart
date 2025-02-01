@@ -48,7 +48,7 @@ class CommonHorizontalWidget extends StatelessWidget {
                             height: 14,
                             child: DecoratedBox(
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(

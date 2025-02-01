@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'music.g.dart';
 
@@ -20,7 +21,7 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
   }) : super(
           basePath: Endpoint.music,
           fetchFunction: (params, path) =>
-              ApiClient.get('$path/music', queryParams: params),
+              apiClient.get('$path/music', queryParams: params),
           transformer: (raw) {
             final List<TrackModel>? data = (raw['music'] as List?)
                 ?.map((e) => TrackModel.fromJson(e))

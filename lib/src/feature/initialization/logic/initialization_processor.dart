@@ -44,31 +44,31 @@ final class InitializationProcessor {
         });
 
     final apiClient = await _initApiClient(tokenStorage);
-    final errorTrackingManager = await _initErrorTrackingManager();
+    // final errorTrackingManager = await _initErrorTrackingManager();
     final settingsStore = await _initSettingsStore(sharedPreferences);
 
     return Dependencies(
       sharedPreferences: sharedPreferences,
       settingsStore: settingsStore,
-      errorTrackingManager: errorTrackingManager,
+      // errorTrackingManager: errorTrackingManager,
       apiClient: apiClient,
       tokenStorage: tokenStorage,
     );
   }
 
-  Future<ErrorTrackingManager> _initErrorTrackingManager() async {
-    final errorTrackingManager = SentryTrackingManager(
-      logger,
-      sentryDsn: AppConfig.sentryDsn,
-      environment: AppConfig.environment.value,
-    );
+  // Future<ErrorTrackingManager> _initErrorTrackingManager() async {
+  //   final errorTrackingManager = SentryTrackingManager(
+  //     logger,
+  //     sentryDsn: AppConfig.sentryDsn,
+  //     environment: AppConfig.environment.value,
+  //   );
 
-    if (AppConfig.enableSentry) {
-      await errorTrackingManager.enableReporting();
-    }
+  //   if (AppConfig.enableSentry) {
+  //     await errorTrackingManager.enableReporting();
+  //   }
 
-    return errorTrackingManager;
-  }
+  //   return errorTrackingManager;
+  // }
 
   Future<SettingsStore> _initSettingsStore(SharedPreferences prefs) async {
     final localeRepository = LocaleRepositoryImpl(
@@ -84,13 +84,16 @@ final class InitializationProcessor {
 
     final localeFuture = localeRepository.getLocale();
     final theme = await themeRepository.getTheme();
+
     final locale = await localeFuture;
-    final settingsStore = SettingsStore(
+    final settingsStore = DefaultSettingsStore(
       localeRepository: localeRepository,
       themeRepository: themeRepository,
       locale: locale ?? Locale(Intl.systemLocale),
-      appTheme: theme ??
-          AppThemeStore(mode: ThemeMode.light, seed: AppColors.primaryColor),
+      appTheme: ThemeStore(
+        mode: theme?.mode ?? ThemeMode.system,
+        seed: theme?.seed ?? AppColors.primaryColor,
+      ),
     );
     return settingsStore;
   }
@@ -109,7 +112,7 @@ final class InitializationProcessor {
         requestHeader: true));
     dio.interceptors.add(storage);
 
-    return ApiClientDio(baseUrl: AppConfig.apiUrl, dio: dio);
+    return ApiClientDio(baseUrl: const AppConfig().apiUrl, dio: dio);
   }
 
   /// Initializes dependencies and returns the result of the initialization.

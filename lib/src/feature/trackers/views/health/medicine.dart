@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/trackers/views/health/add_medicine.dart';
 import 'package:mama/src/feature/trackers/widgets/learn_more_widget.dart';
+import 'package:skit/skit.dart';
 
 class Medicine extends StatelessWidget {
   const Medicine({super.key});

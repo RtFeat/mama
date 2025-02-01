@@ -135,7 +135,7 @@ class _NewConsultationWidgetState extends State<NewConsultationWidget>
               maxLines: null,
               onTapOutside: (event) => FocusScope.of(context).unfocus(),
               decoration: InputDecoration(
-                  fillColor: AppColors.lavenderBlue.withOpacity(.5),
+                  fillColor: AppColors.lavenderBlue.withValues(alpha: .5),
                   filled: true,
                   hintText: t.consultation.comment.action,
                   contentPadding:
