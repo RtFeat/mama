@@ -26,7 +26,6 @@ export 'add_sleep_manually.dart';
 export 'body_manually_sleep_cry.dart';
 export 'edit_time_row.dart';
 export 'tracker_category.dart';
-export 'add_photo.dart';
 export 'add_text_field.dart';
 export 'pill_container.dart';
 export 'buttons_learn_pdf_add.dart';

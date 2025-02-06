@@ -126,8 +126,7 @@ abstract class _DrugViewStore with Store {
     // if (selectedTime == null) return '';
     // final hour = selectedTime.hour.toString().padLeft(2, '0');
     // final minute = selectedTime.minute.toString().padLeft(2, '0');
-    final String formattedTime =
-        DateFormat('HH:mm:ss').format(selectedDateTime);
+    final String formattedTime = DateFormat('HH:mm').format(selectedDateTime);
     return formattedTime;
   }
 

@@ -21,6 +21,7 @@ class CustomButton extends StatelessWidget {
   final TextStyle? textStyle;
 
   final double? height;
+  final double? iconSize;
   final double? width;
 
   final CustomButtonType type;
@@ -50,6 +51,7 @@ class CustomButton extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.type = CustomButtonType.filled,
     this.iconColor,
+    this.iconSize,
   }) : assert(title != null);
 
   Color _getDarkerColor(Color color) {
@@ -106,6 +108,7 @@ class CustomButton extends StatelessWidget {
               Icon(
                 icon,
                 color: iconColor,
+                size: iconSize ?? 24,
               ),
               // IconWidget(
               //   model: icon!.copyWith(

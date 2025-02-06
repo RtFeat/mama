@@ -9,13 +9,17 @@ class ProfilePhoto extends StatelessWidget {
   final String? photoUrl;
   final Function()? onIconTap;
   final Widget? icon;
+  final double? height;
   final bool isShowIcon;
+  final BorderRadius? borderRadius;
   const ProfilePhoto({
     super.key,
     this.photoUrl,
     this.onIconTap,
     this.icon,
     this.isShowIcon = true,
+    this.height,
+    this.borderRadius,
   });
 
   @override
@@ -27,12 +31,13 @@ class ProfilePhoto extends StatelessWidget {
       children: <Widget>[
         Observer(builder: (_) {
           return Container(
-            height: 390,
+            height: height ?? 390,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
-              ),
+              borderRadius: borderRadius ??
+                  const BorderRadius.only(
+                    bottomLeft: Radius.circular(32),
+                    bottomRight: Radius.circular(32),
+                  ),
               image: DecorationImage(
                   image: NetworkImage(
                     photoUrl ?? userStore.account.avatarUrl ?? '',
@@ -64,10 +69,6 @@ class ProfilePhoto extends StatelessWidget {
                       });
                     },
                 child: icon ??
-                    // Image.asset(
-                    //   Assets.icons.icPhotoAdd.path,
-                    //   height: 64,
-                    // ),
                     const Icon(
                       AppIcons.cameraOnRectangleFill,
                       size: 32,
@@ -82,29 +83,42 @@ class ProfilePhoto extends StatelessWidget {
 }
 
 class DashedPhotoProfile extends StatelessWidget {
-  const DashedPhotoProfile({super.key});
+  final VoidCallback? onIconTap;
+  final double? height;
+  final double? iconHeight;
+  final String? text;
+  final BorderRadius? borderRadius;
+  const DashedPhotoProfile(
+      {super.key,
+      this.onIconTap,
+      this.height,
+      this.text,
+      this.borderRadius,
+      this.iconHeight});
 
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch();
     return GestureDetector(
-      onTap: () {
-        final ImagePicker picker = ImagePicker();
+      onTap: onIconTap ??
+          () {
+            final ImagePicker picker = ImagePicker();
 
-        picker.pickImage(source: ImageSource.gallery).then((value) {
-          if (value != null) {
-            userStore.updateAvatar(value);
-          }
-        });
-      },
+            picker.pickImage(source: ImageSource.gallery).then((value) {
+              if (value != null) {
+                userStore.updateAvatar(value);
+              }
+            });
+          },
       child: Container(
-        height: 390,
-        decoration: const BoxDecoration(
+        height: height ?? 390,
+        decoration: BoxDecoration(
           color: AppColors.purpleLighterBackgroundColor,
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(32),
-            bottomRight: Radius.circular(32),
-          ),
+          borderRadius: borderRadius ??
+              const BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
+              ),
         ),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 1.0, left: 1.0, right: 1.0),
@@ -118,18 +132,16 @@ class DashedPhotoProfile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     AppIcons.cameraOnRectangle,
-                    size: 64,
+                    size: iconHeight ?? 53,
                     color: AppColors.primaryColor,
                   ),
-                  // Image(
-                  //   height: 64,
-                  //   image: AssetImage(
-                  //     Assets.icons.icPhotoAdd.path,
-                  //   ),
-                  // ),
-                  Text(t.profile.addPhotoTitle),
+                  Text(text ?? t.profile.addPhotoTitle,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(fontWeight: FontWeight.w400)),
                 ],
               ),
             ),

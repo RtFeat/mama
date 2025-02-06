@@ -3,6 +3,7 @@ import 'package:mama/src/core/core.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Alignment? alignment;
+  final Color? appBarColor;
   final EdgeInsets? padding;
   final Widget? leading;
   final Widget? titleWidget;
@@ -27,102 +28,106 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.titleWidget,
       this.padding,
       this.isScrollable,
-      this.titleTextStyle});
+      this.titleTextStyle,
+      this.appBarColor});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
-    return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-              padding: padding ?? const EdgeInsets.symmetric(horizontal: 12),
-              child: Stack(
-                alignment: alignment ?? Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: leading ??
-                        const Row(
-                          children: [
-                            CustomBackButton(),
-                          ],
-                        ),
-                  ),
-                  if (titleWidget != null)
-                    Align(alignment: Alignment.center, child: titleWidget),
-                  if (title != null)
+    return Container(
+      decoration: BoxDecoration(color: appBarColor ?? Colors.transparent),
+      child: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+                padding: padding ?? const EdgeInsets.symmetric(horizontal: 12),
+                child: Stack(
+                  alignment: alignment ?? Alignment.center,
+                  children: [
                     Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        title!,
-                        style: titleTextStyle ?? textTheme.titleLarge,
-                      ),
+                      alignment: Alignment.centerLeft,
+                      child: leading ??
+                          const Row(
+                            children: [
+                              CustomBackButton(),
+                            ],
+                          ),
                     ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: action ??
-                        const SizedBox(
-                          width: 40,
-                          height: 40,
+                    if (titleWidget != null)
+                      Align(alignment: Alignment.center, child: titleWidget),
+                    if (title != null)
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          title!,
+                          style: titleTextStyle ?? textTheme.titleLarge,
                         ),
+                      ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: action ??
+                          const SizedBox(
+                            width: 40,
+                            height: 40,
+                          ),
+                    ),
+                  ],
+                )),
+            if (tabs != null && tabController != null) ...[
+              10.h,
+              Positioned(
+                bottom: 0,
+                child: TabBar(
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                      (Set<WidgetState> states) {
+                    // Use the default focused overlay color
+                    return states.contains(WidgetState.focused)
+                        ? null
+                        : Colors.transparent;
+                  }),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  isScrollable: isScrollable ?? true,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorColor: Colors.transparent,
+                  controller: tabController,
+                  dividerColor: Colors.transparent,
+                  splashFactory: NoSplash.splashFactory,
+                  indicatorPadding: EdgeInsets.zero,
+                  indicator: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: WaveContainer(),
+                    // borderRadius: const BorderRadius.only(
+                    //   topLeft: Radius.circular(8),
+                    //   topRight: Radius.circular(8),
+                    // ),
+                    // shadows: [
+                    //   BoxShadow(
+                    //     color: AppColors.deepBlue.withOpacity(0.1),
+                    //     blurRadius: 1.0,
+                    //     offset: const Offset(
+                    //       0,
+                    //       2,
+                    //     ),
+                    //   ),
+                    //   BoxShadow(
+                    //     color: AppColors.skyBlue.withOpacity(0.15),
+                    //     blurRadius: 8.0,
+                    //     offset: const Offset(
+                    //       0,
+                    //       3,
+                    //     ),
+                    //   ),
+                    // ],
+                    // color: AppColors.whiteColor,
                   ),
-                ],
-              )),
-          if (tabs != null && tabController != null) ...[
-            10.h,
-            Positioned(
-              bottom: 0,
-              child: TabBar(
-                overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                    (Set<WidgetState> states) {
-                  // Use the default focused overlay color
-                  return states.contains(WidgetState.focused)
-                      ? null
-                      : Colors.transparent;
-                }),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                isScrollable: isScrollable ?? true,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorColor: Colors.transparent,
-                controller: tabController,
-                dividerColor: Colors.transparent,
-                splashFactory: NoSplash.splashFactory,
-                indicatorPadding: EdgeInsets.zero,
-                indicator: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: WaveContainer(),
-                  // borderRadius: const BorderRadius.only(
-                  //   topLeft: Radius.circular(8),
-                  //   topRight: Radius.circular(8),
-                  // ),
-                  // shadows: [
-                  //   BoxShadow(
-                  //     color: AppColors.deepBlue.withOpacity(0.1),
-                  //     blurRadius: 1.0,
-                  //     offset: const Offset(
-                  //       0,
-                  //       2,
-                  //     ),
-                  //   ),
-                  //   BoxShadow(
-                  //     color: AppColors.skyBlue.withOpacity(0.15),
-                  //     blurRadius: 8.0,
-                  //     offset: const Offset(
-                  //       0,
-                  //       3,
-                  //     ),
-                  //   ),
-                  // ],
-                  // color: AppColors.whiteColor,
+                  tabs: tabs!.map((e) => Tab(text: e)).toList(),
                 ),
-                tabs: tabs!.map((e) => Tab(text: e)).toList(),
-              ),
-            )
-          ]
-        ],
+              )
+            ]
+          ],
+        ),
       ),
     );
   }

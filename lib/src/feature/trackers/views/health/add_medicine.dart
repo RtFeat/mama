@@ -46,6 +46,10 @@ class _AddMedicineState extends State<AddMedicine> {
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
         title: t.trackers.medicines.add,
+        appBarColor: AppColors.e8ddf9,
+        padding: const EdgeInsets.only(right: 8),
+        titleTextStyle: textTheme.headlineSmall!
+            .copyWith(fontSize: 17, color: AppColors.blueDark),
       ),
       backgroundColor: AppColors.primaryColorBright,
       body: Padding(
@@ -53,31 +57,39 @@ class _AddMedicineState extends State<AddMedicine> {
         child: ListView(
           children: [
             Observer(builder: (context) {
-              return AddPhoto(
-                onTap: () async {
-                  await widget.store.pickImage();
-                },
-                image: widget.store.image,
-              );
+              return widget.store.image == null
+                  ? DashedPhotoProfile(
+                      onIconTap: () async {
+                        await widget.store.pickImage();
+                      },
+                      height: 358,
+                      iconHeight: 26,
+                      text: t.trackers.addPhoto,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(32),
+                      ),
+                    )
+                  : const ProfilePhoto(
+                      isShowIcon: false,
+                      height: 358,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(32),
+                      ),
+                    );
             }),
-
-            // Builder(builder: (context) {
-            //   return Observer(builder: (context) {
-            //     return const DashedPhotoProfile();
-            //   });
-            // }),
-
             20.h,
             BodyGroup(
               formGroup: widget.store.formGroup,
-              title: t.profile.accountTitle,
               items: [
                 BodyItemWidget(
                   item: InputItem(
                     controlName: 'nameDrug',
                     inputHint: t.trackers.name.title,
                     hintText: t.trackers.name.subTitle,
-                    titleStyle: textTheme.headlineSmall,
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
                     maxLines: 1,
                     onChanged: (value) {
                       nameDrugValue = value;
@@ -89,9 +101,10 @@ class _AddMedicineState extends State<AddMedicine> {
                     controlName: 'dataStart',
                     inputHint: t.trackers.dateStart.title,
                     hintText: t.trackers.dateStart.subTitle,
-                    titleStyle: widget.titlesStyle!.copyWith(
-                        color: AppColors.blackColor,
-                        fontWeight: FontWeight.w400),
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
                     maxLines: 1,
                     controller: dateStartController,
                     readOnly: true,
@@ -106,9 +119,10 @@ class _AddMedicineState extends State<AddMedicine> {
                     controlName: 'dose',
                     inputHint: t.trackers.dose.title,
                     hintText: t.trackers.dose.subTitle,
-                    titleStyle: widget.titlesStyle!.copyWith(
-                        color: AppColors.blackColor,
-                        fontWeight: FontWeight.w400),
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
                     maxLines: 1,
                     onChanged: (value) {
                       doseValue = value;
@@ -120,9 +134,10 @@ class _AddMedicineState extends State<AddMedicine> {
                     controlName: 'comment',
                     inputHint: t.trackers.comment.title,
                     hintText: t.trackers.comment.subTitle,
-                    titleStyle: widget.titlesStyle!.copyWith(
-                        color: AppColors.blackColor,
-                        fontWeight: FontWeight.w400),
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
                     maxLines: 1,
                     onChanged: (value) {
                       commentValue = value;
@@ -145,26 +160,62 @@ class _AddMedicineState extends State<AddMedicine> {
                   children: [
                     Text(
                       t.trackers.dailyreminders,
-                      style: AppTextStyles.f17w400
+                      style: textTheme.bodySmall!
                           .copyWith(color: AppColors.blackColor),
                     ),
                     const SizedBox(height: 8),
                     Observer(builder: (context) {
                       return Row(
                         children: [
-                          Text(
-                            widget.store.formattedTime,
-                            style: AppTextStyles.f17w400
-                                .copyWith(color: AppColors.primaryColor),
+                          // TODO добавить напоминание по времени
+                          Container(
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColorBrighter,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  AppIcons.alarmFill,
+                                  color: AppColors.primaryColor,
+                                  size: 28,
+                                ),
+                                5.w,
+                                Text(
+                                  widget.store.formattedTime,
+                                  style: textTheme.bodySmall!
+                                      .copyWith(color: AppColors.blackColor),
+                                ),
+                                5.w,
+                                InkWell(
+                                  onTap: () {
+                                    // TODO нажатие удалить напоминание
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 28,
+                                    color: AppColors.redColor,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           widget.store.formattedTime == ''
                               ? const SizedBox()
                               : const SizedBox(width: 16),
                           CustomButton(
+                            height: 44,
                             title: t.trackers.add.title,
-                            textStyle: AppTextStyles.f17w400
+                            iconSize: 28,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 8,
+                            ),
+                            textStyle: textTheme.bodySmall!
                                 .copyWith(color: AppColors.primaryColor),
-                            icon: AppIcons.clock,
+                            icon: AppIcons.alarm,
                             iconColor: AppColors.primaryColor,
                             onTap: () async {
                               await widget.store.pickTime(context);
@@ -183,7 +234,7 @@ class _AddMedicineState extends State<AddMedicine> {
                 Expanded(
                   child: CustomButton(
                     title: t.trackers.save,
-                    textStyle: AppTextStyles.f17w400
+                    textStyle: textTheme.bodyMedium!
                         .copyWith(color: AppColors.primaryColor),
                     onTap: () async {
                       final model = DrugModel(
@@ -198,6 +249,7 @@ class _AddMedicineState extends State<AddMedicine> {
                       widget.medicineStore.postData(model: model);
                     },
                     icon: AppIcons.pillsFill,
+                    iconSize: 28,
                     iconColor: AppColors.primaryColor,
                   ),
                 ),

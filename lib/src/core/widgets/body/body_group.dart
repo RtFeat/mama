@@ -5,7 +5,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 import 'decoration.dart';
 
 class BodyGroup extends StatelessWidget {
-  final String title;
+  final String? title;
   final EdgeInsets? titlePadding;
   final TextStyle? titleStyle;
   final List<Widget> items;
@@ -17,7 +17,7 @@ class BodyGroup extends StatelessWidget {
 
   const BodyGroup({
     super.key,
-    required this.title,
+    this.title,
     this.titlePadding,
     this.titleStyle,
     required this.items,
@@ -58,13 +58,16 @@ class BodyGroup extends StatelessWidget {
     final Widget child = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: titlePadding ?? const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            title,
-            style: titleStyle,
-          ),
-        ),
+        title != null
+            ? Padding(
+                padding:
+                    titlePadding ?? const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  title!,
+                  style: titleStyle,
+                ),
+              )
+            : const SizedBox.shrink(),
         4.h,
         if (isDecorated)
           BodyItemDecoration(
