@@ -37,6 +37,8 @@ class Endpoint {
 
   String get ageCaterories => '$categories/age';
 
+  String get authorCaterories => '$article/$categories/writer';
+
   static const String consultation = 'consultation';
 
   String get userConsultations => '$consultation/user';

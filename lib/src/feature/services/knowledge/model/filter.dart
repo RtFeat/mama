@@ -1,3 +1,4 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
 
 part 'filter.g.dart';
@@ -14,3 +15,18 @@ class KnowledgeFilter extends _KnowledgeFilter with _$KnowledgeFilter {
 }
 
 abstract class _KnowledgeFilter with Store {}
+
+@JsonSerializable()
+class KnowledgeFilterModel extends _KnowledgeFilterModel
+    with _$KnowledgeFilterModel {
+  KnowledgeFilterModel();
+}
+
+abstract class _KnowledgeFilterModel with Store {
+  @observable
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool isSelected = false;
+
+  @action
+  void setSelected(bool value) => isSelected = value;
+}

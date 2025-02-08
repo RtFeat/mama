@@ -64,8 +64,14 @@ class ArticleWidget extends StatelessWidget {
                                       fontSize: 14,
                                     ),
                                   ),
-                                  if (favoriteArticle?.profession != null ||
-                                      article?.author?.profession != null)
+                                  if ((favoriteArticle?.profession != null &&
+                                          (favoriteArticle
+                                                  ?.profession?.isNotEmpty ??
+                                              false)) ||
+                                      (article?.author?.profession != null &&
+                                          (article?.author?.profession
+                                                  ?.isNotEmpty ??
+                                              false)))
                                     ConsultationBadge(
                                       title: favoriteArticle?.profession ??
                                           article?.author!.profession ??

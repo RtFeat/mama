@@ -23,6 +23,10 @@ class KnowledgeView extends StatelessWidget {
           knowledgeStore.ageCategoriesStore.selectedItemsCount;
       final bool isSelectedAges = selectedAgesCount >= 1;
 
+      final int selectedAuthorsCount =
+          knowledgeStore.authorsStore.selectedItemsCount;
+      final bool isSelectedAuthors = selectedAuthorsCount >= 1;
+
       final List<KnowledgeFilter> filters = [
         KnowledgeFilter(
             isSelected: isSelectedCategories,
@@ -46,7 +50,20 @@ class KnowledgeView extends StatelessWidget {
                 '${knowledgeStore.ageCategoriesStore.selectedItems.first.title}+',
               _ => t.services.ageBtn.title,
             }),
-        KnowledgeFilter(onTap: () {}, title: t.services.authorBtn.title),
+        KnowledgeFilter(
+            isSelected: isSelectedAuthors,
+            onTap: () {
+              context.pushNamed(AppViews.author);
+            },
+            // title: t.services.authorBtn.title,
+            title: switch (selectedAuthorsCount) {
+              1 =>
+                '${t.services.authorBtn.title(n: 1)}: ${knowledgeStore.authorsStore.selectedItems.first.writer?.fullName}',
+              > 1 => t.services.authorBtn.title(n: selectedAuthorsCount),
+              _ => t.services.authorBtn.title(n: 1),
+              //  t.services.authorBtn.title(n: selectedAuthorsCount),
+              // _ => t.services.authorBtn.title(n: selectedAuthorsCount),
+            }),
       ];
 
       return Scaffold(
@@ -64,29 +81,26 @@ class KnowledgeView extends StatelessWidget {
                 AppIcons.bookmark,
               )),
         ),
-        body: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: AppColors.whiteColor,
-          ),
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Row(
-                        children: filters
-                            .map((e) => KnowledgeFilterWidget(
-                                  filter: e,
-                                ))
-                            .toList()),
-                  ),
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Row(
+                      children: filters
+                          .map((e) => KnowledgeFilterWidget(
+                                filter: e,
+                              ))
+                          .toList()),
                 ),
               ),
-              SliverToBoxAdapter(child: _Body(knowledgeStore: knowledgeStore)),
-            ],
-          ),
+            ),
+            SliverPadding(
+                padding: const EdgeInsets.only(top: 16),
+                sliver: _Body(knowledgeStore: knowledgeStore)),
+          ],
         ),
       );
     });
@@ -104,22 +118,20 @@ class _Body extends StatefulWidget {
 class __BodyState extends State<_Body> {
   @override
   void initState() {
-    widget.knowledgeStore.loadPage(queryParams: {
-      'categories': widget.knowledgeStore.categoriesStore.selectedItems
-          .map((e) => e.title)
-          .toList(),
-      'ages': widget.knowledgeStore.ageCategoriesStore.selectedItems
-          .map((e) => e.title)
-          .toList(),
-    });
+    widget.knowledgeStore.loadPage();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return PaginatedLoadingWidget(
-      emptyData: const SizedBox.shrink(),
+      emptyData: const SliverToBoxAdapter(),
+      initialLoadingWidget: const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      additionalLoadingWidget: const SliverToBoxAdapter(),
       store: widget.knowledgeStore,
+      isFewLists: true,
       separator: (index, item) {
         return const Divider(
           height: 1,

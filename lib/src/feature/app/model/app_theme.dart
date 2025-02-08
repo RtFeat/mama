@@ -7,7 +7,7 @@ import 'package:skit/skit.dart';
 
 part 'app_theme.g.dart';
 
-class ThemeStore extends _AppThemeStore with _$AppThemeStore {
+class ThemeStore extends _AppThemeStore with _$ThemeStore {
   ThemeStore({required super.mode, required super.seed});
 }
 

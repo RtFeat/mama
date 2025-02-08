@@ -36,7 +36,7 @@ abstract class _CategoriesStore extends PaginatedListStore<CategoryModel>
   }
 
   @computed
-  ObservableList get selectedItems => ObservableList.of(
+  ObservableList<CategoryModel> get selectedItems => ObservableList.of(
       listData.where((element) => element.isSelected).toList());
 
   @computed

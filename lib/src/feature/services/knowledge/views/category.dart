@@ -9,8 +9,6 @@ class CategoriesView extends StatelessWidget {
   Widget build(BuildContext context) {
     final KnowledgeStore knowledgeStore = context.watch();
     final CategoriesStore store = knowledgeStore.categoriesStore;
-    final AgeCategoriesStore ageCategoriesStore =
-        knowledgeStore.ageCategoriesStore;
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
@@ -23,20 +21,16 @@ class CategoriesView extends StatelessWidget {
           appBar: CustomAppBar(
             title: t.services.categoriesBtn.title,
           ),
-          body: KnowledgeFilterBody(store: store),
+          body: KnowledgeFilterBody(
+            store: store,
+            titleBuilder: (item) => (item as CategoryModel).title,
+          ),
           bottomNavigationBar: FilterBottomBarWidget(
             onClear: () {
               store.setMarkAllNotSelected();
             },
             onConfirm: () {
-              store.setConfirmed(true);
-              knowledgeStore.resetPagination();
-              knowledgeStore.loadPage(queryParams: {
-                'categories': store.selectedItems.map((e) => e.title).toList(),
-                'ages': ageCategoriesStore.selectedItems
-                    .map((e) => e.title)
-                    .toList()
-              });
+              knowledgeStore.onConfirm();
             },
           )),
     );

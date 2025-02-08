@@ -123,13 +123,16 @@ class App extends StatelessWidget {
           //   ),
           // ),
           Provider(
-              create: (context) => KnowledgeStore(
-                    apiClient: context.read<Dependencies>().apiClient,
-                    categoriesStore: CategoriesStore(
-                        apiClient: context.read<Dependencies>().apiClient),
-                    ageCategoriesStore: AgeCategoriesStore(
-                        apiClient: context.read<Dependencies>().apiClient),
-                  )),
+            create: (context) => KnowledgeStore(
+              authorsStore: AuthorsStore(
+                  apiClient: context.read<Dependencies>().apiClient),
+              categoriesStore: CategoriesStore(
+                  apiClient: context.read<Dependencies>().apiClient),
+              ageCategoriesStore: AgeCategoriesStore(
+                  apiClient: context.read<Dependencies>().apiClient),
+              apiClient: context.read<Dependencies>().apiClient,
+            ),
+          ),
         ],
         child: TranslationProvider(child: const MaterialContext()),
       );

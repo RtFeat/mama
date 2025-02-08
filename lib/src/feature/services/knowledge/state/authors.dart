@@ -3,25 +3,25 @@ import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
-part 'age.g.dart';
+part 'authors.g.dart';
 
-class AgeCategoriesStore extends _AgeCategoriesStore with _$AgeCategoriesStore {
-  AgeCategoriesStore({
+class AuthorsStore extends _AuthorsStore with _$AuthorsStore {
+  AuthorsStore({
     required super.apiClient,
   });
 }
 
-abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
+abstract class _AuthorsStore extends PaginatedListStore<AuthorModel>
     with Store {
-  _AgeCategoriesStore({
+  _AuthorsStore({
     required super.apiClient,
   }) : super(
-          basePath: Endpoint().ageCaterories,
+          basePath: Endpoint().authorCaterories,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
-                .map((e) => CategoryModel.fromJson(e))
+                .map((e) => AuthorModel.fromJson(e))
                 .toList();
 
             return data;
@@ -36,7 +36,7 @@ abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
   }
 
   @computed
-  ObservableList<CategoryModel> get selectedItems => ObservableList.of(
+  ObservableList<AuthorModel> get selectedItems => ObservableList.of(
       listData.where((element) => element.isSelected).toList());
 
   @computed

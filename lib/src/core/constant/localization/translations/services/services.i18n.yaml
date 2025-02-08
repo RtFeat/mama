@@ -56,7 +56,10 @@ ageBtn:
   title: Age
 
 authorBtn:
-  title: Author
+  title:
+    one: Author
+    few: $n authors
+    many: $n authors
 
 obstetrician:
   title: Obstetrician

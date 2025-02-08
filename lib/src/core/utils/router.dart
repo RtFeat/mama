@@ -234,6 +234,10 @@ final GoRouter router = GoRouter(
                   builder: (context, state) => const AgeCategoryView(),
                 ),
                 GoRoute(
+                    path: _Paths.author,
+                    name: AppViews.author,
+                    builder: (context, state) => const AuthorsView()),
+                GoRoute(
                   path: _Paths.favoriteArticles,
                   name: AppViews.favoriteArticles,
                   builder: (context, state) => const FavoriteArticlesView(),
@@ -576,4 +580,5 @@ abstract class _Paths {
   static const favoriteArticles = AppViews.favoriteArticles;
   static const categories = AppViews.categories;
   static const ages = AppViews.ages;
+  static const author = AppViews.author;
 }

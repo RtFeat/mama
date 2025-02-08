@@ -56,7 +56,10 @@ ageBtn:
   title: Возраст
 
 authorBtn:
-  title: Автор
+  title:
+    one: Автор
+    few: $n автора
+    many: $n авторов
 
 obstetrician:
   title: Акушер

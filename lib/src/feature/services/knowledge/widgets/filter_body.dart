@@ -4,8 +4,18 @@ import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
 class KnowledgeFilterBody extends StatefulWidget {
-  final PaginatedListStore<CategoryModel> store;
-  const KnowledgeFilterBody({super.key, required this.store});
+  final PaginatedListStore<KnowledgeFilterModel> store;
+  final String Function(KnowledgeFilterModel) titleBuilder;
+  final String Function(KnowledgeFilterModel)? countBuilder;
+  final String Function(KnowledgeFilterModel)? profession;
+  final Widget Function(KnowledgeFilterModel)? iconBuilder;
+  const KnowledgeFilterBody(
+      {super.key,
+      required this.store,
+      this.countBuilder,
+      this.profession,
+      this.iconBuilder,
+      required this.titleBuilder});
 
   @override
   State<KnowledgeFilterBody> createState() => _KnowledgeFilterBodyState();
@@ -28,13 +38,47 @@ class _KnowledgeFilterBodyState extends State<KnowledgeFilterBody> {
       itemsPadding: EdgeInsets.zero,
       itemBuilder: (context, item, _) {
         return Observer(builder: (_) {
-          return CheckboxListTile(
-            title: Text(
-              item.title,
-              style: textTheme.titleSmall,
+          return ListTile(
+            horizontalTitleGap: 10,
+            leading: widget.iconBuilder?.call(item),
+            visualDensity: VisualDensity.compact,
+            contentPadding: const EdgeInsets.only(left: 16),
+            onTap: () {
+              item.setSelected(!item.isSelected);
+            },
+            title: Row(
+              children: [
+                Text(
+                  widget.titleBuilder(item),
+                  style: textTheme.titleSmall,
+                  maxLines: 2,
+                ),
+                if (widget.profession != null &&
+                    widget.profession!(item).isNotEmpty) ...[
+                  8.w,
+                  ProfessionBox(
+                    profession: widget.profession!(item),
+                  ),
+                ]
+              ],
             ),
-            value: item.isSelected,
-            onChanged: (value) => item.setSelected(value ?? false),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.countBuilder != null)
+                  Text(
+                    widget.countBuilder!(item),
+                    maxLines: 1,
+                    style: textTheme.titleSmall?.copyWith(
+                      color: AppColors.greyBrighterColor,
+                    ),
+                  ),
+                Checkbox(
+                  value: item.isSelected,
+                  onChanged: (value) => item.setSelected(value ?? false),
+                ),
+              ],
+            ),
           );
         });
       },
