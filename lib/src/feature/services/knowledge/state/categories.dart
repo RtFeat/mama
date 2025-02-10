@@ -17,6 +17,7 @@ abstract class _CategoriesStore extends PaginatedListStore<CategoryModel>
     required super.apiClient,
   }) : super(
           basePath: Endpoint.categories,
+          pageSize: 20,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
           transformer: (raw) {

@@ -11,7 +11,7 @@ class AgeCategoriesStore extends _AgeCategoriesStore with _$AgeCategoriesStore {
   });
 }
 
-abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
+abstract class _AgeCategoriesStore extends PaginatedListStore<AgeCategoryModel>
     with Store {
   _AgeCategoriesStore({
     required super.apiClient,
@@ -19,9 +19,10 @@ abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
           basePath: Endpoint().ageCaterories,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
+          pageSize: 20,
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
-                .map((e) => CategoryModel.fromJson(e))
+                .map((e) => AgeCategoryModel.fromJson(e))
                 .toList();
 
             return data;
@@ -36,7 +37,7 @@ abstract class _AgeCategoriesStore extends PaginatedListStore<CategoryModel>
   }
 
   @computed
-  ObservableList<CategoryModel> get selectedItems => ObservableList.of(
+  ObservableList<AgeCategoryModel> get selectedItems => ObservableList.of(
       listData.where((element) => element.isSelected).toList());
 
   @computed

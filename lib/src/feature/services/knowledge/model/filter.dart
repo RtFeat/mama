@@ -20,6 +20,11 @@ abstract class _KnowledgeFilter with Store {}
 class KnowledgeFilterModel extends _KnowledgeFilterModel
     with _$KnowledgeFilterModel {
   KnowledgeFilterModel();
+
+  factory KnowledgeFilterModel.fromJson(Map<String, dynamic> json) =>
+      _$KnowledgeFilterModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$KnowledgeFilterModelToJson(this);
 }
 
 abstract class _KnowledgeFilterModel with Store {

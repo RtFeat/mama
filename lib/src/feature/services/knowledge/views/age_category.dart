@@ -23,7 +23,8 @@ class AgeCategoryView extends StatelessWidget {
           ),
           body: KnowledgeFilterBody(
               store: store,
-              titleBuilder: (item) => (item as CategoryModel).title),
+              titleBuilder: (item) =>
+                  (item as AgeCategoryModel).localizedTitle),
           bottomNavigationBar: FilterBottomBarWidget(
             onClear: () {
               store.setMarkAllNotSelected();

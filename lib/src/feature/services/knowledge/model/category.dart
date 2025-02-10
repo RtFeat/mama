@@ -9,6 +9,7 @@ class CategoryModel extends _CategoryModel with _$CategoryModel {
   final String id;
   @JsonKey(name: 'name')
   final String title;
+
   CategoryModel({
     required this.id,
     required this.title,

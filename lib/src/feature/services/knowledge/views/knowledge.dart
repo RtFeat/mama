@@ -45,9 +45,10 @@ class KnowledgeView extends StatelessWidget {
               context.pushNamed(AppViews.ages);
             },
             title: switch (selectedAgesCount) {
-              1 => knowledgeStore.ageCategoriesStore.selectedItems.first.title,
+              1 => knowledgeStore
+                  .ageCategoriesStore.selectedItems.first.localizedTitle,
               > 1 =>
-                '${knowledgeStore.ageCategoriesStore.selectedItems.first.title}+',
+                '${knowledgeStore.ageCategoriesStore.selectedItems.first.localizedTitle}+',
               _ => t.services.ageBtn.title,
             }),
         KnowledgeFilter(

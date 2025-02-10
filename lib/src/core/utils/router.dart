@@ -1,4 +1,5 @@
 import 'package:calendar_view/calendar_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
@@ -91,9 +92,9 @@ final GoRouter router = GoRouter(
       path: _Paths.startScreen,
       name: AppViews.startScreen,
       builder: (context, state) {
-        // if (kDebugMode) {
-        //   return SleepCryView();
-        // }
+        if (kDebugMode) {
+          return SleepCryView();
+        }
         return const StartScreen();
       },
     ),

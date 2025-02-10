@@ -19,6 +19,7 @@ abstract class _AuthorsStore extends PaginatedListStore<AuthorModel>
           basePath: Endpoint().authorCaterories,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
+          pageSize: 20,
           transformer: (raw) {
             final data = List.from(raw['list'] ?? [])
                 .map((e) => AuthorModel.fromJson(e))
