@@ -38,6 +38,9 @@ class App extends StatelessWidget {
                     tokenStorage: context.read<Dependencies>().tokenStorage,
                   )),
           Provider(
+              create: (context) =>
+                  FirebaseMessageStore(store: context.read<MessagesStore>())),
+          Provider(
               create: (context) => AuthStore(
                     apiClient: context.read<Dependencies>().apiClient,
                     tokenStorage: context.read<Dependencies>().tokenStorage,

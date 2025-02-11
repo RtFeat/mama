@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -20,6 +21,8 @@ final class InitializationProcessor {
     final sharedPreferences = await SharedPreferences.getInstance();
 
     await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
+
+    await Firebase.initializeApp();
 
     final storage = AuthStorageImpl(storage: const FlutterSecureStorage());
 
