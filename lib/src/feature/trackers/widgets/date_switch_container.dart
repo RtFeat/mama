@@ -62,7 +62,7 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(2),
       height: 35,
       decoration: BoxDecoration(

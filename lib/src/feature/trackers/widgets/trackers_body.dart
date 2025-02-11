@@ -3,6 +3,8 @@ import 'package:mama/src/data.dart';
 
 class TrackerBody extends StatelessWidget {
   final List<Widget> children;
+  final VoidCallback onPressClose;
+  final VoidCallback onPressLearnMore;
   final PreferredSizeWidget? appBar;
   final Widget? stackWidget;
   final String learnMoreWidgetText;
@@ -13,7 +15,9 @@ class TrackerBody extends StatelessWidget {
       this.bottomNavigatorBar,
       required this.learnMoreWidgetText,
       this.stackWidget,
-      this.appBar});
+      this.appBar,
+      required this.onPressClose,
+      required this.onPressLearnMore});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +31,8 @@ class TrackerBody extends StatelessWidget {
             children: [
               16.h,
               LearnMoreWidget(
-                onPressClose: () {},
-                onPressButton: () {},
+                onPressClose: () => onPressClose(),
+                onPressButton: () => onPressLearnMore(),
                 title: learnMoreWidgetText,
               ),
               Column(

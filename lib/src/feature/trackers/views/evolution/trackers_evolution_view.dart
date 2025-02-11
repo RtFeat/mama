@@ -63,6 +63,8 @@ class WeightT extends StatelessWidget {
   Widget build(BuildContext context) {
     return TrackerBody(
       learnMoreWidgetText: trackerType.knowMoreTitle,
+      onPressClose: () {},
+      onPressLearnMore: () {},
       children: [
         10.h,
 

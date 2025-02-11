@@ -11,6 +11,8 @@ class BreastScreen extends StatelessWidget {
 
     return TrackerBody(
       learnMoreWidgetText: t.trackers.findOutMoreTextBrist,
+      onPressClose: () {},
+      onPressLearnMore: () {},
       children: [
         const AddFeedingWidget(),
         TableHistory(

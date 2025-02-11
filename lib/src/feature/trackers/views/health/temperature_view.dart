@@ -20,93 +20,16 @@ class TemperatureView extends StatelessWidget {
       ['', '09:30', '36,9'],
     ];
     final phonePadding = MediaQuery.of(context).padding;
+    return TrackerBody(
+      learnMoreWidgetText: t.trackers.findOutMoreTextTemp,
+      onPressClose: () {},
+      onPressLearnMore: () {},
+      stackWidget:
 
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        /// #main content
-        Expanded(
-          child: ColoredBox(
-            color: AppColors.whiteColor,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ListView(
-                padding: const EdgeInsets.only(top: 16),
-                children: [
-                  /// #find out more box
-                  LearnMoreWidget(
-                    onPressClose: () {},
-                    onPressButton: () {},
-                    title: t.trackers.findOutMoreTextTemp,
-                  ),
-                  14.h,
-
-                  /// #tabel header
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          t.trackers.date.title,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.greyBrighterColor,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          t.trackers.time.title,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.greyBrighterColor,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          t.trackers.temperature.title,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.greyBrighterColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 5),
-
-                  /// #actual table
-                  Table(
-                    children: tableData
-                        .map(
-                          (row) => TableRow(
-                            children: row
-                                .map(
-                                  (cell) => Text(cell),
-                                )
-                                .toList(),
-                          ),
-                        )
-                        .toList(),
-                  ),
-
-                  SizedBox(height: phonePadding.bottom + 16),
-                ],
-              ),
-            ),
-          ),
-        ),
-
-        /// #bottom buttons
-        ButtonsLearnPdfAdd(
+          /// #bottom buttons
+          Align(
+        alignment: Alignment.bottomCenter,
+        child: ButtonsLearnPdfAdd(
           onTapLearnMore: () {},
           onTapPDF: () {},
           onTapAdd: () {
@@ -114,6 +37,66 @@ class TemperatureView extends StatelessWidget {
           },
           iconAddButton: AppIcons.thermometer,
         ),
+      ),
+      children: [
+        14.h,
+
+        /// #tabel header
+        Row(
+          children: [
+            Expanded(
+              flex: 4,
+              child: Text(
+                t.trackers.date.title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.greyBrighterColor,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Text(
+                t.trackers.time.title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.greyBrighterColor,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Text(
+                t.trackers.temperature.title,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.greyBrighterColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+
+        /// #actual table
+        Table(
+          children: tableData
+              .map(
+                (row) => TableRow(
+                  children: row
+                      .map(
+                        (cell) => Text(cell),
+                      )
+                      .toList(),
+                ),
+              )
+              .toList(),
+        ),
+
+        SizedBox(height: phonePadding.bottom + 16),
       ],
     );
   }

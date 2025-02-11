@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:mama/src/core/core.dart';
 
 class PillContainer extends StatelessWidget {
@@ -18,18 +17,21 @@ class PillContainer extends StatelessWidget {
       child: SizedBox(
         width: MediaQuery.sizeOf(context).width,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// #pill image
             const DecoratedBox(
               decoration: BoxDecoration(
                 color: AppColors.purpleLighterBackgroundColor,
                 borderRadius: BorderRadius.all(Radius.circular(16)),
+                // image: DecorationImage(image: imagePill, fit: BoxFit.cover), //TODO подгрузить изображение лекарста если есть
               ),
               child: SizedBox(
                 width: 120,
                 height: 120,
                 child: Center(
-                  child: Icon(AppIcons.pillsFill),
+                  child: Icon(AppIcons.pillsFill,
+                      color: AppColors.primaryColor, size: 28),
                 ),
               ),
             ),
@@ -47,24 +49,19 @@ class PillContainer extends StatelessWidget {
                     /// #pill title
                     AutoSizeText(
                       t.trackers.pillTitleOne.title,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 8),
 
                     /// #pill description
                     AutoSizeText(
                       t.trackers.pillDescriptionOne.title,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium
+                          ?.copyWith(fontSize: 14),
                     ),
-                    // const SizedBox(height: 8),
+                    8.h,
 
                     /// #pill exact time, pill remaining time
                     Column(
@@ -73,21 +70,19 @@ class PillContainer extends StatelessWidget {
                         /// #pill exact time
                         AutoSizeText(
                           t.trackers.pillExactTimeOne.title,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14),
                         ),
 
                         /// #pill remaining time
                         AutoSizeText(
                           t.trackers.pillRemainingTimeOne.title,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14),
                         ),
                       ],
                     ),

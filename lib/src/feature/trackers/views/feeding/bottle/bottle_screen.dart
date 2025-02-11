@@ -12,6 +12,8 @@ class BottleScreen extends StatelessWidget {
     final listOfData = historyOfPumping;
     return TrackerBody(
       learnMoreWidgetText: t.trackers.findOutMoreTextBottle,
+      onPressClose: () {},
+      onPressLearnMore: () {},
       children: [
         GraphicWidget(
             listOfData: getBottleData(),

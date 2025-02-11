@@ -64,15 +64,20 @@ class ButtonsLearnPdfAdd extends StatelessWidget {
             ),
             8.w,
 
-            /// #add temperature button
+            /// #add new tracker button
             Expanded(
               flex: 3,
               child: CustomButton(
                 height: buttonsHeight,
                 maxLines: 1,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 5,
+                ),
                 title: t.trackers.add.title,
                 onTap: () => onTapAdd(),
                 icon: iconAddButton,
+                iconSize: 28,
               ),
             )
           ],

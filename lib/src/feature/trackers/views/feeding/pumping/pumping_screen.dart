@@ -13,6 +13,8 @@ class PumpingScreen extends StatelessWidget {
 
     return TrackerBody(
       learnMoreWidgetText: t.trackers.findOutMoreTextPumping,
+      onPressClose: () {},
+      onPressLearnMore: () {},
       children: [
         const PumpingGraphicWidget(),
         30.h,

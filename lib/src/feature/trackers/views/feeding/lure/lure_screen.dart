@@ -20,6 +20,8 @@ class _LureScreenState extends State<LureScreen> {
     final TextTheme textTheme = themeData.textTheme;
     return TrackerBody(
       learnMoreWidgetText: t.trackers.findOutMoreTextLure,
+      onPressClose: () {},
+      onPressLearnMore: () {},
       bottomNavigatorBar: Padding(
         padding: const EdgeInsets.all(15),
         child: EditingButtons(

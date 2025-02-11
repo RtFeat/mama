@@ -15,6 +15,8 @@ class SleepScreen extends StatelessWidget {
 
     return TrackerBody(
         learnMoreWidgetText: t.trackers.findOutMoreTextSleep,
+        onPressClose: () {},
+        onPressLearnMore: () {},
         children: const [
           AddSleepingWidget(),
           CalendarSleeping(),
@@ -77,10 +79,10 @@ class TableWidgetSleepCry extends StatelessWidget {
       height: 300,
       child: Column(
         children: [
-          Row(
+          const Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Начало',
               ),
@@ -95,7 +97,7 @@ class TableWidgetSleepCry extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             itemCount: mapDates.length,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               DateFormat inputFormat = DateFormat('yyyy-MM-dd');
               DateTime input = inputFormat.parse(mapDates[index]);
@@ -110,10 +112,10 @@ class TableWidgetSleepCry extends StatelessWidget {
                   TableRow(
                     children: [
                       Text(maxLines: 1, tracker),
-                      Text(
+                      const Text(
                         'всего',
                       ),
-                      Text(
+                      const Text(
                         'всего',
                       ),
                       for (var item in historyOfSleepCry.where((element) =>
@@ -124,10 +126,10 @@ class TableWidgetSleepCry extends StatelessWidget {
                           children: [
                             TableRow(children: [
                               Text(maxLines: 1, tracker),
-                              Text(
+                              const Text(
                                 'всего',
                               ),
-                              Text(
+                              const Text(
                                 'всего',
                               ),
                             ]),
@@ -136,7 +138,7 @@ class TableWidgetSleepCry extends StatelessWidget {
                       ListView.builder(
                         shrinkWrap: true,
                         itemCount: historyOfSleepCry.length,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {},
                       ),
                     ],
@@ -194,7 +196,7 @@ class CalendarSleeping extends StatelessWidget {
             initialDay: DateTime(2021),
             heightPerMinute: 1, // height occupied by 1 minute time span.
             eventArranger:
-                SideEventArranger(), // To define how simultaneous events will be arranged.
+                const SideEventArranger(), // To define how simultaneous events will be arranged.
             onEventTap: (events, date) => print(events),
             onEventDoubleTap: (events, date) => print(events),
             onDateLongPress: (date) => print(date),

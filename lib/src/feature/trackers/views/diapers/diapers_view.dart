@@ -14,6 +14,8 @@ class DiapersView extends StatelessWidget {
   Widget build(BuildContext context) {
     return TrackerBody(
       learnMoreWidgetText: t.trackers.findOutMoreTextDiapers,
+      onPressClose: () {},
+      onPressLearnMore: () {},
       appBar: CustomAppBar(
         title: t.trackers.diapers,
         padding: const EdgeInsets.only(right: 8),

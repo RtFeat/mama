@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 
+enum AddMedicineType { add, edit }
+
 class AddMedicine extends StatefulWidget {
   const AddMedicine({
     super.key,
     required this.store,
     this.titlesStyle,
     required this.medicineStore,
+    required this.type,
   });
 
   final DrugViewStore store;
   final MedicineStore medicineStore;
   final TextStyle? titlesStyle;
+  final AddMedicineType type;
 
   @override
   State<AddMedicine> createState() => _AddMedicineState();
@@ -45,7 +49,9 @@ class _AddMedicineState extends State<AddMedicine> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
-        title: t.trackers.medicines.add,
+        title: widget.type == AddMedicineType.add
+            ? t.trackers.medicines.add
+            : t.trackers.medicines.edit,
         appBarColor: AppColors.e8ddf9,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: textTheme.headlineSmall!
@@ -228,32 +234,83 @@ class _AddMedicineState extends State<AddMedicine> {
                 ),
               ),
             ),
-            16.h,
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    title: t.trackers.save,
-                    textStyle: textTheme.bodyMedium!
-                        .copyWith(color: AppColors.primaryColor),
-                    onTap: () async {
-                      final model = DrugModel(
-                        child_id: 'ad35f5d5-9911-4c12-bcda-9735b1946c8f',
-                        data_start: dateStartController.text,
-                        name_drug: nameDrugValue,
-                        dose: doseValue,
-                        notes: commentValue,
-                        reminder: widget.store.formattedTime,
-                        is_end: false,
-                      );
-                      widget.medicineStore.postData(model: model);
-                    },
-                    icon: AppIcons.pillsFill,
-                    iconSize: 28,
-                    iconColor: AppColors.primaryColor,
+            widget.type == AddMedicineType.add
+                ? const SizedBox.shrink()
+                : Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: CustomButton(
+                          title: t.trackers.medicines.delete,
+                          backgroundColor: AppColors.redLighterBackgroundColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 8,
+                          ),
+                          textStyle: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.redColor),
+                          onTap: () async {},
+                        ),
+                      ),
+                      10.w,
+                      Expanded(
+                        flex: 2,
+                        child: CustomButton(
+                          title: t.trackers.medicines.finish,
+                          type: CustomButtonType.outline,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 8,
+                          ),
+                          maxLines: 1,
+                          textStyle: textTheme.bodyMedium!
+                              .copyWith(color: AppColors.primaryColor),
+                          onTap: () async {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return EditMedicineDialog(
+                                    medicineName: 'Panadol',
+                                    dateAndTime: DateTime.now()
+                                        .toString(), //widget.store.formattedTime,
+
+                                    onPressFinishMedicine: () async {
+                                      await widget.store.pickTime(context);
+                                    },
+                                  );
+                                });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
+            16.h,
+            Expanded(
+              child: CustomButton(
+                title: t.trackers.save,
+                textStyle: textTheme.bodyMedium!
+                    .copyWith(color: AppColors.primaryColor),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 8,
                 ),
-              ],
+                onTap: () async {
+                  final model = DrugModel(
+                    child_id: 'ad35f5d5-9911-4c12-bcda-9735b1946c8f',
+                    data_start: dateStartController.text,
+                    name_drug: nameDrugValue,
+                    dose: doseValue,
+                    notes: commentValue,
+                    reminder: widget.store.formattedTime,
+                    is_end: false,
+                  );
+                  widget.medicineStore.postData(model: model);
+                },
+                icon: AppIcons.pillsFill,
+                iconSize: 28,
+                iconColor: AppColors.primaryColor,
+              ),
             ),
           ],
         ),
