@@ -11,6 +11,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
     final ChatSocket socket = context.watch<ChatSocket>();
+    final FirebaseMessageStore firebaseMessageStore = context.watch();
 
     return LoadHomeData(
         userStore: userStore,
@@ -18,6 +19,7 @@ class HomeView extends StatelessWidget {
           socket: socket,
           userStore: userStore,
           store: context.watch(),
+          firebaseMessageStore: firebaseMessageStore,
         ));
   }
 }
@@ -26,10 +28,12 @@ class _Body extends StatefulWidget {
   final UserStore userStore;
   final ChatSocket socket;
   final HomeViewStore store;
+  final FirebaseMessageStore firebaseMessageStore;
   const _Body({
     required this.socket,
     required this.userStore,
     required this.store,
+    required this.firebaseMessageStore,
   });
 
   @override
@@ -47,6 +51,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
     widget.socket.initializeSocket();
+    widget.firebaseMessageStore.init();
   }
 
   @override

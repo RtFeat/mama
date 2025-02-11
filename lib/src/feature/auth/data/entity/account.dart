@@ -10,7 +10,7 @@ class AccountModel extends _AccountModel with _$AccountModel {
   String? id;
 
   @JsonKey(name: 'fcm_token')
-  String fcmToken;
+  String? fcmToken;
 
   Gender gender;
 
@@ -88,7 +88,7 @@ abstract class _AccountModel extends BaseModel with Store {
 
   @observable
   @JsonKey(name: 'first_name')
-  String firstName = '';
+  String? firstName = '';
 
   @action
   void setFirstName(String value) {
@@ -121,7 +121,7 @@ abstract class _AccountModel extends BaseModel with Store {
 
   @observable
   @JsonKey(name: 'phone')
-  String phone = '';
+  String? phone = '';
 
   @action
   void setPhone(String value) {

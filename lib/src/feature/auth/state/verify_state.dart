@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:mama/src/data.dart';
@@ -76,14 +77,16 @@ abstract class _VerifyStore with Store {
   void setIsUser(bool value) => isUser = value;
 
   @action
-  void login(
+  Future login(
     String code, {
     RegisterData? data,
-  }) {
+  }) async {
+    final String? token = await FirebaseMessaging.instance.getToken();
+
     apiClient.post(Endpoint().login, body: {
       'code': code,
       'phone': phoneNumber,
-      'fcm_token': '' // TODO: add fcm token
+      'fcm_token': token
     }).then((v) async {
       final String? refreshToken = v?['refresh_token'] as String?;
 

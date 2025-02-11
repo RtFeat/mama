@@ -141,7 +141,7 @@ class _Users extends StatelessWidget {
             onChanged: (v) {
               store?.setQuery(v);
               store?.setFilters({
-                'query': (AccountModel e) {
+                'query': (e) {
                   if (v.isEmpty) return true;
 
                   return e.name.contains(store?.query ?? '');

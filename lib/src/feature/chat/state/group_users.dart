@@ -13,7 +13,7 @@ class GroupUsersStore extends _GroupUsersStore with _$GroupUsersStore {
 }
 
 abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
-    with Store, FilterableDataMixin<AccountModel> {
+    with Store, FilterableDataMixin {
   final String chatId;
 
   _GroupUsersStore({
@@ -50,10 +50,15 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
 
   @action
   @override
-  void setFilters(Map<String, FilterFunction<AccountModel>> filters) {
+  void setFilters(Map<String, FilterFunction> filters) {
     super.setFilters(filters);
-    filteredUsers = applyFilters(listData);
+    filteredUsers = applyFilters(listData) as ObservableList<AccountModel>;
   }
+  // @override
+  // void setFilters(Map<String, FilterFunction<AccountModel>> filters) {
+  //   super.setFilters(filters);
+  //   filteredUsers = applyFilters(listData);
+  // }
 
   @observable
   ObservableList<AccountModel> filteredUsers = ObservableList();

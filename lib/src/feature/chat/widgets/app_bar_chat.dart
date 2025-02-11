@@ -74,7 +74,7 @@ class ChatsAppBar extends StatelessWidget {
                   store.setIsSearching(!store.isSearching);
                   store.setQuery('');
                   store.setFilters({
-                    'query': (MessageItem e) {
+                    'query': (e) {
                       return true;
                     }
                   });
@@ -150,7 +150,7 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
               onChanged: (v) {
                 store.setQuery(v);
                 store.setFilters({
-                  'query': (MessageItem e) {
+                  'query': (e) {
                     if (v.isEmpty) return true;
 
                     return e.text?.contains(v) ?? true;
@@ -161,7 +161,7 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
                 store.formGroup.control('search').value = '';
                 store.setQuery('');
                 store.setFilters({
-                  'query': (MessageItem e) {
+                  'query': (e) {
                     return true;
                   }
                 });

@@ -1,0 +1,41 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "mama-and-co",
+                    "appId": "1:2691017848:android:4a8c303c100af30efed18d",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "mama-and-co",
+                    "appId": "1:2691017848:ios:af5defdd6e372df3fed18d",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "macos": {
+                "default": {
+                    "projectId": "mama-and-co",
+                    "appId": "1:2691017848:ios:3a9dcf19eca1d13efed18d",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "mama-and-co",
+                    "configurations": {
+                        "android": "1:2691017848:android:4a8c303c100af30efed18d",
+                        "ios": "1:2691017848:ios:af5defdd6e372df3fed18d",
+                        "macos": "1:2691017848:ios:3a9dcf19eca1d13efed18d",
+                        "web": "1:2691017848:web:16023cd4b482042ffed18d",
+                        "windows": "1:2691017848:web:ef256e9c5a2e9accfed18d"
+                    }
+                }
+            }
+        }
+    }
+}

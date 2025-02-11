@@ -16,7 +16,7 @@ class MessagesStore extends _MessagesStore with _$MessagesStore {
 }
 
 abstract class _MessagesStore extends PaginatedListStore<MessageItem>
-    with Store, FilterableDataMixin<MessageItem> {
+    with Store, FilterableDataMixin {
   _MessagesStore({
     required super.apiClient,
     required this.chatType,
@@ -124,9 +124,9 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   @action
   @override
-  void setFilters(Map<String, FilterFunction<MessageItem>> filters) {
+  void setFilters(Map<String, FilterFunction> filters) {
     super.setFilters(filters);
-    filteredMessages = applyFilters(listData);
+    filteredMessages = applyFilters(listData) as ObservableList<MessageItem>;
   }
 
   @observable

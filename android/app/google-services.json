@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "2691017848",
+    "project_id": "mama-and-co",
+    "storage_bucket": "mama-and-co.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2691017848:android:4a8c303c100af30efed18d",
+        "android_client_info": {
+          "package_name": "com.example.mama"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMA2ge69SnliSNwgubatTglV4QwX165XQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2691017848:android:436feb690a437251fed18d",
+        "android_client_info": {
+          "package_name": "com.example.mama_co"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMA2ge69SnliSNwgubatTglV4QwX165XQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
