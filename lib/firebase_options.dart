@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'mama-and-co.firebasestorage.app',
     measurementId: 'G-4RXS0M2EHK',
   );
-
 }
