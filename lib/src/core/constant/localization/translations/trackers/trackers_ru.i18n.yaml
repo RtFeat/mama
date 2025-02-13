@@ -34,6 +34,21 @@ medicines:
   finish: Завершить прием
   resume: Возобновить прием
 
+doctor:
+  calendarButton: Календарь посещений врача
+  addNewVisitButton: Добавить визит к врачу
+  addNewVisitTitle: Визит к врачу
+  addNewVisitField1Title: Врач
+  addNewVisitField1Hint: Нажмите, чтобы добавить данные врача. Удобно писать в формате «Педиатр Иванов»
+  addNewVisitField2Title: Дата визита
+  addNewVisitField2Hint: Нажмите, чтобы указать дату визита
+  addNewVisitField3Title: Клиника №
+  addNewVisitField3Hint: Нажмите, чтобы добавить название клиники
+  addNewVisitField4Title: Комментарий
+  addNewVisitField4Hint: Нажмите, чтобы добавить комментарий
+  addNewVisitButtonDelete: Удалить
+  addNewVisitButtonSave: Сохранить
+
 finishMedicine: 
   title: Завершить прием лекарства
   dateTitle: 'Укажите дату завершения приема:'

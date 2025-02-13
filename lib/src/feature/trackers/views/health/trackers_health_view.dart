@@ -67,7 +67,7 @@ class _TrackersHealthViewState extends State<TrackersHealthView>
         children: const [
           Center(child: TemperatureView()),
           Center(child: MedicineScreen()),
-          Center(child: TemperatureView()),
+          Center(child: DoctorVisitScreen()),
           Center(child: TemperatureView()),
         ],
       ),

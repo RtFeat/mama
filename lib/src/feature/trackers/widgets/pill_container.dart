@@ -2,9 +2,20 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 
-class PillContainer extends StatelessWidget {
-  const PillContainer({
+class PillAndDocVisitContainer extends StatelessWidget {
+  final String? imageUrl;
+  final String title;
+  final String? subTitle;
+  final String timeDate;
+  final String? description;
+
+  const PillAndDocVisitContainer({
     super.key,
+    required this.title,
+    this.subTitle,
+    required this.timeDate,
+    this.description,
+    this.imageUrl,
   });
 
   @override
@@ -20,21 +31,33 @@ class PillContainer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// #pill image
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                color: AppColors.purpleLighterBackgroundColor,
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-                // image: DecorationImage(image: imagePill, fit: BoxFit.cover), //TODO подгрузить изображение лекарста если есть
-              ),
-              child: SizedBox(
-                width: 120,
-                height: 120,
-                child: Center(
-                  child: Icon(AppIcons.pillsFill,
-                      color: AppColors.primaryColor, size: 28),
-                ),
-              ),
-            ),
+
+            imageUrl != null
+                ? Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: ExactAssetImage(
+                          imageUrl!,
+                        ),
+                      ),
+                    ),
+                  )
+                : const DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: AppColors.purpleLighterBackgroundColor,
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Center(
+                        child: Icon(AppIcons.pillsFill,
+                            color: AppColors.primaryColor, size: 28),
+                      ),
+                    ),
+                  ),
             const SizedBox(width: 16),
 
             /// #pill details
@@ -48,20 +71,23 @@ class PillContainer extends StatelessWidget {
                   children: [
                     /// #pill title
                     AutoSizeText(
-                      t.trackers.pillTitleOne.title,
+                      title,
                       style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 1,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 5),
 
                     /// #pill description
-                    AutoSizeText(
-                      t.trackers.pillDescriptionOne.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14),
-                    ),
-                    8.h,
+                    subTitle != null
+                        ? AutoSizeText(
+                            subTitle!,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(fontSize: 14),
+                          )
+                        : const SizedBox.shrink(),
+                    5.h,
 
                     /// #pill exact time, pill remaining time
                     Column(
@@ -69,21 +95,27 @@ class PillContainer extends StatelessWidget {
                       children: [
                         /// #pill exact time
                         AutoSizeText(
-                          t.trackers.pillExactTimeOne.title,
+                          timeDate,
                           style: Theme.of(context)
                               .textTheme
                               .labelMedium
                               ?.copyWith(fontSize: 14),
                         ),
+                        description != null ? 5.h : const SizedBox.shrink(),
 
                         /// #pill remaining time
-                        AutoSizeText(
-                          t.trackers.pillRemainingTimeOne.title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(fontSize: 14),
-                        ),
+                        description != null
+                            ? AutoSizeText(
+                                description!,
+                                maxLines: 2,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                        fontSize:
+                                            description != null ? 10 : 14),
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                   ],

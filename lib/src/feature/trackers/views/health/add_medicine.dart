@@ -173,40 +173,12 @@ class _AddMedicineState extends State<AddMedicine> {
                     Observer(builder: (context) {
                       return Row(
                         children: [
-                          // TODO добавить напоминание по времени
-                          Container(
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColorBrighter,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.all(8),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  AppIcons.alarmFill,
-                                  color: AppColors.primaryColor,
-                                  size: 28,
-                                ),
-                                5.w,
-                                Text(
-                                  widget.store.formattedTime,
-                                  style: textTheme.bodySmall!
-                                      .copyWith(color: AppColors.blackColor),
-                                ),
-                                5.w,
-                                InkWell(
-                                  onTap: () {
-                                    // TODO нажатие удалить напоминание
-                                  },
-                                  child: const Icon(
-                                    Icons.close,
-                                    size: 28,
-                                    color: AppColors.redColor,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          // TODO добавить условие если ессть напоминание по времени
+                          RemindItem(
+                            time: widget.store.formattedTime,
+                            onRemove: () {
+                              // TODO нажатие удалить напоминание
+                            },
                           ),
                           widget.store.formattedTime == ''
                               ? const SizedBox()
@@ -241,7 +213,9 @@ class _AddMedicineState extends State<AddMedicine> {
                       Expanded(
                         flex: 1,
                         child: CustomButton(
-                          title: t.trackers.medicines.delete,
+                          title: widget.medicineStore.drug.is_end!
+                              ? t.trackers.medicines.resume
+                              : t.trackers.medicines.delete,
                           backgroundColor: AppColors.redLighterBackgroundColor,
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 12,

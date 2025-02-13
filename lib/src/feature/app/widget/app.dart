@@ -67,6 +67,11 @@ class App extends StatelessWidget {
             ),
           ),
           Provider(
+            create: (context) => DoctorVisitStore(
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
             create: (context) => DoctorStore(
                 restClient: context.read<Dependencies>().restClient),
           ),

@@ -84,17 +84,25 @@ class ProfilePhoto extends StatelessWidget {
 
 class DashedPhotoProfile extends StatelessWidget {
   final VoidCallback? onIconTap;
+  final Color? backgroundColor;
   final double? height;
+  final double? width;
   final double? iconHeight;
+  final bool? needText;
   final String? text;
   final BorderRadius? borderRadius;
+  final double? radius;
   const DashedPhotoProfile(
       {super.key,
       this.onIconTap,
       this.height,
+      this.width,
       this.text,
       this.borderRadius,
-      this.iconHeight});
+      this.needText = true,
+      this.iconHeight,
+      this.radius,
+      this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +120,13 @@ class DashedPhotoProfile extends StatelessWidget {
           },
       child: Container(
         height: height ?? 390,
+        width: width,
         decoration: BoxDecoration(
-          color: AppColors.purpleLighterBackgroundColor,
+          color: backgroundColor ?? AppColors.purpleLighterBackgroundColor,
           borderRadius: borderRadius ??
-              const BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
+              BorderRadius.only(
+                bottomLeft: Radius.circular(radius ?? 32),
+                bottomRight: Radius.circular(radius ?? 32),
               ),
         ),
         child: Padding(
@@ -127,7 +136,7 @@ class DashedPhotoProfile extends StatelessWidget {
             color: AppColors.primaryColor,
             borderType: BorderType.RRect,
             dashPattern: const [10, 7],
-            radius: const Radius.circular(32),
+            radius: Radius.circular(radius ?? 32),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -137,11 +146,13 @@ class DashedPhotoProfile extends StatelessWidget {
                     size: iconHeight ?? 53,
                     color: AppColors.primaryColor,
                   ),
-                  Text(text ?? t.profile.addPhotoTitle,
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .copyWith(fontWeight: FontWeight.w400)),
+                  needText!
+                      ? Text(text ?? t.profile.addPhotoTitle,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(fontWeight: FontWeight.w400))
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),

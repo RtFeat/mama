@@ -3,15 +3,23 @@ import 'package:mama/src/data.dart';
 
 class ButtonsLearnPdfAdd extends StatelessWidget {
   final VoidCallback onTapLearnMore;
+  final EdgeInsetsGeometry? padding;
   final VoidCallback onTapPDF;
   final VoidCallback onTapAdd;
+  final String? titileAdd;
+  final int? maxLinesAddButton;
   final IconData iconAddButton;
+  final CustomButtonType? typeAddButton;
   const ButtonsLearnPdfAdd(
       {super.key,
       required this.onTapLearnMore,
       required this.onTapPDF,
       required this.onTapAdd,
-      required this.iconAddButton});
+      required this.iconAddButton,
+      this.titileAdd,
+      this.maxLinesAddButton,
+      this.typeAddButton,
+      this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +28,11 @@ class ButtonsLearnPdfAdd extends StatelessWidget {
     return ColoredBox(
       color: AppColors.whiteColor,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
-          top: 8,
-          bottom: phonePadding.bottom + 16,
-        ),
+        padding: padding ??
+            const EdgeInsets.symmetric(horizontal: 16).copyWith(
+              top: 8,
+              bottom: phonePadding.bottom + 16,
+            ),
         child: Row(
           children: [
             /// #find out more button
@@ -69,12 +78,13 @@ class ButtonsLearnPdfAdd extends StatelessWidget {
               flex: 3,
               child: CustomButton(
                 height: buttonsHeight,
-                maxLines: 1,
+                type: typeAddButton ?? CustomButtonType.filled,
+                maxLines: maxLinesAddButton ?? 1,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 8,
                   horizontal: 5,
                 ),
-                title: t.trackers.add.title,
+                title: titileAdd ?? t.trackers.add.title,
                 onTap: () => onTapAdd(),
                 icon: iconAddButton,
                 iconSize: 28,

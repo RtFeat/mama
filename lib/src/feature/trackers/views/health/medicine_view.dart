@@ -76,9 +76,28 @@ class MedicineScreen extends StatelessWidget {
                 ),
               ],
             ),
+            10.h,
 
             /// #pill
-            const PillContainer(), // TODO редактирование лекарства
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: 2,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        // TODO редактирование лекарства
+                      },
+                      child: PillAndDocVisitContainer(
+                        title: t.trackers.pillTitleOne.title,
+                        subTitle: t.trackers.pillDescriptionOne.title,
+                        timeDate: t.trackers.pillExactTimeOne.title,
+                        description: t.trackers.pillRemainingTimeOne.title,
+                      ),
+                    ),
+                  );
+                }),
           ],
         ),
       ],
