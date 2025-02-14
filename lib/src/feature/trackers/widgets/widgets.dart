@@ -42,3 +42,5 @@ export 'grapich_widget.dart';
 export 'editing_buttons.dart';
 export 'edit_medicine_dialog.dart';
 export 'reminder_item.dart';
+export 'vaccine_container.dart';
+export 'calendar_vaccines_container.dart';

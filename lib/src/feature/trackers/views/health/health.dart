@@ -4,5 +4,7 @@ export 'trackers_health_view.dart';
 export 'doctor_visit_view.dart';
 export 'add_temperature.dart';
 export 'add_doctor_visit.dart';
+export 'add_vaccine.dart';
 export 'temperature_view.dart';
 export 'vaccines_view.dart';
+export 'calendar_vaccines.dart';

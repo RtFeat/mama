@@ -151,7 +151,7 @@ abstract class _VaccinesViewStore with Store {
     });
   }
 
-  AbstractControl get vaccination => formGroup.control('vaccination');
+  AbstractControl get vaccination => formGroup.control('vaccine');
 
   bool get isVaccinationValid => vaccination.valid;
 

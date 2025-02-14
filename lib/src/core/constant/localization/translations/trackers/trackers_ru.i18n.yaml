@@ -49,6 +49,30 @@ doctor:
   addNewVisitButtonDelete: Удалить
   addNewVisitButtonSave: Сохранить
 
+vaccines:
+  calendarButton: Календарь прививок
+  addNewButton: Другая прививка
+  vaccinesListTitle1: Прививка
+  vaccinesListTitle2: Возраст
+  vaccinesListTitle3: Отметка о прививке
+  recommendedAge: 'Рекомендованный возраст: '
+  addNewVacAppBarTitle: Другая прививка
+  addFromListVacAppBarTitle: Добавить прививку
+  addNewVacField1Title: Название прививки
+  addNewVacField1Hint: Нажмите, чтобы ввести название прививки
+  addNewVacField2Title: Дата прививки
+  addNewVacField2Hint: Нажмите, чтобы указать дату прививки
+  addNewVacField3Title: Клиника №
+  addNewVacField3Hint: Нажмите, чтобы добавить название клиники, в которой делаете прививку
+  addNewVacField4Title: Производитель, комментарий
+  addNewVacField4Hint: Нажмите, чтобы добавить комментарий
+  addNewVacButtonSave: Сохранить
+  calendarViewAppBar: Календарь прививок
+  calendarViewRecomended: Рекомендуемый календарь прививок
+  calendarViewIdeal: Идеальный календарь прививок
+  calendarViewVOZ: Всемирная Организация Здравоохранения (ВОЗ)
+  pdf: ПДФ
+
 finishMedicine: 
   title: Завершить прием лекарства
   dateTitle: 'Укажите дату завершения приема:'
@@ -132,7 +156,7 @@ findOutMoreTextMedicines: Здесь вы можете добавлять лек
 
 findOutMoreTextDoctorVisit: Здесь вы можете фиксировать походы к врачам и их рекомендации, а так же хранить выписки, рецепты и другие медицинские документы в виде фотографий.\n\nУзнайте больше о здоровье ребенка в Центре Знаний
 
-findOutMoreTextVaccinations: Здесь вы можете отмечать прививки в соответствии с календарем прививок Союза педиатров России.\n\nУзнайте больше о здоровье ребенка в Центре Знаний
+findOutMoreTextVaccinations: Здесь вы можете отмечать прививки в соответствии с календарем прививок Союза педиатров России.\n\nУзнайте больше о прививках в Центре Знаний
 
 findOutMoreTextDiapers: Здесь вы можете следить за использованием подгузников и походами малыша в туалет.\n\nУзнайте больше о подгузниках и пищеварительной системе ребенка в Центре Знаний
 
