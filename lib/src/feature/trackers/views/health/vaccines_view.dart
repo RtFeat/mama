@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
@@ -54,8 +55,45 @@ class VaccinesScreen extends StatelessWidget {
               Column(
                 children: [
                   16.h,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: AutoSizeText(
+                          t.trackers.vaccines.vaccinesListTitle1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(letterSpacing: -0.5),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: AutoSizeText(
+                          t.trackers.vaccines.vaccinesListTitle2,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(letterSpacing: -0.5),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: AutoSizeText(
+                          t.trackers.vaccines.vaccinesListTitle3,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(letterSpacing: -0.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                  5.h,
 
-                  /// #doctor visit
+                  /// #vaccines list
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const ScrollPhysics(),
