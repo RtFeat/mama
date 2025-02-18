@@ -124,8 +124,8 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   @action
   @override
-  void setFilters(Map<String, FilterFunction> filters) {
-    super.setFilters(filters);
+  void setFilters(Map<String, dynamic> filters) {
+    super.setFilters(filters as Map<String, FilterFunction<dynamic>>);
     filteredMessages = applyFilters(listData) as ObservableList<MessageItem>;
   }
 

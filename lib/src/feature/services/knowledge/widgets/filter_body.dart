@@ -48,10 +48,13 @@ class _KnowledgeFilterBodyState extends State<KnowledgeFilterBody> {
             },
             title: Row(
               children: [
-                Text(
-                  widget.titleBuilder(item),
-                  style: textTheme.titleSmall,
-                  maxLines: 2,
+                Expanded(
+                  child: Text(
+                    widget.titleBuilder(item),
+                    style: textTheme.titleSmall,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 if (widget.profession != null &&
                     widget.profession!(item).isNotEmpty) ...[

@@ -49,9 +49,15 @@ class MainBoxWithButtons extends StatelessWidget {
                       //   child: SvgPicture.asset(image),
                       // ),
                       Expanded(
-                        child: Image(
-                          image: AssetImage(image),
-                        ),
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return Image.asset(
+                            image,
+                            fit: BoxFit.contain,
+                            cacheWidth: constraints.maxWidth.toInt(),
+                            // image: AssetImage(imagePath),
+                            filterQuality: FilterQuality.low,
+                          );
+                        }),
                       ),
 
                       /// #main text

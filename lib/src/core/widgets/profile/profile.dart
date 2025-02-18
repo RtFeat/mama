@@ -76,11 +76,14 @@ class _Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 25,
-      backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-      child: avatarUrl == null || avatarUrl!.isEmpty
-          ? const Center(
-              child: Icon(Icons.account_circle_outlined),
+      backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
+          ? ResizeImage(
+              NetworkImage(avatarUrl!),
+              width: 100,
             )
+          : null,
+      child: avatarUrl == null || avatarUrl!.isEmpty
+          ? const Center(child: Icon(Icons.account_circle_outlined))
           : null,
     );
   }

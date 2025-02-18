@@ -20,7 +20,7 @@ class AuthorsView extends StatelessWidget {
       },
       child: Scaffold(
           appBar: CustomAppBar(
-            title: t.services.categoriesBtn.title,
+            title: t.services.authorBtn.title(n: 1),
           ),
           body: KnowledgeFilterBody(
               store: authorsStore,

@@ -327,41 +327,41 @@ class _MomsProfileState extends State<MomsProfile> {
                                     ))),
                           ]),
                         ],
-                        if (userStore.role == Role.user)
-                          Padding(
-                            padding: const EdgeInsets.all(28.0),
-                            child: InkWell(
-                              onTap: () {
-                                context.pushNamed(AppViews.registerFillBabyName,
-                                    extra: {
-                                      'isNotRegister': true,
-                                    });
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Image(
-                                  //   height: 17,
-                                  //   image: AssetImage(
-                                  //     Assets.icons.icAddChild.path,
-                                  //   ),
-                                  // ),
-                                  const Icon(
-                                    AppIcons.plusSquareDashed,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                  16.w,
-                                  Text(
-                                    t.profile.addChildButtonTitle,
-                                    style: widget.titlesColoredStyle?.copyWith(
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                      ],
+                    ),
+                  ),
+                if (userStore.role == Role.user)
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: InkWell(
+                      onTap: () {
+                        context
+                            .pushNamed(AppViews.registerFillBabyName, extra: {
+                          'isNotRegister': true,
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Image(
+                          //   height: 17,
+                          //   image: AssetImage(
+                          //     Assets.icons.icAddChild.path,
+                          //   ),
+                          // ),
+                          const Icon(
+                            AppIcons.plusSquareDashed,
+                            color: AppColors.primaryColor,
+                          ),
+                          16.w,
+                          Text(
+                            t.profile.addChildButtonTitle,
+                            style: widget.titlesColoredStyle?.copyWith(
+                              fontSize: 14,
                             ),
                           ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
               ],

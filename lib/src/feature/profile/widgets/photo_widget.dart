@@ -39,9 +39,12 @@ class ProfilePhoto extends StatelessWidget {
                     bottomRight: Radius.circular(32),
                   ),
               image: DecorationImage(
-                  image: NetworkImage(
-                    photoUrl ?? userStore.account.avatarUrl ?? '',
-                  ),
+                  filterQuality: FilterQuality.low,
+                  image: ResizeImage(
+                      NetworkImage(
+                        photoUrl ?? userStore.account.avatarUrl ?? '',
+                      ),
+                      height: 390),
                   fit: BoxFit.cover),
             ),
           );

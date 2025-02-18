@@ -91,6 +91,7 @@ class _Asset extends StatelessWidget {
                         '${const AppConfig().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}',
                     height: size,
                     width: size,
+                    memCacheWidth: size.toInt() * 2,
                     fit: BoxFit.cover,
                   ));
       default:

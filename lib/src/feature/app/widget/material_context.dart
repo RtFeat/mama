@@ -17,13 +17,14 @@ class MaterialContext extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = Provider.of<Dependencies>(context).settingsStore;
+
     return Observer(builder: (_) {
       return MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: router,
         theme: settings.lightTheme,
         darkTheme: settings.darkTheme,
-        themeMode: settings.themeMode,
+        themeMode: ThemeMode.light,
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         supportedLocales: AppLocaleUtils.supportedLocales,
         locale: TranslationProvider.of(context).flutterLocale,

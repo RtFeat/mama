@@ -17,6 +17,7 @@ class ArticleBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double cardWidth = 200;
+
     return GestureDetector(
       onTap: () {
         context.pushNamed(AppViews.article, extra: {'id': model.id});
@@ -34,13 +35,20 @@ class ArticleBox extends StatelessWidget {
                 children: [
                   /// #image
                   model.photo != null && model.photo!.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: 16.r,
-                          child: Image(
-                            width: cardWidth,
-                            height: 180,
-                            fit: BoxFit.cover,
-                            image: NetworkImage(model.photo!),
+                      ? SizedBox(
+                          width: cardWidth,
+                          height: 180,
+                          child: ClipRRect(
+                            borderRadius: 16.r,
+                            child:
+                                LayoutBuilder(builder: (context, constraints) {
+                              return Image.network(
+                                model.photo!,
+                                cacheWidth: constraints.maxWidth.toInt() * 2,
+                                fit: BoxFit.cover,
+                                filterQuality: FilterQuality.low,
+                              );
+                            }),
                           ),
                         )
                       : SizedBox(

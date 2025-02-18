@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
@@ -38,6 +37,7 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
           },
         );
 
+  @action
   void onConfirm() {
     categoriesStore.setConfirmed(true);
     ageCategoriesStore.setConfirmed(true);
@@ -49,16 +49,11 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
       'category': categoriesStore.selectedItems.map((e) => e.title).toList(),
       'age_category':
           ageCategoriesStore.selectedItems.map((e) => e.title).toList(),
-      'accounts': authorsStore.selectedItems
+      'account_id': authorsStore.selectedItems
           .where((e) => e.isSelected)
           .map((e) => e.writer?.accountId)
-          .toList(),
-      if (authorsStore.selectedItems.firstWhereOrNull((e) => e.isSelected) !=
-          null)
-        'account_id': authorsStore.selectedItems
-            .firstWhereOrNull((e) => e.isSelected)
-            ?.writer
-            ?.accountId
+          .whereType<String>()
+          .join(',')
     });
   }
 }

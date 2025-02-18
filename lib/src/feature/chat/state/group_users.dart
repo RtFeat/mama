@@ -50,8 +50,8 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
 
   @action
   @override
-  void setFilters(Map<String, FilterFunction> filters) {
-    super.setFilters(filters);
+  void setFilters(Map<String, dynamic> filters) {
+    super.setFilters(filters as Map<String, FilterFunction<dynamic>>);
     filteredUsers = applyFilters(listData) as ObservableList<AccountModel>;
   }
   // @override

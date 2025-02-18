@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mama/src/core/core.dart';
 
 class CustomServiceBox extends StatelessWidget {
@@ -38,10 +39,15 @@ class CustomServiceBox extends StatelessWidget {
                 children: [
                   /// #service image
                   Expanded(
-                    child: Image(
-                      fit: BoxFit.contain,
-                      image: AssetImage(imagePath),
-                    ),
+                    child: LayoutBuilder(builder: (context, constraints) {
+                      return Image.asset(
+                        imagePath,
+                        fit: BoxFit.contain,
+                        cacheWidth: constraints.maxWidth.toInt(),
+                        // image: AssetImage(imagePath),
+                        filterQuality: FilterQuality.low,
+                      );
+                    }),
                   ),
 
                   /// #service text

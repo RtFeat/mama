@@ -213,7 +213,7 @@ class ChatSocket {
       ),
     );
     logger.info(message.toJson(), runtimeType: runtimeType);
-    store.addMessage(message);
+    store.addMessage(data.data?.message ?? message);
   }
 
   dynamic handleDeleteMessage(SocketResponse data) async {

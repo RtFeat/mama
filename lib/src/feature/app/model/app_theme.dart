@@ -64,6 +64,7 @@ abstract class _AppThemeStore extends AppThemeStore with Store {
                   primary: AppColors.primaryColor,
                 )),
             darkTheme: FlexThemeData.dark(
+              fontFamily: 'SFProText',
               useMaterial3: true,
               colorScheme: ColorScheme.fromSeed(seedColor: seed),
             ));

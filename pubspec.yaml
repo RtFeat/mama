@@ -5,7 +5,7 @@ description: >
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 0.2.1+87
+version: 0.2.2+90
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -123,7 +123,7 @@ dependencies:
   skit:
     git:
       url: https://github.com/nikondrat/skit.git
-      ref: main
+      ref: future
 
 dev_dependencies:
   # -- testing -- #

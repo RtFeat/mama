@@ -29,7 +29,13 @@ class CustomAvatar extends StatelessWidget {
           ]),
       child: CircleAvatar(
         radius: radius,
-        backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+        backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
+            ? ResizeImage(
+                NetworkImage(avatarUrl!),
+                width: 100, // Ограничиваем размер аватарки
+              )
+            : null,
+        // backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
         child: avatarUrl == null
             ? const Center(
                 child: Icon(Icons.people),

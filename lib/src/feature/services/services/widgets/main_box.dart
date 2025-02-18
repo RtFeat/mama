@@ -21,10 +21,20 @@ class MainBox extends StatelessWidget {
 
     final double width = MediaQuery.of(context).size.width;
 
-    final Widget icon = Image(
-      image: AssetImage(image),
-      fit: BoxFit.cover,
-    );
+    final Widget icon = LayoutBuilder(builder: (context, constraints) {
+      return Image.asset(
+        image,
+        fit: BoxFit.cover,
+        cacheWidth: constraints.maxWidth.toInt(),
+        // image: AssetImage(imagePath),
+        filterQuality: FilterQuality.low,
+      );
+    });
+
+    // Image(
+    //   image: AssetImage(image),
+    //   fit: BoxFit.cover,
+    // );
 
     return GestureDetector(
       onTap: onTap,

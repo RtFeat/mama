@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ArticleBody extends StatelessWidget {
   final String id;
@@ -57,58 +56,121 @@ class ArticleBody extends StatelessWidget {
                             ])
                           ],
                         ))),
-                SliverList.builder(
-                    itemCount: store.data?.articles?.length,
-                    // padding: const EdgeInsets.only(
-                    //   top: kToolbarHeight,
-                    //   left: padding,
-                    //   right: padding,
-                    // ),
-                    itemBuilder: (context, index) {
-                      final NativeArticle article = store
-                              .data?.articles?[index] ??
-                          NativeArticle(data: '', type: NativeArticleType.text);
+                //   SliverList.builder(
+                //       itemCount: store.data?.articles?.length,
+                //       // padding: const EdgeInsets.only(
+                //       //   top: kToolbarHeight,
+                //       //   left: padding,
+                //       //   right: padding,
+                //       // ),
+                //       itemBuilder: (context, index) {
+                //         final NativeArticle article = store
+                //                 .data?.articles?[index] ??
+                //             NativeArticle(data: '', type: NativeArticleType.text);
 
-                      if (article.data == null) return const SizedBox.shrink();
+                //         if (article.data == null) return const SizedBox.shrink();
 
-                      switch (article.type) {
-                        case NativeArticleType.text:
-                          return Text(
-                            article.data!,
-                            style: textTheme.titleSmall,
-                          );
-                        case NativeArticleType.image:
-                          return Image.network(
-                            article.data!,
-                            errorBuilder: (context, error, stackTrace) {
-                              logger.error('error',
-                                  error: error, stackTrace: stackTrace);
-                              return const SizedBox.shrink();
-                            },
-                          );
-                        case NativeArticleType.list:
-                          return Column(
-                            children: List.from(
-                                jsonDecode(article.data!).map((e) => ListTile(
-                                        title: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.circle,
-                                          size: 8,
-                                        ),
-                                        10.w,
-                                        Text(
-                                          e.toString(),
-                                          style: textTheme.titleSmall,
-                                        ),
-                                      ],
-                                    )))),
-                          );
-                      }
-                    }),
+                //         switch (article.type) {
+                //           case NativeArticleType.text:
+                //             return Text(
+                //               article.data!,
+                //               style: textTheme.titleSmall,
+                //             );
+                //           case NativeArticleType.image:
+                //             return Image.network(
+                //               article.data!,
+                //               errorBuilder: (context, error, stackTrace) {
+                //                 logger.error('error',
+                //                     error: error, stackTrace: stackTrace);
+                //                 return const SizedBox.shrink();
+                //               },
+                //             );
+                //           case NativeArticleType.list:
+                //             return Column(
+                //               children: List.from(
+                //                   jsonDecode(article.data!).map((e) => ListTile(
+                //                           title: Row(
+                //                         children: [
+                //                           const Icon(
+                //                             Icons.circle,
+                //                             size: 8,
+                //                           ),
+                //                           10.w,
+                //                           Text(
+                //                             e.toString(),
+                //                             style: textTheme.titleSmall,
+                //                           ),
+                //                         ],
+                //                       )))),
+                //             );
+                //         }
+                //       }),
+
+                SliverFillRemaining(
+                    child: _WebBody(
+                        data: store.data?.articles
+                                ?.where((e) => e.data != null)
+                                .firstOrNull
+                                ?.data ??
+                            ''))
               ],
             ),
           );
         });
+  }
+}
+
+class _WebBody extends StatefulWidget {
+  final String data;
+  const _WebBody({
+    required this.data,
+  });
+
+  @override
+  State<_WebBody> createState() => __WebBodyState();
+}
+
+class __WebBodyState extends State<_WebBody> {
+  late final WebViewController controller;
+
+  late final String payload;
+
+  @override
+  void initState() {
+    payload = '''
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Убираем горизонтальный скролл */
+        }
+        img {
+            max-width: 100%; /* Ограничиваем ширину изображений */
+            height: auto; /* Сохраняем пропорции */
+            display: block; /* Убираем лишние отступы */
+            margin: 0 auto; /* Центрируем изображение */
+        }
+    </style>
+</head>
+<body>
+${widget.data}
+</body>
+</html>
+  ''';
+    super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadHtmlString(payload);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WebViewWidget(controller: controller);
   }
 }

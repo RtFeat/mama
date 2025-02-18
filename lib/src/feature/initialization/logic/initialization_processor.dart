@@ -87,17 +87,21 @@ final class InitializationProcessor {
 
     final localeFuture = localeRepository.getLocale();
     final theme = await themeRepository.getTheme();
+    final themeStore = ThemeStore(
+      mode: theme?.mode ?? ThemeMode.system,
+      seed: theme?.seed ?? AppColors.primaryColor,
+    );
 
     final locale = await localeFuture;
     final settingsStore = DefaultSettingsStore(
       localeRepository: localeRepository,
       themeRepository: themeRepository,
       locale: locale ?? Locale(Intl.systemLocale),
-      appTheme: ThemeStore(
-        mode: theme?.mode ?? ThemeMode.system,
-        seed: theme?.seed ?? AppColors.primaryColor,
-      ),
+      appTheme: themeStore,
     );
+    settingsStore.setTheme(themeStore);
+    settingsStore.setLocale(locale ?? Locale(Intl.systemLocale));
+
     return settingsStore;
   }
 
