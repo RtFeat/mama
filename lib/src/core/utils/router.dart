@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/views/feeding/bottle/add_bottle_screen.dart';
 import 'package:mama/src/feature/home/view/day_work.dart';
-import 'package:mama/src/feature/services/knowledge/views/saved_files_screen.dart';
+import 'package:mama/src/feature/services/knowledge/views/favorite_articles_screen.dart';
 import 'package:mama/src/feature/services/knowledge/views/service_info_screen.dart';
 
 abstract class AppViews {
@@ -79,7 +79,7 @@ abstract class AppViews {
   static const categories = 'categories';
   static const ages = 'ages';
   static const author = 'author';
-  static const savedFiles = 'savedFiles';
+  static const favArticles = 'savedFiles';
 }
 
 final GlobalKey<NavigatorState> navKey = GlobalKey();
@@ -237,9 +237,9 @@ final GoRouter router = GoRouter(
                 //   builder: (context, state) => const AuthorsScreen(),
                 // ),
                 GoRoute(
-                  name: AppViews.savedFiles,
-                  path: _Paths.savedFiles,
-                  builder: (context, state) => const SavedFilesScreen(),
+                  name: AppViews.favArticles,
+                  path: _Paths.favoriteArticles,
+                  builder: (context, state) => const FavoriteArticlesScreen(),
                 ),
                 GoRoute(
                   name: AppViews.serviceKnowledgeInfo,
@@ -585,5 +585,5 @@ abstract class _Paths {
   static const categories = AppViews.categories;
   static const ages = AppViews.ages;
   static const author = AppViews.author;
-  static const savedFiles = AppViews.savedFiles;
+  static const favoriteArticles = AppViews.favArticles;
 }

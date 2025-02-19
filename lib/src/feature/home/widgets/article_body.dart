@@ -54,7 +54,8 @@ class _ArticleBodyState extends State<ArticleBody> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: textTheme.bodySmall!.copyWith(
-                                      color: textTheme.bodyLarge!.color),
+                                      color: textTheme.bodyLarge!.color,
+                                      fontSize: 14),
                                 ),
                               ),
                             ]),

@@ -51,7 +51,8 @@ class ArticleWidget extends StatelessWidget {
                                       fontSize: 14,
                                     ),
                                   ),
-                                  if (article.author?.profession != null)
+                                  if (article.author?.profession != null &&
+                                      article.author?.profession != '')
                                     ConsultationBadge(
                                       title: article.author!.profession ?? '',
                                     ),
@@ -96,6 +97,7 @@ class ArticleWidget extends StatelessWidget {
                                         style: textTheme.labelSmall?.copyWith(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
+                                          color: AppColors.greyBrighterColor,
                                         ),
                                       ),
                                       visualDensity: VisualDensity.compact,

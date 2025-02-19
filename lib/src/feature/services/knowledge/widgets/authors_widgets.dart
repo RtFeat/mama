@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/services/knowledge/widgets/common_checkbox.dart';
 
+//TODO виджет нигде не используется, если не нужен удалить
 class AuthorsSub extends StatelessWidget {
   final String title;
   final String titleAuthor;

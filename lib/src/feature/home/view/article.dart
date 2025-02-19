@@ -49,11 +49,11 @@ class ArticleView extends StatelessWidget {
                   iconAlignment: IconAlignment.end,
                   icon: IconWidget(
                       model: IconModel(
-                    // iconPath: Assets.icons.bookmark,
                     icon: AppIcons.bookmark,
+                    color: AppColors.blackColor,
                   )),
                   title: t.home.toFavorites,
-                  labelStyle: textTheme.titleSmall,
+                  labelStyle: textTheme.titleSmall!.copyWith(fontSize: 14),
                   onTapButton: () {
                     if (id != null) {
                       store.addToFavorite(id!);

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//TODO виджет нигде не используется, если не нужен удалить
+
 class CommonFilterChipWidget extends StatefulWidget {
   const CommonFilterChipWidget({super.key});
 

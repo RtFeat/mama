@@ -1,7 +1,6 @@
 export 'items/items.dart';
 export 'card.dart';
 export 'app_bar_chat.dart';
-export 'profession_box.dart';
 export 'items/unread_box.dart';
 export 'finder.dart';
 export 'emoji.dart';

@@ -31,7 +31,7 @@ class MedicCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -45,7 +45,7 @@ class MedicCard extends StatelessWidget {
                         fontFamily: Assets.fonts.nunitoItalic,
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     SizedBox(
                       width: 55,
                       child: DecoratedBox(
@@ -53,7 +53,7 @@ class MedicCard extends StatelessWidget {
                           color: AppColors.lightBlueBackgroundStatus,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Акушер',
                           style: TextStyle(
                             color: AppColors.blueBrightTextColor,
@@ -65,7 +65,7 @@ class MedicCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Expanded(
                   child: Text(
                     maxLines: 4,
@@ -77,8 +77,8 @@ class MedicCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 12),
-                Row(
+                const SizedBox(height: 12),
+                const Row(
                   children: [
                     BuildButton(
                       text: '2 статьи',
@@ -105,14 +105,14 @@ class BuildButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {},
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
-        minimumSize: Size(73, 26),
+        minimumSize: const Size(73, 26),
         backgroundColor: AppColors.greyColorMedicard,
         foregroundColor: AppColors.blackColor,
-        side: BorderSide(color: AppColors.blackColor),
+        side: const BorderSide(color: AppColors.blackColor),
       ),
       child: Text(
         text,

@@ -22,7 +22,13 @@ class ConsultationTags extends StatelessWidget {
                 color: const WidgetStatePropertyAll(
                     AppColors.whiteDarkerButtonColor),
                 label: Text(tags[index]),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                labelStyle: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(fontSize: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 5,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

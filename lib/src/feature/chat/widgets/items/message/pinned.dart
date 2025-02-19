@@ -112,7 +112,7 @@ class PinnedMessages extends StatelessWidget {
                     //         )
                     //       :
                     Padding(
-                  padding: EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
                     onPressed: () {
                       context.pushNamed(AppViews.pinnedMessagesView, extra: {
@@ -120,7 +120,7 @@ class PinnedMessages extends StatelessWidget {
                         'scrollController': scrollController,
                       });
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       AppIcons.pinFill,
                       color: AppColors.greyLighterColor,
                     ),

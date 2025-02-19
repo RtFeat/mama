@@ -48,21 +48,21 @@ class ServiceInfoScreen extends StatelessWidget {
             builder: (windowWidth, windowSize) => ListView(
               padding: HorizontalSpacing.centered(windowWidth),
               children: [
-                SizedBox(height: 10),
+                10.h,
                 InkWell(
                   splashFactory: NoSplash.splashFactory,
                   onTap: () {},
-                  child: MedicCard(),
+                  child: const MedicCard(),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 Text(
                   t.services.childDevelopment.title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   height: 246,
                   width: double.infinity,
@@ -76,103 +76,103 @@ class ServiceInfoScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childDevDescription,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Физическое развитие ребенка в 6 месяцев',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childPhysDescription,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Что умеет ребенок в 6 месяцев',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Зрение',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childVision,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Слух',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childVision,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Речь',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childSpeech,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Моторика',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childMotoric,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Эмоции',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childEmotion,
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Игра',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childGame,
                 ),
-                SizedBox(height: 10),
+                10.h,
                 Container(
                   height: 144,
                   width: MediaQuery.of(context).size.width,
@@ -183,33 +183,32 @@ class ServiceInfoScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
-                Text(
+                10.h,
+                const Text(
                   'Режим дня в 6 месяцев',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childRegimen,
                 ),
-                SizedBox(height: 10),
-                SizedBox(height: 10),
-                Text(
+                20.h,
+                const Text(
                   'Режим сна',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 10),
+                10.h,
                 SizedBox(
                   child: TextHelper.childSleep,
                 ),
-                SizedBox(height: 10),
-                CommonHorizontalWidget(
+                10.h,
+                const CommonHorizontalWidget(
                   mainTittle: 'Развитие ребенка в 6 месяцев',
                 ),
               ],

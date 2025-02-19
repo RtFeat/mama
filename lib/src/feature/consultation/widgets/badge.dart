@@ -19,7 +19,7 @@ class ConsultationBadge extends StatelessWidget {
       child: FittedBox(
         child: DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: 8.r,
+            borderRadius: 4.r,
             color: AppColors.purpleLighterBackgroundColor,
           ),
           child: Padding(

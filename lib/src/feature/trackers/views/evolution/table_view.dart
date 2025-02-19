@@ -12,7 +12,8 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
-  List<bool> isSelected = [true, false];
+  List<bool> isSelectedWeight = [true, false];
+  List<bool> isSelectedHeight = [true, false];
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +33,12 @@ class _TablePageState extends State<TablePage> {
                     title2: t.trackers.old.title,
                   ),
                   CustomButton(
+                    height: 30,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     title: t.trackers.pdf.title,
                     onTap: () {},
                     icon: AppIcons.arrowDownToLineCompact,
-                    // type: CustomButtonType.outline,
                   ),
                 ],
               ),
@@ -79,25 +82,27 @@ class _TablePageState extends State<TablePage> {
                     ],
                   ),
                   const SizedBox(width: 10),
-                  //!!! swith vertical
-                  CustomToggleButton(
-                    isSelected: isSelected,
-                    onToggle: (int index) {
+                  //!!! swith vertical переделать выравнивание по таблице
+                  VericalToogleCustom(
+                    isSelected: isSelectedWeight,
+                    measure: UnitMeasures.weight,
+                    onChange: (int index) {
                       setState(() {
-                        for (int i = 0; i < isSelected.length; i++) {
-                          isSelected[i] = i == index;
+                        for (int i = 0; i < isSelectedWeight.length; i++) {
+                          isSelectedWeight[i] = i == index;
                         }
                       });
                     },
                   ),
-                  const SizedBox(width: 10),
 
-                  CustomToggleButton(
-                    isSelected: isSelected,
-                    onToggle: (int index) {
+                  const SizedBox(width: 10),
+                  VericalToogleCustom(
+                    isSelected: isSelectedHeight,
+                    measure: UnitMeasures.height,
+                    onChange: (int index) {
                       setState(() {
-                        for (int i = 0; i < isSelected.length; i++) {
-                          isSelected[i] = i == index;
+                        for (int i = 0; i < isSelectedHeight.length; i++) {
+                          isSelectedHeight[i] = i == index;
                         }
                       });
                     },
@@ -164,64 +169,6 @@ class _TablePageState extends State<TablePage> {
           style: AppTextStyles.f10w700.copyWith(color: textColor),
           textAlign: TextAlign.center,
         ),
-      ),
-    );
-  }
-}
-
-class CustomToggleButton extends StatelessWidget {
-  final List<bool> isSelected;
-  final void Function(int) onToggle;
-
-  const CustomToggleButton({
-    super.key,
-    required this.isSelected,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(1),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColors.purpleLighterBackgroundColor,
-      ),
-      child: ToggleButtons(
-        constraints: const BoxConstraints(
-          minHeight: 30,
-          minWidth: 60,
-        ),
-        direction: Axis.vertical,
-        isSelected: isSelected,
-        borderRadius: BorderRadius.circular(8),
-        fillColor: AppColors.whiteColor,
-        selectedColor: AppColors.whiteColor,
-        color: Colors.transparent,
-        splashColor: Colors.transparent,
-        onPressed: onToggle,
-        children: [
-          Text(
-            t.trackers.kg.title,
-            style: TextStyle(
-              color: isSelected[0]
-                  ? AppColors.primaryColor
-                  : AppColors.greyBrighterColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Text(
-            t.trackers.g.title,
-            style: TextStyle(
-              color: isSelected[1]
-                  ? AppColors.primaryColor
-                  : AppColors.greyBrighterColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
       ),
     );
   }

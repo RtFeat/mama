@@ -51,30 +51,41 @@ class KnowledgeView extends StatelessWidget {
       return Scaffold(
         appBar: CustomAppBar(
           title: t.services.knowledgeCenter.title,
+          titleTextStyle: Theme.of(context)
+              .textTheme
+              .headlineSmall!
+              .copyWith(color: AppColors.primaryColor, fontSize: 20),
           action: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed(AppViews.favArticles);
+              },
               icon: const Icon(
                 AppIcons.bookmark,
               )),
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: Row(
-                      children: filters
-                          .map((e) => KnowledgeFilterWidget(
-                                filter: e,
-                              ))
-                          .toList()),
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: AppColors.whiteColor,
+          ),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Row(
+                        children: filters
+                            .map((e) => KnowledgeFilterWidget(
+                                  filter: e,
+                                ))
+                            .toList()),
+                  ),
                 ),
               ),
-            ),
-            SliverToBoxAdapter(child: _Body(knowledgeStore: knowledgeStore)),
-          ],
+              SliverToBoxAdapter(child: _Body(knowledgeStore: knowledgeStore)),
+            ],
+          ),
         ),
       );
     });
@@ -105,19 +116,23 @@ class __BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
-    return PaginatedLoadingWidget(
-      emptyData: const SizedBox.shrink(),
-      store: widget.knowledgeStore,
-      separator: (index, item) {
-        return const Divider(
-          color: AppColors.greyColor,
-        );
-      },
-      itemBuilder: (context, item) {
-        return ArticleWidget(
-          article: item,
-        );
-      },
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: PaginatedLoadingWidget(
+        emptyData: const SizedBox.shrink(),
+        store: widget.knowledgeStore,
+        separator: (index, item) {
+          return const Divider(
+            color: AppColors.greyColor,
+          );
+        },
+        padding: EdgeInsets.zero,
+        itemBuilder: (context, item) {
+          return ArticleWidget(
+            article: item,
+          );
+        },
+      ),
     );
   }
 }

@@ -80,8 +80,8 @@ class ChatItemWidget extends StatelessWidget {
                                 //   if (chatItem.profession != null &&
                                 //       chatItem.profession!.isNotEmpty)
                                 WidgetSpan(
-                                  child: ProfessionBox(
-                                    profession: (item as SingleChatItem)
+                                  child: ConsultationBadge(
+                                    title: (item as SingleChatItem)
                                         .participant1!
                                         .profession!,
                                   ),
@@ -124,8 +124,8 @@ class ChatItemWidget extends StatelessWidget {
                                 //   if (chatItem.profession != null &&
                                 //       chatItem.profession!.isNotEmpty)
                                 WidgetSpan(
-                                  child: ProfessionBox(
-                                    profession: (item as GroupItem)
+                                  child: ConsultationBadge(
+                                    title: (item as GroupItem)
                                         .participant!
                                         .profession!,
                                   ),

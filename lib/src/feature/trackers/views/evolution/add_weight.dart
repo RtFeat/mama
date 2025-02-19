@@ -24,8 +24,7 @@ class AddWeight extends StatelessWidget {
               kgOrG: t.trackers.g.title, painter: CustomPointG()),
           const SizedBox(height: 8),
           CustomBlog(
-            kgOrCm: t.trackers.kg.title,
-            gOrM: t.trackers.g.title,
+            measure: UnitMeasures.weight,
             onPressedElevated: () {},
             onPressedOutlined: () {},
           ),

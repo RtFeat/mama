@@ -1,23 +1,19 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/constant/constant.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/widgets/widgets.dart';
 
 class CustomBlog extends StatefulWidget {
   const CustomBlog({
     super.key,
-    this.kgOrCm,
-    this.gOrM,
     this.onPressedElevated,
     this.onPressedOutlined,
     this.controller,
     this.verticalSwitch,
+    this.measure,
   });
 
-  final String? kgOrCm;
-  final String? gOrM;
+  final UnitMeasures? measure;
   final void Function()? onPressedElevated;
   final void Function()? onPressedOutlined;
   final TextEditingController? controller;
@@ -57,7 +53,7 @@ class _CustomBlogState extends State<CustomBlog> {
               // КГ / Г кнопки (вертикально)
               Row(
                 children: [
-                  widget.kgOrCm == null && widget.gOrM == null
+                  widget.measure == null
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
@@ -67,81 +63,16 @@ class _CustomBlogState extends State<CustomBlog> {
                             ),
                           ),
                         )
-                      : Container(
-                          padding: const EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: AppColors.purpleLighterBackgroundColor,
-                          ),
-                          child: ToggleButtons(
-                            constraints: const BoxConstraints(
-                              minHeight: 30, // минимальная высота
-                              minWidth: 60, // минимальная ширина
-                            ),
-                            direction: Axis.vertical,
-                            isSelected: isSelected,
-                            borderRadius: BorderRadius.circular(8),
-                            fillColor: AppColors.purpleLighterBackgroundColor,
-                            selectedColor: Colors.transparent,
-                            borderColor: AppColors.purpleLighterBackgroundColor,
-                            selectedBorderColor:
-                                AppColors.purpleLighterBackgroundColor,
-                            color: AppColors.purpleLighterBackgroundColor,
-                            splashColor: Colors.transparent,
-                            children: [
-                              Container(
-                                height: 30,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: isSelected[0]
-                                      ? AppColors.whiteColor
-                                      : Colors.transparent,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    widget.kgOrCm ?? '',
-                                    style: TextStyle(
-                                      color: isSelected[0]
-                                          ? AppColors.primaryColor
-                                          : AppColors.greyBrighterColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 30,
-                                width: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: isSelected[1]
-                                      ? AppColors.whiteColor
-                                      : Colors.transparent,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    widget.gOrM ?? '',
-                                    style: TextStyle(
-                                      color: isSelected[1]
-                                          ? AppColors.primaryColor
-                                          : AppColors.greyBrighterColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                            onPressed: (int index) {
-                              setState(() {
-                                for (int i = 0; i < isSelected.length; i++) {
-                                  isSelected[i] = i == index;
-                                }
-                              });
-                            },
-                          ),
+                      : VericalToogleCustom(
+                          measure: widget.measure!,
+                          onChange: (int index) {
+                            setState(() {
+                              for (int i = 0; i < isSelected.length; i++) {
+                                isSelected[i] = i == index;
+                              }
+                            });
+                          },
+                          isSelected: isSelected,
                         ),
                   const SizedBox(width: 8),
                   Expanded(

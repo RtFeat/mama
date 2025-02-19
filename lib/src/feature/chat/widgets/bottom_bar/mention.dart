@@ -14,8 +14,8 @@ class MentionWidget extends StatelessWidget {
     return Observer(builder: (context) {
       return Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Icon(AppIcons.arrowshapeTurnUpForwardFill,
                 color: AppColors.primaryColor),
           ),
