@@ -1,4 +1,6 @@
 export 'add_sleeping.dart';
+export 'add_feeding.dart';
+export 'add_pumping.dart';
 export 'drug_view.dart';
 export 'doctor_visit.dart';
 export 'doctor_visit_view.dart';

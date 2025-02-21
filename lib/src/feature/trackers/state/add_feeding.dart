@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
 part 'add_feeding.g.dart';
@@ -30,6 +31,22 @@ abstract class _AddFeeding with Store {
     confirmFeedingTimer = false;
     isRightSideStart = !isRightSideStart;
     isLeftSideStart = false;
+  }
+
+  @action
+  setTimeStartManually(String value) {
+    DateFormat format = DateFormat('HH:mm');
+    if (value.length == 5) {
+      timerStartTime = format.parse(value);
+    }
+  }
+
+  @action
+  setTimeEndManually(String value) {
+    DateFormat format = DateFormat('HH:mm');
+    if (value.length == 5) {
+      timerEndTime = format.parse(value);
+    }
   }
 
   @action

@@ -60,7 +60,7 @@ class TableHistory extends StatelessWidget {
                                 horizontal: 8, vertical: 3),
                             // icon: IconModel(iconPath: Assets.icons.icUpload),
                             icon: AppIcons.arrowDownToLineCompact,
-                            title: "ПДФ",
+                            title: t.trackers.pdf.title,
                             height: 26,
                             width: 70,
                             onTap: () {},

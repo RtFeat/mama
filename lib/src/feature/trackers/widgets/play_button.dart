@@ -5,6 +5,7 @@ class PlayerButton extends StatefulWidget {
   final Function() onTap;
   final String side;
   final bool isStart;
+  final String? timer;
   final bool needTimer;
 
   const PlayerButton({
@@ -13,6 +14,7 @@ class PlayerButton extends StatefulWidget {
     required this.onTap,
     required this.isStart,
     this.needTimer = false,
+    this.timer,
   });
 
   @override
@@ -171,11 +173,11 @@ class _PlayerButtonState extends State<PlayerButton>
                                 child: Column(
                                   children: [
                                     Text(
-                                      '8м 46с',
+                                      widget.timer ?? '',
                                       style: textTheme.labelLarge,
                                     ),
                                     10.h,
-                                    Text('Изменить время',
+                                    Text(t.feeding.changeTime,
                                         style: textTheme.labelSmall?.copyWith(
                                             fontWeight: FontWeight.w400))
                                   ],

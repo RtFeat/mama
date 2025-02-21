@@ -19,13 +19,12 @@ class SpecialistWorkTimeWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Observer(builder: (context) {
           return Column(children: [
-            const SpecialistTextWidget(
-              text: "Рабочее время",
+            SpecialistTextWidget(
+              text: t.consultation.specialistsConsultWorkTime.title,
               isTitle: true,
             ),
-            const SpecialistTextWidget(
-              text:
-                  "Задайте часы консультации в рабочие дни. Конкретный день можно изменить в календаре",
+            SpecialistTextWidget(
+              text: t.consultation.specialistsConsultWorkTime.subtitle,
               isTitle: false,
             ),
             8.h,

@@ -68,6 +68,15 @@ completed: Completed
 canceled: Canceled
 
 schedule: Schedule
+baseLook: Базовая сетка
+hide: Свернуть
+expand: Развернуть
+specialistsConsultWorkDays: 
+  title: Рабочие дни
+  subtitle: Установите рабочие дни в неделе. Конкретный день можно переназначить в календаре
+specialistsConsultWorkTime: 
+  title: Рабочее время
+  subtitle: Задайте часы консультаций в рабочие дни. Конкретный день можно изменить в календаре
 scheduleSaved: Schedule saved
 cantChangeCurrentWeek: You can't change the working time for the current week
 

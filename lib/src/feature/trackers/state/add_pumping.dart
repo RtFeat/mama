@@ -1,4 +1,3 @@
-
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -12,8 +11,8 @@ abstract class _AddPumping with Store {
   final FormBuilder formBuilder = FormBuilder();
 
   late final FormGroup formGroup = formBuilder.group({
-    'left': [''],
-    'right': [''],
+    'left': FormControl<int>(value: 0),
+    'right': FormControl<int>(value: 0),
   });
 
   AbstractControl get left => formGroup.control('left');
@@ -23,5 +22,4 @@ abstract class _AddPumping with Store {
   void dispose() {
     formGroup.dispose();
   }
-
 }

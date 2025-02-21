@@ -30,6 +30,7 @@ table: Table
 addPumping: Add pumping
 mixture: Mixture
 change: Change
+changeTime: Изменить время
 start: Start
 end: End
 timerStarted: Timer started
@@ -48,3 +49,6 @@ date: Date
 gwTime: GW time
 totalLiquidsMl: Total\nliquids,\nml
 totalComplementary: Total\ncomplementary,\ng
+manualyInputComment: 
+  title: Необязательно
+  subtitle: Можно просто указать общее время ниже

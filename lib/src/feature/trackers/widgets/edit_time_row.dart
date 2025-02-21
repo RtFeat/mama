@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 
 class EditTimeRow extends StatelessWidget {
+  final String formControlNameStart;
+  final String formControlNameEnd;
   final DateTime timerStart;
   final bool isTimerStarted;
   final DateTime? timerEnd;
@@ -15,6 +17,8 @@ class EditTimeRow extends StatelessWidget {
     this.isTimerStarted = false,
     this.onStartTimeChanged,
     this.onEndTimeChanged,
+    required this.formControlNameStart,
+    required this.formControlNameEnd,
   });
 
   @override
@@ -45,7 +49,7 @@ class EditTimeRow extends StatelessWidget {
           detail: t.feeding.change,
           filled: true,
           isEdited: true,
-          formControlName: 'sleepStart',
+          formControlName: formControlNameStart,
           onChanged: () {
             onStartTimeChanged!();
           },
@@ -60,7 +64,7 @@ class EditTimeRow extends StatelessWidget {
               : t.feeding.change,
           filled: true,
           isEdited: true,
-          formControlName: 'sleepEnd',
+          formControlName: formControlNameEnd,
           onChanged: () {
             onEndTimeChanged!();
           },

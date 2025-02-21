@@ -64,8 +64,8 @@ class DetailContainer extends StatelessWidget {
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       isDense: true,
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 0),
                       hintStyle: textTheme.headlineSmall
                           ?.copyWith(color: AppColors.greyBrighterColor),
                     ),

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 
@@ -15,7 +13,8 @@ class AddLureScreen extends StatelessWidget {
       appBar: CustomAppBar(
         height: 55,
         titleWidget: Text(t.feeding.addComplementaryFood,
-            style: textTheme.titleMedium?.copyWith(color: Color(0xFF163C63))),
+            style: textTheme.titleMedium
+                ?.copyWith(color: const Color(0xFF163C63))),
       ),
     );
   }

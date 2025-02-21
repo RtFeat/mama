@@ -18,7 +18,7 @@ class SpecialistScheduleTitleWidget extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            "Базовая сетка",
+            t.consultation.baseLook,
             style: textTheme.titleLarge
                 ?.copyWith(color: Colors.black, fontSize: 20),
           ),
@@ -40,7 +40,9 @@ class SpecialistScheduleTitleWidget extends StatelessWidget {
                       //     : Assets.icons.chevronUp
                     )),
                     Text(
-                      store.isCollapsed ? "Развернуть" : "Свернуть",
+                      store.isCollapsed
+                          ? t.consultation.hide
+                          : t.consultation.expand,
                       style: textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.w600),
                     )

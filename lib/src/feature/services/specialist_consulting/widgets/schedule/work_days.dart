@@ -13,20 +13,19 @@ class SpecialistWorkDaysWidget extends StatelessWidget {
         height: 1,
       ),
       12.h,
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           children: [
             SpecialistTextWidget(
-              text: "Рабочие дни",
+              text: t.consultation.specialistsConsultWorkDays.title,
               isTitle: true,
             ),
             SpecialistTextWidget(
-              text:
-                  "Установите рабочие дни в неделе. Конкретный день можно переназначить в календаре",
+              text: t.consultation.specialistsConsultWorkDays.subtitle,
               isTitle: false,
             ),
-            WeekContainer()
+            const WeekContainer()
           ],
         ),
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/state/add_pumping.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -25,6 +24,7 @@ class AddPumpingInput extends StatelessWidget {
         builder: (context, child) {
           final model = context.watch<AddPumping>();
           return Observer(builder: (context) {
+            var total = model.left.value + model.right.value;
             return DecoratedBox(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -42,13 +42,13 @@ class AddPumpingInput extends StatelessWidget {
                         children: [
                           InputContainer(
                             formatter: formatter,
-                            title: 'Левая',
+                            title: t.feeding.left,
                             controlName: 'left',
                             inputHint: '0 мл',
                           ),
                           InputContainer(
                             formatter: formatter,
-                            title: 'Правая',
+                            title: t.feeding.right,
                             controlName: 'right',
                             inputHint: '0 мл',
                           )
@@ -57,7 +57,7 @@ class AddPumpingInput extends StatelessWidget {
                     ),
                     25.h,
                     Text(
-                      'Всего',
+                      t.feeding.total,
                       style: textTheme.headlineSmall?.copyWith(
                           color: AppColors.greyBrighterColor,
                           fontSize: 20,
@@ -65,7 +65,7 @@ class AddPumpingInput extends StatelessWidget {
                     ),
                     8.h,
                     Text(
-                      '0 мл',
+                      '$total мл',
                       style:
                           textTheme.titleSmall?.copyWith(color: Colors.black),
                     ),

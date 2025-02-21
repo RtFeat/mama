@@ -31,7 +31,7 @@ abstract class _VaccinesStore with Store {
 
   @action
   void postData({required DoctorVisitModel model}) {
-    restClient.post('${Endpoint.vaccine}', body: model.toJson()).then(
+    restClient.post(Endpoint.vaccine, body: model.toJson()).then(
       (value) {
         return print('Vaccine was successfully added');
       },

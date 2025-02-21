@@ -7,6 +7,8 @@ class CurrentEditingTrackWidget extends StatelessWidget {
   final String noteText;
   final bool isTimerStarted;
   final DateTime timerStart;
+  final String formControlNameStart;
+  final String formControlNameEnd;
   final DateTime? timerEnd;
   final VoidCallback onPressNote;
   final VoidCallback onPressSubmit;
@@ -23,7 +25,9 @@ class CurrentEditingTrackWidget extends StatelessWidget {
       required this.onPressManually,
       required this.timerStart,
       required this.timerEnd,
-      required this.isTimerStarted});
+      required this.isTimerStarted,
+      required this.formControlNameStart,
+      required this.formControlNameEnd});
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,8 @@ class CurrentEditingTrackWidget extends StatelessWidget {
           timerStart: timerStart,
           timerEnd: timerEnd,
           isTimerStarted: isTimerStarted,
+          formControlNameStart: formControlNameStart,
+          formControlNameEnd: formControlNameEnd,
         ),
         20.h,
         Row(
@@ -54,7 +60,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
                 onTap: () {
                   onPressNote();
                 },
-                icon: AppIcons.pencil, //TODO иконка под вопросом
+                icon: AppIcons.pencil,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
                 textStyle: textTheme.titleMedium?.copyWith(

@@ -25,16 +25,16 @@ class ManuallyInputContainer extends StatelessWidget {
               children: [
                 ReactiveForm(
                   formGroup: model.formGroup,
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InputContainer(
-                        title: 'Левая',
+                        title: t.feeding.left,
                         controlName: 'left',
                         inputHint: '0м 0с',
                       ),
                       InputContainer(
-                        title: 'Правая',
+                        title: t.feeding.right,
                         controlName: 'right',
                         inputHint: '0м 0с',
                       )
@@ -42,9 +42,9 @@ class ManuallyInputContainer extends StatelessWidget {
                   ),
                 ),
                 15.h,
-                const _TextWidget(text: 'Необязательно'),
+                _TextWidget(text: t.feeding.manualyInputComment.title),
                 const SizedBox(height: 8),
-                const _TextWidget(text: 'Можно просто указать общее время ниже')
+                _TextWidget(text: t.feeding.manualyInputComment.subtitle)
               ],
             ),
           ),
@@ -57,7 +57,7 @@ class ManuallyInputContainer extends StatelessWidget {
 class _TextWidget extends StatelessWidget {
   final String text;
 
-  const _TextWidget({super.key, required this.text});
+  const _TextWidget({required this.text});
 
   @override
   Widget build(BuildContext context) {

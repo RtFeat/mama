@@ -97,7 +97,7 @@ abstract class _VaccinesViewStore with Store {
     final String formattedDate =
         DateFormat('dd MMMM yyyy').format(selectedDateTime);
     // final String formattedTime = DateFormat('HH:mm').format(selectedDateTime);
-    return '$formattedDate';
+    return formattedDate;
   }
 
   @action

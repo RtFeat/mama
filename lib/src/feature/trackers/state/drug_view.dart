@@ -97,7 +97,7 @@ abstract class _DrugViewStore with Store {
     final String formattedDate =
         DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDateTime);
     // final String formattedTime = DateFormat('HH:mm').format(selectedDateTime);
-    return '$formattedDate';
+    return formattedDate;
   }
 
   @action

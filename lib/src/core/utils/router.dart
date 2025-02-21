@@ -325,7 +325,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: AppViews.addManually,
               path: _Paths.addManually,
-              builder: (context, state) => const AddManuallyScreen(),
+              builder: (context, state) => const AddFeedingBreastManually(),
             ),
             GoRoute(
               name: AppViews.addPumping,

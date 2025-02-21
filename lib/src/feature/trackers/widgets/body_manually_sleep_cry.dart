@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 
-class BodyAddManuallySleepCry extends StatelessWidget {
+class BodyAddManuallySleepCryFeeding extends StatelessWidget {
   final String? formControlNameStart;
   final String? formControlNameEnd;
   final String titleIfEditNotComplete;
   final String textIfEditNotComplete;
-  final String titleAddNewManual;
-  final String textAddNewManual;
+  final Widget bodyWidget;
+
   final DateTime timerManualStart;
   final bool isTimerStart;
   final DateTime? timerManualEnd;
@@ -16,21 +16,21 @@ class BodyAddManuallySleepCry extends StatelessWidget {
   final VoidCallback? onEndTimeChanged;
   final VoidCallback? onTapNotes;
   final VoidCallback onTapConfirm;
-  const BodyAddManuallySleepCry(
-      {super.key,
-      this.formControlNameStart,
-      this.formControlNameEnd,
-      required this.timerManualStart,
-      this.timerManualEnd,
-      this.onStartTimeChanged,
-      this.onEndTimeChanged,
-      this.onTapNotes,
-      required this.onTapConfirm,
-      required this.isTimerStart,
-      required this.titleIfEditNotComplete,
-      required this.textIfEditNotComplete,
-      required this.titleAddNewManual,
-      required this.textAddNewManual});
+  const BodyAddManuallySleepCryFeeding({
+    super.key,
+    this.formControlNameStart,
+    this.formControlNameEnd,
+    required this.timerManualStart,
+    this.timerManualEnd,
+    this.onStartTimeChanged,
+    this.onEndTimeChanged,
+    this.onTapNotes,
+    required this.onTapConfirm,
+    required this.isTimerStart,
+    required this.titleIfEditNotComplete,
+    required this.textIfEditNotComplete,
+    required this.bodyWidget,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,8 @@ class BodyAddManuallySleepCry extends StatelessWidget {
       appBar: CustomAppBar(
         height: 55,
         titleWidget: Text(t.feeding.addManually,
-            style: textTheme.titleMedium?.copyWith(color: Color(0xFF163C63))),
+            style: textTheme.titleMedium
+                ?.copyWith(color: const Color(0xFF163C63))),
       ),
       body: Container(
         color: Colors.white,
@@ -91,33 +92,7 @@ class BodyAddManuallySleepCry extends StatelessWidget {
                     )
                   : null,
             ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.greyColor, width: 1)),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      textAlign: TextAlign.center,
-                      titleAddNewManual,
-                      style: textTheme.headlineSmall?.copyWith(
-                          fontSize: 20, color: AppColors.greyBrighterColor),
-                    ),
-                    10.h,
-                    Text(
-                      textAlign: TextAlign.center,
-                      textAddNewManual,
-                      style: textTheme.labelMedium?.copyWith(
-                          fontSize: 14, color: AppColors.greyBrighterColor),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            bodyWidget,
             30.h,
             EditTimeRow(
               timerStart: timerStart,
@@ -128,6 +103,8 @@ class BodyAddManuallySleepCry extends StatelessWidget {
                 onEndTimeChanged!();
               },
               timerEnd: timerEnd,
+              formControlNameStart: formControlNameStart!,
+              formControlNameEnd: formControlNameEnd!,
             ),
             30.h,
             CustomButton(

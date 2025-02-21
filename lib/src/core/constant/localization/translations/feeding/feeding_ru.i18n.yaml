@@ -30,6 +30,7 @@ table: Таблица
 addPumping: Добавить сцеживание
 mixture: Смесь
 change: Изменить
+changeTime: Изменить время
 start: Начало
 end: Завершение
 timerStarted: Таймер запущен
@@ -48,3 +49,6 @@ date: Дата
 gwTime: Время ГВ
 totalLiquidsMl: Всего\nжидкости,\nмл
 totalComplementary: Всего\nприкорма,\nг
+manualyInputComment: 
+  title: Необязательно
+  subtitle: Можно просто указать общее время ниже

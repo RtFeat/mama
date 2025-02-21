@@ -41,7 +41,7 @@ class TimeContainer extends StatelessWidget {
                 onTap: () {
                   store.removeWorkSlots(index);
                 },
-                child: Icon(AppIcons.xmark),
+                child: const Icon(AppIcons.xmark),
               ),
             ],
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/core.dart';
+import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/widgets/add_pumping_input.dart';
 
 class AddPumpingScreen extends StatelessWidget {
@@ -28,56 +28,11 @@ class AddPumpingScreen extends StatelessWidget {
               const Spacer(),
               const AddPumpingInput(),
               35.h,
-              Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                    color: const Color(0xFFE7F2FE),
-                    borderRadius: BorderRadius.circular(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Text(
-                        t.feeding.now,
-                        style: textTheme.labelLarge,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        // SvgPicture.asset(Assets.icons.icClock),
-                        const Icon(
-                          AppIcons.clock,
-                          color: AppColors.greyLighterColor,
-                        ),
-                        3.w,
-                        Text(
-                          '16:32',
-                          style: textTheme.labelLarge
-                              ?.copyWith(color: AppColors.greyBrighterColor),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        // SvgPicture.asset(Assets.icons.calendar),
-                        const Icon(
-                          AppIcons.calendar,
-                          color: AppColors.primaryColor,
-                        ),
-                        5.w,
-                        Text(
-                          '14 сентября  ',
-                          style: textTheme.labelLarge
-                              ?.copyWith(color: AppColors.greyBrighterColor),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              DateSwitchContainer(
+                //TODO настроить вывод даты и времени
+                title1: t.trackers.now.title,
+                title2: t.trackers.sixTeenThirtyTwo.title,
+                title3: t.trackers.fourteensOfSeptember.title,
               ),
               30.h,
               Row(

@@ -40,7 +40,7 @@ class _AddSleepingScreenManuallyState extends State<AddSleepingScreenManually> {
         DateFormat('HH:mm').format(addSleeping.manualEndTime);
     return ReactiveForm(
         formGroup: formGroup,
-        child: BodyAddManuallySleepCry(
+        child: BodyAddManuallySleepCryFeeding(
           timerManualStart: addSleeping.manualStartTime,
           timerManualEnd: addSleeping.manualEndTime,
           formControlNameEnd: 'sleepEnd',
@@ -53,9 +53,54 @@ class _AddSleepingScreenManuallyState extends State<AddSleepingScreenManually> {
           onTapConfirm: () {},
           titleIfEditNotComplete: t.trackers.ifEditNotCompleteSleep.title,
           textIfEditNotComplete: t.trackers.ifEditNotCompleteSleep.text,
-          titleAddNewManual: t.trackers.addNewManualSleep.title,
-          textAddNewManual: t.trackers.addNewManualSleep.text,
+          bodyWidget: BodyCommentSleep(
+            titleAddNewManual: t.trackers.addNewManualSleep.title,
+            textAddNewManual: t.trackers.addNewManualSleep.text,
+          ),
         ));
     // });
+  }
+}
+
+class BodyCommentSleep extends StatelessWidget {
+  final String titleAddNewManual;
+  final String textAddNewManual;
+  const BodyCommentSleep(
+      {super.key,
+      required this.titleAddNewManual,
+      required this.textAddNewManual});
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.greyColor, width: 1)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              textAlign: TextAlign.center,
+              titleAddNewManual,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontSize: 20, color: AppColors.greyBrighterColor),
+            ),
+            10.h,
+            Text(
+              textAlign: TextAlign.center,
+              textAddNewManual,
+              style: Theme.of(context)
+                  .textTheme
+                  .labelMedium
+                  ?.copyWith(fontSize: 14, color: AppColors.greyBrighterColor),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
