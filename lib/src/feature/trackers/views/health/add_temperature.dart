@@ -7,7 +7,15 @@ class AddTemperature extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
-      appBar: CustomAppBar(title: t.trackers.temperature.add),
+      appBar: CustomAppBar(
+        title: t.trackers.temperature.add,
+        padding: const EdgeInsets.only(right: 8),
+        titleTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: AppColors.trackerColor,
+              fontSize: 17,
+              letterSpacing: -0.5,
+            ),
+      ),
       body: ListView(
         children: [
           FixedCenterIndicator(

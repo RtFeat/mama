@@ -40,23 +40,25 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
     return ReactiveForm(
         formGroup: formGroup,
         child: BodyAddManuallySleepCryFeeding(
-            timerManualStart: addFeeding.timerStartTime,
-            timerManualEnd: addFeeding.timerEndTime,
-            formControlNameEnd: 'feedingBreastEnd',
-            formControlNameStart: 'feedingBreastStart',
-            onStartTimeChanged: () => addFeeding.setTimeStartManually(
-                formGroup.control('feedingBreastStart').value),
-            onEndTimeChanged: () => addFeeding.setTimeEndManually(
-                formGroup.control('feedingBreastEnd').value),
-            isTimerStart: addFeeding.isRightSideStart == true
-                ? true
-                : addFeeding.isLeftSideStart == true
-                    ? true
-                    : false,
-            onTapConfirm: () {},
-            titleIfEditNotComplete: t.trackers.ifEditNotCompleteSleep.title,
-            textIfEditNotComplete: t.trackers.ifEditNotCompleteSleep.text,
-            bodyWidget: const ManuallyInputContainer()));
+          timerManualStart: addFeeding.timerStartTime,
+          timerManualEnd: addFeeding.timerEndTime,
+          formControlNameEnd: 'feedingBreastEnd',
+          formControlNameStart: 'feedingBreastStart',
+          onStartTimeChanged: () => addFeeding.setTimeStartManually(
+              formGroup.control('feedingBreastStart').value),
+          onEndTimeChanged: () => addFeeding
+              .setTimeEndManually(formGroup.control('feedingBreastEnd').value),
+          isTimerStart: addFeeding.isRightSideStart == true
+              ? true
+              : addFeeding.isLeftSideStart == true
+                  ? true
+                  : false,
+          onTapConfirm: () {},
+          titleIfEditNotComplete: t.feeding.ifEditNotCompleteFeed.title,
+          textIfEditNotComplete: t.feeding.ifEditNotCompleteFeed.text,
+          bodyWidget: const ManuallyInputContainer(),
+          needIfEditNotCompleteMessage: true,
+        ));
     // });
   }
 }

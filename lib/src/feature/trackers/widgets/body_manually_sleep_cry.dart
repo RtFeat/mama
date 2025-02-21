@@ -5,8 +5,9 @@ import 'package:mama/src/data.dart';
 class BodyAddManuallySleepCryFeeding extends StatelessWidget {
   final String? formControlNameStart;
   final String? formControlNameEnd;
-  final String titleIfEditNotComplete;
-  final String textIfEditNotComplete;
+  final bool needIfEditNotCompleteMessage;
+  final String? titleIfEditNotComplete;
+  final String? textIfEditNotComplete;
   final Widget bodyWidget;
 
   final DateTime timerManualStart;
@@ -27,9 +28,10 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
     this.onTapNotes,
     required this.onTapConfirm,
     required this.isTimerStart,
-    required this.titleIfEditNotComplete,
-    required this.textIfEditNotComplete,
+    this.titleIfEditNotComplete,
+    this.textIfEditNotComplete,
     required this.bodyWidget,
+    required this.needIfEditNotCompleteMessage,
   });
 
   @override
@@ -43,9 +45,13 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
       backgroundColor: const Color(0xFFE7F2FE),
       appBar: CustomAppBar(
         height: 55,
-        titleWidget: Text(t.feeding.addManually,
-            style: textTheme.titleMedium
-                ?.copyWith(color: const Color(0xFF163C63))),
+        title: t.feeding.addManually,
+        padding: const EdgeInsets.only(right: 8),
+        titleTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: AppColors.trackerColor,
+              fontSize: 17,
+              letterSpacing: -0.5,
+            ),
       ),
       body: Container(
         color: Colors.white,
@@ -54,21 +60,21 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
           children: [
             SizedBox(
               height: MediaQuery.of(context).size.height / 3.5,
-              child: isTimerStart
+              child: needIfEditNotCompleteMessage && isTimerStart
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
                           textAlign: TextAlign.center,
-                          titleIfEditNotComplete,
+                          titleIfEditNotComplete!,
                           style: textTheme.labelMedium?.copyWith(
                               fontSize: 14, color: AppColors.greyBrighterColor),
                         ),
                         5.h,
                         Text(
                           textAlign: TextAlign.center,
-                          textIfEditNotComplete,
+                          textIfEditNotComplete!,
                           style: textTheme.labelMedium?.copyWith(
                               fontSize: 14, color: AppColors.greyBrighterColor),
                         ),

@@ -41,6 +41,7 @@ class _AddSleepingScreenManuallyState extends State<AddSleepingScreenManually> {
     return ReactiveForm(
         formGroup: formGroup,
         child: BodyAddManuallySleepCryFeeding(
+          needIfEditNotCompleteMessage: true,
           timerManualStart: addSleeping.manualStartTime,
           timerManualEnd: addSleeping.manualEndTime,
           formControlNameEnd: 'sleepEnd',

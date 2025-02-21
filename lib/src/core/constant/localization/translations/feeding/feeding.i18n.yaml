@@ -52,3 +52,6 @@ totalComplementary: Total\ncomplementary,\ng
 manualyInputComment: 
   title: Необязательно
   subtitle: Можно просто указать общее время ниже
+ifEditNotCompleteFeed:
+  title: У вас запущено кормление
+  text: Если вы измените значения вручную, запущенное кормление не сохранится
