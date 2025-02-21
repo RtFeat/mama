@@ -100,7 +100,7 @@ class DoctorVisitScreen extends StatelessWidget {
             /// #doctor visit
             ListView.builder(
               shrinkWrap: true,
-              itemCount: 2,
+              itemCount: 2, // TODO изменить при подключении бэка на state
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
@@ -109,6 +109,7 @@ class DoctorVisitScreen extends StatelessWidget {
                       // TODO редактирование приема
                     },
                     child: const PillAndDocVisitContainer(
+                      // TODO настроить вывод приема
                       imageUrl: 'assets/images/on_boarding_3.png',
                       title: 'Педиатр Евраева',
                       timeDate: '24 сентября',

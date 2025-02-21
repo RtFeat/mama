@@ -23,7 +23,7 @@ class CommonHorizontalWidget extends StatelessWidget {
             width: 164,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Color(0xffF0F2F7),
+                color: const Color(0xffF0F2F7),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(
@@ -69,7 +69,7 @@ class CommonHorizontalWidget extends StatelessWidget {
                   SizedBox(
                     child: Text(
                       mainTittle,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -87,4 +87,3 @@ class CommonHorizontalWidget extends StatelessWidget {
     );
   }
 }
-

@@ -151,3 +151,11 @@ schoolItems:
     desc: All about children in the age of 12 to 18 months
   
 consultationVariants: Consultation variants
+
+alertDialog1:
+  title: Reset settings?
+  desc: If you sign out now, data not saved will be lost
+alertDialog2:
+  title: Reset settings?
+  subtitle: If you sign out now, not saved data will be lost
+  desc: Fill in the required fields to save your child's data

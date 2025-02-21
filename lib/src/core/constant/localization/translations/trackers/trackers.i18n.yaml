@@ -1,7 +1,9 @@
-evolution: Evolution
-sleepAndCrying: Sleep and crying
-feeding: Feeding
-diapers: Diapers
+trackersName:
+  evolution: Evolution
+  sleepAndCrying: Sleep and crying
+  feeding: Feeding
+  health: Health
+  diapers: Diapers
 
 weight:
   title: Weight
@@ -74,7 +76,7 @@ vaccines:
   addNewVacField4Hint: Click to add a comment
   addNewVacButtonSave: Save
   calendarViewAppBar: Vaccination calendar
-  calendarViewRecommended: Recommended vaccination calendar
+  calendarViewRecomended: Recommended vaccination calendar
   calendarViewIdeal: Perfect vaccination calendar
   calendarViewVOZ: World Health Organization (WHO)
   pdf: PDF

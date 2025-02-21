@@ -46,6 +46,7 @@ class GraphicWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                //TODO сделать динамическую дату
                 Text('11 сентября - 17 сентября',
                     style: textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w400, color: Colors.black)),

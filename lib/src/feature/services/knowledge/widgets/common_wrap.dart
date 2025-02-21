@@ -31,7 +31,7 @@ class _CommonFilterChipWidgetState extends State<CommonFilterChipWidget> {
                   CategoryFilter.values.map((CategoryFilter categoriesFilter) {
                 return FilterChip(
                   label: Text(categoriesFilter.name),
-                  selectedColor: Color(0xff4D4DE8),
+                  selectedColor: const Color(0xff4D4DE8),
                   selected: filters.contains(categoriesFilter),
                   onSelected: (bool selected) {
                     setState(() {

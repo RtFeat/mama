@@ -32,7 +32,7 @@ class _EvolutionViewState extends State<EvolutionView>
       appBar: CustomAppBar(
         height: 110,
         isScrollable: false,
-        title: t.trackers.evolution,
+        title: t.trackers.trackersName.evolution,
         tabController: _tabController,
         action: const ProfileWidget(),
         padding: const EdgeInsets.only(right: 8),

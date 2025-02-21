@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/core/constant/colors.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/services/knowledge/widgets/common_checkbox.dart';
 
@@ -48,7 +47,7 @@ class _BuildCategoryState extends State<BuildCategory> {
                 widget.count.toString(),
               ),
             ),
-            Expanded(
+            const Expanded(
               child: CommonCheckBoxWidget(),
             )
           ],
@@ -95,7 +94,7 @@ class BuildSubCategory extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              CommonCheckBoxWidget(),
+              const CommonCheckBoxWidget(),
             ],
           ),
         ],

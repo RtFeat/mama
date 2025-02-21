@@ -22,7 +22,7 @@ class AuthorsSub extends StatelessWidget {
         CircleAvatar(
           backgroundImage: AssetImage(Assets.images.imgPerson2.path),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Row(
           children: [
             Text(
@@ -33,7 +33,7 @@ class AuthorsSub extends StatelessWidget {
                 fontWeight: FontWeight.w300,
               ),
             ),
-            SizedBox(width: 3),
+            const SizedBox(width: 3),
             SizedBox(
               height: 14,
               width: 43,
@@ -55,14 +55,15 @@ class AuthorsSub extends StatelessWidget {
             ),
           ],
         ),
-        Spacer(),
+        const Spacer(),
         Row(
           children: [
             Text(
               count.toString(),
-              style: TextStyle(color: AppColors.greyLighterColor, fontSize: 17),
+              style: const TextStyle(
+                  color: AppColors.greyLighterColor, fontSize: 17),
             ),
-            CommonCheckBoxWidget(),
+            const CommonCheckBoxWidget(),
           ],
         ),
       ],
@@ -88,7 +89,7 @@ class SchoolSub extends StatelessWidget {
         CircleAvatar(
           backgroundImage: AssetImage(Assets.images.imgPerson1.path),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Flexible(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -105,14 +106,15 @@ class SchoolSub extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(width: 40),
+        const SizedBox(width: 40),
         Row(
           children: [
             Text(
               count.toString(),
-              style: TextStyle(color: AppColors.greyLighterColor, fontSize: 17),
+              style: const TextStyle(
+                  color: AppColors.greyLighterColor, fontSize: 17),
             ),
-            CommonCheckBoxWidget(),
+            const CommonCheckBoxWidget(),
           ],
         ),
       ],

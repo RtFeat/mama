@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 
 class MedicCard extends StatelessWidget {
+  //TODO карточка на моковых данных, не настроена
   const MedicCard({super.key});
 
   @override

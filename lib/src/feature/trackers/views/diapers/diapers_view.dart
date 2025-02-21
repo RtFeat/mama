@@ -17,7 +17,7 @@ class DiapersView extends StatelessWidget {
       onPressClose: () {},
       onPressLearnMore: () {},
       appBar: CustomAppBar(
-        title: t.trackers.diapers,
+        title: t.trackers.trackersName.diapers,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context)
             .textTheme

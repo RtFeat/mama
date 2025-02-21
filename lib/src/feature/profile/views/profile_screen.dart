@@ -27,15 +27,13 @@ class ProfileScreen extends StatelessWidget {
 
     List<DialogItem> alertDialog = [
       DialogItem(
-          title: 'Сбросить настройки?',
-          subtitle:
-              'Если сейчас выйти из аккаунта, не сохраненные данные потеряются',
+          title: t.profile.alertDialog1.title,
+          subtitle: t.profile.alertDialog1.desc,
           onTap: () {}),
       DialogItem(
-          title: 'Сбросить настройки?',
-          subtitle:
-              'Если сейчас выйти из аккаунта, не сохраненные данные потеряются',
-          text: 'Заполните обязательные поля, чтобы сохранить данные ребенка',
+          title: t.profile.alertDialog2.title,
+          subtitle: t.profile.alertDialog2.subtitle,
+          text: t.profile.alertDialog2.desc,
           onTap: () {})
     ];
 

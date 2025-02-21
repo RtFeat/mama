@@ -25,7 +25,7 @@ class TrackersView extends StatelessWidget {
                       onTap: () {
                         context.pushNamed(AppViews.evolutionView);
                       },
-                      title: 'Развитие',
+                      title: t.trackers.trackersName.evolution,
                       icon: IconModel(
                         // size: iconSize,
                         iconPath: Assets.images.grow.path,
@@ -39,7 +39,7 @@ class TrackersView extends StatelessWidget {
                       onTap: () {
                         context.pushNamed(AppViews.sleeping);
                       },
-                      title: 'Сон и плач',
+                      title: t.trackers.trackersName.sleepAndCrying,
                       icon: IconModel(
                         // size: iconSize,
                         iconPath: Assets.images.sleep.path,
@@ -56,7 +56,7 @@ class TrackersView extends StatelessWidget {
                     onTap: () {
                       context.pushNamed(AppViews.feeding);
                     },
-                    title: 'Кормление',
+                    title: t.trackers.trackersName.feeding,
                     icon: IconModel(
                       // size: iconSize,
                       iconPath: Assets.images.feeding.path,
@@ -73,7 +73,7 @@ class TrackersView extends StatelessWidget {
                       onTap: () {
                         context.pushNamed(AppViews.trackersHealthView);
                       },
-                      title: 'Здоровье',
+                      title: t.trackers.trackersName.health,
                       icon: IconModel(
                         // size: iconSize,
                         iconPath: Assets.images.health.path,
@@ -87,7 +87,7 @@ class TrackersView extends StatelessWidget {
                       onTap: () {
                         context.pushNamed(AppViews.diapersView);
                       },
-                      title: 'Подгузники',
+                      title: t.trackers.trackersName.diapers,
                       icon: IconModel(
                         // size: iconSize,
                         iconPath: Assets.images.diaper.path,

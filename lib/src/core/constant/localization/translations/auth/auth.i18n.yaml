@@ -11,5 +11,19 @@ sendAnotherOneIn: Send another one in
 sendOneMore: Send one more
 numberNotRegistered: Number not registered
 invalidPassword: Invalid password
-
+onBoardData1:
+  title: Welcome to Mama&Co
+  text: No more looking for blogs, channels and good specialists .\nWe've put everything together.
+onBoardData2:
+  title: Toddler development diaries
+  text: Track your little one's life and development with handy trackers as recommended by the WHO and with the option to send data to a paediatrician.
+onBoardData3:
+  title: Sleep music
+  text: Help your little one fall asleep with the most bombastic tunes, white noise and fairytales.
+onBoardData4:
+  title: Support group chat with specialists and mums
+  text: Ask for advice, get support, find out everything a mom needs .\nConsult the best experts in breastfeeding, sleep, complementary foods and others.
+onBoardData5:
+  title: Knowledge center instead of a thousand channels and blogs
+  text: We have collected all the knowledge mothers need in a convenient module .\nArticles and recommendations from leading doctors in Moscow, life hacks for comfort and WHO recommendations in an understandable form.
 

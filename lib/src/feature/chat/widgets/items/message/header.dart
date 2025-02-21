@@ -34,8 +34,8 @@ class Header extends StatelessWidget {
             ),
           ),
           //  if (person.profession != null && person.profession!.isNotEmpty)
-          Padding(
-              padding: const EdgeInsets.only(left: 3.0, bottom: 18),
+          const Padding(
+              padding: EdgeInsets.only(left: 3.0, bottom: 18),
               child: ConsultationBadge(
                 title: 'sdf',
                 // title: item.senderId.profession ?? '',

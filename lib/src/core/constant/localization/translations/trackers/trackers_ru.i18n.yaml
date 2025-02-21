@@ -1,7 +1,9 @@
-evolution: Развитие
-sleepAndCrying: Сон и плач
-feeding: Кормление
-diapers: Подгузники
+trackersName:
+  evolution: Развитие
+  sleepAndCrying: Сон и плач
+  feeding: Кормление
+  health: Здоровье
+  diapers: Подгузники
 
 weight:
   title: Вес
