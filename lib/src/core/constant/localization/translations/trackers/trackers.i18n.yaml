@@ -29,55 +29,55 @@ temperature:
 medicines:
   title: Medicines
   add: Add medicines
-  edit: Редактировать
-  delete: Удалить
-  finish: Завершить прием
-  resume: Возобновить прием
+  edit: Edit
+  delete: Delete
+  finish: End medication
+  resume: Resume medication
 
 finishMedicine: 
-  title: Завершить прием лекарства
-  dateTitle: 'Укажите дату завершения приема:'
-  comment1: Если вы снова начнете курс, добавьте это лекарство как новое
-  comment2: Это позволит вам в любой момент восстановить всю историю лечения
+  title: End medication
+  dateTitle: 'Specify end date:'
+  comment1: If you start the course again, add this medicine as new
+  comment2: This will allow you to restore the entire treatment history at any time
 
 doctor:
-  calendarButton: Календарь посещений врача
-  addNewVisitButton: Добавить визит к врачу
-  addNewVisitTitle: Визит к врачу
-  addNewVisitField1Title: Врач
-  addNewVisitField1Hint: Нажмите, чтобы добавить данные врача. Удобно писать в формате «Педиатр Иванов»
-  addNewVisitField2Title: Дата визита
-  addNewVisitField2Hint: Нажмите, чтобы указать дату визита
-  addNewVisitField3Title: Клиника №
-  addNewVisitField3Hint: Нажмите, чтобы добавить название клиники
-  addNewVisitField4Title: Комментарий
-  addNewVisitField4Hint: Нажмите, чтобы добавить комментарий
-  addNewVisitButtonDelete: Удалить
-  addNewVisitButtonSave: Сохранить
+  calendarButton: Calendar of doctor visits
+  addNewVisitButton: Add a visit to the doctor
+  addNewVisitTitle: Visit to the doctor
+  addNewVisitField1Title: Doctor
+  addNewVisitField1Hint: Click to add physician details. It is convenient to write in the format "Pediatrician Ivanov"
+  addNewVisitField2Title: Date of visit
+  addNewVisitField2Hint: Click to specify visit date
+  addNewVisitField3Title: Clinic No.
+  addNewVisitField3Hint: Click to add clinic name
+  addNewVisitField4Title: Comment
+  addNewVisitField4Hint: Click to add a comment
+  addNewVisitButtonDelete: Delete
+  addNewVisitButtonSave: Save
 
 vaccines:
-  calendarButton: Календарь прививок
-  addNewButton: Другая прививка
-  vaccinesListTitle1: Прививка
-  vaccinesListTitle2: Возраст
-  vaccinesListTitle3: Отметка о прививке
-  recommendedAge: 'Рекомендованный возраст: '
-  addNewVacAppBarTitle: Другая прививка
-  addFromListVacAppBarTitle: Добавить прививку
-  addNewVacField1Title: Название прививки
-  addNewVacField1Hint: Нажмите, чтобы ввести название прививки
-  addNewVacField2Title: Дата прививки
-  addNewVacField2Hint: Нажмите, чтобы указать дату прививки
-  addNewVacField3Title: Клиника №
-  addNewVacField3Hint: Нажмите, чтобы добавить название клиники, в которой делаете прививку
-  addNewVacField4Title: Производитель, комментарий
-  addNewVacField4Hint: Нажмите, чтобы добавить комментарий
-  addNewVacButtonSave: Сохранить
-  calendarViewAppBar: Календарь прививок
-  calendarViewRecomended: Рекомендуемый календарь прививок
-  calendarViewIdeal: Идеальный календарь прививок
-  calendarViewVOZ: Всемирная Организация Здравоохранения (ВОЗ)
-  pdf: ПДФ
+  calendarButton: Vaccination calendar
+  addNewButton: Another inoculation
+  vaccinesListTitle1: Inoculation
+  vaccinesListTitle2: Age
+  vaccinesListTitle3: Vaccination mark
+  recommendedAge: 'Recommended age:'
+  addNewVacAppBarTitle: Other inoculation
+  addFromListVacAppBarTitle: Add inoculation
+  addNewVacField1Title: Vaccination name
+  addNewVacField1Hint: Click to enter vaccination name
+  addNewVacField2Title: Vaccination date
+  addNewVacField2Hint: Click to specify vaccination date
+  addNewVacField3Title: Clinic No.
+  addNewVacField3Hint: Click to add the name of the clinic where you vaccinate
+  addNewVacField4Title: Manufacturer, comment
+  addNewVacField4Hint: Click to add a comment
+  addNewVacButtonSave: Save
+  calendarViewAppBar: Vaccination calendar
+  calendarViewRecommended: Recommended vaccination calendar
+  calendarViewIdeal: Perfect vaccination calendar
+  calendarViewVOZ: World Health Organization (WHO)
+  pdf: PDF
 
 doctorsAppointment:
   title: Doctor's appointment
@@ -85,97 +85,97 @@ doctorsAppointment:
 vaccinations:
   title: Vaccinations
 
-learnMoreBtn: Узнать\nбольше
+learnMoreBtn: Learn\nmore
 
 titlePlayButtonSleep: Timer sleep
 min: m
 sec: s
 
 ifEditNotCompleteSleep:
-  title: У вас запущен сон
-  text: Если вы измените значения вручную, запущенный сон не сохранится
+  title: Your sleep is running
+  text: If you change the values manually, the started sleep will not be saved
 
 addNewManualSleep:
-  title: Добавить сон
-  text: Укажите, когда малыш заснул, и когда проснулся
+  title: Add Sleep
+  text: Indicate when the baby fell asleep and when he woke up
 
 ifEditNotCompleteCry:
-  title: У вас запущен счетчик плача
-  text: Если вы измените значения вручную, запущенный плач не сохранится
+  title: You have a crying meter running
+  text: If you change the values manually, the started cry will not be saved
 
 addNewManualCry:
-  title: Добавить плач
-  text: Укажите, когда малыш начал и закончил плакать
+  title: Add Crying
+  text: Indicate when the toddler started and finished crying
 
-infoManuallyContainerButtonBackAndContinue: Вернуться и продолжить
-infoManuallyContainerButtonNote: Заметка
-infoManuallyContainerSaveFeeding: 
-  title: Cохранено
-  text1: Кормление сохранено.
-  text2: 'Если нужно продолжить это кормление, нажмите на кнопку:'
-infoManuallyContainerCancellFeeding: 
-  title: Кормление отменено
-  text1: Отмененное кормление не будет сохранено.
-  text2: 'Чтобы продолжить отмененное кормление, нажмите на кнопку:'
-infoManuallyContainerSaveSleeping: 
-  title: Cохранено
-  text1: Сон сохранен.
-  text2: 'Если нужно продолжить этот сон, нажмите на кнопку:'
-infoManuallyContainerCancellSleeping: 
-  title: Сон отменен
-  text1: Отмененный сон не будет сохранен.
-  text2: 'Чтобы продолжить отмененный сон, нажмите на кнопку:'
+infoManuallyContainerButtonBackAndContinue: Go Back and Continue
+infoManuallyContainerButtonNote: Note
+infoManuallyContainerSaveFeeding:
+  title: Saved
+  text1: Feeding saved.
+  text2: 'If you want to continue this feeding, press the button:'
+infoManuallyContainerCancellFeeding:
+  title: Feeding cancelled
+  text1: Cancelled feeding will not be saved.
+  text2: 'To continue the cancelled feeding, press the button:'
+infoManuallyContainerSaveSleeping:
+  title: Saved
+  text1: Sleep saved.
+  text2: 'If you want to continue this dream, press the button:'
+infoManuallyContainerCancellSleeping:
+  title: Sleep cancelled
+  text1: Canceled sleep will not be saved.
+  text2: 'To continue canceled sleep, click on the button:'
 
-helperPlayButtonFeed: Добавьте кормление\n
-helperPlayButtonCry: Добавьте плач\n
-helperPlayButtonSleep: Добавьте сон\n
-helperPlayButtonText: 
-  first: Нажмите на
-  second: или добавьте вручную
+helperPlayButtonFeed: Add feeding\n
+helperPlayButtonCry: Add crying\n
+helperPlayButtonSleep: Add sleep\n
+helperPlayButtonText:
+  first: Click on
+  second: or add manually
 
-currentEditTrackFeedingTitle: Текущее кормление
-currentEditTrackSleepingTitle: Малыш спит
-currentEditTrackStart: Начало
-currentEditTrackFinish: Завершение
-currentEditTrackAll: Всего
-currentEditTrackButtonNote: Заметка
-currentEditTrackButtonSubmit: Подтвердить
-currentEditTrackButtonCancel: Отменить
-currentEditTrackButtonManually: Вручную
-currentEditTrackButtonChange: Изменить
-currentEditTrackButtonTimerStart: Таймер запущен
-currentEditTrackCountTextTitleSleep: Счетчик будет добавлять время
-currentEditTrackCountTextSleep: Подтвердите окончание сна или отмените его
-currentEditTrackCountTextFeed: Подтвердите окончание кормления или отмените его
-currentEditTrackCountTextTitleFeed: Счетчик запущен
+currentEditTrackFeedingTitle: Current feeding
+currentEditTrackSleepingTitle: Baby sleeps
+currentEditTrackStart: Start
+currentEditTrackFinish: Finish
+currentEditTrackAll: Total
+currentEditTrackButtonNote: Note
+currentEditTrackButtonSubmit: Confirm
+currentEditTrackButtonCancel: Cancel
+currentEditTrackButtonManually: Manually
+currentEditTrackButtonChange: Change
+currentEditTrackButtonTimerStart: Timer Started
+currentEditTrackCountTextTitleSleep: Counter will add time
+currentEditTrackCountTextSleep: Confirm or cancel sleep end
+currentEditTrackCountTextFeed: Confirm or cancel the end of feeding
+currentEditTrackCountTextTitleFeed: Counter Started
 
 findOutMoreTextTemp: Here you can record your baby's temperature and track its changes.\n\nFind out what can cause a child's temperature to rise in the Knowledge Center
 
-findOutMoreTextMedicines: Здесь вы можете добавлять лекарства, задавать напоминания и вести историю лечения.\n\nУзнайте больше о здоровье ребенка в Центре Знаний
+findOutMoreTextMedicines: Here, you can add medications, set reminders, and keep a treatment history .\n\nLearn more about a child's health at the Knowledge Center
 
-findOutMoreTextDoctorVisit: Здесь вы можете фиксировать походы к врачам и их рекомендации, а так же хранить выписки, рецепты и другие медицинские документы в виде фотографий.\n\nУзнайте больше о здоровье ребенка в Центре Знаний
+findOutMoreTextDoctorVisit: Here you can record doctor visits and their recommendations, as well as store extracts, prescriptions and other medical documents in the form of photos .\n\nLearn more about child health in the Knowledge Center.
 
-findOutMoreTextVaccinations: Здесь вы можете отмечать прививки в соответствии с календарем прививок Союза педиатров России.\n\nУзнайте больше о прививках в Центре Знаний
+findOutMoreTextVaccinations: Here you can mark vaccinations according to the vaccination calendar of the Russian Pediatric Union .\n\nLearn more about vaccinations at the Knowledge Center
 
-findOutMoreTextDiapers: Здесь вы можете следить за использованием подгузников и походами малыша в туалет.\n\nУзнайте больше о подгузниках и пищеварительной системе ребенка в Центре Знаний
+findOutMoreTextDiapers: Here, you can follow the baby's diaper use and trips to the toilet .\n\nLearn more about the baby's diapers and digestive system at the Knowledge Center
 
-findOutMoreTextWeight: Здесь вы можете следить за весом своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять вес в нашем Центре Знаний
+findOutMoreTextWeight: Here you can monitor your child's weight and monitor their development by comparing it with World Health Organization regulations .\n\nLearn more about these regulations and learn how to measure weight correctly in our Knowledge Center
 
-findOutMoreTextHeight: Здесь вы можете следить за ростом своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять рост в нашем Центре Знаний
+findOutMoreTextHeight: Here you can monitor your child's growth and monitor their development by comparing it with World Health Organization regulations .\n\nLearn more about these regulations and learn how to properly measure growth in our Knowledge Center
 
-findOutMoreTextHead: Здесь вы можете следить за изменениями окружности головы своего ребенка и контролировать его развитие, сравнивая с нормативами Всемирной Организации Здравоохранения.\n\nУзнайте больше про эти нормативы и научитесь правильно измерять окружность головы в нашем Центре Знаний 
+findOutMoreTextHead: Here you can monitor changes in the circumference of your child's head and monitor its development by comparing it with the standards of the World Health Organization .\n\nLearn more about these standards and learn how to correctly measure head circumference in our Knowledge Center
 
-findOutMoreTextBrist: Здесь вы можете отслеживать, как проходит кормление грудью.\n\nУзнайте больше про процесс грудного вскармливания в нашем Центре Знаний
+findOutMoreTextBrist: You can track breastfeeding progress here .\n\nLearn more about breastfeeding at our Knowledge Center
 
-findOutMoreTextPumping: Здесь вы можете отмечать процесс сцеживания и следить за изменениями количества молока.\n\nУзнайте больше про сцеживание грудного молока в нашем Центре Знаний
+findOutMoreTextPumping: Here you can mark the pumping process and monitor changes in the amount of milk .\n\nLearn more about expressing breast milk in our Knowledge Center
 
-findOutMoreTextBottle: Здесь вы можете следить за кормлением из бутылочки и контролировать соотношение грудного молока и смеси.\n\nУзнайте больше про кормление из бутылочки в нашем Центре Знаний
+findOutMoreTextBottle: Here you can follow the bottle feeding and monitor the ratio of breast milk to formula .\n\nLearn more about bottle feeding in our Knowledge Center
 
-findOutMoreTextLure: Здесь вы можете вести учет прикорма и следить за тем, какие продукты нравятся вашему ребенку.\n\nУзнайте больше про прикорм в нашем Центре Знаний
+findOutMoreTextLure: Here you can keep track of complementary foods and see what foods your child likes .\n\nLearn more about complementary foods in our Knowledge Center
 
-findOutMoreTextSleep: Здесь вы можете отслеживать сон малыша.\n\nУзнайте больше про детский сон в нашем Центре Знаний
+findOutMoreTextSleep: You can track your baby's sleep here .\n\nLearn more about baby sleep in our Knowledge Center
 
-findOutMoreTextCry: Здесь вы можете отслеживать плач малыша.\n\nУзнайте больше про детский плач в нашем Центре Знаний
+findOutMoreTextCry: You can track a toddler crying here .\n\nLearn more about baby crying in our Knowledge Center
 
 date:
   title: Date
@@ -249,7 +249,7 @@ pillExactTimeOne:
 pillRemainingTimeOne:
   title: In 2 hours 12 minutes
 
-addPhoto: Добавить фото
+addPhoto: Add Photo
 
 cm:  
   title: cm
@@ -266,8 +266,8 @@ wet:
   average: Average
   many: Many
 
-list_of_wet: [Мало, Средне, Много]
-list_of_mixed: [Твердый, Мягкий, Жидкий, Плотный, Липкий, Зернистый, Диарея]
+list_of_wet: [Small, Medium, Large]
+list_of_mixed: [Hard, Soft, Liquid, Dense, Sticky, Grainy, Diarrhea]
 
 mixed:
   mixed: Mixed

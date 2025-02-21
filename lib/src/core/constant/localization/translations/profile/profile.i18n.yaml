@@ -65,7 +65,7 @@ genderTitle: Gender
 
 twinsTitle: Twins
 
-twinsHelper: Нужно для подбора статей и рекомендаций. Добавьте второго малыша для отслеживания его развития.
+twinsHelper: Needed to select articles and recommendations. Add a second toddler to track their development.
 
 weightTitle: Birth weight
 
@@ -102,9 +102,9 @@ weight: weight
 height: height
 headCirc: head circumference
 needToFill: Need to fill
-subscribeBlockTitle: Пробный период кончился
-subscribeBlockSubitle: Оформите подписку в личном кабинете, чтобы мы могли и дальше предоставлять вам качественный сервис и услуги специалистов
-subscribeBlocButtonTitle: В личный кабинет
+subscribeBlockTitle: Trial period ended
+subscribeBlockSubitle: Subscribe in your personal account so that we can continue to provide you with high-quality service and specialist services
+subscribeBlocButtonTitle: To personal account
 bottomBarHome: Home
 bottomBarDiaries: Diaries
 bottomBarChats: Chats

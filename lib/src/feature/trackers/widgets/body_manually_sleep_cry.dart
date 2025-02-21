@@ -118,7 +118,7 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
               width: double.infinity,
               type: CustomButtonType.outline,
               icon: AppIcons.pencil,
-              iconColor: AppColors.primaryColor, // TODo иконка под вопросом
+              iconColor: AppColors.primaryColor,
               title: t.feeding.note,
               onTap: () => onTapNotes!(),
             ),
