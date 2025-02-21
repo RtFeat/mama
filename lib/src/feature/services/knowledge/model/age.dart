@@ -8,6 +8,7 @@ class AgeCategoryModel extends CategoryModel {
   AgeCategoryModel({
     required super.id,
     required super.title,
+    super.count,
   });
 
   String get localizedTitle {

@@ -10,9 +10,13 @@ class CategoryModel extends _CategoryModel with _$CategoryModel {
   @JsonKey(name: 'name')
   final String title;
 
+  @JsonKey(name: 'quantity')
+  final int? count;
+
   CategoryModel({
     required this.id,
     required this.title,
+    this.count,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>

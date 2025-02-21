@@ -23,6 +23,7 @@ class AgeCategoryView extends StatelessWidget {
           ),
           body: KnowledgeFilterBody(
               store: store,
+              countBuilder: (item) => '${(item as AgeCategoryModel).count}',
               titleBuilder: (item) =>
                   (item as AgeCategoryModel).localizedTitle),
           bottomNavigationBar: FilterBottomBarWidget(

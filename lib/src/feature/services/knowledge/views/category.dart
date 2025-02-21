@@ -24,6 +24,7 @@ class CategoriesView extends StatelessWidget {
           body: KnowledgeFilterBody(
             store: store,
             titleBuilder: (item) => (item as CategoryModel).title,
+            countBuilder: (item) => '${(item as CategoryModel).count}',
           ),
           bottomNavigationBar: FilterBottomBarWidget(
             onClear: () {
