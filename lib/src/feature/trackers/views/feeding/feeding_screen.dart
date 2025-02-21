@@ -32,7 +32,7 @@ class _FeedingScreenState extends State<FeedingScreen>
     return Scaffold(
       backgroundColor: const Color(0xFFE7F2FE),
       appBar: CustomAppBar(
-        height: 98,
+        height: 114,
         tabController: _tabController,
         title: t.feeding.feeding,
         padding: const EdgeInsets.only(right: 8),
@@ -43,9 +43,7 @@ class _FeedingScreenState extends State<FeedingScreen>
           t.feeding.lure,
           t.feeding.table
         ],
-        action: const CircleAvatar(
-          radius: 20,
-        ),
+        action: const ProfileWidget(),
         titleTextStyle: Theme.of(context)
             .textTheme
             .headlineSmall!

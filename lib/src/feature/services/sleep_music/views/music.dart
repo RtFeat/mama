@@ -46,7 +46,7 @@ class __ContentState extends State<_Content>
     return Scaffold(
       appBar: CustomAppBar(
         title: t.services.sleepMusic.title,
-        height: 94,
+        height: 114,
         action: const ProfileWidget(),
         tabController: _tabController,
         tabs: [

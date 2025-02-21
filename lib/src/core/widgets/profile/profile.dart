@@ -29,8 +29,11 @@ class ProfileWidget extends StatelessWidget {
     return Observer(
       builder: (context) {
         if (avatarUrl != null) {
-          return GestureDetector(
-              onTap: onTap, child: _Avatar(avatarUrl: avatarUrl));
+          return SizedBox(
+            height: 56,
+            child: GestureDetector(
+                onTap: onTap, child: _Avatar(avatarUrl: avatarUrl)),
+          );
         } else if (userStore.children.isNotEmpty) {
           if (userStore.children.length >= 2) {
             return ProfileSwitch(

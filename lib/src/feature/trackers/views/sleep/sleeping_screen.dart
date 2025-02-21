@@ -34,7 +34,7 @@ class _SleepingScreenState extends State<SleepingScreen>
       appBar: CustomAppBar(
         isScrollable: false,
         padding: const EdgeInsets.only(right: 8),
-        height: 100,
+        height: 114,
         tabController: _tabController,
         title: t.sleep.title,
         titleTextStyle: textTheme.headlineSmall!
@@ -44,9 +44,7 @@ class _SleepingScreenState extends State<SleepingScreen>
           t.sleep.cry,
           t.sleep.table,
         ],
-        action: const CircleAvatar(
-          radius: 20,
-        ),
+        action: const ProfileWidget(),
       ),
       body: TabBarView(
         controller: _tabController,
