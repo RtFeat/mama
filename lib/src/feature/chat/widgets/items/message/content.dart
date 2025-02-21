@@ -83,7 +83,8 @@ class Content extends StatelessWidget {
 
     final UserStore userStore = context.watch<UserStore>();
     final ChatSocket socket = context.watch<ChatSocket>();
-    final bool isAdmin = userStore.role == Role.admin;
+    final bool isAdmin =
+        userStore.role == Role.admin || userStore.role == Role.moderator;
 
     return Observer(builder: (context) {
       final entries = [

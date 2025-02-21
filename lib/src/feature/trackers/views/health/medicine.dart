@@ -1,20 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/trackers/views/health/add_medicine.dart';
 import 'package:mama/src/feature/trackers/widgets/learn_more_widget.dart';
 import 'package:skit/skit.dart';
 
 class Medicine extends StatelessWidget {
   const Medicine({super.key});
-
-  void _navigateToAddMedicineView(BuildContext context) =>
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const AddMedicine(),
-        ),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +215,10 @@ class Medicine extends StatelessWidget {
                       child: CustomButton(
                         title: t.trackers.add.title,
                         backgroundColor: AppColors.purpleLighterBackgroundColor,
-                        onTap: () => _navigateToAddMedicineView(context),
+                        onTap: () {
+                          // context.pushNamed();
+                        },
+                        // onTap: () => _navigateToAddMedicineView(context),
                         // icon: IconModel(
                         //   iconPath: Assets.icons.icPillsFilled,
                         // ),

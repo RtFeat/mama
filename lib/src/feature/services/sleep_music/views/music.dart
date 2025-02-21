@@ -46,7 +46,7 @@ class __ContentState extends State<_Content>
     return Scaffold(
       appBar: CustomAppBar(
         title: t.services.sleepMusic.title,
-        height: 120,
+        height: 94,
         action: const ProfileWidget(),
         tabController: _tabController,
         tabs: [
@@ -55,20 +55,25 @@ class __ContentState extends State<_Content>
           t.services.fairyTales.title,
         ],
       ),
-      body: TabBarView(controller: _tabController, children: [
-        MusicViewBody(
-          store: widget.store,
-          category: TrackCategory.music,
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          color: Colors.white,
         ),
-        MusicViewBody(
-          store: widget.store,
-          category: TrackCategory.whiteNoise,
-        ),
-        MusicViewBody(
-          store: widget.store,
-          category: TrackCategory.story,
-        ),
-      ]),
+        child: TabBarView(controller: _tabController, children: [
+          MusicViewBody(
+            store: widget.store,
+            category: TrackCategory.music,
+          ),
+          MusicViewBody(
+            store: widget.store,
+            category: TrackCategory.whiteNoise,
+          ),
+          MusicViewBody(
+            store: widget.store,
+            category: TrackCategory.story,
+          ),
+        ]),
+      ),
       bottomNavigationBar: const TrackPlayer(),
     );
   }

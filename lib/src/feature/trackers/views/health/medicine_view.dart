@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class MedicineScreen extends StatelessWidget {
   const MedicineScreen({super.key});
@@ -26,7 +27,7 @@ class MedicineScreen extends StatelessWidget {
           Provider(
               create: (context) => DrugViewStore(
                   model: medicineStore.drug,
-                  restClient: context.read<Dependencies>().restClient),
+                  restClient: context.read<Dependencies>().apiClient),
               builder: (context, _) {
                 final DrugViewStore store = context.watch();
 
@@ -39,7 +40,7 @@ class MedicineScreen extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => Observer(builder: (_) {
-                            return AddMedicine(
+                            return AddMedicineView(
                               titlesStyle: titlesStyle,
                               store: store,
                               medicineStore: medicineStore,

@@ -24,6 +24,11 @@ class _ConsultationRecordsState extends State<ConsultationRecords> {
   @override
   Widget build(BuildContext context) {
     return PaginatedLoadingWidget(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 16,
+        ),
+        itemsPadding: const EdgeInsets.symmetric(vertical: 4),
         emptyData: const SizedBox.shrink(),
         store: widget.store.recordsState,
         itemBuilder: (context, item, _) {

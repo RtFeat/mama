@@ -28,6 +28,11 @@ class _SpecialistsViewState extends State<SpecialistsView> {
     final TextTheme textTheme = theme.textTheme;
 
     return PaginatedLoadingWidget(
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 16,
+        ),
+        itemsPadding: EdgeInsets.symmetric(vertical: 4),
         store: widget.store.doctorsState,
         itemBuilder: (context, item, _) {
           final DoctorModel? doctor = item;

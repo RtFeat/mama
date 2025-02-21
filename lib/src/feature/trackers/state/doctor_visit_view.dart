@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 part 'doctor_visit_view.g.dart';
 
@@ -17,7 +18,7 @@ class DoctorVisitViewStore extends _DoctorVisitViewStore
 
 abstract class _DoctorVisitViewStore with Store {
   final DoctorVisitModel model;
-  final RestClient restClient;
+  final ApiClient restClient;
 
   late final FormGroup formGroup;
 

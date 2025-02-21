@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'medicine.g.dart';
 
@@ -12,7 +13,7 @@ class MedicineStore extends _MedicineStore with _$MedicineStore {
 abstract class _MedicineStore with Store {
   _MedicineStore({required this.restClient});
 
-  final RestClient restClient;
+  final ApiClient restClient;
 
   // @observable
   // ObservableFuture<DrugModel> fetchMedicineFuture = emptyResponse;

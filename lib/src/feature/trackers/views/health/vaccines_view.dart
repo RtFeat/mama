@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class VaccinesScreen extends StatelessWidget {
   const VaccinesScreen({super.key});
@@ -17,7 +18,7 @@ class VaccinesScreen extends StatelessWidget {
     return Provider(
         create: (context) => VaccinesViewStore(
             model: vaccinesStore.vaccine,
-            restClient: context.read<Dependencies>().restClient),
+            restClient: context.read<Dependencies>().apiClient),
         builder: (context, _) {
           final VaccinesViewStore store = context.watch();
           return TrackerBody(

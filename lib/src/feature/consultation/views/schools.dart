@@ -29,6 +29,11 @@ class _SchoolsViewState extends State<SchoolsView> {
 
     return PaginatedLoadingWidget(
         store: widget.store.schoolsState,
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 16,
+        ),
+        itemsPadding: EdgeInsets.symmetric(vertical: 4),
         itemBuilder: (context, item, _) {
           final SchoolModel? schoolModel = item;
 

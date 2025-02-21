@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 enum AddMedicineType { add, edit }
 
-class AddMedicine extends StatefulWidget {
-  const AddMedicine({
+class AddMedicineView extends StatefulWidget {
+  const AddMedicineView({
     super.key,
     required this.store,
     this.titlesStyle,
@@ -19,10 +20,10 @@ class AddMedicine extends StatefulWidget {
   final AddMedicineType type;
 
   @override
-  State<AddMedicine> createState() => _AddMedicineState();
+  State<AddMedicineView> createState() => _AddMedicineViewState();
 }
 
-class _AddMedicineState extends State<AddMedicine> {
+class _AddMedicineViewState extends State<AddMedicineView> {
   final dateStartController = TextEditingController();
 
   @override

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 part 'vaccines_view.g.dart';
 
@@ -16,7 +17,7 @@ class VaccinesViewStore extends _VaccinesViewStore with _$VaccinesViewStore {
 
 abstract class _VaccinesViewStore with Store {
   final VaccineModel model;
-  final RestClient restClient;
+  final ApiClient restClient;
 
   late final FormGroup formGroup;
 

@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'doctor_visit.g.dart';
 
@@ -12,7 +13,7 @@ class DoctorVisitStore extends _DoctorVisitStore with _$DoctorVisitStore {
 abstract class _DoctorVisitStore with Store {
   _DoctorVisitStore({required this.restClient});
 
-  final RestClient restClient;
+  final ApiClient restClient;
 
   @observable
   DoctorVisitModel? doctorVisitModel;

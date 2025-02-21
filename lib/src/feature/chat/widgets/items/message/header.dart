@@ -35,7 +35,8 @@ class Header extends StatelessWidget {
             ),
           ),
           if (item.senderProfession != null &&
-              item.senderProfession!.isNotEmpty)
+              item.senderProfession!.isNotEmpty &&
+              item.senderProfession != 'USER')
             Padding(
                 padding: const EdgeInsets.only(left: 3.0, bottom: 18),
                 child: ConsultationBadge(

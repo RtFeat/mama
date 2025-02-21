@@ -32,7 +32,8 @@ class _ConsultationsViewState extends State<ConsultationsView>
         return Scaffold(
             appBar: CustomAppBar(
               title: t.consultation.title,
-              height: 114,
+              // height: 114,
+              height: 94,
               action: const ProfileWidget(),
               tabController: controller,
               tabs: [
@@ -41,17 +42,22 @@ class _ConsultationsViewState extends State<ConsultationsView>
                 t.consultation.schools,
               ],
             ),
-            body: TabBarView(controller: controller, children: [
-              ConsultationRecords(
-                store: store,
+            body: DecoratedBox(
+              decoration: const BoxDecoration(
+                color: Colors.white,
               ),
-              SpecialistsView(
-                store: store,
-              ),
-              SchoolsView(
-                store: store,
-              ),
-            ]));
+              child: TabBarView(controller: controller, children: [
+                ConsultationRecords(
+                  store: store,
+                ),
+                SpecialistsView(
+                  store: store,
+                ),
+                SchoolsView(
+                  store: store,
+                ),
+              ]),
+            ));
       },
     );
   }

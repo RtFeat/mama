@@ -59,8 +59,8 @@ class _KnowledgeFilterBodyState extends State<KnowledgeFilterBody> {
                 if (widget.profession != null &&
                     widget.profession!(item).isNotEmpty) ...[
                   8.w,
-                  ProfessionBox(
-                    profession: widget.profession!(item),
+                  ConsultationBadge(
+                    title: widget.profession!(item),
                   ),
                 ]
               ],

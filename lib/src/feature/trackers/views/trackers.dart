@@ -15,90 +15,92 @@ class TrackersView extends StatelessWidget {
       appBar: appBar,
       body: SubscribeBlockItem(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ListView(
-            // mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Column(
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CategoryCard(
+                        onTap: () {
+                          context.pushNamed(AppViews.evolutionView);
+                        },
+                        title: t.trackers.trackersName.evolution,
+                        icon: IconModel(
+                          // size: iconSize,
+                          iconPath: Assets.images.grow.path,
+                        ),
+                        backgroundColor: AppColors.blueLighter1,
+                      ),
+                    ),
+                    16.w,
+                    Expanded(
+                      child: CategoryCard(
+                        onTap: () {
+                          context.pushNamed(AppViews.sleeping);
+                        },
+                        title: t.trackers.trackersName.sleepAndCrying,
+                        icon: IconModel(
+                          // size: iconSize,
+                          iconPath: Assets.images.sleep.path,
+                        ),
+                        backgroundColor: AppColors.lavenderBlue,
+                      ),
+                    ),
+                  ],
+                ),
+                16.h,
+                Row(children: [
                   Expanded(
                     child: CategoryCard(
                       onTap: () {
-                        context.pushNamed(AppViews.evolutionView);
+                        context.pushNamed(AppViews.feeding);
                       },
-                      title: t.trackers.trackersName.evolution,
+                      title: t.trackers.trackersName.feeding,
                       icon: IconModel(
                         // size: iconSize,
-                        iconPath: Assets.images.grow.path,
+                        iconPath: Assets.images.feeding.path,
                       ),
-                      backgroundColor: AppColors.blueLighter1,
+                      backgroundColor: AppColors.paleBlue,
                     ),
-                  ),
-                  16.w,
-                  Expanded(
-                    child: CategoryCard(
-                      onTap: () {
-                        context.pushNamed(AppViews.sleeping);
-                      },
-                      title: t.trackers.trackersName.sleepAndCrying,
-                      icon: IconModel(
-                        // size: iconSize,
-                        iconPath: Assets.images.sleep.path,
+                  )
+                ]),
+                16.h,
+                Row(
+                  children: [
+                    Expanded(
+                      child: CategoryCard(
+                        onTap: () {
+                          context.pushNamed(AppViews.trackersHealthView);
+                        },
+                        title: t.trackers.trackersName.health,
+                        icon: IconModel(
+                          // size: iconSize,
+                          iconPath: Assets.images.health.path,
+                        ),
+                        backgroundColor: AppColors.lightPurple,
                       ),
-                      backgroundColor: AppColors.lavenderBlue,
                     ),
-                  ),
-                ],
-              ),
-              16.h,
-              Row(children: [
-                Expanded(
-                  child: CategoryCard(
-                    onTap: () {
-                      context.pushNamed(AppViews.feeding);
-                    },
-                    title: t.trackers.trackersName.feeding,
-                    icon: IconModel(
-                      // size: iconSize,
-                      iconPath: Assets.images.feeding.path,
-                    ),
-                    backgroundColor: AppColors.paleBlue,
-                  ),
-                )
-              ]),
-              16.h,
-              Row(
-                children: [
-                  Expanded(
-                    child: CategoryCard(
-                      onTap: () {
-                        context.pushNamed(AppViews.trackersHealthView);
-                      },
-                      title: t.trackers.trackersName.health,
-                      icon: IconModel(
-                        // size: iconSize,
-                        iconPath: Assets.images.health.path,
+                    16.w,
+                    Expanded(
+                      child: CategoryCard(
+                        onTap: () {
+                          context.pushNamed(AppViews.diapersView);
+                        },
+                        title: t.trackers.trackersName.diapers,
+                        icon: IconModel(
+                          // size: iconSize,
+                          iconPath: Assets.images.diaper.path,
+                        ),
+                        backgroundColor: AppColors.mintGreen,
                       ),
-                      backgroundColor: AppColors.lightPurple,
                     ),
-                  ),
-                  16.w,
-                  Expanded(
-                    child: CategoryCard(
-                      onTap: () {
-                        context.pushNamed(AppViews.diapersView);
-                      },
-                      title: t.trackers.trackersName.diapers,
-                      icon: IconModel(
-                        // size: iconSize,
-                        iconPath: Assets.images.diaper.path,
-                      ),
-                      backgroundColor: AppColors.mintGreen,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
