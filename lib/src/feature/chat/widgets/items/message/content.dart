@@ -121,6 +121,7 @@ class Content extends StatelessWidget {
         child: MessageDecorationWidget(
           isUser: isUser,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!item.hasVoice)
@@ -136,15 +137,17 @@ class Content extends StatelessWidget {
                 ),
               MessageAssets(item: item),
               if (item.text != null && item.text!.isNotEmpty)
-                Row(
-                  children: [
-                    Expanded(
-                      child: MessageText(
-                        item: item,
-                        store: store,
-                      ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width *
+                        0.75, // Ограничение до 75% экрана
+                  ),
+                  child: IntrinsicWidth(
+                    child: MessageText(
+                      item: item,
+                      store: store,
                     ),
-                  ],
+                  ),
                 ),
             ],
           ),

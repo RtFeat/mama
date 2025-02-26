@@ -101,4 +101,8 @@ class Endpoint {
   static const String vaccine = 'health/vaccine';
 
   String get drug => '$health/drug';
+
+  static const String diaper = 'diaper';
+
+  static const String diaperList = 'diaper/list';
 }

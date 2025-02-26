@@ -80,11 +80,7 @@ class _AddDiaperState extends State<AddDiaper> {
                   ],
                 ),
                 16.h,
-                DateSwitchContainer(
-                  title1: t.trackers.now.title,
-                  title2: t.trackers.sixTeenThirtyTwo.title,
-                  title3: t.trackers.fourteensOfSeptember.title,
-                ),
+                const DateTimeSelectorWidget(),
                 16.h,
                 Row(
                   children: [

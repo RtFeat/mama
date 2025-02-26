@@ -83,10 +83,10 @@ abstract class _ChatBottomBarStore with Store {
   }
 
   @computed
-  AbstractControl get _messageController => store.formGroup.control('message');
+  AbstractControl get messageController => store.formGroup.control('message');
 
   @computed
-  String get _messageText => _messageController.value ?? '';
+  String get _messageText => messageController.value ?? '';
 
   Future sendMessage({String? filePath}) async {
     logger.info('Сообщение отправлено', runtimeType: runtimeType);
@@ -118,7 +118,7 @@ abstract class _ChatBottomBarStore with Store {
       replyMessageId: store.mentionedMessage?.id ?? '',
     );
 
-    _messageController.value = '';
+    messageController.value = '';
     store.setMentionedMessage(null);
     files.clear();
   }
@@ -208,10 +208,11 @@ abstract class _ChatBottomBarStore with Store {
     }
 
     setIsRecording(false);
+    seconds = 0;
   }
 
   @action
-  void onDragEnd(DragEndDetails details) {
+  void onDragEnd() {
     if (!isRecording) return;
 
     // Проверяем длительность записи перед отправкой
@@ -227,7 +228,6 @@ abstract class _ChatBottomBarStore with Store {
   @action
   void _startTimer() {
     if (_timer != null) return;
-    seconds = 0; // Сбрасываем счетчик перед началом записи
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       seconds++;
     });

@@ -5,3 +5,5 @@ export 'doctor_visit_model.dart';
 export 'temperature_model.dart';
 export 'vaccine_model.dart';
 export 'vaccine.dart';
+export 'entity_diapers_main.dart';
+export 'entity_diapers_sub_main.dart';

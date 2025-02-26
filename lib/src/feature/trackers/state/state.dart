@@ -8,3 +8,7 @@ export 'doctor_visit_view.dart';
 export 'medicine.dart';
 export 'vaccines.dart';
 export 'vaccines_view.dart';
+export 'date_time_selector.dart';
+export 'diapers/diapers.dart';
+export 'learn_more/learn_more_dao.dart';
+export 'learn_more/learn_more.dart';

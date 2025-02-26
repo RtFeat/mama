@@ -201,7 +201,7 @@ class __BodyState extends State<_Body> {
                   ChatDateWidget(
                       scrollController: widget.store.scrollController!,
                       date: widget.store.currentShowingMessage!.createdAt!
-                          .toLocal())
+                          .toLocal()),
               ],
             );
           }));

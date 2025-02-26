@@ -3,6 +3,10 @@ accountTitleSpecialist: Аккаунт специалиста
 accountTitleSchool: Аккаунт онлайн-школы
 
 onlineSchool: Онлайн-школа
+admin: Администратор
+user: Пользователь
+moderator: Модератор
+doctor: Акушер
 
 addPhotoTitle: Нажмите, чтобы добавить фото
 
@@ -111,8 +115,6 @@ bottomBarDiaries: Дневники
 bottomBarChats: Чаты
 bottomBarServices: Сервисы
 
-
-
 male: Мальчик
 female: Девочка
 
@@ -123,10 +125,10 @@ gift:
   title: Подарочный
   desc: Вы получили\n1 месяц подписки
 
-feedback: 
+feedback:
   title: Отправьте запрос
   send: Отправить
-  success: 
+  success:
     title: Успешно
     desc: Мы свяжемся с вами в ближайшее время
     ok: Ок
@@ -136,26 +138,25 @@ aboutMe2: о себе
 aboutSchool: о школе
 
 schoolItems:
-  first: 
+  first:
     title: Полезные вебинары
     desc: Запись 6-ти полезных вебинаров с ответами на вопросы
-  second: 
+  second:
     title: С рождения до 3 месяцев
     desc: Все о детях от 3 до 6 месяцев жизни
-  third: 
+  third:
     title: От 6 до 12 месяцев
     desc: Все о детях в возрасте от 6 до 12 месяцев
-  fourth: 
+  fourth:
     title: От 12 до 18 месяцев
     desc: Все о детях в возрасте от 12 до 18 месяцев
 
-
 consultationVariants: Варианты консультации
 
-alertDialog1: 
+alertDialog1:
   title: Сбросить настройки?
   desc: Если сейчас выйти из аккаунта, не сохраненные данные потеряются
-alertDialog2: 
+alertDialog2:
   title: Сбросить настройки?
   subtitle: Если сейчас выйти из аккаунта, не сохраненные данные потеряются
   desc: Заполните обязательные поля, чтобы сохранить данные ребенка

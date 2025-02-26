@@ -1,8 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, prefer_single_quotes
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/core/constant/constant.dart';
 import 'package:mama/src/feature/trackers/trackers.dart';
+import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class DateSwitchContainer extends StatefulWidget {
   const DateSwitchContainer({
@@ -181,6 +184,167 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
           });
         },
       ),
+    );
+  }
+}
+
+class DateTimeSelectorWidget extends StatelessWidget {
+  final Function(DateTime? value)? onChanged;
+  const DateTimeSelectorWidget({
+    super.key,
+    this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider(
+      create: (context) => DateTimeSelectorStore(),
+      builder: (context, child) {
+        final DateTimeSelectorStore store = context.watch();
+
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.purpleLighterBackgroundColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(2),
+            child: Observer(builder: (context) {
+              return Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: _SelectorWidget(
+                        isSelected: !store.isSelectedOtherDateTime,
+                        onTap: () {
+                          store.setDateTime(null);
+                          onChanged?.call(DateTime.now());
+                        },
+                        child: Center(
+                            child: _SelectorItemWidget(
+                                title: t.home.today,
+                                isSelected: !store.isSelectedOtherDateTime))),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: _SelectorWidget(
+                      isSelected: store.isSelectedOtherDateTime,
+                      onTap: () async {
+                        final DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2010),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 365)),
+                        );
+
+                        if (pickedDate != null) {
+                          store.setDateTime(pickedDate);
+                          onChanged?.call(pickedDate);
+
+                          final TimeOfDay? pickedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+
+                          if (pickedTime != null) {
+                            final DateTime dateTime = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                pickedTime.hour,
+                                pickedTime.minute);
+                            store.setDateTime(dateTime);
+                            onChanged?.call(dateTime);
+                          }
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _SelectorItemWidget(
+                              title: store.time,
+                              icon: AppIcons.clock,
+                              isSelected: store.isSelectedOtherDateTime),
+                          _SelectorItemWidget(
+                              title: store.date,
+                              icon: AppIcons.calendar,
+                              isSelected: store.isSelectedOtherDateTime),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SelectorWidget extends StatelessWidget {
+  final Widget child;
+  final Function() onTap;
+  final bool isSelected;
+  const _SelectorWidget({
+    required this.child,
+    required this.onTap,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 35,
+      child: GestureDetector(
+        onTap: onTap,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? AppColors.whiteColor : null,
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectorItemWidget extends StatelessWidget {
+  final String title;
+  final bool isSelected;
+  final IconData? icon;
+  const _SelectorItemWidget({
+    this.icon,
+    required this.title,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (icon != null) ...[
+          Icon(
+            icon,
+            color: isSelected
+                ? AppColors.primaryColor
+                : AppColors.greyBrighterColor,
+          ),
+          4.w,
+        ],
+        Text(
+          title,
+          style: AppTextStyles.f14w700.copyWith(
+            color: isSelected
+                ? AppColors.primaryColor
+                : AppColors.greyBrighterColor,
+          ),
+        ),
+      ],
     );
   }
 }
