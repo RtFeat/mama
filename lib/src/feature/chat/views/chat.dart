@@ -71,7 +71,7 @@ class __BodyState extends State<_Body> {
     widget.store.loadPage(
       fetchFunction: (query, apiClient, path) {
         return apiClient.get(
-            '${Endpoint().messages}/${widget.item is SingleChatItem ? 'solo' : 'group'}',
+            '$path/${widget.item is SingleChatItem ? 'solo' : 'group'}',
             queryParams: {
               'limit': '10',
               'chat_id': widget.store.chatId,
@@ -146,6 +146,7 @@ class __BodyState extends State<_Body> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   store: widget.store,
                   isReversed: true,
+                  emptyData: const SizedBox.shrink(),
                   separator: (index, item) => DateSeparatorInChat(
                       index: index,
                       item: item,

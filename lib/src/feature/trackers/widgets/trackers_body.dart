@@ -48,11 +48,7 @@ class TrackerBody extends StatelessWidget {
                     ),
                   ),
                 ],
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: children,
-                  ),
-                )
+                ...children,
               ],
             );
           }),

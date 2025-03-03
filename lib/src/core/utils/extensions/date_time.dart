@@ -5,4 +5,8 @@ extension DateTimeExtension on DateTime {
   String timeRange(DateTime end) {
     return '$formattedTime - ${end.formattedTime}';
   }
+
+  DateTime startOfWeek() {
+    return DateTime.utc(year, month, day).subtract(Duration(days: weekday - 1));
+  }
 }

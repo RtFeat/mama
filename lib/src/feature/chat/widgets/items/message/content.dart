@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
@@ -105,7 +106,7 @@ class Content extends StatelessWidget {
               item.setIsAttached(!item.isAttached);
             },
           ),
-        if (isAdmin)
+        if (isAdmin || kDebugMode)
           MenuItem(
             label: t.chat.delete,
             icon: AppIcons.xmark,
@@ -118,38 +119,36 @@ class Content extends StatelessWidget {
         onTapDown: storePosition,
         onSecondaryTapDown: storePosition,
         onTap: () => MenuShower.show(context, entries, pos),
-        child: MessageDecorationWidget(
-          isUser: isUser,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if (!item.hasVoice)
-                Header(
-                  item: item,
-                  isOnGroup: isOnGroup,
-                  isUser: isUser,
-                ),
-              if (item.reply != null &&
-                  (item.reply?.id != null && item.reply!.id!.isNotEmpty))
-                ReplyContent(
-                  item: item.reply!,
-                ),
-              MessageAssets(item: item),
-              if (item.text != null && item.text!.isNotEmpty)
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width *
-                        0.75, // Ограничение до 75% экрана
-                  ),
-                  child: IntrinsicWidth(
-                    child: MessageText(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.7,
+          ),
+          child: MessageDecorationWidget(
+            isUser: isUser,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (!item.hasVoice)
+                    Header(
                       item: item,
-                      store: store,
+                      isOnGroup: isOnGroup,
+                      isUser: isUser,
                     ),
-                  ),
-                ),
-            ],
+                  if (item.reply != null &&
+                      (item.reply?.id != null && item.reply!.id!.isNotEmpty))
+                    ReplyContent(
+                      item: item.reply!,
+                    ),
+                  MessageAssets(item: item),
+                  if (item.text != null && item.text!.isNotEmpty)
+                    IntrinsicWidth(
+                      child: MessageText(
+                        item: item,
+                        store: store,
+                      ),
+                    ),
+                ]),
           ),
         ),
       );

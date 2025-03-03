@@ -22,6 +22,7 @@ class MicButton extends StatelessWidget {
     final ChatBottomBarStore store = context.watch();
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onPanStart: (_) {
         onStartRecording();
       },

@@ -20,7 +20,7 @@ class AvatarWidget extends StatelessWidget {
                   return Image.network(
                     url!,
                     fit: BoxFit.cover,
-                    cacheHeight: (constraints.maxHeight * 1.5).toInt(),
+                    cacheHeight: (constraints.maxHeight * 2).toInt(),
                     filterQuality: FilterQuality.low,
                     errorBuilder: (context, error, stackTrace) =>
                         _NoAvatar(radius: radius),

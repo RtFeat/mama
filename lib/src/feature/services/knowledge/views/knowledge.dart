@@ -68,6 +68,7 @@ class KnowledgeView extends StatelessWidget {
       ];
 
       return Scaffold(
+        backgroundColor: AppColors.lightBlue,
         appBar: CustomAppBar(
           title: t.services.knowledgeCenter.title,
           titleTextStyle: Theme.of(context)

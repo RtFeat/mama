@@ -16,7 +16,9 @@ class FavoriteArticlesView extends StatelessWidget {
           final FavoriteArticlesStore store = context.watch();
 
           return Scaffold(
+            backgroundColor: AppColors.lightBlue,
             appBar: AppBar(
+              backgroundColor: AppColors.lightBlue,
               centerTitle: false,
               title: Text(t.services.favoriteAtriclesTitle),
             ),

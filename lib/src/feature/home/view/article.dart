@@ -18,10 +18,11 @@ class ArticleView extends StatelessWidget {
         final NativeArticleStore store = context.watch();
 
         return Scaffold(
+            backgroundColor: Colors.white,
             body: _Body(
-          store: store,
-          id: id,
-        ));
+              store: store,
+              id: id,
+            ));
       },
     );
   }
@@ -54,37 +55,36 @@ class __BodyState extends State<_Body> {
     return LoadingWidget(
         future: widget.store.fetchFuture,
         builder: (d) {
-          return Stack(
-            children: [
-              if (widget.id != null)
-                SafeArea(
-                    child: ArticleBody(id: widget.id!, store: widget.store)),
-              Positioned(
-                top: 50.0,
-                left: 0.0,
-                child: ButtonLeading(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    size: 20.0,
-                    color: AppColors.blackColor,
+          return SafeArea(
+              bottom: false,
+              child: Stack(
+                children: [
+                  if (widget.id != null)
+                    ArticleBody(id: widget.id!, store: widget.store),
+                  Positioned(
+                    left: 0.0,
+                    child: ButtonLeading(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 20.0,
+                        color: AppColors.blackColor,
+                      ),
+                      title: t.profile.backLeadingButton,
+                      labelStyle: textTheme.titleSmall,
+                      onTapButton: () {
+                        context.pop();
+                      },
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Radius.circular(20),
+                      ),
+                    ),
                   ),
-                  title: t.profile.backLeadingButton,
-                  labelStyle: textTheme.titleSmall,
-                  onTapButton: () {
-                    context.pop();
-                  },
-                  borderRadius: const BorderRadius.horizontal(
-                    right: Radius.circular(20),
+                  Positioned(
+                    right: 0.0,
+                    child: _FavoriteButton(id: widget.id),
                   ),
-                ),
-              ),
-              Positioned(
-                top: 50.0,
-                right: 0.0,
-                child: _FavoriteButton(id: widget.id),
-              ),
-            ],
-          );
+                ],
+              ));
         });
   }
 }

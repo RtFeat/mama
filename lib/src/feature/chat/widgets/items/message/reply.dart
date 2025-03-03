@@ -42,7 +42,7 @@ class ReplyContent extends StatelessWidget {
     final TextTheme textTheme = themeData.textTheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxHeight: 70,
@@ -61,7 +61,7 @@ class ReplyContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'sdf',
+                      '${item.senderName} ${item.senderSurname != null && (item.senderSurname?.isNotEmpty ?? false) ? '${item.senderSurname}' : ''}',
                       style: textTheme.bodyMedium?.copyWith(
                         color: AppColors.primaryColor,
                       ),
@@ -72,7 +72,7 @@ class ReplyContent extends StatelessWidget {
                       item.text ?? '',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: textTheme.bodySmall,
+                      style: textTheme.bodySmall?.copyWith(fontSize: 16),
                     ),
                   ],
                 ),

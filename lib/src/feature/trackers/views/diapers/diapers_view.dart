@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/state/diapers/diapers_dao_impl.dart';
 import 'package:provider/provider.dart';
-import 'package:skit/skit.dart';
+import 'package:skit/skit.dart' as skit;
 
 class DiapersView extends StatelessWidget {
   const DiapersView({super.key});
@@ -27,8 +28,10 @@ class DiapersView extends StatelessWidget {
           ),
         ],
         builder: (context, _) {
+          final UserStore userStore = context.watch<UserStore>();
           return _Body(
             store: context.watch(),
+            childId: userStore.selectedChild?.id ?? '',
           );
         });
   }
@@ -36,8 +39,10 @@ class DiapersView extends StatelessWidget {
 
 class _Body extends StatefulWidget {
   final DiapersStore store;
+  final String childId;
   const _Body({
     required this.store,
+    required this.childId,
   });
 
   @override
@@ -45,10 +50,16 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  final format = DateFormat(
+      'dd MMMM', LocaleSettings.currentLocale.flutterLocale.toLanguageTag());
+
   @override
   void initState() {
-    widget.store.loadPage(
-        queryParams: {'child_id': '5533793a-4752-4378-ac45-7ebdbe2f2f45'});
+    widget.store.loadPage(queryParams: {
+      'child_id': widget.childId,
+      'from_time': widget.store.startOfWeek.toUtc().toIso8601String(),
+      'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
+    });
 
     widget.store.getIsShowInfo();
     super.initState();
@@ -90,86 +101,35 @@ class _BodyState extends State<_Body> {
           ),
         ),
         children: [
-          20.h,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: AppColors.primaryColor,
-                ),
-                onPressed: () {},
-              ),
-              Column(
-                children: [
-                  Text(
-                    '11 сентября - 17 сентября',
-                    style: AppTextStyles.f14w400,
-                  ),
-                  Text(
-                    t.trackers.diaperforday,
-                    style: AppTextStyles.f10w400,
-                  ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.primaryColor,
-                ),
-              ),
-            ],
+          SliverToBoxAdapter(child: 20.h),
+          SliverToBoxAdapter(
+            child: DateRangeSelectorWidget(
+              startDate: widget.store.startOfWeek,
+            ),
           ),
-          10.h,
-          // Основное содержимое календаря
-          BuildDaySection('17\nсентября', [
-            BuilldGridItem(
-              '09:56',
-              t.trackers.wet.wet,
-              t.trackers.wet.many,
-              AppColors.purpleLighterBackgroundColor,
-              AppColors.primaryColor,
-            ),
-            BuilldGridItem(
-              '11:25',
-              t.trackers.dirty.dirty,
-              t.trackers.dirty.solid,
-              AppColors.yellowBackgroundColor,
-              AppColors.orangeTextColor,
-            ),
-            BuilldGridItem(
-              '13:30',
-              t.trackers.mixed.mixed,
-              t.trackers.mixed.soft,
-              AppColors.greenLighterBackgroundColor,
-              AppColors.greenTextColor,
-            ),
-            BuilldGridItem(
-              '15:00',
-              t.trackers.wet.wet,
-              t.trackers.wet.average,
-              AppColors.purpleLighterBackgroundColor,
-              AppColors.primaryColor,
-            ),
-            BuilldGridItem(
-              '18:00',
-              t.trackers.mixed.mixed,
-              t.trackers.mixed.soft,
-              AppColors.greenLighterBackgroundColor,
-              AppColors.greenTextColor,
-            ),
-            BuilldGridItem(
-              '20:00',
-              t.trackers.wet.wet,
-              t.trackers.wet.littleBit,
-              AppColors.purpleLighterBackgroundColor,
-              AppColors.primaryColor,
-            ),
-          ]),
-          const SizedBox(height: 70),
+          SliverToBoxAdapter(child: 10.h),
+          skit.PaginatedLoadingWidget(
+            initialLoadingWidget: const SliverToBoxAdapter(),
+            emptyData: const SliverToBoxAdapter(),
+            additionalLoadingWidget: const SliverToBoxAdapter(),
+            store: widget.store,
+            isFewLists: true,
+            itemBuilder: (context, item, index) {
+              final DiapersMain diapersMain = item as DiapersMain;
+
+              return BuildDaySection(
+                  date: diapersMain.data ?? '$index',
+                  items: diapersMain.diapersSub?.map((e) {
+                    return BuilldGridItem(
+                      time: 'time',
+                      type: e.typeOfDiapers ?? '',
+                      description: e.howMuch ?? '',
+                      // AppColors.purpleLighterBackgroundColor,
+                      // AppColors.primaryColor,
+                    );
+                  }).toList());
+            },
+          ),
         ],
       );
     });

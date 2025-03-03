@@ -85,8 +85,8 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
     final mic = Observer(builder: (_) {
       return Positioned(
         right:
-            widget.barStore.isRecording ? -20 + widget.barStore.dragOffset : 10,
-        top: widget.barStore.isRecording ? -26 : 12,
+            widget.barStore.isRecording ? -28 + widget.barStore.dragOffset : 10,
+        top: widget.barStore.isRecording ? -28 : 12,
         child: ReactiveFormConsumer(builder: (context, form, child) {
           final String? value = form.control('message').value;
           final bool isNotEmpty = value != null && value != '';

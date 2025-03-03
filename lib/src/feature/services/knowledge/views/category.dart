@@ -18,6 +18,7 @@ class CategoriesView extends StatelessWidget {
         store.setConfirmed(false);
       },
       child: Scaffold(
+          backgroundColor: AppColors.lightBlue,
           appBar: CustomAppBar(
             title: t.services.categoriesBtn.title,
           ),

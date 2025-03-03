@@ -91,8 +91,6 @@ abstract class _ChatBottomBarStore with Store {
   Future sendMessage({String? filePath}) async {
     logger.info('Сообщение отправлено', runtimeType: runtimeType);
 
-    final String messageText = _messageText;
-
     List<MessageFile> uploadedFiles = [];
 
     // Если есть файл для загрузки
@@ -111,16 +109,18 @@ abstract class _ChatBottomBarStore with Store {
       );
     }
 
-    socket.sendMessage(
+    socket
+        .sendMessage(
       files: uploadedFiles,
-      messageText: messageText,
+      messageText: _messageText,
       chatId: store.chatId!,
       replyMessageId: store.mentionedMessage?.id ?? '',
-    );
-
-    messageController.value = '';
-    store.setMentionedMessage(null);
-    files.clear();
+    )
+        .then((v) {
+      messageController.value = '';
+      store.setMentionedMessage(null);
+      files.clear();
+    });
   }
 
   Future<List<MessageFile>> _uploadFiles({
@@ -162,18 +162,39 @@ abstract class _ChatBottomBarStore with Store {
 
   @action
   Future startRecording() async {
-    final filePath = await _generateFilePath();
+    try {
+      isRecording = false;
+      if (isRecording) {
+        logger.warning('Запись уже идёт');
+        return;
+      }
 
-    if (await record.hasPermission()) {
+      final filePath = await _generateFilePath();
+
+      final hasPermission = await record.hasPermission();
+      if (!hasPermission) {
+        logger.warning('Нет разрешения на запись');
+        return;
+      }
+
+      final isRecordingNow = await record.isRecording();
+      if (isRecordingNow) {
+        logger.warning(
+            'Попытка начать запись, но уже идёт другая запись. Сбрасываем.');
+        await stopRecording();
+      }
+
+      logger.info('Запускаем запись, файл: $filePath');
       await record.start(
         const RecordConfig(),
         path: filePath,
       );
 
       setIsRecording(true);
-      _startTimer(); // Запуск таймера
-    } else {
-      logger.warning('Нет разрешения на запись');
+      _startTimer();
+    } catch (e, stackTrace) {
+      logger.error('Ошибка при старте записи: $e',
+          error: e, stackTrace: stackTrace);
     }
   }
 
@@ -246,7 +267,7 @@ abstract class _ChatBottomBarStore with Store {
   Future getAttach() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
-      type: FileType.image,
+      // type: FileType.image,
     );
 
     logger.info('Выбрано файлов: ${result?.files.length}',

@@ -31,5 +31,12 @@ abstract class _DiapersStore extends LearnMoreStore<DiapersMain> with Store {
           },
         );
 
-  // TODO найти начало недели и конец, отображать данные для этого периода
+  @observable
+  DateTime selectedDate = DateTime.now();
+
+  @computed
+  DateTime get startOfWeek => selectedDate.startOfWeek();
+
+  @computed
+  DateTime get endOfWeek => selectedDate.add(const Duration(days: 6));
 }

@@ -21,6 +21,7 @@ class MessageAssets extends StatelessWidget {
     if (item.hasVoice) {
       final MessageFile file =
           item.files!.firstWhere((e) => e.typeFile == 'm4a');
+
       return Stack(
         children: [
           Row(
@@ -34,7 +35,11 @@ class MessageAssets extends StatelessWidget {
                 },
               ),
               10.w,
-              Expanded(child: Text(t.chat.voice)),
+              Expanded(
+                  child: Text(
+                t.chat.voice,
+                style: textTheme.labelMedium,
+              )),
             ],
           ),
           Positioned(
@@ -53,31 +58,36 @@ class MessageAssets extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Observer(builder: (context) {
-        return Row(
-          children: [
-            Expanded(
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: item.files!.map((e) {
-                  if (e.fileUrl != null && e.fileUrl!.isNotEmpty) {
-                    return AssetItemWidget(
-                        asset: e,
-                        onTapDelete: () {
-                          item.files?.remove(e);
-                        });
-                  }
+    if (item.files != null &&
+        item.files!.isNotEmpty &&
+        item.files!.length > 1) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Observer(builder: (context) {
+          return Row(
+            children: [
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: item.files!.map((e) {
+                    if (e.fileUrl != null && e.fileUrl!.isNotEmpty) {
+                      return AssetItemWidget(
+                          asset: e,
+                          onTapDelete: () {
+                            item.files?.remove(e);
+                          });
+                    }
 
-                  return const SizedBox.shrink();
-                }).toList(),
+                    return const SizedBox.shrink();
+                  }).toList(),
+                ),
               ),
-            ),
-          ],
-        );
-      }),
-    );
+            ],
+          );
+        }),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }

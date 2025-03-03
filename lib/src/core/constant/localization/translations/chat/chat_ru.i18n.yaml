@@ -9,7 +9,7 @@ hintSearchParticipant: Найти участника
 pinned: Закрепленное сообщение
 pinnedMessages: Закрепленные сообщения
 voice: Голосовое сообщение
-recording: Идет запись
+recording(rich): "Идет запись ${duration(v)}"
 cancelRecording: Влево – отмена
 reply: Ответить
 pin: Закрепить

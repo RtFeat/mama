@@ -90,7 +90,7 @@ class ChatSocket {
     }
   }
 
-  sendMessage({
+  Future sendMessage({
     required String messageText,
     required String chatId,
     String replyMessageId = '',
