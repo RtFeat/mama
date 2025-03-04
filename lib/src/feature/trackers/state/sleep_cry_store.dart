@@ -74,7 +74,7 @@ abstract class _SleepCryStore extends TableStore<SleepCryCell> with Store {
               title: e.title,
               row: i + 1,
               column: 1,
-              trailing: e.note != null || e.note!.isNotEmpty
+              trailing: e.note != null && e.note!.isNotEmpty
                   ? const NoteIconWidget()
                   : null),
           TableItem(title: e.sleep, row: i + 1, column: 2),
