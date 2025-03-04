@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
@@ -11,7 +12,9 @@ class HomeViewStore {
   HomeViewStore({
     required ApiClient apiClient,
     required String? userId,
+    required Faker faker,
   })  : allArticlesStore = ArticlesStore(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) => apiClient.get(
             path,
@@ -19,6 +22,7 @@ class HomeViewStore {
           ),
         ),
         forMeArticlesStore = ArticlesStore(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) => apiClient.get(
             path,
@@ -29,6 +33,7 @@ class HomeViewStore {
           ),
         ),
         ownArticlesStore = ArticlesStore(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) => apiClient.get(
             Endpoint().articleOwn,
@@ -36,6 +41,7 @@ class HomeViewStore {
           ),
         ),
         coursesStore = CoursesStore(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) => apiClient.get(
             path,

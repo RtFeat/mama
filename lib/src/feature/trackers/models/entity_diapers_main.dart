@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 import 'entity_diapers_sub_main.dart';
 
 part 'entity_diapers_main.g.dart';
@@ -18,7 +19,8 @@ class DiapersMain extends _DiapersMain with _$DiapersMain {
   });
   factory DiapersMain.fromJson(Map<String, dynamic> json) =>
       _$DiapersMainFromJson(json);
+  @override
   Map<String, dynamic> toJson() => _$DiapersMainToJson(this);
 }
 
-abstract class _DiapersMain with Store {}
+abstract class _DiapersMain extends SkitBaseModel with Store {}

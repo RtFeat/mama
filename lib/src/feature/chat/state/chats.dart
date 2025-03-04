@@ -15,13 +15,46 @@ class ChatsStore extends _ChatsStore with _$ChatsStore {
   ChatsStore({
     required super.fetchFunction,
     required super.apiClient,
+    required super.faker,
   });
 }
 
 abstract class _ChatsStore extends PaginatedListStore<SingleChatItem>
     with Store {
-  _ChatsStore({required super.apiClient, required super.fetchFunction})
-      : super(
+  _ChatsStore({
+    required super.apiClient,
+    required super.fetchFunction,
+    required super.faker,
+  }) : super(
+            testDataGenerator: () {
+              return SingleChatItem(
+                id: faker.datatype.uuid(),
+                participant1Id: faker.datatype.uuid(),
+                participant2Id: faker.datatype.uuid(),
+                participant1Unread: faker.datatype.number().toString(),
+                participant2Unread: faker.datatype.number().toString(),
+                participant1: AccountModel(
+                  id: faker.datatype.uuid(),
+                  firstName: faker.name.firstName(),
+                  secondName: faker.name.lastName(),
+                  avatarUrl: faker.image.image(),
+                  gender: Gender.values[
+                      faker.datatype.number(max: Gender.values.length - 1)],
+                  phone: faker.phoneNumber.phoneNumber(),
+                ),
+                participant2: AccountModel(
+                  id: faker.datatype.uuid(),
+                  firstName: faker.name.firstName(),
+                  secondName: faker.name.lastName(),
+                  avatarUrl: faker.image.image(),
+                  gender: Gender.values[
+                      faker.datatype.number(max: Gender.values.length - 1)],
+                  phone: faker.phoneNumber.phoneNumber(),
+                ),
+                profession: faker.name.jobType(),
+                unreadMessages: faker.datatype.number(),
+              );
+            },
             basePath: Endpoint.chat,
             transformer: (raw) {
               final List<SingleChatItem>? data = (raw['chats'] as List?)

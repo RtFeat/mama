@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
@@ -8,7 +9,9 @@ class ConsultationViewStore {
 
   ConsultationViewStore({
     required ApiClient apiClient,
+    required Faker faker,
   })  : recordsState = ConsultationRecordsState(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) => apiClient.get(
             path,
@@ -16,6 +19,7 @@ class ConsultationViewStore {
           ),
         ),
         doctorsState = DoctorsState(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) => apiClient.get(
             path,
@@ -23,6 +27,7 @@ class ConsultationViewStore {
           ),
         ),
         schoolsState = SchoolsStore(
+            faker: faker,
             apiClient: apiClient,
             fetchFunction: (params, path) => apiClient.get(
                   path,

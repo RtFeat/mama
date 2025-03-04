@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'chat_item.g.dart';
 
@@ -24,10 +25,11 @@ class ChatItem extends _ChatItem with _$ChatItem {
   factory ChatItem.fromJson(Map<String, dynamic> json) =>
       _$ChatItemFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$ChatItemToJson(this);
 }
 
-abstract class _ChatItem with Store {
+abstract class _ChatItem extends SkitBaseModel with Store {
   _ChatItem({
     this.lastMessage,
     this.lastMessageAt,

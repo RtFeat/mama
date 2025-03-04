@@ -9,6 +9,7 @@ class DiapersStore extends _DiapersStore with _$DiapersStore {
     required super.apiClient,
     required super.onSet,
     required super.onLoad,
+    required super.faker,
   });
 }
 
@@ -17,7 +18,18 @@ abstract class _DiapersStore extends LearnMoreStore<DiapersMain> with Store {
     required super.onLoad,
     required super.onSet,
     required super.apiClient,
+    required super.faker,
   }) : super(
+          testDataGenerator: () {
+            return DiapersMain(
+                diapersSub: List.generate(faker.datatype.number(max: 20), (_) {
+              return DiapersSubMain(
+                data: faker.lorem.paragraph(),
+                howMuch: faker.datatype.number(max: 20).toString(),
+                typeOfDiapers: faker.lorem.word(),
+              );
+            }));
+          },
           basePath: Endpoint.diaperList,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),

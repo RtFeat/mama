@@ -12,6 +12,7 @@ class MessagesStore extends _MessagesStore with _$MessagesStore {
     required super.apiClient,
     required super.chatType,
     super.pageSize = 20,
+    required super.faker,
   });
 }
 
@@ -21,7 +22,22 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     required super.apiClient,
     required this.chatType,
     required super.pageSize,
+    required super.faker,
   }) : super(
+            testDataGenerator: () {
+              return MessageItem(
+                id: faker.datatype.uuid(),
+                chatId: faker.datatype.uuid(),
+                readAt: faker.date.past(DateTime.now()),
+                senderAvatarUrl: faker.image.image(),
+                senderName: faker.name.firstName(),
+                senderSurname: faker.name.lastName(),
+                senderProfession: faker.name.jobTitle(),
+                text: faker.lorem.text(),
+                createdAt: faker.date.past(DateTime.now()),
+                updatedAt: faker.date.past(DateTime.now()),
+              );
+            },
             basePath: Endpoint().messages,
             fetchFunction: (params, path) =>
                 apiClient.get('$path/$chatType', queryParams: params),

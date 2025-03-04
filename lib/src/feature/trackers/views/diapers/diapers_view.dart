@@ -20,6 +20,7 @@ class DiapersView extends StatelessWidget {
                       context.read<Dependencies>().sharedPreferences)),
           Provider(
             create: (context) => DiapersStore(
+              faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
               onLoad: () => context.read<DiapersDataSourceLocal>().getIsShow(),
               onSet: (value) =>
@@ -109,9 +110,6 @@ class _BodyState extends State<_Body> {
           ),
           SliverToBoxAdapter(child: 10.h),
           skit.PaginatedLoadingWidget(
-            initialLoadingWidget: const SliverToBoxAdapter(),
-            emptyData: const SliverToBoxAdapter(),
-            additionalLoadingWidget: const SliverToBoxAdapter(),
             store: widget.store,
             isFewLists: true,
             itemBuilder: (context, item, index) {

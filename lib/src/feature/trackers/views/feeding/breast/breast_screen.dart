@@ -14,14 +14,16 @@ class BreastScreen extends StatelessWidget {
       onPressClose: () {},
       onPressLearnMore: () {},
       children: [
-        const AddFeedingWidget(),
-        TableHistory(
-          listOfData: listOfData,
-          firstColumnName: t.feeding.feedingEndTime,
-          secondColumnName: t.feeding.l,
-          thirdColumnName: t.feeding.r,
-          fourthColumnName: t.feeding.general,
-          showTitle: true,
+        SliverToBoxAdapter(child: const AddFeedingWidget()),
+        SliverToBoxAdapter(
+          child: TableHistory(
+            listOfData: listOfData,
+            firstColumnName: t.feeding.feedingEndTime,
+            secondColumnName: t.feeding.l,
+            thirdColumnName: t.feeding.r,
+            fourthColumnName: t.feeding.general,
+            showTitle: true,
+          ),
         )
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 
@@ -25,6 +26,15 @@ class SchoolModel extends BaseModel {
     this.isCourse = false,
     required this.articlesCount,
   });
+
+  factory SchoolModel.mock(Faker faker) {
+    return SchoolModel(
+        id: faker.datatype.uuid(),
+        account: AccountModel.mock(faker),
+        isCourse: false,
+        title: faker.lorem.word(),
+        articlesCount: faker.datatype.number());
+  }
 
   factory SchoolModel.fromJson(Map<String, dynamic> json) =>
       _$SchoolModelFromJson(json);

@@ -5,7 +5,7 @@ description: >
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 0.2.2+92
+version: 0.2.2+94
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -20,9 +20,6 @@ dependencies:
   meta: any
   intl: ^0.19.0
 
-  # Stream
-  # rxdart: ^0.28.0
-
   # -- service locator -- #
   provider: ^6.1.2
 
@@ -30,8 +27,9 @@ dependencies:
   mobx: ^2.3.0+1
   flutter_mobx: ^2.2.0+2
 
-  # -- codegen -- #
+  # -- data -- #
   json_annotation: ^4.9.0
+  faker_dart: ^0.2.2
 
   # -- networking -- #
   dio: ^5.3.3
@@ -53,7 +51,7 @@ dependencies:
   # Logging
   stack_trace: ^1.11.0
   # sentry_flutter: ^8.9.0
-  logging: ^1.2.0
+  # logging: ^1.2.0
 
   # Utils
   open_filex: ^4.6.0

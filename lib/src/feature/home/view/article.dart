@@ -13,7 +13,9 @@ class ArticleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       create: (context) => NativeArticleStore(
-          id: id, apiClient: context.read<Dependencies>().apiClient),
+          faker: context.read<Dependencies>().faker,
+          id: id,
+          apiClient: context.read<Dependencies>().apiClient),
       builder: (context, _) {
         final NativeArticleStore store = context.watch();
 

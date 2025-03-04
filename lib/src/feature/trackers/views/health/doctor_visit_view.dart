@@ -94,34 +94,36 @@ class DoctorVisitScreen extends StatelessWidget {
               }),
       children: [
         /// #main content
-        Column(
-          children: [
-            16.h,
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              16.h,
 
-            /// #doctor visit
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: 2, // TODO изменить при подключении бэка на state
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      // TODO редактирование приема
-                    },
-                    child: const PillAndDocVisitContainer(
-                      // TODO настроить вывод приема
-                      imageUrl: 'assets/images/on_boarding_3.png',
-                      title: 'Педиатр Евраева',
-                      timeDate: '24 сентября',
-                      description:
-                          'Температура скакала, записались на анализы и прописали сироп Нурофен чтобы ее сбивать Анализы сдаем завтра в 8:00 Купить безболезненный ланцет в аптеке на Ильича',
+              /// #doctor visit
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: 2, // TODO изменить при подключении бэка на state
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        // TODO редактирование приема
+                      },
+                      child: const PillAndDocVisitContainer(
+                        // TODO настроить вывод приема
+                        imageUrl: 'assets/images/on_boarding_3.png',
+                        title: 'Педиатр Евраева',
+                        timeDate: '24 сентября',
+                        description:
+                            'Температура скакала, записались на анализы и прописали сироп Нурофен чтобы ее сбивать Анализы сдаем завтра в 8:00 Купить безболезненный ланцет в аптеке на Ильича',
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ],
     );

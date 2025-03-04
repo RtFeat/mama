@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'filter.g.dart';
 
@@ -24,10 +25,11 @@ class KnowledgeFilterModel extends _KnowledgeFilterModel
   factory KnowledgeFilterModel.fromJson(Map<String, dynamic> json) =>
       _$KnowledgeFilterModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$KnowledgeFilterModelToJson(this);
 }
 
-abstract class _KnowledgeFilterModel with Store {
+abstract class _KnowledgeFilterModel extends SkitBaseModel with Store {
   @observable
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool isSelected = false;

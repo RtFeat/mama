@@ -10,6 +10,8 @@ class LearnMoreStore<T> extends _LearnMoreStore with _$LearnMoreStore {
       super.pageSize = 20,
       required super.basePath,
       required super.apiClient,
+      required super.testDataGenerator,
+      required super.faker,
       required super.fetchFunction,
       required super.transformer});
 }
@@ -20,12 +22,14 @@ abstract class _LearnMoreStore<T> extends PaginatedListStore<T> with Store {
 
   _LearnMoreStore({
     required super.pageSize,
+    required super.faker,
     required this.onLoad,
     required this.onSet,
     required super.basePath,
     required super.apiClient,
     required super.fetchFunction,
     required super.transformer,
+    required super.testDataGenerator,
   });
 
   @observable

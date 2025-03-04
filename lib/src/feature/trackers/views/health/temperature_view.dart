@@ -40,64 +40,68 @@ class TemperatureView extends StatelessWidget {
         ),
       ),
       children: [
-        14.h,
+        SliverToBoxAdapter(child: 14.h),
 
         /// #tabel header
-        Row(
-          children: [
-            Expanded(
-              flex: 4,
-              child: Text(
-                t.trackers.date.title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.greyBrighterColor,
+        SliverToBoxAdapter(
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Text(
+                  t.trackers.date.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.greyBrighterColor,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Text(
-                t.trackers.time.title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.greyBrighterColor,
+              Expanded(
+                flex: 3,
+                child: Text(
+                  t.trackers.time.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.greyBrighterColor,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Text(
-                t.trackers.temperature.title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.greyBrighterColor,
+              Expanded(
+                flex: 3,
+                child: Text(
+                  t.trackers.temperature.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.greyBrighterColor,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 5),
+        SliverToBoxAdapter(child: const SizedBox(height: 5)),
 
         /// #actual table
-        Table(
-          children: tableData
-              .map(
-                (row) => TableRow(
-                  children: row
-                      .map(
-                        (cell) => Text(cell),
-                      )
-                      .toList(),
-                ),
-              )
-              .toList(),
+        SliverToBoxAdapter(
+          child: Table(
+            children: tableData
+                .map(
+                  (row) => TableRow(
+                    children: row
+                        .map(
+                          (cell) => Text(cell),
+                        )
+                        .toList(),
+                  ),
+                )
+                .toList(),
+          ),
         ),
 
-        SizedBox(height: phonePadding.bottom + 16),
+        SliverToBoxAdapter(child: SizedBox(height: phonePadding.bottom + 16)),
       ],
     );
   }

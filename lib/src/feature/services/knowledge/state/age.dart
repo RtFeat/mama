@@ -8,6 +8,7 @@ part 'age.g.dart';
 class AgeCategoriesStore extends _AgeCategoriesStore with _$AgeCategoriesStore {
   AgeCategoriesStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
@@ -15,7 +16,15 @@ abstract class _AgeCategoriesStore extends PaginatedListStore<AgeCategoryModel>
     with Store {
   _AgeCategoriesStore({
     required super.apiClient,
+    required super.faker,
   }) : super(
+          testDataGenerator: () {
+            return AgeCategoryModel(
+              id: faker.datatype.uuid(),
+              title: faker.lorem.word(),
+              count: faker.datatype.number(),
+            );
+          },
           basePath: Endpoint().ageCaterories,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),

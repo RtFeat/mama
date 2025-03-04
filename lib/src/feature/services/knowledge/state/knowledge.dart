@@ -10,6 +10,7 @@ class KnowledgeStore extends _KnowledgeStore with _$KnowledgeStore {
     required super.categoriesStore,
     required super.ageCategoriesStore,
     required super.authorsStore,
+    required super.faker,
   });
 }
 
@@ -21,10 +22,16 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
 
   _KnowledgeStore({
     required super.apiClient,
+    required super.faker,
     required this.categoriesStore,
     required this.ageCategoriesStore,
     required this.authorsStore,
   }) : super(
+          testDataGenerator: () {
+            return ArticleModel.mock(
+              faker,
+            );
+          },
           basePath: Endpoint().allByCategory,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),

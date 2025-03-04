@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,7 @@ base class Dependencies {
     // required this.errorTrackingManager,
     required this.apiClient,
     required this.tokenStorage,
+    required this.faker,
   });
 
   /// [SharedPreferences] instance, used to store Key-Value pairs.
@@ -21,6 +23,9 @@ base class Dependencies {
 
   /// [FlutterSecureStorage] instance, used to store tokens.
   final Fresh<OAuth2Token> tokenStorage;
+
+  /// [Faker] instance, used to generate fake data.
+  final Faker faker;
 
   // /// [ErrorTrackingManager] instance, used to report errors.
   // final ErrorTrackingManager errorTrackingManager;

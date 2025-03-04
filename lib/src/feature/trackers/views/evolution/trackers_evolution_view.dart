@@ -67,103 +67,119 @@ class WeightT extends StatelessWidget {
       onPressClose: () {},
       onPressLearnMore: () {},
       children: [
-        10.h,
+        SliverToBoxAdapter(child: 10.h),
 
         /// Current and Dynamic Container
-        CurrentAndDymanicContainer(
-          trackerType: trackerType,
+        SliverToBoxAdapter(
+          child: CurrentAndDymanicContainer(
+            trackerType: trackerType,
+          ),
         ),
 
         /// KG Or gramm Container
-        trackerType == EvolutionCategory.weight ||
-                trackerType == EvolutionCategory.growth
-            ? Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 5,
-                  top: 16,
-                ),
-                child: Row(
-                  children: [
-                    SwitchContainer(
+        SliverToBoxAdapter(
+          child: trackerType == EvolutionCategory.weight ||
+                  trackerType == EvolutionCategory.growth
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 5,
+                    top: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      SwitchContainer(
+                        title1: trackerType.switchContainerTitle1,
+                        title2: trackerType.switchContainerTitle2,
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox(),
+        ),
+
+        /// Grafic
+        SliverToBoxAdapter(
+          child: const Padding(
+            padding: EdgeInsets.only(bottom: 16, top: 0),
+            child: SizedBox(
+              height: 278,
+              child: FlProgressChart(),
+            ),
+          ),
+        ),
+
+        SliverToBoxAdapter(
+          child: EditingButtons(
+              addBtnText: trackerType.addButtonTitle,
+              learnMoreTap: () {},
+              addButtonTap: () {
+                context.pushNamed(trackerType.route);
+              }),
+        ),
+        SliverToBoxAdapter(child: const SizedBox(height: 16)),
+
+        /// Stories
+        SliverToBoxAdapter(
+          child: Center(
+            child: Text(
+              t.trackers.stories.title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+
+        SliverToBoxAdapter(child: const SizedBox(height: 8)),
+
+        SliverToBoxAdapter(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SwitchContainer(
+                title1: t.trackers.news.title,
+                title2: t.trackers.old.title,
+                // isTrue: false,
+              ),
+              trackerType.title == EvolutionCategory.head.title
+                  ? const SizedBox()
+                  : SwitchContainer(
                       title1: trackerType.switchContainerTitle1,
                       title2: trackerType.switchContainerTitle2,
                     ),
-                  ],
-                ),
-              )
-            : const SizedBox(),
-
-        /// Grafic
-        const Padding(
-          padding: EdgeInsets.only(bottom: 16, top: 0),
-          child: SizedBox(
-            height: 278,
-            child: FlProgressChart(),
+            ],
           ),
         ),
-
-        EditingButtons(
-            addBtnText: trackerType.addButtonTitle,
-            learnMoreTap: () {},
-            addButtonTap: () {
-              context.pushNamed(trackerType.route);
-            }),
-        const SizedBox(height: 16),
-
-        /// Stories
-        Center(
-          child: Text(
-            t.trackers.stories.title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
+        SliverToBoxAdapter(child: const SizedBox(height: 16)),
+        SliverToBoxAdapter(
+          child: RowStroriesData(
+            data: t.trackers.date.title,
+            week: t.trackers.weeks.title,
+            growth: trackerType.storiesValueTitle,
+            style: AppTextStyles.f10w700.copyWith(
+              color: AppColors.greyBrighterColor,
             ),
           ),
         ),
+        SliverToBoxAdapter(child: const SizedBox(height: 8)),
 
-        const SizedBox(height: 8),
-
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SwitchContainer(
-              title1: t.trackers.news.title,
-              title2: t.trackers.old.title,
-              // isTrue: false,
+        SliverToBoxAdapter(
+          child: Column(
+            children: List.generate(
+              5,
+              (index) {
+                return RowStroriesData(
+                  data: '01 сентября',
+                  week: '17',
+                  weight: trackerType.storiesValue,
+                  style: AppTextStyles.f17w400,
+                );
+              },
             ),
-            trackerType.title == EvolutionCategory.head.title
-                ? const SizedBox()
-                : SwitchContainer(
-                    title1: trackerType.switchContainerTitle1,
-                    title2: trackerType.switchContainerTitle2,
-                  ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        RowStroriesData(
-          data: t.trackers.date.title,
-          week: t.trackers.weeks.title,
-          growth: trackerType.storiesValueTitle,
-          style: AppTextStyles.f10w700.copyWith(
-            color: AppColors.greyBrighterColor,
           ),
         ),
-        const SizedBox(height: 8),
-
-        Column(
-          children: List.generate(
-            5,
-            (index) {
-              return RowStroriesData(
-                data: '01 сентября',
-                week: '17',
-                weight: trackerType.storiesValue,
-                style: AppTextStyles.f17w400,
-              );
-            },
-          ),
-        ),
-        const SizedBox(height: 10),
+        SliverToBoxAdapter(child: const SizedBox(height: 10)),
       ],
     );
   }

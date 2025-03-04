@@ -9,6 +9,7 @@ class GroupUsersStore extends _GroupUsersStore with _$GroupUsersStore {
   GroupUsersStore({
     required super.apiClient,
     required super.chatId,
+    required super.faker,
   });
 }
 
@@ -19,7 +20,19 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
   _GroupUsersStore({
     required super.apiClient,
     required this.chatId,
+    required super.faker,
   }) : super(
+            testDataGenerator: () {
+              return AccountModel(
+                id: faker.datatype.uuid(),
+                firstName: faker.name.firstName(),
+                secondName: faker.name.lastName(),
+                avatarUrl: faker.image.image(),
+                gender: Gender.values[
+                    faker.datatype.number(max: Gender.values.length - 1)],
+                phone: faker.phoneNumber.phoneNumber(),
+              );
+            },
             basePath: Endpoint().groupUsers,
             fetchFunction: (params, path) =>
                 apiClient.get('$path/$chatId', queryParams: params),

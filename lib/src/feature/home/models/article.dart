@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 
@@ -69,6 +70,20 @@ class ArticleModel extends _ArticleModel with _$ArticleModel {
     super.createdAt,
     super.isFavorite = false,
   });
+
+  factory ArticleModel.mock(Faker faker) {
+    return ArticleModel(
+      id: faker.datatype.uuid(),
+      title: faker.lorem.word(),
+      category: faker.lorem.word(),
+      photo: faker.image.image(),
+      author: AccountModel.mock(faker),
+      ageCategory: List.generate(
+          faker.datatype.number(max: 5),
+          (_) => AgeCategory.values[
+              faker.datatype.number(max: AgeCategory.values.length - 1)]),
+    );
+  }
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) =>
       _$ArticleModelFromJson(json);

@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart' as faker;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
@@ -35,6 +36,17 @@ class AccountModel extends _AccountModel with _$AccountModel {
     this.status,
   });
 
+  factory AccountModel.mock(faker.Faker faker) {
+    return AccountModel(
+      id: faker.datatype.uuid(),
+      firstName: faker.name.firstName(),
+      secondName: faker.name.lastName(),
+      avatarUrl: faker.image.image(),
+      gender:
+          Gender.values[faker.datatype.number(max: Gender.values.length - 1)],
+      phone: faker.phoneNumber.phoneNumber(),
+    );
+  }
   factory AccountModel.fromJson(Map<String, dynamic> json) =>
       _$AccountModelFromJson(json);
 

@@ -16,6 +16,7 @@ class ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       create: (_) => GroupUsersStore(
+          faker: context.read<Dependencies>().faker,
           apiClient: context.read<Dependencies>().apiClient,
           chatId:
               (item is GroupItem) ? (item as GroupItem).groupChatId ?? '' : ''),

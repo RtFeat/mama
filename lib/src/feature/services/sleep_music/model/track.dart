@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'track.g.dart';
 
@@ -38,10 +39,11 @@ class TrackModel extends _TrackModel with _$TrackModel {
   factory TrackModel.fromJson(Map<String, dynamic> json) =>
       _$TrackModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$TrackModelToJson(this);
 }
 
-abstract class _TrackModel with Store {
+abstract class _TrackModel extends SkitBaseModel with Store {
   @observable
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool isPlaying = false;

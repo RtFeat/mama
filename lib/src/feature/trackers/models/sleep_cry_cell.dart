@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:skit/skit.dart';
 
 part 'sleep_cry_cell.g.dart';
 
 @JsonSerializable()
-class SleepCryCell {
+class SleepCryCell extends SkitBaseModel {
   @JsonKey(name: 'time')
   final String? title;
 
@@ -24,5 +25,6 @@ class SleepCryCell {
   factory SleepCryCell.fromJson(Map<String, dynamic> json) =>
       _$SleepCryCellFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$SleepCryCellToJson(this);
 }

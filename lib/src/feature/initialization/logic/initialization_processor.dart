@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:faker_dart/faker_dart.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,10 @@ final class InitializationProcessor {
     // final errorTrackingManager = await _initErrorTrackingManager();
     final settingsStore = await _initSettingsStore(sharedPreferences);
 
+    final Faker faker = Faker.instance;
+
     return Dependencies(
+      faker: faker,
       sharedPreferences: sharedPreferences,
       settingsStore: settingsStore,
       // errorTrackingManager: errorTrackingManager,
