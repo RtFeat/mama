@@ -35,16 +35,16 @@ class BottleScreen extends StatelessWidget {
                 context.pushNamed(AppViews.addBottle);
               }),
         ),
-        SliverToBoxAdapter(
-          child: TableHistory(
-            listOfData: listOfData,
-            firstColumnName: t.feeding.feedingEndTime,
-            secondColumnName: t.feeding.breastMl,
-            thirdColumnName: t.feeding.bottleMl,
-            fourthColumnName: t.feeding.totalMl,
-            showTitle: true,
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: TableHistory(
+        //     listOfData: listOfData,
+        //     firstColumnName: t.feeding.feedingEndTime,
+        //     secondColumnName: t.feeding.breastMl,
+        //     thirdColumnName: t.feeding.bottleMl,
+        //     fourthColumnName: t.feeding.totalMl,
+        //     showTitle: true,
+        //   ),
+        // ),
       ],
     );
   }

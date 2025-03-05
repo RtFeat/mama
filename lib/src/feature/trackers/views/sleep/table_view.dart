@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
-import 'package:mama/src/feature/trackers/widgets/table_feeding_history.dart';
+import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 
 class TableScreen extends StatelessWidget {
   const TableScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: TableHistory(
-          listOfData: listOfTableData,
-          firstColumnName: 'Дата',
-          secondColumnName: 'Время ГВ',
-          thirdColumnName: 'Всего\nжидкости,\nмл',
-          fourthColumnName: 'Всего\nприкорма,\nг',
-          showTitle: false,
+    return Provider(
+      create: (context) =>
+          SleepCryStore(apiClient: context.read<Dependencies>().apiClient),
+      builder: (context, child) => Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: TableSleepHistory(
+            store: context.watch(),
+            showTitle: true,
+            title: t.trackers.report,
+          ),
         ),
       ),
     );

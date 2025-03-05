@@ -1,4 +1,5 @@
 export 'sleep_cry_store.dart';
+export 'feeding_store.dart';
 export 'add_sleeping.dart';
 export 'add_feeding.dart';
 export 'add_pumping.dart';

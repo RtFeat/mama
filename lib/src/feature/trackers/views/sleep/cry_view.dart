@@ -15,16 +15,16 @@ class CryScreen extends StatelessWidget {
       learnMoreWidgetText: t.trackers.findOutMoreTextCry,
       children: [
         SliverToBoxAdapter(child: const AddFeedingWidget()),
-        SliverToBoxAdapter(
-          child: TableHistory(
-            listOfData: listOfData,
-            firstColumnName: t.feeding.feedingEndTime,
-            secondColumnName: t.feeding.l,
-            thirdColumnName: t.feeding.r,
-            fourthColumnName: t.feeding.general,
-            showTitle: true,
-          ),
-        )
+        // SliverToBoxAdapter(
+        //   child: TableHistory(
+        //     listOfData: listOfData,
+        //     firstColumnName: t.feeding.feedingEndTime,
+        //     secondColumnName: t.feeding.l,
+        //     thirdColumnName: t.feeding.r,
+        //     fourthColumnName: t.feeding.general,
+        //     showTitle: true,
+        //   ),
+        // )
       ],
     );
   }

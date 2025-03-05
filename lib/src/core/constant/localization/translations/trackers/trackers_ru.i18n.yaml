@@ -316,3 +316,16 @@ comment:
   subTitle: Нажмите, чтобы добавить комментарии
 
 dailyreminders: Ежедневные напоминания
+
+report: Сводка
+
+feedTableTitles: 
+  title1: Дата
+  title2: Время ГВ
+  title3: Всего жидкости, мл
+  title4: Всего прикорма, г
+
+evolution:
+  attention: Обратите внимание
+  norm: Граница нормы
+  anormal: Вне нормы

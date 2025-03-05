@@ -28,16 +28,16 @@ class PumpingScreen extends StatelessWidget {
                 context.pushNamed(AppViews.addPumping);
               }),
         ),
-        SliverToBoxAdapter(
-          child: TableHistory(
-            listOfData: listOfData,
-            firstColumnName: t.feeding.endTimeOfPumping,
-            secondColumnName: t.feeding.pumpingLeftSide,
-            thirdColumnName: t.feeding.pumpingRightSide,
-            fourthColumnName: t.feeding.totalMl,
-            showTitle: true,
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: TableHistory(
+        //     listOfData: listOfData,
+        //     firstColumnName: t.feeding.endTimeOfPumping,
+        //     secondColumnName: t.feeding.pumpingLeftSide,
+        //     thirdColumnName: t.feeding.pumpingRightSide,
+        //     fourthColumnName: t.feeding.totalMl,
+        //     showTitle: true,
+        //   ),
+        // ),
       ],
     );
   }
