@@ -11,13 +11,23 @@ part 'feeding_store.g.dart';
 class FeedingStore extends _FeedingStore with _$FeedingStore {
   FeedingStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
 abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
   _FeedingStore({
     required super.apiClient,
+    required super.faker,
   }) : super(
+          testDataGenerator: () {
+            return FeedingCell(
+              title: faker.lorem.word(),
+              chest: faker.lorem.word(),
+              food: faker.lorem.word(),
+              lure: faker.lorem.word(),
+            );
+          },
           basePath: Endpoint().feedTable,
           fetchFunction: (params, path) =>
               apiClient.get('$path/new', queryParams: params),

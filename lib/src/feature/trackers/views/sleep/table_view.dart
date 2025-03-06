@@ -8,8 +8,9 @@ class TableScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (context) =>
-          SleepCryStore(apiClient: context.read<Dependencies>().apiClient),
+      create: (context) => SleepCryStore(
+          faker: context.read<Dependencies>().faker,
+          apiClient: context.read<Dependencies>().apiClient),
       builder: (context, child) => Scaffold(
         backgroundColor: Colors.white,
         body: Padding(
