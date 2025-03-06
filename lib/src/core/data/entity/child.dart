@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
@@ -62,6 +63,22 @@ class ChildModel extends _ChildModel with _$ChildModel {
       _$ChildModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ChildModelToJson(this);
+
+  factory ChildModel.mock(Faker faker) {
+    return ChildModel(
+      firstName: faker.name.firstName(),
+      secondName: faker.name.lastName(),
+      birthDate: faker.datatype.dateTime(),
+      avatarUrl: faker.image.image(),
+      isTwins: faker.datatype.boolean(),
+      height: faker.datatype.float(),
+      weight: faker.datatype.float(),
+      status: ChildStatus(
+          title: faker.lorem.word(),
+          value: ChildStatusType.values[
+              faker.datatype.number(max: ChildStatusType.values.length - 1)]),
+    );
+  }
 }
 
 abstract class _ChildModel with Store {

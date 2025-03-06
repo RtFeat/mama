@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 
@@ -49,6 +50,20 @@ class UserModel extends BaseModel {
   /// Connect the generated [_$UserModelFromJson] function to the `toJson` method.
   @override
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+
+  factory UserModel.mock(Faker faker) {
+    return UserModel(
+      accountId: faker.datatype.uuid(),
+      city: faker.address.city(),
+      createdId: faker.datatype.uuid(),
+      endPrime: faker.datatype.string(),
+      id: faker.datatype.uuid(),
+      roles: [faker.datatype.string()],
+      startPrime: faker.datatype.string(),
+      typePrime: faker.datatype.string(),
+      updatedId: faker.datatype.uuid(),
+    );
+  }
 
   @override
   String toString() {
