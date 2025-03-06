@@ -3,14 +3,14 @@ import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
 class BuildDaySection extends StatelessWidget {
-  const BuildDaySection(
+  const BuildDaySection({
     this.date,
-    this.items, {
+    this.items,
     super.key,
   });
 
-  final String date;
-  final List<Widget> items;
+  final String? date;
+  final List<Widget>? items;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class BuildDaySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            date,
+            date ?? '',
             style: AppTextStyles.f14w400,
           ),
           10.w,
@@ -30,7 +30,7 @@ class BuildDaySection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Wrap(
-                  children: items,
+                  children: items ?? [],
                 ),
               ],
             ),

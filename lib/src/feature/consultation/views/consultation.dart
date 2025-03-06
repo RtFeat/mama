@@ -24,6 +24,7 @@ class ConsultationView extends StatelessWidget {
 
     return Provider(
       create: (context) => ConsultationStore(
+        faker: context.read<Dependencies>().faker,
         apiClient: context.read<Dependencies>().apiClient,
       ),
       builder: (context, child) => _Body(

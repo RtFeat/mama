@@ -18,6 +18,17 @@ class ArticleWidget extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
+    Map<String, String> roleTranslations = {
+      'ADMIN': t.profile.admin,
+      'USER': t.profile.user,
+      'MODERATOR': t.profile.moderator,
+      'DOCTOR': t.profile.doctor,
+      'ONLINE_SCHOOL': t.profile.onlineSchool,
+    };
+
+    String? profession =
+        favoriteArticle?.profession ?? article?.author?.profession;
+
     return GestureDetector(
       onTap: () {
         context.pushNamed(AppViews.article, extra: {
@@ -73,8 +84,8 @@ class ArticleWidget extends StatelessWidget {
                                                   ?.isNotEmpty ??
                                               false)))
                                     ConsultationBadge(
-                                      title: favoriteArticle?.profession ??
-                                          article?.author!.profession ??
+                                      title: roleTranslations[profession] ??
+                                          profession ??
                                           '',
                                     ),
                                 ],

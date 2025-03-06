@@ -7,13 +7,20 @@ part 'doctor.g.dart';
 class DoctorStore extends _DoctorStore with _$DoctorStore {
   DoctorStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
 abstract class _DoctorStore extends SingleDataStore<DoctorData> with Store {
-  final ApiClient apiClient;
-  _DoctorStore({required this.apiClient})
-      : super(
+  _DoctorStore({
+    required super.apiClient,
+    required super.faker,
+  }) : super(
+          testDataGenerator: () {
+            return DoctorData(
+              doctor: DoctorModel.mock(faker),
+            );
+          },
           fetchFunction: (_) => apiClient.get(Endpoint().doctorData),
           transformer: (v) {
             if (v == null) return DoctorData();

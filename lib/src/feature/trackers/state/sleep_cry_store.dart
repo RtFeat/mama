@@ -10,13 +10,22 @@ part 'sleep_cry_store.g.dart';
 class SleepCryStore extends _SleepCryStore with _$SleepCryStore {
   SleepCryStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
 abstract class _SleepCryStore extends TableStore<SleepCryCell> with Store {
   _SleepCryStore({
     required super.apiClient,
+    required super.faker,
   }) : super(
+          testDataGenerator: () {
+            return SleepCryCell(
+              title: faker.lorem.word(),
+              sleep: faker.datatype.number(max: 10).toString(),
+              cry: faker.datatype.number(max: 10).toString(),
+            );
+          },
           basePath: Endpoint().sleepCryTable,
           fetchFunction: (params, path) =>
               apiClient.get('$path/new', queryParams: params),
@@ -65,7 +74,7 @@ abstract class _SleepCryStore extends TableStore<SleepCryCell> with Store {
               title: e.title,
               row: i + 1,
               column: 1,
-              trailing: e.note != null || e.note!.isNotEmpty
+              trailing: e.note != null && e.note!.isNotEmpty
                   ? const NoteIconWidget()
                   : null),
           TableItem(title: e.sleep, row: i + 1, column: 2),

@@ -64,9 +64,6 @@ class _GroupsList extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 PaginatedLoadingWidget(
-                  errorWidget: const SliverToBoxAdapter(),
-                  additionalLoadingWidget: const SliverToBoxAdapter(),
-                  initialLoadingWidget: const SliverToBoxAdapter(),
                   isFewLists: true,
                   store: store.groups,
                   separator: (_, __) => separator,
@@ -118,9 +115,6 @@ class __ChatsListState extends State<_ChatsList> {
             slivers: [
               PaginatedLoadingWidget(
                 isFewLists: true,
-                errorWidget: const SliverToBoxAdapter(),
-                additionalLoadingWidget: const SliverToBoxAdapter(),
-                initialLoadingWidget: const SliverToBoxAdapter(),
                 separator: (_, __) => widget.separator,
                 store: widget.store.chats,
                 listData: () => widget.store.chats.filteredChats,

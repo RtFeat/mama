@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -22,40 +25,46 @@ class ArticleBody extends StatelessWidget {
         future: store.fetchFuture,
         builder: (context) {
           return Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12, top: 60),
+            padding: const EdgeInsets.only(
+              left: 12,
+              right: 12,
+            ),
             child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
-                    child: ConsultationItem(
-                        url: store.data?.author?.avatarUrl,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ConsultationItemTitle(
-                              name:
-                                  '${store.data?.author?.firstName} ${store.data?.author?.secondName ?? ''}',
-                              badgeTitle: store.data?.author?.profession,
-                            ),
-                            Row(children: [
-                              Expanded(
-                                child: AutoSizeText(
-                                  store.data?.author?.info ?? '',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: textTheme.bodySmall!.copyWith(
-                                      color: textTheme.bodyLarge!.color,
-                                      fontSize: 14),
-                                ),
+                    child: Padding(
+                  padding: const EdgeInsets.only(top: kToolbarHeight * 1.5),
+                  child: ConsultationItem(
+                      url: store.data?.author?.avatarUrl,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ConsultationItemTitle(
+                            name:
+                                '${store.data?.author?.firstName} ${store.data?.author?.secondName ?? ''}',
+                            badgeTitle: store.data?.author?.profession,
+                          ),
+                          Row(children: [
+                            Expanded(
+                              child: AutoSizeText(
+                                store.data?.author?.info ?? '',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodySmall!.copyWith(
+                                    color: textTheme.bodyLarge!.color,
+                                    fontSize: 14),
                               ),
-                            ]),
-                            ConsultationTags(tags: [
-                              (t.consultation.articles(
-                                  n: store.data?.countArticlesAuthor ?? 0)),
-                              // if (schoolModel?.isCourse ?? false)
-                              // t.consultation.course,
-                            ])
-                          ],
-                        ))),
+                            ),
+                          ]),
+                          ConsultationTags(tags: [
+                            (t.consultation.articles(
+                                n: store.data?.countArticlesAuthor ?? 0)),
+                            // if (schoolModel?.isCourse ?? false)
+                            // t.consultation.course,
+                          ])
+                        ],
+                      )),
+                )),
                 //   SliverList.builder(
                 //       itemCount: store.data?.articles?.length,
                 //       // padding: const EdgeInsets.only(
@@ -105,7 +114,9 @@ class ArticleBody extends StatelessWidget {
                 //             );
                 //         }
                 //       }),
-
+                SliverToBoxAdapter(
+                  child: 20.h,
+                ),
                 SliverFillRemaining(
                     child: _WebBody(
                         data: store.data?.articles
@@ -132,45 +143,77 @@ class _WebBody extends StatefulWidget {
 
 class __WebBodyState extends State<_WebBody> {
   late final WebViewController controller;
+  late Future future;
 
   late final String payload;
 
-  @override
-  void initState() {
+  Future<String> loadFontBase64() async {
+    ByteData fontData = await rootBundle.load(Assets.fonts.sFProTextMedium);
+    Uint8List bytes = fontData.buffer.asUint8List();
+    return base64Encode(bytes);
+  }
+
+  Future<void> setupWebView() async {
+    String base64Font = await loadFontBase64();
+    String fontFace = '''
+    @font-face {
+      font-family: 'SF Pro Text';
+      src: url(data:font/ttf;base64,$base64Font) format('truetype');
+    }
+    body {
+      font-family: 'SF Pro Text', sans-serif;
+    }
+  ''';
+
     payload = '''
     <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Document</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* Убираем горизонтальный скролл */
-        }
-        img {
-            max-width: 100%; /* Ограничиваем ширину изображений */
-            height: auto; /* Сохраняем пропорции */
-            display: block; /* Убираем лишние отступы */
-            margin: 0 auto; /* Центрируем изображение */
-        }
-    </style>
-</head>
-<body>
-${widget.data}
-</body>
-</html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>Document</title>
+        <style>
+            $fontFace
+            body {
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+            }
+            img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+      ${widget.data}
+    </body>
+    </html>
   ''';
-    super.initState();
+
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..clearCache()
       ..loadHtmlString(payload);
   }
 
   @override
+  void initState() {
+    super.initState();
+    future = setupWebView();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: controller);
+    return FutureBuilder(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return WebViewWidget(controller: controller);
+          }
+          return const SizedBox.shrink();
+        });
   }
 }

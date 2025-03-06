@@ -64,7 +64,9 @@ class ChatItemWidget extends StatelessWidget {
                               // isChat
                               //     ? '${(item as SingleChatItem).participant2?.name}'
                               //     : (item as GroupItem).groupInfo?.name,
-                              style: textTheme.bodyMedium,
+                              style: textTheme.bodyMedium?.copyWith(
+                                fontSize: 14,
+                              ),
                             ),
                             if (isChat)
                               if (participant?.profession != null &&
@@ -100,50 +102,52 @@ class ChatItemWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Flexible(
-                      flex: 7,
-                      child: RichText(
-                        maxLines: 2,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: item.lastMessage?.nickname?.trim(),
-                              style: textTheme.labelMedium,
-                            ),
-                            if (!isChat)
-                              if (participant?.profession != null &&
-                                  participant!.profession!.isNotEmpty)
-                                // if ((item as GroupItem).participant?.profession !=
-                                //         null &&
-                                //     (item as GroupItem)
-                                //         .participant!
-                                //         .profession!
-                                //         .isNotEmpty)
-                                // if (chatEntity == ChatEntity.groupChat)
-                                //   if (chatItem.profession != null &&
-                                //       chatItem.profession!.isNotEmpty)
-                                WidgetSpan(
-                                  child: ConsultationBadge(
-                                    title: (item as GroupItem)
-                                        .participant!
-                                        .profession!,
+                    (item.lastMessage != null)
+                        ? Flexible(
+                            flex: 7,
+                            child: RichText(
+                              maxLines: 2,
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: item.lastMessage?.nickname?.trim(),
+                                    style: textTheme.labelMedium,
                                   ),
-                                ),
-                            TextSpan(
-                              text: ': ',
-                              style: textTheme.labelMedium,
+                                  if (!isChat)
+                                    if (participant?.profession != null &&
+                                        participant!.profession!.isNotEmpty)
+                                      // if ((item as GroupItem).participant?.profession !=
+                                      //         null &&
+                                      //     (item as GroupItem)
+                                      //         .participant!
+                                      //         .profession!
+                                      //         .isNotEmpty)
+                                      // if (chatEntity == ChatEntity.groupChat)
+                                      //   if (chatItem.profession != null &&
+                                      //       chatItem.profession!.isNotEmpty)
+                                      WidgetSpan(
+                                        child: ConsultationBadge(
+                                          title: (item as GroupItem)
+                                              .participant!
+                                              .profession!,
+                                        ),
+                                      ),
+                                  TextSpan(
+                                    text: ': ',
+                                    style: textTheme.labelMedium,
+                                  ),
+                                  TextSpan(
+                                    text: item.lastMessage?.text,
+                                    style: textTheme.labelMedium!.copyWith(
+                                        color: AppColors.greyBrighterColor),
+                                  ),
+                                ],
+                              ),
                             ),
-                            TextSpan(
-                              text: item.lastMessage?.text,
-                              style: textTheme.labelMedium!
-                                  .copyWith(color: AppColors.greyBrighterColor),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          )
+                        : const SizedBox.shrink(),
                     if (item.lastMessage != null &&
                         item.lastMessage?.filePath != null &&
                         item.lastMessage!.filePath!.isNotEmpty)

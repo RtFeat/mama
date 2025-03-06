@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
@@ -9,6 +10,7 @@ part 'chats_view.g.dart';
 class ChatsViewStore extends _ChatsViewStore with _$ChatsViewStore {
   ChatsViewStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
@@ -19,11 +21,14 @@ abstract class _ChatsViewStore with Store {
 
   _ChatsViewStore({
     required ApiClient apiClient,
+    required Faker faker,
   })  : chats = ChatsStore(
+            faker: faker,
             apiClient: apiClient,
             fetchFunction: (params, path) =>
                 apiClient.get(path, queryParams: params)),
         groups = GroupsStore(
+          faker: faker,
           apiClient: apiClient,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),

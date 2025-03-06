@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:mama/src/data.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:skit/skit.dart';
 
 class AssetItemWidget extends StatelessWidget {
@@ -32,7 +33,13 @@ class AssetItemWidget extends StatelessWidget {
             alignment: Alignment.topRight,
             clipBehavior: Clip.none,
             children: [
-              _Asset(asset: asset, size: size),
+              GestureDetector(
+                  onTap: () async {
+                    var file = await DefaultCacheManager().getSingleFile(
+                        '${const AppConfig().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}');
+                    OpenFilex.open(file.path);
+                  },
+                  child: _Asset(asset: asset, size: size)),
               Positioned(
                 right: -5,
                 top: -5,
@@ -115,44 +122,39 @@ class __FileAssetState extends State<_FileAsset> {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return GestureDetector(
-      onTap: () {
-        // if (!isDownloaded) {
-        // }
-      },
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(6),
-            color: AppColors.primaryColor,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AutoSizeText(
-                widget.asset.typeFile?.toUpperCase() ?? '',
-                maxLines: 1,
-                style: textTheme.headlineSmall!.copyWith(
-                  fontSize: 20,
-                  color: AppColors.whiteColor,
-                ),
-              ),
-              // if (!isDownloaded)
-              //   if (progress == null || progress == 100)
-              const Icon(
-                AppIcons.arrowDownToLineCompact,
+    return SizedBox(
+      width: widget.size,
+      height: widget.size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          color: AppColors.primaryColor,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              widget.asset.typeFile?.toUpperCase() ?? '',
+              maxLines: 1,
+              style: textTheme.headlineSmall!.copyWith(
+                fontSize: 20,
                 color: AppColors.whiteColor,
-              )
-              // else
-              //   CircularProgressIndicator(
-              //     value: progress != null ? progress! / 100 : null,
-              //     color: AppColors.whiteColor,
-              //   ),
-            ],
-          ),
+              ),
+            ),
+            // if (!isDownloaded)
+            //   if (progress == null || progress == 100)
+            const Icon(
+              AppIcons.arrowDownToLineCompact,
+              color: AppColors.whiteColor,
+            )
+            // else
+            //   CircularProgressIndicator(
+            //     value: progress != null ? progress! / 100 : null,
+            //     color: AppColors.whiteColor,
+            //   ),
+          ],
         ),
       ),
     );

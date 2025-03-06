@@ -9,7 +9,7 @@ hintSearchParticipant: Find participant
 pinned: Pinned message
 pinnedMessages: Pinned messages
 voice: Voice message
-recording: Recording
+recording(rich): "Recording ${duration(v)}"
 cancelRecording: In left - cancel
 reply: Reply
 pin: Pin

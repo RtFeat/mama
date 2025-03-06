@@ -11,15 +11,21 @@ part 'consultation.g.dart';
 class ConsultationStore extends _ConsultationStore with _$ConsultationStore {
   ConsultationStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
 abstract class _ConsultationStore extends SingleDataStore<Consultation>
     with Store {
-  final ApiClient apiClient;
-
-  _ConsultationStore({required this.apiClient})
-      : super(
+  _ConsultationStore({
+    required super.apiClient,
+    required super.faker,
+  }) : super(
+            testDataGenerator: () {
+              return Consultation(
+                id: faker.datatype.uuid(),
+              );
+            },
             fetchFunction: (id) =>
                 apiClient.get('${Endpoint.consultation}/$id'),
             transformer: (raw) {

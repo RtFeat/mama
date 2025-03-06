@@ -68,6 +68,7 @@ class KnowledgeView extends StatelessWidget {
       ];
 
       return Scaffold(
+        backgroundColor: AppColors.lightBlue,
         appBar: CustomAppBar(
           title: t.services.knowledgeCenter.title,
           titleTextStyle: Theme.of(context)
@@ -126,11 +127,6 @@ class __BodyState extends State<_Body> {
   @override
   Widget build(BuildContext context) {
     return PaginatedLoadingWidget(
-      emptyData: const SliverToBoxAdapter(),
-      initialLoadingWidget: const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      additionalLoadingWidget: const SliverToBoxAdapter(),
       store: widget.knowledgeStore,
       isFewLists: true,
       separator: (index, item) {

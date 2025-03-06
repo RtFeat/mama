@@ -173,6 +173,51 @@ class MessageItem extends _MessageItem with _$MessageItem {
         updatedAt: updatedAt ?? this.updatedAt,
         isAttached: isAttached ?? this.isAttached,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MessageItem &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          chatId == other.chatId &&
+          filePath == other.filePath &&
+          filename == other.filename &&
+          nickname == other.nickname &&
+          readAt == other.readAt &&
+          files == other.files &&
+          reply == other.reply &&
+          senderId == other.senderId &&
+          senderAvatarUrl == other.senderAvatarUrl &&
+          senderName == other.senderName &&
+          senderSurname == other.senderSurname &&
+          senderProfession == other.senderProfession &&
+          text == other.text &&
+          typeFile == other.typeFile &&
+          createdAt == other.createdAt &&
+          updatedAt == other.updatedAt &&
+          isAttached == other.isAttached;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      chatId.hashCode ^
+      filePath.hashCode ^
+      filename.hashCode ^
+      nickname.hashCode ^
+      readAt.hashCode ^
+      files.hashCode ^
+      reply.hashCode ^
+      senderId.hashCode ^
+      senderAvatarUrl.hashCode ^
+      senderName.hashCode ^
+      senderSurname.hashCode ^
+      senderProfession.hashCode ^
+      text.hashCode ^
+      typeFile.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode ^
+      isAttached.hashCode;
 }
 
 abstract class _MessageItem extends BaseModel with Store {

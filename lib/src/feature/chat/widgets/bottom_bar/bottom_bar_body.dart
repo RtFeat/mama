@@ -3,8 +3,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
-import 'package:skit/skit.dart';
 
+import 'asset_row.dart';
+import 'mention.dart';
 import 'recording/recording.dart';
 import 'text_field.dart';
 
@@ -65,7 +66,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
     super.dispose();
   }
 
-  void _onDragStart(DragStartDetails details) {
+  void _onDragStart() {
     widget.barStore.setIsRecording(true);
     widget.barStore.resetDragOffset();
     widget.barStore.startRecording();
@@ -76,107 +77,114 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
     widget.barStore.setDragOffset(details);
   }
 
-  void _onDragEnd(DragEndDetails details) {
-    widget.barStore.onDragEnd(details);
-  }
-
   @override
   Widget build(BuildContext context) {
     final MessagesStore? store = widget.store;
     final ChatBottomBarStore barStore = context.watch();
 
+    final mic = Observer(builder: (_) {
+      return Positioned(
+        right:
+            widget.barStore.isRecording ? -28 + widget.barStore.dragOffset : 10,
+        top: widget.barStore.isRecording ? -28 : 12,
+        child: ReactiveFormConsumer(builder: (context, form, child) {
+          final String? value = form.control('message').value;
+          final bool isNotEmpty = value != null && value != '';
+
+          if (isNotEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Row(
+            children: [
+              if (widget.barStore.isRecording)
+                Opacity(
+                  opacity: widget.barStore.fadeOpacity,
+                  child: RecordingText(animation: _textOffsetAnimation),
+                ),
+              const SizedBox(width: 10),
+              if (!widget.barStore.isRecording) ...[
+                widget.barStore.files.isNotEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          widget.barStore.sendMessage();
+                        },
+                        child: const Icon(
+                          AppIcons.send,
+                          color: AppColors.primaryColor,
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          widget.barStore.getAttach().then((v) {
+                            widget.barStore.messageController.unfocus();
+                          });
+                        },
+                        child: const Icon(
+                          AppIcons.paperclip,
+                          color: AppColors.greyLighterColor,
+                        ),
+                      ),
+                const SizedBox(width: 20),
+              ],
+              MicButton(
+                animation: _micScaleAnimation,
+                onStartRecording: () {
+                  _onDragStart();
+                },
+                onDragUpdate: (details) {
+                  _onDragUpdate(details);
+                },
+                onStopRecording: () {
+                  widget.barStore.onDragEnd();
+                  widget.barStore.setIsRecording(false);
+                },
+              )
+            ],
+          );
+        }),
+      );
+    });
+
     return Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Stack(
-        alignment: Alignment.topRight,
+        alignment: Alignment.bottomRight,
         clipBehavior: Clip.none,
         children: [
-          Observer(builder: (_) {
-            return widget.barStore.isRecording
-                ? RecordingIndicator(
-                    animation: _micScaleAnimation,
-                  )
-                : BottomBarTextField(
-                    store: widget.store,
-                  );
-          }),
-          Observer(builder: (_) {
-            return Positioned(
-              right: widget.barStore.isRecording
-                  ? -20 + widget.barStore.dragOffset
-                  : 10,
-              // top: widget.barStore.isRecording ? -30 : 12,
-              top: widget.barStore.isRecording
-                  ? -30
-                  : widget.barStore.isShowEmojiPanel &&
-                              store?.mentionedMessage != null ||
-                          barStore.files.isNotEmpty
-                      ? 60 +
-                          (barStore.files.isNotEmpty
-                              ? widget.barStore.isShowEmojiPanel &&
-                                      store?.mentionedMessage != null
-                                  ? 100
-                                  : 50
-                              : 0)
-                      : 12,
-              bottom: store?.mentionedMessage != null &&
-                      !widget.barStore.isShowEmojiPanel &&
-                      barStore.files.isEmpty
-                  ? 0
-                  : barStore.files.isNotEmpty &&
-                          !widget.barStore.isShowEmojiPanel &&
-                          store?.mentionedMessage != null
-                      ? 0
-                      : null,
-              child: ReactiveFormConsumer(builder: (context, form, child) {
-                final String? value = form.control('message').value;
-                final bool isNotEmpty = value != null && value != '';
-
-                if (isNotEmpty) {
-                  return const SizedBox.shrink();
-                }
-
-                return GestureDetector(
-                  onHorizontalDragStart: _onDragStart,
-                  onHorizontalDragUpdate: _onDragUpdate,
-                  onHorizontalDragEnd: _onDragEnd,
-                  child: Row(
-                    children: [
-                      if (widget.barStore.isRecording)
-                        Opacity(
-                          opacity: widget.barStore.fadeOpacity,
-                          child: RecordingText(animation: _textOffsetAnimation),
-                        ),
-                      10.w,
-                      if (!widget.barStore.isRecording) ...[
-                        widget.barStore.files.isNotEmpty
-                            ? GestureDetector(
-                                onTap: () {
-                                  widget.barStore.sendMessage();
-                                },
-                                child: const Icon(
-                                  AppIcons.send,
-                                  color: AppColors.primaryColor,
+          Observer(
+            builder: (context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (store?.mentionedMessage != null)
+                    MentionWidget(
+                      store: store!,
+                    ),
+                  if (barStore.files.isNotEmpty) const AssetsInBottomWidget(),
+                  SafeArea(
+                      bottom: !barStore.isShowEmojiPanel,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          widget.barStore.isRecording
+                              ? RecordingIndicator(
+                                  animation: _micScaleAnimation)
+                              : BottomBarTextField(
+                                  store: store,
                                 ),
-                              )
-                            : GestureDetector(
-                                onTap: () {
-                                  widget.barStore.getAttach();
-                                },
-                                child: const Icon(
-                                  AppIcons.paperclip,
-                                  color: AppColors.greyLighterColor,
-                                )),
-                        20.w,
-                      ],
-                      MicButton(animation: _micScaleAnimation),
-                    ],
-                  ),
-                );
-              }),
-            );
-          }),
+                          mic,
+                        ],
+                      )),
+                  if (barStore.isShowEmojiPanel)
+                    EmojiWidget(
+                      store: store!,
+                    )
+                ],
+              );
+            },
+          ),
         ],
       ),
     );

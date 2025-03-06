@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
 import 'package:skit/skit.dart';
 
 class LureScreen extends StatefulWidget {
@@ -33,43 +32,47 @@ class _LureScreenState extends State<LureScreen> {
             }),
       ),
       children: [
-        15.h,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CustomToggleButton(
-                items: [t.feeding.newS, t.feeding.old],
-                onTap: (index) {},
-                btnWidth: 64,
-                btnHeight: 26),
-            CustomToggleButton(
-                items: [t.feeding.all, '🙂', '🤢', '⚠'],
-                onTap: (index) {},
-                btnWidth: 40,
-                btnHeight: 26),
-          ],
+        SliverToBoxAdapter(child: 15.h),
+        SliverToBoxAdapter(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomToggleButton(
+                  items: [t.feeding.newS, t.feeding.old],
+                  onTap: (index) {},
+                  btnWidth: 64,
+                  btnHeight: 26),
+              CustomToggleButton(
+                  items: [t.feeding.all, '🙂', '🤢', '⚠'],
+                  onTap: (index) {},
+                  btnWidth: 40,
+                  btnHeight: 26),
+            ],
+          ),
         ),
-        15.h,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              t.feeding.onlyWithAllergies,
-              style: textTheme.labelLarge?.copyWith(
-                  color: AppColors.greyBrighterColor,
-                  fontWeight: FontWeight.w400),
-            ),
-            5.w,
-            CupertinoSwitch(
-                value: isSwitch,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitch = value;
-                  });
-                })
-          ],
+        SliverToBoxAdapter(child: 15.h),
+        SliverToBoxAdapter(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                t.feeding.onlyWithAllergies,
+                style: textTheme.labelLarge?.copyWith(
+                    color: AppColors.greyBrighterColor,
+                    fontWeight: FontWeight.w400),
+              ),
+              5.w,
+              CupertinoSwitch(
+                  value: isSwitch,
+                  onChanged: (value) {
+                    setState(() {
+                      isSwitch = value;
+                    });
+                  })
+            ],
+          ),
         ),
-        15.h,
+        SliverToBoxAdapter(child: 15.h),
         // TableWidget(
         //     columnTitles: [
         //       t.feeding.time,

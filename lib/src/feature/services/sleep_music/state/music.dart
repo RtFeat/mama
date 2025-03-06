@@ -10,6 +10,7 @@ class MusicStore extends _MusicStore with _$MusicStore {
   MusicStore({
     required super.audioPlayerStore,
     required super.apiClient,
+    required super.faker,
   });
 }
 
@@ -18,7 +19,18 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
   _MusicStore({
     required this.audioPlayerStore,
     required super.apiClient,
+    required super.faker,
   }) : super(
+          testDataGenerator: () {
+            return TrackModel(
+              id: faker.datatype.uuid(),
+              title: faker.lorem.word(),
+              description: faker.lorem.text(),
+              author: faker.name.fullName(),
+              duration: faker.datatype.float(max: 1000),
+              createdAt: faker.date.past(DateTime.now()),
+            );
+          },
           basePath: Endpoint.music,
           fetchFunction: (params, path) =>
               apiClient.get('$path/music', queryParams: params),

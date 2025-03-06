@@ -4,47 +4,9 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-import 'asset_row.dart';
-import 'mention.dart';
-
 class BottomBarTextField extends StatelessWidget {
   final MessagesStore? store;
   const BottomBarTextField({super.key, required this.store});
-
-  @override
-  Widget build(BuildContext context) {
-    final ChatBottomBarStore barStore = context.watch();
-
-    return Observer(builder: (_) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (store?.mentionedMessage != null)
-            MentionWidget(
-              store: store!,
-            ),
-          if (barStore.files.isNotEmpty) const AssetsInBottomWidget(),
-          barStore.isShowEmojiPanel
-              ? _Field(
-                  store: store,
-                )
-              : SafeArea(
-                  child: _Field(
-                  store: store,
-                )),
-          if (barStore.isShowEmojiPanel)
-            EmojiWidget(
-              store: store!,
-            )
-        ],
-      );
-    });
-  }
-}
-
-class _Field extends StatelessWidget {
-  final MessagesStore? store;
-  const _Field({required this.store});
 
   @override
   Widget build(BuildContext context) {

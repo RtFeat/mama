@@ -11,6 +11,8 @@ class RecordingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ChatBottomBarStore store = context.watch();
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
 
     return SafeArea(
       child: Padding(
@@ -32,8 +34,19 @@ class RecordingIndicator extends StatelessWidget {
                 )),
             const SizedBox(width: 10),
             Observer(
-              builder: (_) =>
-                  Text('${t.chat.recording} ${store.formattedDuration}'),
+              builder: (_) {
+                return Text.rich(
+                  t.chat.recording(
+                    duration: (p0) => TextSpan(
+                      text: store.formattedDuration,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                  style: textTheme.titleSmall,
+                );
+              },
             ),
           ],
         ),

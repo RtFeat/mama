@@ -316,3 +316,17 @@ comment:
   subTitle: Click to add comments
 
 dailyreminders: Daily reminders
+
+report: Report
+
+feedTableTitles: 
+  title1: Date
+  title2: Breastfeeding time
+  title3: Total fluid, mL
+  title4: Total lure, g
+
+
+evolution:
+  attention: Pay attention
+  norm: Normal limit
+  anormal: Out of normal

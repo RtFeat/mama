@@ -64,7 +64,7 @@ class EditTimeRow extends StatelessWidget {
               ? t.trackers.currentEditTrackButtonTimerStart
               : t.feeding.change,
           filled: true,
-          isEdited: true,
+          isEdited: isTimerStarted ? false : true,
           formControlName: formControlNameEnd,
           onChanged: () {
             onEndTimeChanged!();

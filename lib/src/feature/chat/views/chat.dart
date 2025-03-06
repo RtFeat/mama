@@ -16,6 +16,7 @@ class ChatView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       create: (_) => GroupUsersStore(
+          faker: context.read<Dependencies>().faker,
           apiClient: context.read<Dependencies>().apiClient,
           chatId:
               (item is GroupItem) ? (item as GroupItem).groupChatId ?? '' : ''),
@@ -71,7 +72,7 @@ class __BodyState extends State<_Body> {
     widget.store.loadPage(
       fetchFunction: (query, apiClient, path) {
         return apiClient.get(
-            '${Endpoint().messages}/${widget.item is SingleChatItem ? 'solo' : 'group'}',
+            '$path/${widget.item is SingleChatItem ? 'solo' : 'group'}',
             queryParams: {
               'limit': '10',
               'chat_id': widget.store.chatId,
@@ -146,6 +147,7 @@ class __BodyState extends State<_Body> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   store: widget.store,
                   isReversed: true,
+                  emptyData: const SizedBox.shrink(),
                   separator: (index, item) => DateSeparatorInChat(
                       index: index,
                       item: item,
@@ -201,7 +203,7 @@ class __BodyState extends State<_Body> {
                   ChatDateWidget(
                       scrollController: widget.store.scrollController!,
                       date: widget.store.currentShowingMessage!.createdAt!
-                          .toLocal())
+                          .toLocal()),
               ],
             );
           }));

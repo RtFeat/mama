@@ -10,13 +10,16 @@ class FavoriteArticlesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
         create: (_) => FavoriteArticlesStore(
+              faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
             ),
         builder: (context, child) {
           final FavoriteArticlesStore store = context.watch();
 
           return Scaffold(
+            backgroundColor: AppColors.lightBlue,
             appBar: AppBar(
+              backgroundColor: AppColors.lightBlue,
               centerTitle: false,
               title: Text(t.services.favoriteAtriclesTitle),
             ),

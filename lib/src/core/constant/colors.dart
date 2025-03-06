@@ -47,6 +47,8 @@ abstract class AppColors {
 
   static const Color greenLightTextColor = Color(0xFF059613);
 
+  static const Color deeperAppBarColor = Color(0xFFE9FAF3);
+
   // static const Color greenLighterBackgroundColor = Color(0xFFDEF8E0);
 
   static const Color orangeTextColor = Color(0xFFE29520);

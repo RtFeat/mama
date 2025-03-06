@@ -26,8 +26,8 @@ class DateSeparatorInChat extends StatelessWidget {
           isAttachedMessages ? store.attachedMessages : store.messages;
       final previousItem =
           index < messages.length - 1 ? messages[index + 1] : null;
-      final currentDate = item.createdAt?.toLocal();
-      final previousDate = previousItem?.createdAt?.toLocal();
+      final currentDate = item.createdAt;
+      final previousDate = previousItem?.createdAt;
 
       if (currentDate != null &&
           (previousDate == null ||

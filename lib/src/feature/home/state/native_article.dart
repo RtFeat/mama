@@ -4,9 +4,13 @@ import 'package:skit/skit.dart';
 
 class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
   NativeArticleStore({
-    required this.apiClient,
+    required super.apiClient,
+    required super.faker,
     required String? id,
   }) : super(
+          testDataGenerator: () {
+            return ArticleModel.mock(faker);
+          },
           fetchFunction: (_) => apiClient.get('${Endpoint.article}/$id'),
           transformer: (raw) {
             final data = ArticleModel.fromJson(raw?['article']);
@@ -14,8 +18,6 @@ class NativeArticleStore extends SingleDataStore<ArticleModel> with Store {
             return data;
           },
         );
-
-  final ApiClient apiClient;
 
   Future toggleFavorite(String id) async {
     if (data?.isFavorite ?? false) {

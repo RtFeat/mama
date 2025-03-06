@@ -9,8 +9,10 @@ class SleepCryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (context) =>
-          SleepCryStore(apiClient: context.read<Dependencies>().apiClient),
+      create: (context) => SleepCryStore(
+        apiClient: context.read<Dependencies>().apiClient,
+        faker: context.read<Dependencies>().faker,
+      ),
       builder: (context, child) => Scaffold(
         appBar: AppBar(
           title: Text('Sleep Cry'),

@@ -3,6 +3,10 @@ accountTitleSpecialist: Specialist account
 accountTitleSchool: Online-school account
 
 onlineSchool: Online-school
+admin: Administrator
+user: User
+moderator: Moderator
+doctor: Obstetrician
 
 addPhotoTitle: Tap to add image
 
@@ -110,7 +114,6 @@ bottomBarDiaries: Diaries
 bottomBarChats: Chats
 bottomBarServices: Services
 
-
 male: Boy
 female: Girl
 
@@ -122,11 +125,10 @@ gift:
   title: Gift
   desc: You received\n1 month subscription
 
-
-feedback: 
+feedback:
   title: Send request
   send: Send
-  success: 
+  success:
     title: Success
     desc: We will contact you soon
     ok: Ok
@@ -135,21 +137,20 @@ aboutMe: about me
 aboutMe2: about me
 aboutSchool: about school
 
-
 schoolItems:
-  first: 
+  first:
     title: Useful webinars
     desc: Recording 6-ten useful webinars with answers to questions
-  second: 
+  second:
     title: From birth to 3 months
     desc: All about children from 3 to 6 months of life
-  third: 
+  third:
     title: From 6 to 12 months
     desc: All about children in the age of 6 to 12 months
-  fourth: 
+  fourth:
     title: From 12 to 18 months
     desc: All about children in the age of 12 to 18 months
-  
+
 consultationVariants: Consultation variants
 
 alertDialog1:

@@ -8,6 +8,7 @@ part 'categories.g.dart';
 class CategoriesStore extends _CategoriesStore with _$CategoriesStore {
   CategoriesStore({
     required super.apiClient,
+    required super.faker,
   });
 }
 
@@ -15,7 +16,15 @@ abstract class _CategoriesStore extends PaginatedListStore<CategoryModel>
     with Store {
   _CategoriesStore({
     required super.apiClient,
+    required super.faker,
   }) : super(
+          testDataGenerator: () {
+            return CategoryModel(
+              id: faker.datatype.uuid(),
+              title: faker.lorem.word(),
+              count: faker.datatype.number(),
+            );
+          },
           basePath: Endpoint.categories,
           pageSize: 20,
           fetchFunction: (params, path) =>

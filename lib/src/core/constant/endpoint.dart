@@ -92,8 +92,11 @@ class Endpoint {
   static const String music = 'music/descriptions';
 
   static const String sleepCry = 'sleep_cry';
-
   String get sleepCryTable => '$sleepCry/table';
+
+  static const String feed = 'feed';
+  String get feedTable => '$feed/table';
+
   static const String health = 'health';
 
   static const String medicine = 'health/drug';
@@ -101,4 +104,8 @@ class Endpoint {
   static const String vaccine = 'health/vaccine';
 
   String get drug => '$health/drug';
+
+  static const String diaper = 'diaper';
+
+  static const String diaperList = 'diaper/list';
 }

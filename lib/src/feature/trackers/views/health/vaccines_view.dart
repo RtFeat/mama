@@ -53,143 +53,147 @@ class VaccinesScreen extends StatelessWidget {
             ),
             children: [
               /// #main content
-              Column(
-                children: [
-                  16.h,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: AutoSizeText(
-                          t.trackers.vaccines.vaccinesListTitle1,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(letterSpacing: -0.5),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: AutoSizeText(
-                          t.trackers.vaccines.vaccinesListTitle2,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(letterSpacing: -0.5),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: AutoSizeText(
-                          t.trackers.vaccines.vaccinesListTitle3,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(letterSpacing: -0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                  5.h,
-
-                  /// #vaccines list
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const ScrollPhysics(),
-                    itemCount: listVaccines.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      VaccineItem item = listVaccines[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: GestureDetector(
-                          onTap: item.isDone
-                              ? () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => Observer(
-                                        builder: (_) {
-                                          return AddVaccine(
-                                            titlesStyle: titlesStyle,
-                                            nameVaccine: item.vaccineName,
-                                            recomendedAge: item.recommendedAge,
-                                            store: store,
-                                            vaccinesStore: vaccinesStore,
-                                            type: AddVaccineType.fromList,
-                                            editType: EditVaccineType.edit,
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                }
-                              : null,
-                          child: VaccineContainer(
-                            nameVaccine: item.vaccineName,
-                            recommendedAge: item.recommendedAge,
-                            timeDate: item.date,
-                            recommendedAgeSubtitle: item.recommendedAgeSubtitle,
-                            isDone: item.isDone,
-                            onTapAdd: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => Observer(
-                                    builder: (_) {
-                                      return AddVaccine(
-                                        titlesStyle: titlesStyle,
-                                        nameVaccine: item.vaccineName,
-                                        recomendedAge: item.recommendedAge,
-                                        store: store,
-                                        vaccinesStore: vaccinesStore,
-                                        type: AddVaccineType.fromList,
-                                        editType: EditVaccineType.add,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    16.h,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: AutoSizeText(
+                            t.trackers.vaccines.vaccinesListTitle1,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
+                                .copyWith(letterSpacing: -0.5),
                           ),
                         ),
-                      );
-                    },
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      // top: 8.0,
-                      bottom: 100.0,
+                        Expanded(
+                          flex: 3,
+                          child: AutoSizeText(
+                            t.trackers.vaccines.vaccinesListTitle2,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
+                                .copyWith(letterSpacing: -0.5),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: AutoSizeText(
+                            t.trackers.vaccines.vaccinesListTitle3,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
+                                .copyWith(letterSpacing: -0.5),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: CustomButton(
-                      height: 55,
-                      width: double.infinity,
-                      // contentPadding: const EdgeInsets.symmetric(
-                      //   vertical: 8,
-                      //   horizontal: 5,
-                      // ),
-                      title: t.trackers.vaccines.addNewButton,
-                      maxLines: 1,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Observer(builder: (_) {
-                              return AddVaccine(
-                                titlesStyle: titlesStyle,
-                                store: store,
-                                vaccinesStore: vaccinesStore,
-                                type: AddVaccineType.newVac,
-                                editType: EditVaccineType.add,
-                              );
-                            }),
+                    5.h,
+
+                    /// #vaccines list
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const ScrollPhysics(),
+                      itemCount: listVaccines.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        VaccineItem item = listVaccines[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: GestureDetector(
+                            onTap: item.isDone
+                                ? () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => Observer(
+                                          builder: (_) {
+                                            return AddVaccine(
+                                              titlesStyle: titlesStyle,
+                                              nameVaccine: item.vaccineName,
+                                              recomendedAge:
+                                                  item.recommendedAge,
+                                              store: store,
+                                              vaccinesStore: vaccinesStore,
+                                              type: AddVaccineType.fromList,
+                                              editType: EditVaccineType.edit,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            child: VaccineContainer(
+                              nameVaccine: item.vaccineName,
+                              recommendedAge: item.recommendedAge,
+                              timeDate: item.date,
+                              recommendedAgeSubtitle:
+                                  item.recommendedAgeSubtitle,
+                              isDone: item.isDone,
+                              onTapAdd: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => Observer(
+                                      builder: (_) {
+                                        return AddVaccine(
+                                          titlesStyle: titlesStyle,
+                                          nameVaccine: item.vaccineName,
+                                          recomendedAge: item.recommendedAge,
+                                          store: store,
+                                          vaccinesStore: vaccinesStore,
+                                          type: AddVaccineType.fromList,
+                                          editType: EditVaccineType.add,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         );
                       },
-                      icon: AppIcons.syringeFill,
-                      iconSize: 28,
                     ),
-                  ),
-                ],
+
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        // top: 8.0,
+                        bottom: 100.0,
+                      ),
+                      child: CustomButton(
+                        height: 55,
+                        width: double.infinity,
+                        // contentPadding: const EdgeInsets.symmetric(
+                        //   vertical: 8,
+                        //   horizontal: 5,
+                        // ),
+                        title: t.trackers.vaccines.addNewButton,
+                        maxLines: 1,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => Observer(builder: (_) {
+                                return AddVaccine(
+                                  titlesStyle: titlesStyle,
+                                  store: store,
+                                  vaccinesStore: vaccinesStore,
+                                  type: AddVaccineType.newVac,
+                                  editType: EditVaccineType.add,
+                                );
+                              }),
+                            ),
+                          );
+                        },
+                        icon: AppIcons.syringeFill,
+                        iconSize: 28,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           );

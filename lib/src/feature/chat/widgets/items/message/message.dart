@@ -36,14 +36,14 @@ class MessageWidget extends StatelessWidget {
             isUser: isUser,
             avatarUrl: item.senderAvatarUrl,
           ),
-          Expanded(
-              flex: 5,
-              child: Content(
-                item: item,
-                isOnGroup: isOnGroup,
-                isUser: isUser,
-                store: store,
-              )),
+          IntrinsicWidth(
+            child: Content(
+              item: item,
+              isOnGroup: isOnGroup,
+              isUser: isUser,
+              store: store,
+            ),
+          ),
           ReplyButton(
             isUser: isUser,
             message: item,

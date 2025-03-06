@@ -72,8 +72,8 @@ class _AddSleepingWidgetState extends State<AddSleepingWidget> {
                 addSleeping.showEditMenu
                     ? CurrentEditingTrackWidget(
                         title: t.trackers.currentEditTrackSleepingTitle,
-                        formControlNameEnd: 'sleepStart',
-                        formControlNameStart: 'sleepEnd',
+                        formControlNameEnd: 'sleepEnd',
+                        formControlNameStart: 'sleepStart',
                         noteTitle:
                             t.trackers.currentEditTrackCountTextTitleFeed,
                         noteText: t.trackers.currentEditTrackCountTextSleep,

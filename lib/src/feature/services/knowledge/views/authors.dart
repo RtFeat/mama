@@ -19,6 +19,7 @@ class AuthorsView extends StatelessWidget {
         store.setConfirmed(false);
       },
       child: Scaffold(
+          backgroundColor: AppColors.lightBlue,
           appBar: CustomAppBar(
             title: t.services.authorBtn.title(n: 1),
           ),
@@ -35,7 +36,7 @@ class AuthorsView extends StatelessWidget {
                   (item as AuthorModel).writer?.fullName ?? ''),
           bottomNavigationBar: FilterBottomBarWidget(
             onClear: () {
-              store.setMarkAllNotSelected();
+              authorsStore.setMarkAllNotSelected();
             },
             onConfirm: () {
               knowledgeStore.onConfirm();

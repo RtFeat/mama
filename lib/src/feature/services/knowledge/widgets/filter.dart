@@ -17,6 +17,7 @@ class KnowledgeFilterWidget extends StatelessWidget {
           filter.onTap();
         },
         showCheckmark: false,
+        color: const WidgetStatePropertyAll(AppColors.lightBlue),
         selected: filter.isSelected,
         selectedColor: AppColors.primaryColor,
         labelStyle: textTheme.titleSmall?.copyWith(

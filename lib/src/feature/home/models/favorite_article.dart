@@ -1,10 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 part 'favorite_article.g.dart';
 
 @JsonSerializable()
-class FavoriteArticle {
+class FavoriteArticle extends SkitBaseModel {
   final String? id;
   final String? title;
   final String? author;
@@ -35,5 +36,6 @@ class FavoriteArticle {
   factory FavoriteArticle.fromJson(Map<String, dynamic> json) =>
       _$FavoriteArticleFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$FavoriteArticleToJson(this);
 }

@@ -23,11 +23,13 @@ class App extends StatelessWidget {
           ),
           Provider(
             create: (context) => MessagesStore(
+                faker: context.read<Dependencies>().faker,
                 apiClient: context.read<Dependencies>().apiClient,
                 chatType: 'solo'),
           ),
           Provider(
             create: (context) => ChatsViewStore(
+              faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
             ),
           ),
@@ -96,14 +98,17 @@ class App extends StatelessWidget {
             ),
           ),
           Provider(
-            create: (context) =>
-                DoctorStore(apiClient: context.read<Dependencies>().apiClient),
+            create: (context) => DoctorStore(
+                faker: context.read<Dependencies>().faker,
+                apiClient: context.read<Dependencies>().apiClient),
           ),
           Provider(
               create: (context) => SchoolStore(
+                  faker: context.read<Dependencies>().faker,
                   apiClient: context.read<Dependencies>().apiClient)),
           Provider(
             create: (context) => HomeViewStore(
+                faker: context.read<Dependencies>().faker,
                 apiClient: context.read<Dependencies>().apiClient,
                 userId: context.read<UserStore>().user.id),
           ),
@@ -122,16 +127,21 @@ class App extends StatelessWidget {
           ),
           Provider(
             create: (_) => FavoriteArticlesStore(
+              faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
             create: (context) => KnowledgeStore(
+              faker: context.read<Dependencies>().faker,
               authorsStore: AuthorsStore(
+                  faker: context.read<Dependencies>().faker,
                   apiClient: context.read<Dependencies>().apiClient),
               categoriesStore: CategoriesStore(
+                  faker: context.read<Dependencies>().faker,
                   apiClient: context.read<Dependencies>().apiClient),
               ageCategoriesStore: AgeCategoriesStore(
+                  faker: context.read<Dependencies>().faker,
                   apiClient: context.read<Dependencies>().apiClient),
               apiClient: context.read<Dependencies>().apiClient,
             ),

@@ -18,22 +18,26 @@ class PumpingScreen extends StatelessWidget {
       onPressClose: () {},
       onPressLearnMore: () {},
       children: [
-        const PumpingGraphicWidget(),
-        30.h,
-        EditingButtons(
-            addBtnText: t.feeding.addPumping,
-            learnMoreTap: () {},
-            addButtonTap: () {
-              context.pushNamed(AppViews.addPumping);
-            }),
-        TableHistory(
-          listOfData: listOfData,
-          firstColumnName: t.feeding.endTimeOfPumping,
-          secondColumnName: t.feeding.pumpingLeftSide,
-          thirdColumnName: t.feeding.pumpingRightSide,
-          fourthColumnName: t.feeding.totalMl,
-          showTitle: true,
+        SliverToBoxAdapter(child: const PumpingGraphicWidget()),
+        SliverToBoxAdapter(child: 30.h),
+        SliverToBoxAdapter(
+          child: EditingButtons(
+              addBtnText: t.feeding.addPumping,
+              learnMoreTap: () {},
+              addButtonTap: () {
+                context.pushNamed(AppViews.addPumping);
+              }),
         ),
+        // SliverToBoxAdapter(
+        //   child: TableHistory(
+        //     listOfData: listOfData,
+        //     firstColumnName: t.feeding.endTimeOfPumping,
+        //     secondColumnName: t.feeding.pumpingLeftSide,
+        //     thirdColumnName: t.feeding.pumpingRightSide,
+        //     fourthColumnName: t.feeding.totalMl,
+        //     showTitle: true,
+        //   ),
+        // ),
       ],
     );
   }

@@ -51,13 +51,38 @@ class SingleChatItem extends _SingleChatItem with _$SingleChatItem {
   Map<String, dynamic> toJson() => _$SingleChatItemToJson(this);
 
   @override
-  bool operator ==(Object other) =>
-      other is SingleChatItem &&
-      other.id == id &&
-      other.lastMessage == lastMessage;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is SingleChatItem &&
+        other.participant1Id == participant1Id &&
+        other.participant1Unread == participant1Unread &&
+        other.participant2Id == participant2Id &&
+        other.participant2Unread == participant2Unread &&
+        other.participant1 == participant1 &&
+        other.participant2 == participant2 &&
+        other.profession == profession &&
+        other.professionId == professionId &&
+        other.id == id &&
+        other.lastMessage == lastMessage &&
+        other.lastMessageAt == lastMessageAt &&
+        other.unreadMessages == unreadMessages;
+  }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode {
+    return participant1Id.hashCode ^
+        participant1Unread.hashCode ^
+        participant2Id.hashCode ^
+        participant2Unread.hashCode ^
+        participant1.hashCode ^
+        participant2.hashCode ^
+        profession.hashCode ^
+        professionId.hashCode ^
+        id.hashCode ^
+        lastMessage.hashCode ^
+        lastMessageAt.hashCode ^
+        unreadMessages.hashCode;
+  }
 }
 
 abstract class _SingleChatItem extends ChatItem with Store {

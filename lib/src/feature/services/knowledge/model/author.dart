@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'author.g.dart';
 
@@ -19,13 +20,14 @@ class AuthorModel extends _AuthorModel with _$AuthorModel {
   factory AuthorModel.fromJson(Map<String, dynamic> json) =>
       _$AuthorModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$AuthorModelToJson(this);
 }
 
 abstract class _AuthorModel extends KnowledgeFilterModel with Store {}
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class WriterModel {
+class WriterModel extends SkitBaseModel {
   final String? accountId;
 
   final String? firstName;
@@ -52,5 +54,6 @@ class WriterModel {
   factory WriterModel.fromJson(Map<String, dynamic> json) =>
       _$WriterModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$WriterModelToJson(this);
 }

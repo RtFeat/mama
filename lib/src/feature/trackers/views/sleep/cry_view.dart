@@ -14,15 +14,17 @@ class CryScreen extends StatelessWidget {
       onPressLearnMore: () {},
       learnMoreWidgetText: t.trackers.findOutMoreTextCry,
       children: [
-        const AddFeedingWidget(),
-        TableHistory(
-          listOfData: listOfData,
-          firstColumnName: t.feeding.feedingEndTime,
-          secondColumnName: t.feeding.l,
-          thirdColumnName: t.feeding.r,
-          fourthColumnName: t.feeding.general,
-          showTitle: true,
-        )
+        SliverToBoxAdapter(child: const AddFeedingWidget()),
+        // SliverToBoxAdapter(
+        //   child: TableHistory(
+        //     listOfData: listOfData,
+        //     firstColumnName: t.feeding.feedingEndTime,
+        //     secondColumnName: t.feeding.l,
+        //     thirdColumnName: t.feeding.r,
+        //     fourthColumnName: t.feeding.general,
+        //     showTitle: true,
+        //   ),
+        // )
       ],
     );
   }
