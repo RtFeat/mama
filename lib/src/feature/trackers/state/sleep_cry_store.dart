@@ -22,8 +22,10 @@ abstract class _SleepCryStore extends TableStore<SleepCryCell> with Store {
           testDataGenerator: () {
             return SleepCryCell(
               title: faker.lorem.word(),
-              sleep: faker.datatype.number(max: 10).toString(),
-              cry: faker.datatype.number(max: 10).toString(),
+              sleep:
+                  '${faker.datatype.number(max: 10).toString()} ч ${faker.datatype.number(max: 60).toString()} м',
+              cry:
+                  '${faker.datatype.number(max: 10).toString()} ч ${faker.datatype.number(max: 60).toString()} м',
             );
           },
           basePath: Endpoint().sleepCryTable,
