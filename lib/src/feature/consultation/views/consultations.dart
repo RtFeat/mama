@@ -34,7 +34,6 @@ class _ConsultationsViewState extends State<ConsultationsView>
             appBar: CustomAppBar(
               title: t.consultation.title,
               height: 114,
-              // height: 94,
               action: const ProfileWidget(),
               tabController: controller,
               tabs: [

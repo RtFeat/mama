@@ -170,3 +170,6 @@ icons_launcher:
       enable: true
     ios:
       enable: true
+# dependency_overrides:
+#   skit:
+#     path: /Users/nikondrat/Documents/work/projects/apps/skit

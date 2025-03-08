@@ -3,6 +3,16 @@ import 'package:mobx/mobx.dart';
 
 part 'entity_diapers_sub_main.g.dart';
 
+@JsonEnum()
+enum TypeOfDiapers {
+  @JsonValue('Смешанный')
+  mixed,
+  @JsonValue('Мокрый')
+  wet,
+  @JsonValue('Грязный')
+  dirty,
+}
+
 @JsonSerializable()
 class DiapersSubMain extends _DiapersSubMain with _$DiapersSubMain {
   @JsonKey(name: 'data')
@@ -15,7 +25,7 @@ class DiapersSubMain extends _DiapersSubMain with _$DiapersSubMain {
   final String? notes;
 
   @JsonKey(name: 'type_of_diapers')
-  final String? typeOfDiapers;
+  final TypeOfDiapers? typeOfDiapers;
 
   DiapersSubMain({
     this.data,
