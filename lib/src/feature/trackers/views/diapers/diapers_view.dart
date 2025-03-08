@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/state/diapers/diapers_dao_impl.dart';
 import 'package:provider/provider.dart';
@@ -51,9 +50,6 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
-  final format = DateFormat(
-      'dd MMMM', LocaleSettings.currentLocale.flutterLocale.toLanguageTag());
-
   @override
   void initState() {
     widget.store.loadPage(queryParams: {
@@ -87,25 +83,48 @@ class _BodyState extends State<_Body> {
               .headlineSmall!
               .copyWith(color: AppColors.trackerColor, fontSize: 20),
         ),
-        stackWidget:
-
-            /// #bottom buttons
-            Align(
-          alignment: Alignment.bottomCenter,
-          child: ButtonsLearnPdfAdd(
-            onTapLearnMore: () {},
-            onTapPDF: () {},
-            onTapAdd: () {
-              context.pushNamed(AppViews.addDiaper);
-            },
-            iconAddButton: AppIcons.diaperFill,
-          ),
+        bottomNavigatorBar: ButtonsLearnPdfAdd(
+          onTapLearnMore: () {
+            // TODO change url
+            context.pushNamed(AppViews.webView, extra: {
+              'url': 'https://google.com',
+            });
+          },
+          onTapPDF: () {},
+          onTapAdd: () {
+            context.pushNamed(AppViews.addDiaper);
+          },
+          iconAddButton: AppIcons.diaperFill,
         ),
         children: [
           SliverToBoxAdapter(child: 20.h),
           SliverToBoxAdapter(
             child: DateRangeSelectorWidget(
               startDate: widget.store.startOfWeek,
+              // Todo add localization and text from design
+              subtitle: '${widget.store.averageOfDiapers}',
+              onLeftTap: () {
+                widget.store.resetPagination();
+                widget.store.setSelectedDate(
+                    widget.store.startOfWeek.subtract(const Duration(days: 7)));
+                widget.store.loadPage(queryParams: {
+                  'child_id': widget.childId,
+                  'from_time': widget.store.startOfWeek
+                    ..toUtc().toIso8601String(),
+                  'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
+                });
+              },
+              onRightTap: () {
+                widget.store.resetPagination();
+                widget.store.setSelectedDate(
+                    widget.store.startOfWeek.add(const Duration(days: 7)));
+                widget.store.loadPage(queryParams: {
+                  'child_id': widget.childId,
+                  'from_time': widget.store.startOfWeek
+                    ..toUtc().toIso8601String(),
+                  'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
+                });
+              },
             ),
           ),
           SliverToBoxAdapter(child: 10.h),
@@ -120,7 +139,7 @@ class _BodyState extends State<_Body> {
                   items: diapersMain.diapersSub?.map((e) {
                     return BuilldGridItem(
                       time: 'time',
-                      type: e.typeOfDiapers ?? '',
+                      type: e.typeOfDiapers,
                       description: e.howMuch ?? '',
                       // AppColors.purpleLighterBackgroundColor,
                       // AppColors.primaryColor,

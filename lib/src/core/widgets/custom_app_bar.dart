@@ -78,53 +78,50 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 )),
             if (tabs != null && tabController != null) ...[
               10.h,
-              Positioned(
-                bottom: 0,
-                child: TabBar(
-                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                      (Set<WidgetState> states) {
-                    // Use the default focused overlay color
-                    return states.contains(WidgetState.focused)
-                        ? null
-                        : Colors.transparent;
-                  }),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  isScrollable: isScrollable ?? true,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorColor: Colors.transparent,
-                  controller: tabController,
-                  dividerColor: Colors.transparent,
-                  splashFactory: NoSplash.splashFactory,
-                  indicatorPadding: EdgeInsets.zero,
-                  indicator: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: WaveContainer(),
-                    // borderRadius: const BorderRadius.only(
-                    //   topLeft: Radius.circular(8),
-                    //   topRight: Radius.circular(8),
-                    // ),
-                    // shadows: [
-                    //   BoxShadow(
-                    //     color: AppColors.deepBlue.withOpacity(0.1),
-                    //     blurRadius: 1.0,
-                    //     offset: const Offset(
-                    //       0,
-                    //       2,
-                    //     ),
-                    //   ),
-                    //   BoxShadow(
-                    //     color: AppColors.skyBlue.withOpacity(0.15),
-                    //     blurRadius: 8.0,
-                    //     offset: const Offset(
-                    //       0,
-                    //       3,
-                    //     ),
-                    //   ),
-                    // ],
-                    // color: AppColors.whiteColor,
-                  ),
-                  tabs: tabs!.map((e) => Tab(text: e)).toList(),
+              TabBar(
+                overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                    (Set<WidgetState> states) {
+                  // Use the default focused overlay color
+                  return states.contains(WidgetState.focused)
+                      ? null
+                      : Colors.transparent;
+                }),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                isScrollable: isScrollable ?? true,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorColor: Colors.transparent,
+                controller: tabController,
+                dividerColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                indicatorPadding: EdgeInsets.zero,
+                indicator: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: WaveContainer(),
+                  // borderRadius: const BorderRadius.only(
+                  //   topLeft: Radius.circular(8),
+                  //   topRight: Radius.circular(8),
+                  // ),
+                  // shadows: [
+                  //   BoxShadow(
+                  //     color: AppColors.deepBlue.withOpacity(0.1),
+                  //     blurRadius: 1.0,
+                  //     offset: const Offset(
+                  //       0,
+                  //       2,
+                  //     ),
+                  //   ),
+                  //   BoxShadow(
+                  //     color: AppColors.skyBlue.withOpacity(0.15),
+                  //     blurRadius: 8.0,
+                  //     offset: const Offset(
+                  //       0,
+                  //       3,
+                  //     ),
+                  //   ),
+                  // ],
+                  // color: AppColors.whiteColor,
                 ),
+                tabs: tabs!.map((e) => Tab(text: e)).toList(),
               )
             ]
           ],

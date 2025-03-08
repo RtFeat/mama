@@ -19,12 +19,15 @@ class BuildDaySection extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            date ?? '',
-            style: AppTextStyles.f14w400,
+          Expanded(
+            child: Text(
+              date ?? '',
+              style: AppTextStyles.f14w400,
+            ),
           ),
           10.w,
           Expanded(
+            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,

@@ -18,7 +18,7 @@ class LoadHomeData extends StatefulWidget {
 class _LoadHomeDataState extends State<LoadHomeData> {
   @override
   void initState() {
-    widget.userStore.getData();
+    widget.userStore.loadData();
     super.initState();
   }
 
@@ -26,7 +26,7 @@ class _LoadHomeDataState extends State<LoadHomeData> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: LoadingWidget(
-        future: widget.userStore.fetchUserDataFuture,
+        future: widget.userStore.fetchFuture,
         builder: (v) {
           return widget.child;
         },
