@@ -13,15 +13,14 @@ class BuilldGridItem extends StatelessWidget {
   });
 
   final String time;
-  final String type;
+  final TypeOfDiapers? type;
   final String description;
 
   @override
   Widget build(BuildContext context) {
     final Color color = switch (type) {
-      // TODO change colors from design
-      'Грязный' => AppColors.purpleLighterBackgroundColor,
-      'Смешанный' => AppColors.redColor,
+      TypeOfDiapers.mixed => AppColors.greenLighterBackgroundColor,
+      TypeOfDiapers.dirty => AppColors.yellowBackgroundColor,
       _ => AppColors.purpleLighterBackgroundColor,
     };
 
@@ -40,9 +39,14 @@ class BuilldGridItem extends StatelessWidget {
             style: AppTextStyles.f10w400,
           ),
           Text(
-            type.capitalizeFirstLetter(),
-            style:
-                AppTextStyles.f14w700.copyWith(color: color.getDarkerColor(.5)),
+            // TODO Localize
+            type?.name.capitalizeFirstLetter() ?? '',
+            style: AppTextStyles.f14w700.copyWith(
+                color: switch (type) {
+              TypeOfDiapers.mixed => AppColors.greenLightTextColor,
+              TypeOfDiapers.dirty => AppColors.orangeTextColor,
+              _ => color.getDarkerColor(.4),
+            }),
           ),
           Text(
             description.capitalizeFirstLetter(),
