@@ -79,7 +79,8 @@ class ChatSocket {
       logger.info('Reconnected successfully!', runtimeType: runtimeType);
     } catch (e) {
       logger.error('Reconnection failed: $e');
-      reconnect(); // Рекурсивно пробуем переподключиться
+      await Future.delayed(const Duration(seconds: 5));
+      reconnect();
     }
   }
 
@@ -90,48 +91,42 @@ class ChatSocket {
     }
   }
 
-  Future sendMessage({
+  Future<void> sendMessage({
     required String messageText,
     required String chatId,
     String replyMessageId = '',
     List<MessageFile>? files,
   }) async {
     await ensureConnection();
-    if (store.chatType == 'join') {
-      final data = jsonEncode({
-        'event': 'message',
-        'type_chat': store.chatType,
-        'data': {
-          'access_token': 'Bearer $accessToken',
-          'message': messageText,
-          'chat_id': chatId,
-          'reply': replyMessageId,
-          if (files != null) 'upload_data': files
-        }
-      });
-      channel?.sink.add(data);
-    } else {
-      final join = json.encode({
-        'event': 'join',
-        'type_chat': store.chatType,
-        'data': {
-          'access_token': 'Bearer $accessToken',
-        }
-      });
-      channel?.sink.add(join);
+    if (channel == null || channel?.sink == null) {
+      logger.error('WebSocket channel is not initialized or sink is null');
+      return;
+    }
 
-      final data = json.encode({
-        'event': 'message',
-        'type_chat': store.chatType,
-        'data': {
-          'access_token': 'Bearer $accessToken',
-          'message': messageText,
-          'chat_id': chatId,
-          'reply': replyMessageId,
-          if (files != null) 'upload_data': files
-        }
-      });
+    if (accessToken == null) {
+      logger.error('Access token is null, cannot send message.');
+      return;
+    }
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final data = jsonEncode({
+      'event': 'message',
+      'type_chat': store.chatType,
+      'data': {
+        'access_token': 'Bearer $accessToken',
+        'message': messageText,
+        'chat_id': chatId,
+        'reply': replyMessageId,
+        if (files != null) 'upload_data': files
+      }
+    });
+
+    try {
+      logger.info('Sending message: $messageText');
       channel?.sink.add(data);
+    } catch (e) {
+      logger.error('Error sending message: $e');
     }
   }
 

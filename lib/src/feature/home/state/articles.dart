@@ -7,6 +7,7 @@ class ArticlesStore extends PaginatedListStore<ArticleModel> {
     required super.fetchFunction,
     required super.faker,
   }) : super(
+          pageSize: 5,
           testDataGenerator: () {
             return
                 // ArticlesData(

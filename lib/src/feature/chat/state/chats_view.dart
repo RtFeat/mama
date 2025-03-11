@@ -41,15 +41,21 @@ abstract class _ChatsViewStore with Store {
   void setFetchFuture(ObservableFuture? value) => fetchFuture = value;
 
   Future loadAllChats() async {
-    await chats.loadPage(queryParams: {});
+    await chats.loadPage();
   }
 
   Future loadAllGroups(
     String? childId,
   ) async {
-    await groups.loadPage(queryParams: {
-      if (childId != null) 'child_id': childId,
-    });
+    await groups.loadPage(
+      newFilters: [
+        if (childId != null)
+          SkitFilter(
+              field: 'child_id',
+              operator: FilterOperator.equals,
+              value: childId),
+      ],
+    );
   }
 
   @action

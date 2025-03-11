@@ -70,13 +70,13 @@ class __BodyState extends State<_Body> {
     widget.store.setChatType(widget.item is SingleChatItem ? 'solo' : 'group');
 
     widget.store.loadPage(
-      fetchFunction: (query, apiClient, path) {
+      fetchFunction: (filters, apiClient, path) {
         return apiClient.get(
             '$path/${widget.item is SingleChatItem ? 'solo' : 'group'}',
             queryParams: {
               'limit': '10',
               'chat_id': widget.store.chatId,
-              ...query
+              ...filters
             });
       },
     );
@@ -154,7 +154,7 @@ class __BodyState extends State<_Body> {
                       store: widget.store,
                       scrollController: widget.store.scrollController!),
                   listData: () => widget.store.isSearching
-                      ? widget.store.filteredMessages
+                      ? widget.store.filteredList
                       : widget.store.messages,
                   itemBuilder: (context, item, _) {
                     final index = widget.store.messages.indexOf(item);

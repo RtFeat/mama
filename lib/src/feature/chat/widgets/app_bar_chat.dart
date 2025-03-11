@@ -73,11 +73,11 @@ class ChatsAppBar extends StatelessWidget {
                 onTap: () {
                   store.setIsSearching(!store.isSearching);
                   store.setQuery('');
-                  store.setFilters({
-                    'query': (e) {
-                      return true;
-                    }
-                  });
+                  // store.setFilters({
+                  //   'query': (e) {
+                  //     return true;
+                  //   }
+                  // });
                 },
                 child: const Icon(Icons.search, color: AppColors.primaryColor),
               ),
@@ -149,22 +149,22 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               onChanged: (v) {
                 store.setQuery(v);
-                store.setFilters({
-                  'query': (e) {
-                    if (v.isEmpty) return true;
+                // store.setFilters({
+                //   'query': (e) {
+                //     if (v.isEmpty) return true;
 
-                    return e.text?.contains(v) ?? true;
-                  }
-                });
+                //     return e.text?.contains(v) ?? true;
+                //   }
+                // });
               },
               onPressedClear: () {
                 store.formGroup.control('search').value = '';
                 store.setQuery('');
-                store.setFilters({
-                  'query': (e) {
-                    return true;
-                  }
-                });
+                // store.setFilters({
+                //   'query': (e) {
+                //     return true;
+                //   }
+                // });
               },
               formControlName: 'search',
               hintText: t.chat.hintSearchChat);

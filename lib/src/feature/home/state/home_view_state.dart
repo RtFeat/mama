@@ -50,18 +50,25 @@ class HomeViewStore {
         );
 
   Future<void> loadAllArticles() async {
-    await allArticlesStore.loadPage(queryParams: {});
+    await allArticlesStore.loadPage();
   }
 
   Future<void> loadForMeArticles(String accountId) async {
-    await forMeArticlesStore.loadPage(queryParams: {});
+    await forMeArticlesStore.loadPage();
   }
 
   Future<void> loadOwnArticles(String accountId) async {
-    await ownArticlesStore.loadPage(queryParams: {});
+    await ownArticlesStore.loadPage();
   }
 
   Future<void> loadSchoolCourses(String schoolId) async {
-    await coursesStore.loadPage(queryParams: {'school_id': schoolId});
+    await coursesStore.loadPage(
+      newFilters: [
+        SkitFilter(
+            field: 'school_id',
+            operator: FilterOperator.equals,
+            value: schoolId),
+      ],
+    );
   }
 }

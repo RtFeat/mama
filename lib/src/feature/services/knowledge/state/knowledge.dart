@@ -52,15 +52,38 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
 
     resetPagination();
 
-    loadPage(queryParams: {
-      'category': categoriesStore.selectedItems.map((e) => e.title).toList(),
-      'age_category':
-          ageCategoriesStore.selectedItems.map((e) => e.title).toList(),
-      'account_id': authorsStore.selectedItems
-          .where((e) => e.isSelected)
-          .map((e) => e.writer?.accountId)
-          .whereType<String>()
-          .join(',')
-    });
+    loadPage(newFilters: [
+      if (categoriesStore.selectedItems.isNotEmpty)
+        SkitFilter(
+          field: 'category',
+          operator: FilterOperator.contains,
+          value: categoriesStore.selectedItems.map((e) => e.title).toList(),
+        ),
+      if (ageCategoriesStore.selectedItems.isNotEmpty)
+        SkitFilter(
+            field: 'age_category',
+            operator: FilterOperator.contains,
+            value: ageCategoriesStore.selectedItems.map((e) => e.title)),
+      if (authorsStore.selectedItems.isNotEmpty)
+        SkitFilter(
+          field: 'account_id',
+          operator: FilterOperator.contains,
+          value: authorsStore.selectedItems
+              .where((e) => e.isSelected)
+              .map((e) => e.writer?.accountId)
+              .whereType<String>()
+              .join(','),
+        )
+    ]);
+    // queryParams: {
+    // 'category': categoriesStore.selectedItems.map((e) => e.title).toList(),
+    // 'age_category':
+    //     ageCategoriesStore.selectedItems.map((e) => e.title).toList(),
+    // 'account_id': authorsStore.selectedItems
+    //     .where((e) => e.isSelected)
+    //     .map((e) => e.writer?.accountId)
+    //     .whereType<String>()
+    //     .join(',')
+    // });
   }
 }

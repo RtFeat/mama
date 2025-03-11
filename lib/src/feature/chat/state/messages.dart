@@ -17,7 +17,7 @@ class MessagesStore extends _MessagesStore with _$MessagesStore {
 }
 
 abstract class _MessagesStore extends PaginatedListStore<MessageItem>
-    with Store, FilterableDataMixin {
+    with Store {
   _MessagesStore({
     required super.apiClient,
     required this.chatType,
@@ -136,13 +136,18 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     logger.info('query $value', runtimeType: runtimeType);
     query = value;
     formGroup.control('search').value = value;
-  }
 
-  @action
-  @override
-  void setFilters(Map<String, dynamic> filters) {
-    super.setFilters(filters as Map<String, FilterFunction<dynamic>>);
-    filteredMessages = applyFilters(listData) as ObservableList<MessageItem>;
+    filters.clear();
+    filters.add(
+      SkitFilter<MessageItem>(
+        field: 'query',
+        operator: FilterOperator.contains,
+        value: value,
+        localPredicate: (item) {
+          return item.text?.contains(value) ?? false;
+        },
+      ),
+    );
   }
 
   @observable

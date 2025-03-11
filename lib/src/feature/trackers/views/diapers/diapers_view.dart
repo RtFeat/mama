@@ -52,11 +52,26 @@ class _Body extends StatefulWidget {
 class _BodyState extends State<_Body> {
   @override
   void initState() {
-    widget.store.loadPage(queryParams: {
-      'child_id': widget.childId,
-      'from_time': widget.store.startOfWeek.toUtc().toIso8601String(),
-      'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
-    });
+    widget.store.loadPage(newFilters: [
+      skit.SkitFilter(
+          field: 'child_id',
+          operator: skit.FilterOperator.equals,
+          value: widget.childId),
+      skit.SkitFilter(
+          field: 'from_time',
+          operator: skit.FilterOperator.equals,
+          value: widget.store.startOfWeek.toUtc().toIso8601String()),
+      skit.SkitFilter(
+          field: 'to_time',
+          operator: skit.FilterOperator.equals,
+          value: widget.store.endOfWeek.toUtc().toIso8601String())
+    ]
+        //   queryParams: {
+        //   'child_id': widget.childId,
+        //   'from_time': widget.store.startOfWeek.toUtc().toIso8601String(),
+        //   'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
+        // }
+        );
 
     widget.store.getIsShowInfo();
     super.initState();
@@ -107,23 +122,57 @@ class _BodyState extends State<_Body> {
                 widget.store.resetPagination();
                 widget.store.setSelectedDate(
                     widget.store.startOfWeek.subtract(const Duration(days: 7)));
-                widget.store.loadPage(queryParams: {
-                  'child_id': widget.childId,
-                  'from_time': widget.store.startOfWeek
-                    ..toUtc().toIso8601String(),
-                  'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
-                });
+                widget.store.loadPage(newFilters: [
+                  skit.SkitFilter(
+                      field: 'child_id',
+                      operator: skit.FilterOperator.equals,
+                      value: widget.childId),
+                  skit.SkitFilter(
+                      field: 'from_time',
+                      operator: skit.FilterOperator.greaterThan,
+                      value:
+                          widget.store.startOfWeek.toUtc().toIso8601String()),
+                  skit.SkitFilter(
+                      field: 'to_time',
+                      operator: skit.FilterOperator.lessThan,
+                      value: widget.store.endOfWeek.toUtc().toIso8601String()),
+                ]
+                    //   queryParams: {
+                    //   'child_id': widget.childId,
+                    //   'from_time': widget.store.startOfWeek
+                    //     ..toUtc().toIso8601String(),
+                    //   'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
+                    // }
+                    );
               },
               onRightTap: () {
                 widget.store.resetPagination();
                 widget.store.setSelectedDate(
                     widget.store.startOfWeek.add(const Duration(days: 7)));
-                widget.store.loadPage(queryParams: {
-                  'child_id': widget.childId,
-                  'from_time': widget.store.startOfWeek
-                    ..toUtc().toIso8601String(),
-                  'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
-                });
+                widget.store.loadPage(
+                  newFilters: [
+                    skit.SkitFilter(
+                        field: 'child_id',
+                        operator: skit.FilterOperator.equals,
+                        value: widget.childId),
+                    skit.SkitFilter(
+                        field: 'from_time',
+                        operator: skit.FilterOperator.greaterThan,
+                        value:
+                            widget.store.startOfWeek.toUtc().toIso8601String()),
+                    skit.SkitFilter(
+                        field: 'to_time',
+                        operator: skit.FilterOperator.lessThan,
+                        value:
+                            widget.store.endOfWeek.toUtc().toIso8601String()),
+                  ],
+                  //   queryParams: {
+                  //   'child_id': widget.childId,
+                  //   'from_time': widget.store.startOfWeek
+                  //     ..toUtc().toIso8601String(),
+                  //   'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
+                  // }
+                );
               },
             ),
           ),

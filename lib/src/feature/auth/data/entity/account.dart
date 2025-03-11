@@ -57,7 +57,6 @@ class AccountModel extends _AccountModel with _$AccountModel {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AccountModel &&
-          id == other.id &&
           fcmToken == other.fcmToken &&
           gender == other.gender &&
           role == other.role &&
@@ -73,7 +72,6 @@ class AccountModel extends _AccountModel with _$AccountModel {
 
   @override
   int get hashCode =>
-      id.hashCode ^
       fcmToken.hashCode ^
       gender.hashCode ^
       role.hashCode ^

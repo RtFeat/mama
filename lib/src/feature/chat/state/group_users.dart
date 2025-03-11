@@ -14,7 +14,7 @@ class GroupUsersStore extends _GroupUsersStore with _$GroupUsersStore {
 }
 
 abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
-    with Store, FilterableDataMixin {
+    with Store {
   final String chatId;
 
   _GroupUsersStore({
@@ -52,6 +52,10 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
   ObservableList<AccountModel> get users =>
       ObservableList.of(listData.where((e) => e.role == Role.user));
 
+  @computed
+  ObservableList<AccountModel> get filteredUsers =>
+      ObservableList.of(filteredList.where((e) => e.role == Role.user));
+
   @observable
   String? query;
 
@@ -59,22 +63,31 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
   void setQuery(String value) {
     logger.info('query $value', runtimeType: runtimeType);
     query = value;
+
+    filters.clear();
+    filters.add(SkitFilter<AccountModel>(
+      field: 'query',
+      operator: FilterOperator.contains,
+      value: value,
+      localPredicate: (item) {
+        if (value.isEmpty) return true;
+        final contains = item.name.toLowerCase().contains(value.toLowerCase());
+        return contains;
+      },
+    ));
   }
 
-  @action
-  @override
-  void setFilters(Map<String, dynamic> filters) {
-    super.setFilters(filters as Map<String, FilterFunction<dynamic>>);
-    filteredUsers = applyFilters(listData) as ObservableList<AccountModel>;
-  }
+  // @action
+  // @override
+  // void setFilters(Map<String, dynamic> filters) {
+  //   super.setFilters(filters as Map<String, FilterFunction<dynamic>>);
+  //   filteredUsers = applyFilters(listData) as ObservableList<AccountModel>;
+  // }
   // @override
   // void setFilters(Map<String, FilterFunction<AccountModel>> filters) {
   //   super.setFilters(filters);
   //   filteredUsers = applyFilters(listData);
   // }
-
-  @observable
-  ObservableList<AccountModel> filteredUsers = ObservableList();
 
   FormGroup formGroup = FormGroup({
     'search': FormControl<String>(),

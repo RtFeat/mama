@@ -22,14 +22,11 @@ abstract class _GroupsStore extends PaginatedListStore<GroupItem> with Store {
               return GroupItem(
                 groupChatId: faker.datatype.uuid(),
                 participantId: faker.datatype.uuid(),
-                participant: AccountModel(
+                participant: AccountModel.mock(faker),
+                groupInfo: GroupChatInfo(
                   id: faker.datatype.uuid(),
-                  firstName: faker.name.firstName(),
-                  secondName: faker.name.lastName(),
+                  name: faker.lorem.word(),
                   avatarUrl: faker.image.image(),
-                  gender: Gender.values[
-                      faker.datatype.number(max: Gender.values.length - 1)],
-                  phone: faker.phoneNumber.phoneNumber(),
                 ),
               );
             },
