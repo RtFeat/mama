@@ -73,30 +73,51 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
       );
 
   @override
-  ObservableList<List<TableItem>> get rows =>
-      ObservableList.of(listData.mapIndexed((i, e) {
+  ObservableList<List<TableItem>> get rows {
+    final uniqueTitles = <String>{};
+
+    return ObservableList.of(listData.mapIndexed((i, e) {
+      if (uniqueTitles.add(e.title!) && e.table!.isNotEmpty) {
+        // Это уникальный заголовок
         return [
-          TableItem(
-              title: e.title,
-              row: i + 1,
-              column: 1,
-              trailing: null,
-              isHorizontalHeader: true),
-          TableItem(title: '', row: i + 1, column: 2, isHorizontalHeader: true),
-          TableItem(title: '', row: i + 1, column: 3, isHorizontalHeader: true),
-          TableItem(title: '', row: i + 1, column: 4, isHorizontalHeader: true),
-          for (int j = 0; j < e.table!.length; j++) ...[
-            TableItem(
-                title: e.table![j].title,
-                row: i + 1,
-                column: 1,
-                trailing: null),
-            TableItem(title: e.table![j].chest, row: i + 1, column: 2),
-            TableItem(title: e.table![j].food, row: i + 1, column: 3),
-            TableItem(title: e.table![j].lure, row: i + 1, column: 4),
-          ]
+          TableItem(title: e.title, row: i + 1, column: 1, trailing: null),
+          TableItem(title: '', row: i + 1, column: 2, trailing: null),
+          TableItem(title: '', row: i + 1, column: 3, trailing: null),
+          TableItem(title: '', row: i + 1, column: 4, trailing: null),
         ];
-      }));
+      } else {
+        // Это данные таблицы
+        return e.table!
+            .mapIndexed((j, tableItem) {
+              return [
+                TableItem(
+                    title: tableItem.title,
+                    row: i + 1,
+                    column: 1,
+                    trailing: null),
+                TableItem(
+                    title: tableItem.chest,
+                    row: i + 1,
+                    column: 2,
+                    trailing: null),
+                TableItem(
+                    title: tableItem.food,
+                    row: i + 1,
+                    column: 3,
+                    trailing: null),
+                TableItem(
+                    title: tableItem.lure,
+                    row: i + 1,
+                    column: 4,
+                    trailing: null),
+              ];
+            })
+            .expand((element) => element)
+            .toList();
+      }
+    }).toList());
+  }
+
   // var data = List.from(e.table!.map((element) {
   //   [
   //     TableItem(

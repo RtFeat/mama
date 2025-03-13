@@ -97,6 +97,9 @@ class Endpoint {
   static const String feed = 'feed';
   String get feedTable => '$feed/table';
 
+  static const String evolution = 'growth';
+  String get evolutionTable => '$evolution/table';
+
   static const String health = 'health';
 
   static const String medicine = 'health/drug';

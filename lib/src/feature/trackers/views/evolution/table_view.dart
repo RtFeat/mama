@@ -1,153 +1,166 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
+import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
-class TablePage extends StatefulWidget {
-  const TablePage({super.key, required this.trackerType});
-
-  final EvolutionCategory trackerType;
+class TablePage extends StatelessWidget {
+  const TablePage({
+    super.key,
+  });
 
   @override
-  State<TablePage> createState() => _TablePageState();
+  Widget build(BuildContext context) {
+    return Provider(
+      create: (context) => EvolutionStore(
+          faker: context.read<Dependencies>().faker,
+          apiClient: context.read<Dependencies>().apiClient),
+      builder: (context, child) => Scaffold(
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: TableEvolutionHistory(
+            store: context.watch(),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
-class _TablePageState extends State<TablePage> {
+class TableEvolutionHistory extends StatefulWidget {
+  final EvolutionStore store;
+
+  const TableEvolutionHistory({
+    super.key,
+    required this.store,
+  });
+
+  @override
+  State<TableEvolutionHistory> createState() => _TableEvolutionHistoryState();
+}
+
+class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
+  @override
+  void initState() {
+    widget.store.loadPage();
+    super.initState();
+  }
+
   List<bool> isSelectedWeight = [true, false];
   List<bool> isSelectedHeight = [true, false];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  SwitchContainer(
-                    title1: t.trackers.news.title,
-                    title2: t.trackers.old.title,
-                  ),
-                  CustomButton(
-                    height: 30,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    title: t.trackers.pdf.title,
-                    onTap: () {},
-                    icon: AppIcons.arrowDownToLineCompact,
-                  ),
+                  CustomToggleButton(
+                      alignment: Alignment.topLeft,
+                      items: [t.feeding.newS, t.feeding.old],
+                      onTap:
+                          (index) {}, // TODO переключение между новыми и старыми
+                      btnWidth: 64,
+                      btnHeight: 26),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        CustomButton(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          icon: AppIcons.arrowDownToLineCompact,
+                          title: t.trackers.pdf.title,
+                          height: 26,
+                          width: 70,
+                          onTap: () {}, // TODO скачать pdf
+                        )
+                      ],
+                    ),
+                  )
                 ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+              15.h,
+            ],
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Заголовок
-                      Text(
-                        'Обратите внимание',
-                        style: AppTextStyles.f10w700
-                            .copyWith(color: AppColors.greyBrighterColor),
-                      ),
-                      const SizedBox(height: 10),
+                  // Заголовок
+                  Text(
+                    t.trackers.evolution.attention,
+                    style: AppTextStyles.f10w700
+                        .copyWith(color: AppColors.greyBrighterColor),
+                  ),
+                  10.h,
 
-                      // Индикаторы
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          _buildIndicator(
-                            label: 'Граница\nнормы',
-                            color: AppColors.greenLighterBackgroundColor,
-                            textColor: AppColors.greenTextColor,
-                          ),
-                          const SizedBox(width: 10),
-                          _buildIndicator(
-                            label: 'Вне нормы',
-                            color: AppColors.yellowBackgroundColor,
-                            textColor: AppColors.orangeTextColor,
-                          ),
-                        ],
+                  // Индикаторы
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _buildIndicator(
+                        label: t.trackers.evolution.norm,
+                        color: AppColors.greenLighterBackgroundColor,
+                        textColor: AppColors.greenTextColor,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(width: 10),
+                      _buildIndicator(
+                        label: t.trackers.evolution.anormal,
+                        color: AppColors.yellowBackgroundColor,
+                        textColor: AppColors.orangeTextColor,
+                      ),
                     ],
                   ),
-                  const SizedBox(width: 10),
-                  //!!! swith vertical переделать выравнивание по таблице
-                  VericalToogleCustom(
-                    isSelected: isSelectedWeight,
-                    measure: UnitMeasures.weight,
-                    onChange: (int index) {
-                      setState(() {
-                        for (int i = 0; i < isSelectedWeight.length; i++) {
-                          isSelectedWeight[i] = i == index;
-                        }
-                      });
-                    },
-                  ),
-
-                  const SizedBox(width: 10),
-                  VericalToogleCustom(
-                    isSelected: isSelectedHeight,
-                    measure: UnitMeasures.height,
-                    onChange: (int index) {
-                      setState(() {
-                        for (int i = 0; i < isSelectedHeight.length; i++) {
-                          isSelectedHeight[i] = i == index;
-                        }
-                      });
-                    },
-                  ),
+                  12.h,
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: RowStroriesData(
-                data: t.trackers.date.title,
-                week: t.trackers.weeks.title,
-                weight: t.trackers.weight.title,
-                growth: t.trackers.growth.title,
-                head: t.trackers.head.title,
-                style: AppTextStyles.f10w700.copyWith(
-                  color: AppColors.greyBrighterColor,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Таблица бөлүгү (скролл менен кошо)
-            Column(
-              children: List.generate(
-                5,
-                (index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: RowStroriesData(
-                      data: '01 сентября',
-                      week: '17',
-                      weight: '6,25',
-                      growth: '6,25',
-                      head: '6,25',
-                      style: AppTextStyles.f17w400,
-                    ),
-                  );
+              10.w,
+              VericalToogleCustom(
+                width: 50,
+                isSelected: isSelectedWeight,
+                measure: UnitMeasures.weight,
+                onChange: (int index) {
+                  setState(() {
+                    for (int i = 0; i < isSelectedWeight.length; i++) {
+                      isSelectedWeight[i] = i == index;
+                    }
+                  });
                 },
               ),
-            ),
-            const SizedBox(height: 10),
-          ],
+              10.w,
+              VericalToogleCustom(
+                width: 50,
+                isSelected: isSelectedHeight,
+                measure: UnitMeasures.height,
+                onChange: (int index) {
+                  setState(() {
+                    for (int i = 0; i < isSelectedHeight.length; i++) {
+                      isSelectedHeight[i] = i == index;
+                    }
+                  });
+                },
+              ),
+              40.w,
+            ],
+          ),
         ),
-      ),
+        SliverToBoxAdapter(
+          child: SkitTableWidget(
+            store: widget.store,
+          ),
+        ),
+// TODO виджет для добавления строк
+      ],
     );
   }
 
@@ -157,7 +170,7 @@ class _TablePageState extends State<TablePage> {
     required Color textColor,
   }) {
     return Container(
-      width: 100,
+      width: 85,
       height: 40,
       decoration: BoxDecoration(
         color: color,

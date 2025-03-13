@@ -328,5 +328,12 @@ feedTableTitles:
 
 evolution:
   attention: Pay attention
-  norm: Normal limit
+  norm: Normal\nlimit
   anormal: Out of normal
+
+evolutionTableTitles:
+  title1: Date
+  title2: Week
+  title3: Wheight
+  title4: Height
+  title5: Circle
