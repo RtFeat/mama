@@ -64,7 +64,7 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
+                  16.h,
 
                   /// #article category text
                   Padding(
@@ -73,7 +73,7 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
                         t.home.yourArticles,
                         style: textTheme.headlineSmall?.copyWith(fontSize: 24),
                       )),
-                  const SizedBox(height: 16),
+                  16.h,
 
                   /// #articles
                   // ArticlesListView(
@@ -94,7 +94,7 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
                             },
                           ))),
 
-                  const SizedBox(height: 24),
+                  24.h,
                 ],
               ),
             ),

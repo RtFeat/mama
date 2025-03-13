@@ -74,7 +74,6 @@ class _TableFeedHistoryState extends State<TableFeedHistory> {
             ],
           ),
           15.h,
-          SkitTableWidget(store: widget.store),
           widget.store.rows.isNotEmpty
               ? SkitTableWidget(store: widget.store)
               : const SizedBox.shrink(),

@@ -9,12 +9,14 @@ enum UnitMeasures {
 class VericalToogleCustom extends StatelessWidget {
   final UnitMeasures measure;
   final Function(int index) onChange;
+  final double? width;
   final List<bool> isSelected;
   const VericalToogleCustom(
       {super.key,
       required this.measure,
       required this.onChange,
-      required this.isSelected});
+      required this.isSelected,
+      this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,9 @@ class VericalToogleCustom extends StatelessWidget {
         color: AppColors.purpleLighterBackgroundColor,
       ),
       child: ToggleButtons(
-        constraints: const BoxConstraints(
+        constraints: BoxConstraints(
           minHeight: 30, // минимальная высота
-          minWidth: 60, // минимальная ширина
+          minWidth: width ?? 60, // минимальная ширина
         ),
         direction: Axis.vertical,
         isSelected: isSelected,
@@ -41,7 +43,7 @@ class VericalToogleCustom extends StatelessWidget {
         children: [
           Container(
             height: 30,
-            width: 60,
+            width: width ?? 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: isSelected[0] ? AppColors.whiteColor : Colors.transparent,
@@ -63,7 +65,7 @@ class VericalToogleCustom extends StatelessWidget {
           ),
           Container(
             height: 30,
-            width: 60,
+            width: width ?? 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: isSelected[1] ? AppColors.whiteColor : Colors.transparent,

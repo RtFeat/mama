@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
+import 'package:skit/skit.dart';
 
 class MedicCard extends StatelessWidget {
   //TODO карточка на моковых данных, не настроена
@@ -32,7 +33,7 @@ class MedicCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(width: 16),
+            16.w,
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -46,7 +47,7 @@ class MedicCard extends StatelessWidget {
                         fontFamily: Assets.fonts.nunitoItalic,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    8.w,
                     SizedBox(
                       width: 55,
                       child: DecoratedBox(
@@ -66,7 +67,7 @@ class MedicCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                4.h,
                 Expanded(
                   child: Text(
                     maxLines: 4,
@@ -78,14 +79,14 @@ class MedicCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                const Row(
+                12.h,
+                Row(
                   children: [
-                    BuildButton(
+                    const BuildButton(
                       text: '2 статьи',
                     ),
-                    SizedBox(width: 8),
-                    BuildButton(text: 'Консультации'),
+                    8.w,
+                    const BuildButton(text: 'Консультации'),
                   ],
                 ),
               ],

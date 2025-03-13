@@ -75,7 +75,7 @@ class _CustomBlogState extends State<CustomBlog> {
                           },
                           isSelected: isSelected,
                         ),
-                  const SizedBox(width: 8),
+                  8.w,
                   Expanded(
                     child: TextFormField(
                       controller: widget.controller,
@@ -87,18 +87,18 @@ class _CustomBlogState extends State<CustomBlog> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  16.w,
                 ],
               ),
 
-              const SizedBox(height: 10),
+              10.h,
 
               DateSwitchContainer(
                 title1: t.trackers.now.title,
                 title2: t.trackers.sixTeenThirtyTwo.title,
                 title3: t.trackers.fourteensOfSeptember.title,
               ),
-              const SizedBox(height: 10),
+              10.h,
 
               // кнопки "Заметка" и "Добавить"
               Row(

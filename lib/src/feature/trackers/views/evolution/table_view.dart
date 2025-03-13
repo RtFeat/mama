@@ -113,7 +113,7 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                         color: AppColors.greenLighterBackgroundColor,
                         textColor: AppColors.greenTextColor,
                       ),
-                      const SizedBox(width: 10),
+                      10.w,
                       _buildIndicator(
                         label: t.trackers.evolution.anormal,
                         color: AppColors.yellowBackgroundColor,

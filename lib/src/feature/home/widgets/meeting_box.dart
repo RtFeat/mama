@@ -110,7 +110,7 @@ class MeetingBox extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      4.w,
 
                       /// #mark
                       if (whichSection == 1)

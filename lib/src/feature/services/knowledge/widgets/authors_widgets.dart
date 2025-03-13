@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/services/knowledge/widgets/common_checkbox.dart';
+import 'package:skit/skit.dart';
 
 //TODO виджет нигде не используется, если не нужен удалить
 class AuthorsSub extends StatelessWidget {
@@ -22,7 +23,7 @@ class AuthorsSub extends StatelessWidget {
         CircleAvatar(
           backgroundImage: AssetImage(Assets.images.imgPerson2.path),
         ),
-        const SizedBox(width: 10),
+        10.w,
         Row(
           children: [
             Text(
@@ -33,7 +34,7 @@ class AuthorsSub extends StatelessWidget {
                 fontWeight: FontWeight.w300,
               ),
             ),
-            const SizedBox(width: 3),
+            3.w,
             SizedBox(
               height: 14,
               width: 43,
@@ -89,7 +90,7 @@ class SchoolSub extends StatelessWidget {
         CircleAvatar(
           backgroundImage: AssetImage(Assets.images.imgPerson1.path),
         ),
-        const SizedBox(width: 10),
+        10.w,
         Flexible(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -102,11 +103,11 @@ class SchoolSub extends StatelessWidget {
                   fontWeight: FontWeight.w300,
                 ),
               ),
-              const SizedBox(width: 3),
+              3.w,
             ],
           ),
         ),
-        const SizedBox(width: 40),
+        40.w,
         Row(
           children: [
             Text(
