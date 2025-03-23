@@ -188,6 +188,19 @@ class ChatSocket {
     chatsViewStore.deleteChat(store.chatId!, store.chatType!);
   }
 
+  Future<void> readMessage() async {
+    await ensureConnection();
+    var data = jsonEncode({
+      'event': 'read_message',
+      'type_chat': store.chatType,
+      'data': {
+        'access_token': 'Bearer $accessToken',
+        'chat_id': store.chatId,
+      }
+    });
+    channel?.sink.add(data);
+  }
+
   dynamic handleMessage(SocketResponse data) async {
     final MessageItem message = MessageItem(
       id: data.data?.message?.id ?? '',

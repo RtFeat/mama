@@ -14,9 +14,7 @@ class MessageAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return !isUser
-        ? isOnGroup
-            ? AvatarWidget(url: avatarUrl, size: const Size(40, 40), radius: 20)
-            : const SizedBox.shrink()
+        ? AvatarWidget(url: avatarUrl, size: const Size(40, 40), radius: 20)
         : const Spacer();
   }
 }

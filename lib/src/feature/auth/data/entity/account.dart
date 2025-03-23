@@ -13,6 +13,9 @@ class AccountModel extends _AccountModel with _$AccountModel {
   @JsonKey(name: 'fcm_token')
   String? fcmToken;
 
+  @JsonKey(name: 'last_active_at')
+  String? lastActiveAt;
+
   Gender gender;
 
   @JsonKey(includeToJson: false)

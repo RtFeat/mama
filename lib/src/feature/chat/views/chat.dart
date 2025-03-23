@@ -58,8 +58,9 @@ class __BodyState extends State<_Body> {
   @override
   void initState() {
     widget.store.init();
-    widget.socket.iAmActive();
+
     logger.info('${widget.item.runtimeType}');
+    widget.socket.readMessage();
 
     widget.store.setChatId(widget.item is SingleChatItem
         ? widget.item?.id
@@ -84,6 +85,13 @@ class __BodyState extends State<_Body> {
     // widget.store.scrollController?.addListener(_updateCurrentDate);
 
     super.initState();
+  }
+
+  void readMessage() async {
+    await widget.socket.readMessage();
+    final store = context.watch<ChatsViewStore>();
+    store.loadAllChats();
+    store.loadAllGroups(context.watch<UserStore>().selectedChild?.id);
   }
 
   @override

@@ -40,8 +40,14 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
           widget.store.groups.fetchFuture,
         ])),
         builder: (_) => CustomScrollView(slivers: [
-              _GroupsList(store: widget.store, separator: separator),
-              _ChatsList(store: widget.store, separator: separator),
+              SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver:
+                      _GroupsList(store: widget.store, separator: separator)),
+              SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver:
+                      _ChatsList(store: widget.store, separator: separator)),
             ]));
   }
 }
@@ -105,7 +111,7 @@ class __ChatsListState extends State<_ChatsList> {
               widget.store.chats
                   .setChatUserTypeFilter(ChatUserTypeFilter.values[index]);
             },
-            btnWidth: MediaQuery.of(context).size.width / 2.32,
+            btnWidth: MediaQuery.of(context).size.width / 2.35,
             btnHeight: 38,
           ),
         ),

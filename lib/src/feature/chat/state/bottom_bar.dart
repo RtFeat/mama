@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:record/record.dart';
 import 'package:skit/skit.dart';
+import 'package:path/path.dart' as p;
 
 part 'bottom_bar.g.dart';
 
@@ -128,8 +129,17 @@ abstract class _ChatBottomBarStore with Store {
     required ApiClient apiClient,
   }) async {
     final List<MultipartFile> multipartFiles = await Future.wait(
-      files.map((path) => MultipartFile.fromFile(path)),
+      files.map((filePath) async {
+        String fileName = p.basename(filePath); // Extract file name
+
+        return await MultipartFile.fromFile(
+          filePath,
+          filename: fileName, // Explicitly set the file name
+        );
+      }),
     );
+
+    print(multipartFiles.first); // Debugging
 
     FormData formData = FormData.fromMap({
       'file': multipartFiles,
@@ -267,7 +277,7 @@ abstract class _ChatBottomBarStore with Store {
   Future getAttach() async {
     final FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
-      // type: FileType.image,
+      type: FileType.image,
     );
 
     logger.info('Выбрано файлов: ${result?.files.length}',

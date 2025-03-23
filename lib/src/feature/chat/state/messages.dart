@@ -130,7 +130,6 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   @observable
   String? query;
-
   @action
   void setQuery(String value) {
     logger.info('query $value', runtimeType: runtimeType);
@@ -144,7 +143,10 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
         operator: FilterOperator.contains,
         value: value,
         localPredicate: (item) {
-          return item.text?.contains(value) ?? false;
+          return (item.text?.toLowerCase().contains(value.toLowerCase()) ??
+                  false) ||
+              (item.senderName?.toLowerCase().contains(value.toLowerCase()) ??
+                  false);
         },
       ),
     );
