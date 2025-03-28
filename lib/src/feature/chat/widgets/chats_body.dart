@@ -40,14 +40,8 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
           widget.store.groups.fetchFuture,
         ])),
         builder: (_) => CustomScrollView(slivers: [
-              SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver:
-                      _GroupsList(store: widget.store, separator: separator)),
-              SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver:
-                      _ChatsList(store: widget.store, separator: separator)),
+              _GroupsList(store: widget.store, separator: separator),
+              _ChatsList(store: widget.store, separator: separator),
             ]));
   }
 }
