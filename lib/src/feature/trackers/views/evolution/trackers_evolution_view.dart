@@ -47,7 +47,7 @@ class _EvolutionViewState extends State<EvolutionView>
         controller: _tabController,
         children: EvolutionCategory.values.map((trackerType) {
           if (trackerType == EvolutionCategory.table) {
-            return TablePage(trackerType: trackerType);
+            return const TablePage();
           }
           return WeightT(trackerType: trackerType);
         }).toList(),
@@ -98,8 +98,8 @@ class WeightT extends StatelessWidget {
         ),
 
         /// Grafic
-        SliverToBoxAdapter(
-          child: const Padding(
+        const SliverToBoxAdapter(
+          child: Padding(
             padding: EdgeInsets.only(bottom: 16, top: 0),
             child: SizedBox(
               height: 278,
@@ -116,7 +116,7 @@ class WeightT extends StatelessWidget {
                 context.pushNamed(trackerType.route);
               }),
         ),
-        SliverToBoxAdapter(child: const SizedBox(height: 16)),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
         /// Stories
         SliverToBoxAdapter(
@@ -131,7 +131,7 @@ class WeightT extends StatelessWidget {
           ),
         ),
 
-        SliverToBoxAdapter(child: const SizedBox(height: 8)),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
         SliverToBoxAdapter(
           child: Row(
@@ -151,7 +151,7 @@ class WeightT extends StatelessWidget {
             ],
           ),
         ),
-        SliverToBoxAdapter(child: const SizedBox(height: 16)),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
         SliverToBoxAdapter(
           child: RowStroriesData(
             data: t.trackers.date.title,
@@ -162,7 +162,7 @@ class WeightT extends StatelessWidget {
             ),
           ),
         ),
-        SliverToBoxAdapter(child: const SizedBox(height: 8)),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
         SliverToBoxAdapter(
           child: Column(
@@ -179,7 +179,7 @@ class WeightT extends StatelessWidget {
             ),
           ),
         ),
-        SliverToBoxAdapter(child: const SizedBox(height: 10)),
+        const SliverToBoxAdapter(child: SizedBox(height: 10)),
       ],
     );
   }

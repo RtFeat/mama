@@ -327,5 +327,12 @@ feedTableTitles:
 
 evolution:
   attention: Обратите внимание
-  norm: Граница нормы
+  norm: Граница\nнормы
   anormal: Вне нормы
+
+evolutionTableTitles:
+  title1: Дата
+  title2: Неделя
+  title3: Вес
+  title4: Рост
+  title5: Голова

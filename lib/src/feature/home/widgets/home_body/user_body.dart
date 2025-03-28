@@ -97,7 +97,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                             text: t.home.progressDiary.title,
                             onTap: () => widget.tabController.animateTo(1),
                           ),
-                          const SizedBox(width: 8),
+                          8.w,
 
                           /// #
                           CustomServiceBox(
@@ -110,7 +110,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      8.h,
                     ],
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
+import 'package:skit/skit.dart';
 
 class CommonHorizontalWidget extends StatelessWidget {
   final String mainTittle;
@@ -81,7 +82,7 @@ class CommonHorizontalWidget extends StatelessWidget {
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(width: 15);
+          return 15.w;
         },
       ),
     );

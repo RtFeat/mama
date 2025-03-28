@@ -71,7 +71,7 @@ class DateSwitchSection extends StatelessWidget {
                   calendarButtonOnPressed: calendarButtonOnPressed,
                   backToTodayOnPressed: backToTodayOnPressed,
                 ),
-                const SizedBox(height: 8),
+                8.h,
                 const SlotsWidget(),
               ],
             );

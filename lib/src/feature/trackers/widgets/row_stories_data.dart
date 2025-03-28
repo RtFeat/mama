@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skit/skit.dart';
 
 class RowStroriesData extends StatelessWidget {
   const RowStroriesData({
@@ -28,11 +29,11 @@ class RowStroriesData extends StatelessWidget {
         Row(
           children: [
             Text(week ?? '', style: style),
-            const SizedBox(width: 40),
+            40.w,
             Text(weight ?? '', style: style),
-            weight == null ? const SizedBox() : const SizedBox(width: 30),
+            weight == null ? const SizedBox() : 30.w,
             Text(growth ?? '', style: style),
-            growth == null ? const SizedBox() : const SizedBox(width: 30),
+            growth == null ? const SizedBox() : 30.w,
             Text(head ?? '', style: style),
             // head == null ? const SizedBox() : const SizedBox(width: 30),
           ],

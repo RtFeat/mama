@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mama/src/core/core.dart';
+import 'package:skit/skit.dart';
 
 class VaccineContainer extends StatelessWidget {
   final String nameVaccine;
@@ -58,7 +59,7 @@ class VaccineContainer extends StatelessWidget {
                             fontSize: 14,
                           ),
                     ),
-                    const SizedBox(height: 5),
+                    5.h,
 
                     /// #rec age description
                     recommendedAgeSubtitle != null

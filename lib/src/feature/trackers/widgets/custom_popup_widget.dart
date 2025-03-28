@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class CustomPopupWidget extends StatefulWidget {
   const CustomPopupWidget({
@@ -92,11 +93,11 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
                         )
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  8.h,
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            12.h,
           ],
         ),
         // Стрелка внизу
