@@ -4,6 +4,8 @@ import 'package:mama/src/data.dart';
 import 'animated_text.dart';
 import 'avatar.dart';
 
+bool _isFirstCircleOnTop = true;
+
 class ProfileSwitch extends StatefulWidget {
   final List<ChildModel?> children;
   final Alignment alignment;
@@ -24,7 +26,6 @@ class ProfileSwitch extends StatefulWidget {
 }
 
 class _ProfileSwitchState extends State<ProfileSwitch> {
-  bool _isFirstCircleOnTop = true;
 
   void _toggleCircles() {
     setState(() {

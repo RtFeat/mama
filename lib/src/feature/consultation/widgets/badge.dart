@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
@@ -25,7 +24,7 @@ class ConsultationBadge extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            child: AutoSizeText(
+            child: Text(
               title,
               maxLines: 1,
               style:

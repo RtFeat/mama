@@ -25,6 +25,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
     super.initState();
     widget.homeViewStore.loadAllArticles();
     widget.homeViewStore.loadForMeArticles(widget.userStore.account.id ?? '');
+    widget.userStore.setUserData(widget.userStore.data);
     // widget.articleStore.fetchAll();
     // widget.articleStore.fetchForMe(widget.userStore.account.id ?? '');
   }

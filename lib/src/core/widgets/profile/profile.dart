@@ -28,7 +28,7 @@ class ProfileWidget extends StatelessWidget {
 
     return Observer(
       builder: (context) {
-        if (userStore.children.isNotEmpty) {
+        if (userStore.children.isNotEmpty && avatarUrl == null) {
           if (userStore.children.length >= 2) {
             return ProfileSwitch(
               userStore: context.watch(),

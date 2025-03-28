@@ -2,6 +2,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
+import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 class GroupUsersView extends StatefulWidget {
   final GroupUsersStore? store;
@@ -17,19 +19,19 @@ class GroupUsersView extends StatefulWidget {
 }
 
 class _GroupUsersViewState extends State<GroupUsersView> {
-  Map<String, bool Function(AccountModel)> filters = {};
+  // Map<String, bool Function(AccountModel)> filters = {};
 
   @override
   void initState() {
-    widget.store?.loadPage(queryParams: {});
-    filters = {
-      'query': (AccountModel e) {
-        if (widget.store?.query == null || (widget.store?.query)!.isEmpty) {
-          return true;
-        }
-        return e.name.contains(widget.store?.query ?? '');
-      }
-    };
+    widget.store?.loadPage();
+    // filters = {
+    //   'query': (AccountModel e) {
+    //     if (widget.store?.query == null || (widget.store?.query)!.isEmpty) {
+    //       return true;
+    //     }
+    //     return e.name.contains(widget.store?.query ?? '');
+    //   }
+    // };
     super.initState();
   }
 
@@ -91,28 +93,13 @@ class _GroupUsersViewState extends State<GroupUsersView> {
               ),
             ),
             SliverToBoxAdapter(
-              child: BodyGroup(
-                isDecorated: true,
-                titlePadding: const EdgeInsets.only(left: 20, bottom: 8),
-                backgroundBorderRadius: BorderRadius.circular(24),
-                title: t.chat.buttonToogleSpecialist,
-                items: widget.store?.doctors.map((e) {
-                      return PersonItem(
-                        person: e,
-                        store: widget.store,
-                      );
-                    }).toList() ??
-                    [],
-              ),
+              child: _OtherRoles(store: widget.store),
             ),
             SliverToBoxAdapter(
               child: Observer(builder: (_) {
                 return _Users(
-                    store: widget.store,
-                    users: widget.store != null &&
-                            widget.store!.filteredUsers.isEmpty
-                        ? widget.store?.users
-                        : widget.store?.filteredUsers.toList() ?? []);
+                  store: widget.store,
+                );
               }),
             ),
           ],
@@ -124,41 +111,160 @@ class _GroupUsersViewState extends State<GroupUsersView> {
 
 class _Users extends StatelessWidget {
   final GroupUsersStore? store;
-  final List<AccountModel>? users;
   const _Users({
     required this.store,
-    required this.users,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BodyGroup(
-        isDecorated: true,
-        title: '',
-        formGroup: store?.formGroup,
-        items: [
-          Finder(
-            onChanged: (v) {
-              store?.setQuery(v);
-              store?.setFilters({
-                'query': (e) {
-                  if (v.isEmpty) return true;
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+    final TextStyle titleStyle = textTheme.labelLarge!;
 
-                  return e.name.contains(store?.query ?? '');
-                }
-              });
-            },
-            onPressedClear: () {},
-            formControlName: 'search',
-            hintText: t.chat.hintSearchParticipant,
-          ),
-          if (users != null)
-            ...users!.map((e) {
-              return PersonItem(
-                person: e,
-                store: store,
-              );
-            })
-        ]);
+    return ReactiveForm(
+        formGroup: store!.formGroup,
+        child: CustomScrollView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  bottom: 8,
+                  top: 8,
+                ),
+                child: Text(
+                  t.chat.groupChatsListTitle,
+                  style: titleStyle,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: CardWidget(
+                  elevation: 0,
+                  // title: t.chat.groupChatsListTitle,
+                  child: CustomScrollView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Observer(builder: (_) {
+                            return Finder(
+                              suffixIcon: () {
+                                if (store?.query == null ||
+                                    store!.query!.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return GestureDetector(
+                                  onTap: () {
+                                    store?.formGroup.control('search').value =
+                                        '';
+                                    store?.setQuery('');
+                                  },
+                                  child: const Icon(
+                                    Icons.clear,
+                                    size: 24,
+                                    color: AppColors.greyBrighterColor,
+                                  ),
+                                );
+                              },
+                              value: store?.query,
+                              onChanged: (v) {
+                                store?.setQuery(v);
+                              },
+                              onPressedClear: () {},
+                              formControlName: 'search',
+                              hintText: t.chat.hintSearchParticipant,
+                            );
+                          }),
+                        ),
+                        PaginatedLoadingWidget(
+                          isFewLists: true,
+                          store: store!,
+                          listData: () {
+                            if (store!.query != null &&
+                                store!.query!.isNotEmpty) {
+                              return store!.filteredUsers;
+                            }
+                            return store!.listData;
+                          },
+                          // separator: (_, __) => separator,
+                          itemBuilder: (context, item, _) {
+                            return PersonItem(
+                              person: item,
+                              store: store,
+                            );
+                          },
+                        ),
+                      ])),
+            )
+          ],
+        ));
+  }
+}
+
+class _OtherRoles extends StatelessWidget {
+  final GroupUsersStore? store;
+  const _OtherRoles({
+    required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+    final TextStyle titleStyle = textTheme.labelLarge!;
+
+    return Observer(
+      builder: (context) {
+        return CustomScrollView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  bottom: 8,
+                  top: 8,
+                ),
+                child: Text(
+                  t.chat.buttonToogleSpecialist,
+                  style: titleStyle,
+                ),
+              ),
+            ),
+            if (store!.doctors.isEmpty)
+              const SliverToBoxAdapter(
+                  child: Center(child: Text('There are no specialists'))),
+            if (store!.doctors.isNotEmpty)
+              SliverToBoxAdapter(
+                child: CardWidget(
+                    elevation: 0,
+                    child: CustomScrollView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        slivers: [
+                          PaginatedLoadingWidget(
+                            isFewLists: true,
+                            store: store!,
+                            listData: () {
+                              return store!.doctors;
+                            },
+                            // separator: (_, __) => separator,
+                            itemBuilder: (context, item, _) {
+                              return PersonItem(
+                                person: item,
+                                store: store,
+                              );
+                            },
+                          ),
+                        ])),
+              )
+          ],
+        );
+      },
+    );
   }
 }

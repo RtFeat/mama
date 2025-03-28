@@ -62,7 +62,6 @@ class SingleChatItem extends _SingleChatItem with _$SingleChatItem {
         other.participant2 == participant2 &&
         other.profession == profession &&
         other.professionId == professionId &&
-        other.id == id &&
         other.lastMessage == lastMessage &&
         other.lastMessageAt == lastMessageAt &&
         other.unreadMessages == unreadMessages;
@@ -78,7 +77,6 @@ class SingleChatItem extends _SingleChatItem with _$SingleChatItem {
         participant2.hashCode ^
         profession.hashCode ^
         professionId.hashCode ^
-        id.hashCode ^
         lastMessage.hashCode ^
         lastMessageAt.hashCode ^
         unreadMessages.hashCode;
