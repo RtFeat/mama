@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
@@ -19,20 +20,29 @@ class MaterialContext extends StatelessWidget {
     final settings = Provider.of<Dependencies>(context).settingsStore;
 
     return Observer(builder: (_) {
-      return MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routerConfig: router,
-        theme: settings.lightTheme,
-        darkTheme: settings.darkTheme,
-        themeMode: ThemeMode.light,
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        supportedLocales: AppLocaleUtils.supportedLocales,
-        locale: TranslationProvider.of(context).flutterLocale,
-        builder: (context, child) => MediaQuery.withClampedTextScaling(
-          key: _globalKey,
-          minScaleFactor: 1.0,
-          maxScaleFactor: 2.0,
-          child: child!,
+      return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
+          }
+        },
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+          theme: settings.lightTheme,
+          darkTheme: settings.darkTheme,
+          themeMode: ThemeMode.light,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: AppLocaleUtils.supportedLocales,
+          locale: TranslationProvider.of(context).flutterLocale,
+          builder: (context, child) => MediaQuery.withClampedTextScaling(
+            key: _globalKey,
+            minScaleFactor: 1.0,
+            maxScaleFactor: 2.0,
+            child: child!,
+          ),
         ),
       );
     });

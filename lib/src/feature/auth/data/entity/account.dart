@@ -13,6 +13,9 @@ class AccountModel extends _AccountModel with _$AccountModel {
   @JsonKey(name: 'fcm_token')
   String? fcmToken;
 
+  @JsonKey(name: 'last_active_at')
+  String? lastActiveAt;
+
   Gender gender;
 
   @JsonKey(includeToJson: false)
@@ -57,7 +60,6 @@ class AccountModel extends _AccountModel with _$AccountModel {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AccountModel &&
-          id == other.id &&
           fcmToken == other.fcmToken &&
           gender == other.gender &&
           role == other.role &&
@@ -73,7 +75,6 @@ class AccountModel extends _AccountModel with _$AccountModel {
 
   @override
   int get hashCode =>
-      id.hashCode ^
       fcmToken.hashCode ^
       gender.hashCode ^
       role.hashCode ^

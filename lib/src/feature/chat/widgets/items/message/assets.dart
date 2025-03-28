@@ -58,9 +58,7 @@ class MessageAssets extends StatelessWidget {
       );
     }
 
-    if (item.files != null &&
-        item.files!.isNotEmpty &&
-        item.files!.length > 1) {
+    if (item.files != null && item.files!.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Observer(builder: (context) {

@@ -116,10 +116,14 @@ class Content extends StatelessWidget {
       ];
 
       return GestureDetector(
-        onTapDown: storePosition,
-        onSecondaryTapDown: storePosition,
-        onTap: () => MenuShower.show(context, entries, pos),
-        child: ConstrainedBox(
+  onTapDown: storePosition,
+  onSecondaryTapDown: storePosition,
+  onTap: () {
+    FocusManager.instance.primaryFocus?.unfocus(); // Unfocus keyboard
+    MenuShower.show(context, entries, pos);
+  },
+
+ child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.7,
           ),

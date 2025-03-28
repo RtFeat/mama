@@ -11,6 +11,7 @@ class Finder extends StatelessWidget {
   final String hintText;
   final InputBorder? inputBorder;
   final Function()? onSearchIconPressed;
+  final Widget Function()? suffixIcon;
   const Finder({
     super.key,
     this.onTap,
@@ -21,6 +22,7 @@ class Finder extends StatelessWidget {
     required this.onPressedClear,
     required this.formControlName,
     required this.hintText,
+    this.suffixIcon,
   });
 
   @override
@@ -52,19 +54,20 @@ class Finder extends StatelessWidget {
               color: AppColors.primaryColor,
             ),
           ),
-          suffixIcon: ValueListenableBuilder(
-              valueListenable: ValueNotifier(value),
-              builder: (_, v, __) {
-                if (v == null || v.isEmpty) return const SizedBox.shrink();
-                return GestureDetector(
-                  onTap: onPressedClear,
-                  child: const Icon(
-                    Icons.clear,
-                    size: 24,
-                    color: AppColors.greyBrighterColor,
-                  ),
-                );
-              }),
+          suffixIcon: suffixIcon?.call() ??
+              ValueListenableBuilder(
+                  valueListenable: ValueNotifier(value),
+                  builder: (_, v, __) {
+                    if (v == null || v.isEmpty) return const SizedBox.shrink();
+                    return GestureDetector(
+                      onTap: onPressedClear,
+                      child: const Icon(
+                        Icons.clear,
+                        size: 24,
+                        color: AppColors.greyBrighterColor,
+                      ),
+                    );
+                  }),
           hintText: hintText,
           hintStyle: textTheme.titleSmall!.copyWith(
             color: AppColors.greyBrighterColor,

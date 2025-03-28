@@ -105,7 +105,7 @@ class __ChatsListState extends State<_ChatsList> {
               widget.store.chats
                   .setChatUserTypeFilter(ChatUserTypeFilter.values[index]);
             },
-            btnWidth: MediaQuery.of(context).size.width / 2.32,
+            btnWidth: MediaQuery.of(context).size.width / 2.35,
             btnHeight: 38,
           ),
         ),

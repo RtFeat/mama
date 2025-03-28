@@ -35,14 +35,14 @@ class ConsultationViewStore {
                 ));
 
   Future<void> loadAllRecords() async {
-    await recordsState.loadPage(queryParams: {});
+    await recordsState.loadPage();
   }
 
   Future<void> loadAllDoctors() async {
-    await doctorsState.loadPage(queryParams: {});
+    await doctorsState.loadPage();
   }
 
   Future<void> loadAllSchools() async {
-    await schoolsState.loadPage(queryParams: {});
+    await schoolsState.loadPage();
   }
 }

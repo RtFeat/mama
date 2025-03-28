@@ -74,6 +74,7 @@ class Endpoint {
   String get groupUsers => '${groups}s/all';
 
   String get messages => '$chat/message';
+  String get readMessages => '$chat/read_message';
 
   static const String doctor = 'doctor';
 

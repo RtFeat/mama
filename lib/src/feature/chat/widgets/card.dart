@@ -5,11 +5,13 @@ class CardWidget extends StatelessWidget {
   final String? title;
   final Widget? titleWidget;
   final Widget child;
+  final double? elevation;
   const CardWidget({
     super.key,
     this.title,
     this.titleWidget,
     required this.child,
+    this.elevation,
   });
 
   @override
@@ -21,7 +23,7 @@ class CardWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Card(
         shadowColor: AppColors.skyBlue,
-        elevation: 1,
+        elevation: elevation ?? 1,
         color: AppColors.whiteColor,
         margin: EdgeInsets.zero,
         shape: const RoundedRectangleBorder(

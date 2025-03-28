@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/chat/chat.dart';
 import 'package:marquee/marquee.dart';
@@ -60,10 +61,27 @@ class ChatsAppBar extends StatelessWidget {
                   style: textTheme.bodyMedium?.copyWith(letterSpacing: .01),
                 ),
               ),
-              Text(
-                'sdfdsf',
-                style: textTheme.labelSmall,
-              ),
+              if (item is SingleChatItem)
+                SizedBox(
+                  height: kToolbarHeight / 2, // Ensure proper scrolling space
+                  child: Text(
+                    '${(item as SingleChatItem).participant2?.lastActiveAt} ',
+                    style: textTheme.labelSmall,
+                  ),
+                ),
+              if (item is! SingleChatItem) // Show only for GroupItem
+                SizedBox(
+                  height: kToolbarHeight / 2, // Ensure proper scrolling space
+                  child: Marquee(
+                    text:
+                        '${(item as GroupItem).groupInfo?.numberOfSpecialists ?? 0} специалиста, '
+                        '${(item as GroupItem).groupInfo?.numberOfUsers ?? 0} участников, '
+                        '${(item as GroupItem).groupInfo?.numberOfOnlineUsers ?? 0} в сети',
+                    velocity: 30,
+                    blankSpace: 10,
+                    style: textTheme.labelSmall,
+                  ),
+                ),
             ],
           ),
           actions: [
@@ -73,25 +91,25 @@ class ChatsAppBar extends StatelessWidget {
                 onTap: () {
                   store.setIsSearching(!store.isSearching);
                   store.setQuery('');
-                  store.setFilters({
-                    'query': (e) {
-                      return true;
-                    }
-                  });
+                  // store.setFilters({
+                  //   'query': (e) {
+                  //     return true;
+                  //   }
+                  // });
                 },
                 child: const Icon(Icons.search, color: AppColors.primaryColor),
               ),
             ),
             GestureDetector(
               onTap: () {
-                if (groupUsersStore != null) {
+                if (item is SingleChatItem) {
+                  context.pushNamed(AppViews.profileInfo, extra: {
+                    'model': (item as SingleChatItem).participant2,
+                  });
+                } else if (groupUsersStore != null) {
                   context.pushNamed(AppViews.groupUsers, extra: {
                     'store': groupUsersStore,
                     'groupInfo': (item as GroupItem).groupInfo,
-                  });
-                } else if (item is SingleChatItem) {
-                  context.pushNamed(AppViews.profileInfo, extra: {
-                    'model': (item as SingleChatItem).participant2,
                   });
                 }
               },
@@ -149,22 +167,22 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               onChanged: (v) {
                 store.setQuery(v);
-                store.setFilters({
-                  'query': (e) {
-                    if (v.isEmpty) return true;
+                // store.setFilters({
+                //   'query': (e) {
+                //     if (v.isEmpty) return true;
 
-                    return e.text?.contains(v) ?? true;
-                  }
-                });
+                //     return e.text?.contains(v) ?? true;
+                //   }
+                // });
               },
               onPressedClear: () {
                 store.formGroup.control('search').value = '';
                 store.setQuery('');
-                store.setFilters({
-                  'query': (e) {
-                    return true;
-                  }
-                });
+                // store.setFilters({
+                //   'query': (e) {
+                //     return true;
+                //   }
+                // });
               },
               formControlName: 'search',
               hintText: t.chat.hintSearchChat);
@@ -175,4 +193,22 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+// }
+
+// String formatLastSeen(String isoTime) {
+//   try {
+//     print(isoTime);
+//     DateTime dateTime = DateTime.parse(isoTime);
+//     print(isoTime);
+
+//     // Create a DateFormat object with the desired pattern and locale
+//     DateFormat formatter = DateFormat('d MMMM HH:mm', 'ru');
+
+//     // Format the date into a string
+//     String formattedDate = formatter.format(dateTime);
+//     return 'Был(а) в $formattedDate';
+//   } catch (e) {
+//     return 'Invalid time format';
+//   }
+// }
 }
