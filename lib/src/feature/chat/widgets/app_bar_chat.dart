@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/chat/chat.dart';
-import 'package:marquee/marquee.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:skit/skit.dart';
 
@@ -51,13 +49,11 @@ class ChatsAppBar extends StatelessWidget {
             children: [
               SizedBox(
                 height: kToolbarHeight / 2,
-                child: Marquee(
-                  text: (item is SingleChatItem
+                child: Text(
+                  (item is SingleChatItem
                           ? (item as SingleChatItem).participant2?.name
                           : (item as GroupItem).groupInfo?.name) ??
                       '',
-                  velocity: 30,
-                  blankSpace: 10,
                   style: textTheme.bodyMedium?.copyWith(letterSpacing: .01),
                 ),
               ),
@@ -72,13 +68,10 @@ class ChatsAppBar extends StatelessWidget {
               if (item is! SingleChatItem) // Show only for GroupItem
                 SizedBox(
                   height: kToolbarHeight / 2, // Ensure proper scrolling space
-                  child: Marquee(
-                    text:
-                        '${(item as GroupItem).groupInfo?.numberOfSpecialists ?? 0} специалиста, '
-                        '${(item as GroupItem).groupInfo?.numberOfUsers ?? 0} участников, '
-                        '${(item as GroupItem).groupInfo?.numberOfOnlineUsers ?? 0} в сети',
-                    velocity: 30,
-                    blankSpace: 10,
+                  child: Text(
+                    '${(item as GroupItem).groupInfo?.numberOfSpecialists ?? 0} специалиста, '
+                    '${(item as GroupItem).groupInfo?.numberOfUsers ?? 0} участников, '
+                    '${(item as GroupItem).groupInfo?.numberOfOnlineUsers ?? 0} в сети',
                     style: textTheme.labelSmall,
                   ),
                 ),
