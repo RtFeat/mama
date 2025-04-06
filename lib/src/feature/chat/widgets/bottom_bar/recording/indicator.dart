@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class RecordingIndicator extends StatelessWidget {
   final Animation<double> animation;
@@ -19,7 +20,7 @@ class RecordingIndicator extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: [
-            const SizedBox(width: 10),
+            10.w,
             ScaleTransition(
                 scale: animation,
                 child: const SizedBox(
@@ -32,7 +33,7 @@ class RecordingIndicator extends StatelessWidget {
                     ),
                   ),
                 )),
-            const SizedBox(width: 10),
+            10.w,
             Observer(
               builder: (_) {
                 return Text.rich(

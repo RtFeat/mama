@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skit/skit.dart';
 
 /// InitializationFailedScreen widget
 class InitializationFailedApp extends StatefulWidget {
@@ -63,7 +64,7 @@ class _InitializationFailedAppState extends State<InitializationFailedApp> {
                       ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                16.h,
                 Text(
                   '${widget.error}',
                   style: Theme.of(context)
@@ -71,7 +72,7 @@ class _InitializationFailedAppState extends State<InitializationFailedApp> {
                       .bodyLarge
                       ?.copyWith(color: Theme.of(context).colorScheme.error),
                 ),
-                const SizedBox(height: 16),
+                16.h,
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(

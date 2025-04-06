@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/constant/constant.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
+import 'package:skit/skit.dart';
 
 class CurrentAndDymanicContainer extends StatelessWidget {
   const CurrentAndDymanicContainer({
@@ -11,6 +12,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //TODO мок данные
     return Row(
       children: [
         /// Current Container
@@ -45,7 +47,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                         color: AppColors.blackColor,
                       ),
                     ),
-                    const SizedBox(width: 5),
+                    5.w,
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: Text(
@@ -68,7 +70,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                         color: AppColors.greyBrighterColor,
                       ),
                     ),
-                    const SizedBox(width: 5),
+                    5.w,
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: Text(
@@ -84,7 +86,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        5.w,
 
         /// Dynamic Container
         Expanded(
@@ -118,7 +120,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                         color: AppColors.blackColor,
                       ),
                     ),
-                    const SizedBox(width: 5),
+                    5.w,
                     Padding(
                       padding: const EdgeInsets.only(bottom: 1),
                       child: Text(

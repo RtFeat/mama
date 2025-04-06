@@ -1,4 +1,6 @@
 export 'sleep_cry_cell.dart';
+export 'feeding_cell.dart';
+export 'evolution_table_cell.dart';
 export 'sleep_history_model.dart';
 export 'drug_model.dart';
 export 'doctor_visit_model.dart';

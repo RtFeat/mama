@@ -62,8 +62,8 @@ class Medicine extends StatelessWidget {
                       child: Row(
                         children: [
                           /// #pill image
-                          DecoratedBox(
-                            decoration: const BoxDecoration(
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
                               color: AppColors.purpleLighterBackgroundColor,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(16)),
@@ -71,7 +71,7 @@ class Medicine extends StatelessWidget {
                             child: SizedBox(
                               width: 100,
                               height: 100,
-                              child: Center(
+                              child: const Center(
                                 child: Icon(AppIcons.pillsFill),
                                 // child: SvgPicture.asset(
                                 //   Assets.icons.icPillsFilled,
@@ -81,7 +81,7 @@ class Medicine extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          16.w,
 
                           /// #pill details
                           Expanded(
@@ -102,7 +102,7 @@ class Medicine extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  8.h,
 
                                   /// #pill description
                                   AutoSizeText(
@@ -113,7 +113,7 @@ class Medicine extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  8.h,
 
                                   /// #pill exact time, pill remaining time
                                   Column(

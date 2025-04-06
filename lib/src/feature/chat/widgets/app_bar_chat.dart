@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/chat/chat.dart';
-import 'package:marquee/marquee.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:skit/skit.dart';
 
@@ -30,6 +30,17 @@ class ChatsAppBar extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
 
+    final GroupChatInfo? groupChatInfo =
+        item is GroupItem ? (item as GroupItem).groupInfo : null;
+
+    final DateTime? date = item is SingleChatItem
+        ? DateTime.parse(
+                (item as SingleChatItem).participant2?.lastActiveAt ?? '')
+            .toLocal()
+        : null;
+
+    final DateTime now = DateTime.now();
+
     return Observer(builder: (context) {
       return AppBar(
           backgroundColor: AppColors.lightPirple,
@@ -50,20 +61,41 @@ class ChatsAppBar extends StatelessWidget {
             children: [
               SizedBox(
                 height: kToolbarHeight / 2,
-                child: Marquee(
-                  text: (item is SingleChatItem
+                child: Text(
+                  (item is SingleChatItem
                           ? (item as SingleChatItem).participant2?.name
                           : (item as GroupItem).groupInfo?.name) ??
                       '',
-                  velocity: 30,
-                  blankSpace: 10,
                   style: textTheme.bodyMedium?.copyWith(letterSpacing: .01),
                 ),
               ),
-              Text(
-                'sdfdsf',
-                style: textTheme.labelSmall,
-              ),
+              if (item is SingleChatItem)
+                SizedBox(
+                  height: kToolbarHeight / 2, // Ensure proper scrolling space
+                  child: Text(
+                    t.chat.lastSeen(
+                      date: date != null &&
+                              (date.year != now.year ||
+                                  date.month != now.month ||
+                                  date.day != now.day)
+                          ? DateFormat('dd.MM.yyyy').format(date)
+                          : '',
+                      time: date?.formattedTime ?? '',
+                    ),
+                    // '${(item as SingleChatItem).participant2?.lastActiveAt} ',
+                    style: textTheme.labelSmall,
+                  ),
+                ),
+              if (item is! SingleChatItem)
+                SizedBox(
+                  height: kToolbarHeight / 2,
+                  child: Text(
+                    '${t.chat.specialists(
+                      n: groupChatInfo?.numberOfSpecialists ?? 0,
+                    )}, ${t.chat.participants(n: groupChatInfo?.numberOfUsers ?? 0)}, ${t.chat.inNetwork(n: groupChatInfo?.numberOfOnlineUsers ?? 0)}',
+                    style: textTheme.labelSmall,
+                  ),
+                ),
             ],
           ),
           actions: [
@@ -84,14 +116,14 @@ class ChatsAppBar extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                if (groupUsersStore != null) {
+                if (item is SingleChatItem) {
+                  context.pushNamed(AppViews.profileInfo, extra: {
+                    'model': (item as SingleChatItem).participant2,
+                  });
+                } else if (groupUsersStore != null) {
                   context.pushNamed(AppViews.groupUsers, extra: {
                     'store': groupUsersStore,
                     'groupInfo': (item as GroupItem).groupInfo,
-                  });
-                } else if (item is SingleChatItem) {
-                  context.pushNamed(AppViews.profileInfo, extra: {
-                    'model': (item as SingleChatItem).participant2,
                   });
                 }
               },
@@ -175,4 +207,22 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+// }
+
+// String formatLastSeen(String isoTime) {
+//   try {
+//     print(isoTime);
+//     DateTime dateTime = DateTime.parse(isoTime);
+//     print(isoTime);
+
+//     // Create a DateFormat object with the desired pattern and locale
+//     DateFormat formatter = DateFormat('d MMMM HH:mm', 'ru');
+
+//     // Format the date into a string
+//     String formattedDate = formatter.format(dateTime);
+//     return 'Был(а) в $formattedDate';
+//   } catch (e) {
+//     return 'Invalid time format';
+//   }
+// }
 }

@@ -1,3 +1,4 @@
+import 'package:faker_dart/faker_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';

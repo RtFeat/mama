@@ -7,6 +7,8 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:intl/intl.dart';
+import 'package:ispectify_dio/ispectify_dio.dart';
+import 'package:mama/main.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mama/src/data.dart';
@@ -122,6 +124,21 @@ final class InitializationProcessor {
         responseBody: true,
         requestHeader: true));
     dio.interceptors.add(storage);
+
+    dio.interceptors.add(
+      ISpectifyDioLogger(
+        iSpectify: iSpectify,
+        settings: ISpectifyDioLoggerSettings(
+            // requestFilter: (requestOptions) =>
+            //     requestOptions.path != '/post3s/1',
+            // responseFilter: (response) => response.statusCode != 404,
+            // errorFilter: (response) => response.response?.statusCode != 404,
+            // errorFilter: (response) {
+            //   return (response.message?.contains('This exception was thrown because')) == false;
+            // },
+            ),
+      ),
+    );
 
     return ApiClientDio(baseUrl: const AppConfig().apiUrl, dio: dio);
   }

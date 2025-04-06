@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:skit/skit.dart';
 
 import 'asset_row.dart';
 import 'mention.dart';
@@ -102,7 +103,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
                   opacity: widget.barStore.fadeOpacity,
                   child: RecordingText(animation: _textOffsetAnimation),
                 ),
-              const SizedBox(width: 10),
+              10.w,
               if (!widget.barStore.isRecording) ...[
                 widget.barStore.files.isNotEmpty
                     ? GestureDetector(
@@ -125,7 +126,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
                           color: AppColors.greyLighterColor,
                         ),
                       ),
-                const SizedBox(width: 20),
+                20.w,
               ],
               MicButton(
                 animation: _micScaleAnimation,

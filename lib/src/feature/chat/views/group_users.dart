@@ -218,10 +218,6 @@ class _OtherRoles extends StatelessWidget {
 
     return Observer(
       builder: (context) {
-        if (store!.doctors.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
         return CustomScrollView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -239,29 +235,33 @@ class _OtherRoles extends StatelessWidget {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: CardWidget(
-                  elevation: 0,
-                  child: CustomScrollView(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      slivers: [
-                        PaginatedLoadingWidget(
-                          isFewLists: true,
-                          store: store!,
-                          listData: () {
-                            return store!.doctors;
-                          },
-                          // separator: (_, __) => separator,
-                          itemBuilder: (context, item, _) {
-                            return PersonItem(
-                              person: item,
-                              store: store,
-                            );
-                          },
-                        ),
-                      ])),
-            )
+            if (store!.doctors.isEmpty)
+              const SliverToBoxAdapter(
+                  child: Center(child: Text('There are no specialists'))),
+            if (store!.doctors.isNotEmpty)
+              SliverToBoxAdapter(
+                child: CardWidget(
+                    elevation: 0,
+                    child: CustomScrollView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        slivers: [
+                          PaginatedLoadingWidget(
+                            isFewLists: true,
+                            store: store!,
+                            listData: () {
+                              return store!.doctors;
+                            },
+                            // separator: (_, __) => separator,
+                            itemBuilder: (context, item, _) {
+                              return PersonItem(
+                                person: item,
+                                store: store,
+                              );
+                            },
+                          ),
+                        ])),
+              )
           ],
         );
       },

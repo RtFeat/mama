@@ -34,10 +34,17 @@ abstract class _GroupsStore extends PaginatedListStore<GroupItem> with Store {
             transformer: (raw) {
               // final data =  ChatsData.fromJson(raw);
 
-              final List<GroupItem>? data = (raw['chats'] as List?)
-                  ?.map((e) => GroupItem.fromJson(e))
-                  .toList();
-              return data ?? [];
+              return {
+                'main': (raw['chats'] as List?)
+                        ?.map((e) => GroupItem.fromJson(e))
+                        .toList() ??
+                    [],
+              };
+
+              // final List<GroupItem>? data = (raw['chats'] as List?)
+              //     ?.map((e) => GroupItem.fromJson(e))
+              //     .toList();
+              // return data ?? [];
             });
 
   @action

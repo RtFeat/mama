@@ -40,7 +40,11 @@ abstract class _AuthorsStore extends PaginatedListStore<AuthorModel>
                 .map((e) => AuthorModel.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 

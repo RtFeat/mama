@@ -59,7 +59,7 @@ class PillAndDocVisitContainer extends StatelessWidget {
                       ),
                     ),
                   ),
-            const SizedBox(width: 16),
+            16.w,
 
             /// #pill details
             Expanded(
@@ -76,7 +76,7 @@ class PillAndDocVisitContainer extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                       maxLines: 1,
                     ),
-                    const SizedBox(height: 5),
+                    5.h,
 
                     /// #pill description
                     subTitle != null

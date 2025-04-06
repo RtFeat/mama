@@ -94,7 +94,7 @@ class _CitySearchBodyState extends State<CitySearchBody> {
                         );
                       },
                       separatorBuilder: (context, index) {
-                        return const SizedBox(height: 5);
+                        return 5.h;
                       },
                       itemCount: widget.store.cities.length),
                 ),

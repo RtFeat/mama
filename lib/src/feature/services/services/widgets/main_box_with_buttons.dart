@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/services/services/model/button_model.dart';
+import 'package:skit/skit.dart';
 
 class MainBoxWithButtons extends StatelessWidget {
   final String image;
@@ -69,7 +70,7 @@ class MainBoxWithButtons extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              12.w,
 
               /// #three buttons
               Expanded(

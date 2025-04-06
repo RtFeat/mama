@@ -20,7 +20,11 @@ class ArticlesStore extends PaginatedListStore<ArticleModel> {
           basePath: Endpoint().articles,
           transformer: (raw) {
             final data = ArticlesData.fromJson(raw);
-            return data.articles ?? [];
+            // return data.articles ?? [];
+
+            return {
+              'main': data.articles ?? [],
+            };
           },
         );
 }

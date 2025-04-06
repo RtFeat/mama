@@ -1,0 +1,31 @@
+// Static tasks configuration.
+//
+// Example:
+[
+  {
+    "label": "Localization",
+    "command": "fvm dart run slang",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "reveal_target": "dock",
+    "hide": "always",
+    "shell": "system"
+  },
+  {
+    "label": "Run flutter",
+    "command": "fvm flutter run",
+    "args": [
+      "--dart-define",
+      "API_URL=https://api.mama-api.ru/api/v1/",
+      "--dart-define",
+      "ENVIRONMENT=DEV"
+    ],
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+    "reveal_target": "dock",
+    "hide": "always",
+    "shell": "system"
+  }
+]

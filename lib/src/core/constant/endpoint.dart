@@ -67,6 +67,8 @@ class Endpoint {
 
   static const String chat = 'chat';
 
+  String get createChat => '$chat/create';
+
   String get uploadFile => '$chat/upload';
 
   String get groups => '$chat/group';
@@ -74,6 +76,7 @@ class Endpoint {
   String get groupUsers => '${groups}s/all';
 
   String get messages => '$chat/message';
+  String get readMessages => '$chat/read_message';
 
   static const String doctor = 'doctor';
 
@@ -96,6 +99,9 @@ class Endpoint {
 
   static const String feed = 'feed';
   String get feedTable => '$feed/table';
+
+  static const String evolution = 'growth';
+  String get evolutionTable => '$evolution/table';
 
   static const String health = 'health';
 

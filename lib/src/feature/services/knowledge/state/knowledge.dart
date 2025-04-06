@@ -40,7 +40,11 @@ abstract class _KnowledgeStore extends PaginatedListStore<ArticleModel>
                 .map((e) => ArticleModel.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 

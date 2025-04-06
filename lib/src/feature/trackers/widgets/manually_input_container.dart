@@ -44,7 +44,7 @@ class ManuallyInputContainer extends StatelessWidget {
                 ),
                 15.h,
                 _TextWidget(text: t.feeding.manualyInputComment.title),
-                const SizedBox(height: 8),
+                8.h,
                 _TextWidget(text: t.feeding.manualyInputComment.subtitle)
               ],
             ),

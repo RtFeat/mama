@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class ArticlesListView extends StatelessWidget {
   final List listData;
@@ -23,7 +24,7 @@ class ArticlesListView extends StatelessWidget {
             model: article,
           );
         },
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        separatorBuilder: (context, index) => 8.w,
       ),
     );
   }

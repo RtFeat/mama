@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class AddWeight extends StatelessWidget {
   const AddWeight({super.key});
@@ -19,16 +20,16 @@ class AddWeight extends StatelessWidget {
         children: [
           FixedCenterIndicator(
               kgOrG: t.trackers.kg.title, painter: CustomPointKG()),
-          const SizedBox(height: 8),
+          8.h,
           FixedCenterIndicator(
               kgOrG: t.trackers.g.title, painter: CustomPointG()),
-          const SizedBox(height: 8),
+          8.h,
           CustomBlog(
             measure: UnitMeasures.weight,
             onPressedElevated: () {},
             onPressedOutlined: () {},
           ),
-          const SizedBox(height: 8),
+          8.h,
         ],
       ),
     );

@@ -17,7 +17,11 @@ class ConsultationRecordsState extends PaginatedListStore {
           basePath: Endpoint().userConsultations,
           transformer: (raw) {
             final data = Consultations.fromJson(raw);
-            return data.data ?? [];
+            // return data.data ?? [];
+
+            return {
+              'main': data.data ?? [],
+            };
           },
         );
 }

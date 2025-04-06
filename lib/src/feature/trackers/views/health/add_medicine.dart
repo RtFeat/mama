@@ -170,7 +170,7 @@ class _AddMedicineViewState extends State<AddMedicineView> {
                       style: textTheme.bodySmall!
                           .copyWith(color: AppColors.blackColor),
                     ),
-                    const SizedBox(height: 8),
+                    8.h,
                     Observer(builder: (context) {
                       return Row(
                         children: [
@@ -183,7 +183,7 @@ class _AddMedicineViewState extends State<AddMedicineView> {
                           ),
                           widget.store.formattedTime == ''
                               ? const SizedBox()
-                              : const SizedBox(width: 16),
+                              : 16.w,
                           CustomButton(
                             height: 44,
                             title: t.trackers.add.title,

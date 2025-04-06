@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class HelperPlayButtonWidget extends StatelessWidget {
   final String title;
@@ -16,20 +17,20 @@ class HelperPlayButtonWidget extends StatelessWidget {
         style: textTheme.titleLarge
             ?.copyWith(color: AppColors.greyBrighterColor, fontSize: 20),
         children: [
-          const WidgetSpan(
+          WidgetSpan(
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
-              child: SizedBox(height: 20)),
+              child: 20.h),
           TextSpan(
             text: t.trackers.helperPlayButtonText.first,
             style: textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.w400,
                 color: AppColors.greyBrighterColor),
           ),
-          const WidgetSpan(
+          WidgetSpan(
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
-              child: SizedBox(width: 5)),
+              child: 5.w),
           WidgetSpan(
             child: Container(
               height: 18,
@@ -47,10 +48,11 @@ class HelperPlayButtonWidget extends StatelessWidget {
               ),
             ),
           ),
-          const WidgetSpan(
-              alignment: PlaceholderAlignment.baseline,
-              baseline: TextBaseline.alphabetic,
-              child: SizedBox(width: 5)),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.baseline,
+            baseline: TextBaseline.alphabetic,
+            child: 5.w,
+          ),
           TextSpan(
             text: t.trackers.helperPlayButtonText.second,
             style: textTheme.labelLarge?.copyWith(

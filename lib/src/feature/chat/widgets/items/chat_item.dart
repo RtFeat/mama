@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/feature.dart';
@@ -25,6 +26,7 @@ class ChatItemWidget extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
+        item.setUnreadMessages(0);
         context.pushNamed(AppViews.chatView, extra: {
           'item': item,
         });
@@ -46,59 +48,62 @@ class ChatItemWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: RichText(
-                        maxLines: 2,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: isChat
-                                  ? participant?.name
-                                  : (item as GroupItem).groupInfo?.name,
-                              // isChat
-                              //     ? '${(item as SingleChatItem).participant2?.name}'
-                              //     : (item as GroupItem).groupInfo?.name,
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontSize: 14,
-                              ),
-                            ),
-                            if (isChat)
-                              if (participant?.profession != null &&
-                                  participant!.profession!.isNotEmpty)
-                                // if ((item as SingleChatItem)
-                                //             .participant2
-                                //             ?.profession !=
-                                //         null &&
-                                //     (item as SingleChatItem)
-                                //         .participant2!
-                                //         .profession!
-                                //         .isNotEmpty)
-                                // if (chatEntity == ChatEntity.singleChat)
-                                //   if (chatItem.profession != null &&
-                                //       chatItem.profession!.isNotEmpty)
-                                WidgetSpan(
-                                  child: ConsultationBadge(
-                                    title: (item as SingleChatItem)
-                                        .participant1!
-                                        .profession!,
-                                  ),
+                Observer(builder: (context) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: RichText(
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: isChat
+                                    ? participant?.name
+                                    : (item as GroupItem).groupInfo?.name,
+                                // isChat
+                                //     ? '${(item as SingleChatItem).participant2?.name}'
+                                //     : (item as GroupItem).groupInfo?.name,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontSize: 14,
                                 ),
-                          ],
+                              ),
+                              if (isChat)
+                                if (participant?.profession != null &&
+                                    participant!.profession!.isNotEmpty)
+                                  // if ((item as SingleChatItem)
+                                  //             .participant2
+                                  //             ?.profession !=
+                                  //         null &&
+                                  //     (item as SingleChatItem)
+                                  //         .participant2!
+                                  //         .profession!
+                                  //         .isNotEmpty)
+                                  // if (chatEntity == ChatEntity.singleChat)
+                                  //   if (chatItem.profession != null &&
+                                  //       chatItem.profession!.isNotEmpty)
+                                  WidgetSpan(
+                                    child: ConsultationBadge(
+                                      title: (item as SingleChatItem)
+                                          .participant1!
+                                          .profession!,
+                                    ),
+                                  ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    if (item.unreadMessages != null && item.unreadMessages! > 0)
-                      UnreadBox(
-                        unread: item.unreadMessages,
-                      ),
-                  ],
-                ),
+                      if (item.unreadMessages != null &&
+                          item.unreadMessages! > 0)
+                        UnreadBox(
+                          unread: item.unreadMessages,
+                        ),
+                    ],
+                  );
+                }),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -151,14 +156,9 @@ class ChatItemWidget extends StatelessWidget {
                     if (item.lastMessage != null &&
                         item.lastMessage?.filePath != null &&
                         item.lastMessage!.filePath!.isNotEmpty)
-                      // Image.asset(
-                      //   Assets.icons.clip.path,
-                      //   height: 33,
-                      // ),
-
                       const Icon(
                         AppIcons.paperclip,
-                        size: 33,
+                        size: 22,
                         color: AppColors.greyBrighterColor,
                       )
                   ],
@@ -166,6 +166,7 @@ class ChatItemWidget extends StatelessWidget {
               ],
             ),
           ),
+          8.w,
         ],
       ),
     );

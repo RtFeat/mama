@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart';
 
 class UserServicesBodyWidget extends StatelessWidget {
   const UserServicesBodyWidget({super.key});
@@ -11,7 +12,7 @@ class UserServicesBodyWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: ListView(children: [
           /// #some space
-          const SizedBox(height: 16),
+          16.h,
 
           /// #knowledge center box
           MainBox(
@@ -21,7 +22,7 @@ class UserServicesBodyWidget extends StatelessWidget {
               context.pushNamed(AppViews.serviceKnowlegde);
             },
           ),
-          const SizedBox(height: 8),
+          8.h,
 
           SubscribeBlockItem(
               child: Column(
@@ -57,7 +58,7 @@ class UserServicesBodyWidget extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(height: 8),
+              8.h,
 
               /// #music for sleep box
               MainBoxWithButtons(
