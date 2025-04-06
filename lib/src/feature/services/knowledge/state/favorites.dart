@@ -41,7 +41,11 @@ abstract class _FavoriteArticlesStore
                 .map((e) => FavoriteArticle.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 }

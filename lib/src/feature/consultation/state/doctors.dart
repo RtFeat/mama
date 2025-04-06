@@ -13,7 +13,11 @@ class DoctorsState extends PaginatedListStore {
           basePath: Endpoint.doctor,
           transformer: (raw) {
             final data = Doctors.fromJson(raw);
-            return data.data ?? [];
+            // return data.data ?? [];
+
+            return {
+              'main': data.data ?? [],
+            };
           },
         );
 }

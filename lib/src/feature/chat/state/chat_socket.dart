@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
@@ -16,27 +18,39 @@ class ChatSocket {
       required this.chatsViewStore});
 
   WebSocketChannel? channel;
+  StreamSubscription? _socketSubscription;
   String? accessToken;
 
   bool isConnected = false;
+  bool isClosed = false;
+
+  int _reconnectAttempts = 0;
+  final int _maxReconnectAttempts = 5;
+
+  void close() {
+    isClosed = true;
+    channel?.sink.close();
+  }
 
   Future<void> initializeSocket() async {
-    accessToken = await tokenStorage.token.then((token) {
-      if (token != null) {
-        return token.accessToken;
-      }
-      return null;
-    });
+    await _socketSubscription?.cancel();
+    accessToken = await tokenStorage.token.then((token) => token?.accessToken);
 
     channel = WebSocketChannel.connect(
       Uri.parse('wss://api.mama-api.ru/api/v1/chat/ws'),
     );
 
-    channel?.stream.listen(
+    _socketSubscription = channel?.stream.listen(
       (data) {
         isConnected = true;
         logger.info('onData: $data', runtimeType: runtimeType);
         final dataInfo = SocketResponse.fromJson(jsonDecode(data));
+
+        if (dataInfo.error != null && dataInfo.error == 'invalid token') {
+          refreshToken().then((_) => reconnect());
+          return;
+        }
+
         if (dataInfo.event == 'message') {
           handleMessage(dataInfo);
         } else if (dataInfo.event == 'delete_message') {
@@ -50,6 +64,7 @@ class ChatSocket {
       },
       onDone: () {
         isConnected = false;
+        if (!isClosed) reconnect();
       },
     );
 
@@ -72,15 +87,61 @@ class ChatSocket {
     channel?.sink.add(data2);
   }
 
+  Future<OAuth2Token?> refreshToken() async {
+    try {
+      final currentToken = await tokenStorage.token;
+      if (currentToken == null) return null;
+
+      final dio = Dio(BaseOptions(
+        baseUrl: const AppConfig().apiUrl,
+        followRedirects: true,
+      ));
+
+      final response = await dio.get(
+        '${const AppConfig().apiUrl}${Endpoint().accessToken}',
+        options: Options(
+          headers: {'Refresh-Token': 'Bearer ${currentToken.refreshToken}'},
+          followRedirects: true,
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 401) {
+        await tokenStorage.clearToken();
+        return null;
+      }
+
+      final newToken = OAuth2Token(
+        accessToken: response.data['access_token'],
+        refreshToken: response.data['refresh_token'],
+      );
+
+      await tokenStorage.setToken(newToken);
+      return newToken;
+    } catch (e) {
+      logger.error('Error refreshing token: $e');
+      return null;
+    }
+  }
+
   Future<void> reconnect() async {
-    logger.info('Attempting to reconnect...', runtimeType: runtimeType);
+    if (_reconnectAttempts >= _maxReconnectAttempts) {
+      logger.error('Max reconnect attempts reached');
+      return;
+    }
+
+    _reconnectAttempts++;
+    logger.info('Attempting to reconnect (attempt $_reconnectAttempts)...');
+
     try {
       await initializeSocket();
-      logger.info('Reconnected successfully!', runtimeType: runtimeType);
+      _reconnectAttempts = 0;
+      logger.info('Reconnected successfully!');
     } catch (e) {
       logger.error('Reconnection failed: $e');
-      await Future.delayed(const Duration(seconds: 5));
-      reconnect();
+      await Future.delayed(Duration(seconds: 5 * _reconnectAttempts));
+      if (!isClosed) reconnect();
     }
   }
 
@@ -220,7 +281,12 @@ class ChatSocket {
         senderId: data.data?.message?.reply?.senderId ?? '',
       ),
     );
-    logger.info(message.toJson(), runtimeType: runtimeType);
+    logger.info('Received message with ID: ${data.data?.message?.id}');
+    if (store.messages.any((m) => m.id == message.id)) {
+      logger.warning('Duplicate message detected: ${message.id}');
+      return;
+    }
+
     store.addMessage(data.data?.message ?? message);
   }
 

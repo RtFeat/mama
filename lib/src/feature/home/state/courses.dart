@@ -21,7 +21,11 @@ class CoursesStore extends PaginatedListStore<OnlineSchoolCourse> {
                 .map((e) => OnlineSchoolCourse.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 }

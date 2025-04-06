@@ -46,7 +46,11 @@ abstract class _DiapersStore extends LearnMoreStore<DiapersMain> with Store {
                 .map((e) => DiapersMain.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 

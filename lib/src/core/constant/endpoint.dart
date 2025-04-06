@@ -67,6 +67,8 @@ class Endpoint {
 
   static const String chat = 'chat';
 
+  String get createChat => '$chat/create';
+
   String get uploadFile => '$chat/upload';
 
   String get groups => '$chat/group';

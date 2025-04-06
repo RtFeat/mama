@@ -43,7 +43,7 @@ class _SchoolsViewState extends State<SchoolsView> {
                 context.pushNamed(
                   AppViews.profileInfo,
                   extra: {
-                    'model': schoolModel,
+                    'model': schoolModel?.account,
                   },
                 );
               },

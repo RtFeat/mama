@@ -40,7 +40,11 @@ abstract class _EvolutionStore extends TableStore<EvolutionCell> with Store {
                 .map((e) => EvolutionCell.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 

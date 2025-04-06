@@ -56,7 +56,11 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
                 }
               }
 
-              return data ?? [];
+              // return data ?? [];
+
+              return {
+                'main': data ?? [],
+              };
             });
 
   @observable

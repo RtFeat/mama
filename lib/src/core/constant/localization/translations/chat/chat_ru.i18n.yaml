@@ -1,7 +1,6 @@
 accountTitle: Аккаунт
 messageHint: Сообщение
 groupChatsListTitle: Группы
-lastSeen: Был(а) в
 buttonToogleAll: Все
 buttonToogleSpecialist: Специалисты
 hintSearchChat: Найти
@@ -15,3 +14,12 @@ reply: Ответить
 pin: Закрепить
 unpin: Открепить
 delete: Удалить
+
+specialists:
+  one: $n специалист
+  other: $n специалистов
+participants:
+  one: $n участник
+  other: $n участников
+inNetwork: $n в сети
+lastSeen: Был(а) $date в $time

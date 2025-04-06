@@ -34,7 +34,11 @@ abstract class _CategoriesStore extends PaginatedListStore<CategoryModel>
                 .map((e) => CategoryModel.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 

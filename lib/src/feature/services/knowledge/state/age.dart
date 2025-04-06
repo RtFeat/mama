@@ -34,7 +34,11 @@ abstract class _AgeCategoriesStore extends PaginatedListStore<AgeCategoryModel>
                 .map((e) => AgeCategoryModel.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 
