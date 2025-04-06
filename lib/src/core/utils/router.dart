@@ -422,7 +422,7 @@ final GoRouter router = GoRouter(
           name: AppViews.profileInfo,
           builder: (context, state) {
             final Map? extra = state.extra as Map?;
-            final BaseModel? model = extra?['model'] as BaseModel?;
+            final AccountModel? model = extra?['model'];
 
             return ProfileInfoView(
               model: model!,

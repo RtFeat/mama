@@ -1,7 +1,6 @@
 accountTitle: Account
 messageHint: Message
 groupChatsListTitle: Groups
-lastSeen: Last seen at
 buttonToogleAll: All
 buttonToogleSpecialist: Specialists
 hintSearchChat: Find
@@ -15,3 +14,12 @@ reply: Reply
 pin: Pin
 unpin: Unpin
 delete: Delete
+
+specialists:
+  one: $n specialist
+  other: $n specialists
+participants:
+  one: $n participant
+  other: $n participants
+inNetwork: $n in network
+lastSeen: Was $date $time

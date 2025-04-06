@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/feature/chat/chat.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -28,6 +29,17 @@ class ChatsAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
+
+    final GroupChatInfo? groupChatInfo =
+        item is GroupItem ? (item as GroupItem).groupInfo : null;
+
+    final DateTime? date = item is SingleChatItem
+        ? DateTime.parse(
+                (item as SingleChatItem).participant2?.lastActiveAt ?? '')
+            .toLocal()
+        : null;
+
+    final DateTime now = DateTime.now();
 
     return Observer(builder: (context) {
       return AppBar(
@@ -61,17 +73,26 @@ class ChatsAppBar extends StatelessWidget {
                 SizedBox(
                   height: kToolbarHeight / 2, // Ensure proper scrolling space
                   child: Text(
-                    '${(item as SingleChatItem).participant2?.lastActiveAt} ',
+                    t.chat.lastSeen(
+                      date: date != null &&
+                              (date.year != now.year ||
+                                  date.month != now.month ||
+                                  date.day != now.day)
+                          ? DateFormat('dd.MM.yyyy').format(date)
+                          : '',
+                      time: date?.formattedTime ?? '',
+                    ),
+                    // '${(item as SingleChatItem).participant2?.lastActiveAt} ',
                     style: textTheme.labelSmall,
                   ),
                 ),
-              if (item is! SingleChatItem) // Show only for GroupItem
+              if (item is! SingleChatItem)
                 SizedBox(
-                  height: kToolbarHeight / 2, // Ensure proper scrolling space
+                  height: kToolbarHeight / 2,
                   child: Text(
-                    '${(item as GroupItem).groupInfo?.numberOfSpecialists ?? 0} специалиста, '
-                    '${(item as GroupItem).groupInfo?.numberOfUsers ?? 0} участников, '
-                    '${(item as GroupItem).groupInfo?.numberOfOnlineUsers ?? 0} в сети',
+                    '${t.chat.specialists(
+                      n: groupChatInfo?.numberOfSpecialists ?? 0,
+                    )}, ${t.chat.participants(n: groupChatInfo?.numberOfUsers ?? 0)}, ${t.chat.inNetwork(n: groupChatInfo?.numberOfOnlineUsers ?? 0)}',
                     style: textTheme.labelSmall,
                   ),
                 ),

@@ -37,12 +37,31 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
             fetchFunction: (params, path) =>
                 apiClient.get('$path/$chatId', queryParams: params),
             transformer: (raw) {
-              final List<AccountModel>? data = (raw['account'] as List?)
-                  ?.map((e) => AccountModel.fromJson(e))
-                  .toList();
+              return {
+                'main': (raw['users'] as List?)
+                        ?.map((e) => AccountModel.fromJson(e))
+                        .toList() ??
+                    [],
+                'specialists': (raw['specialists'] as List?)
+                        ?.map((e) => AccountModel.fromJson(e))
+                        .toList() ??
+                    [],
+              };
 
-              return data ?? [];
+              // final List<AccountModel>? data = (raw['users'] as List?)
+              //     ?.map((e) => AccountModel.fromJson(e))
+              //     .toList();
+
+              // final List<AccountModel>? specialists =
+              //     (raw['specialists'] as List?)
+              //         ?.map((e) => AccountModel.fromJson(e))
+              //         .toList();
+
+              // return data ?? [];
             });
+
+  @computed
+  ObservableList<AccountModel> get specialists => dataLists['specialists']!;
 
   @computed
   ObservableList<AccountModel> get doctors =>

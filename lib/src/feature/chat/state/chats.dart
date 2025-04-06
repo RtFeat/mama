@@ -60,7 +60,11 @@ abstract class _ChatsStore extends PaginatedListStore<SingleChatItem>
               final List<SingleChatItem>? data = (raw['chats'] as List?)
                   ?.map((e) => SingleChatItem.fromJson(e))
                   .toList();
-              return data ?? [];
+              // return data ?? [];
+
+              return {
+                'main': data ?? [],
+              };
             });
 
   @action

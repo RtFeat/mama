@@ -17,7 +17,11 @@ class SchoolsStore extends PaginatedListStore {
           basePath: Endpoint().schools,
           transformer: (raw) {
             final data = Schools.fromJson(raw);
-            return data.schools ?? [];
+            // return data.schools ?? [];
+
+            return {
+              'main': data.schools ?? [],
+            };
           },
         );
 }

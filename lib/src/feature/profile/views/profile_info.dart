@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class ProfileInfoView extends StatelessWidget {
-  final BaseModel model;
+  final AccountModel model;
   const ProfileInfoView({
     super.key,
     required this.model,
@@ -18,171 +18,181 @@ class ProfileInfoView extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    final SchoolModel? schoolModel =
-        model is SchoolModel ? model as SchoolModel : null;
-    final DoctorModel? doctorModel =
-        model is DoctorModel ? model as DoctorModel : null;
-    final AccountModel? userModel =
-        model is AccountModel ? model as AccountModel : null;
+    // final SchoolModel? schoolModel =
+    //     model is SchoolModel ? model as SchoolModel : null;
+    // final DoctorModel? doctorModel =
+    //     model is DoctorModel ? model as DoctorModel : null;
+    // final AccountModel? userModel =
+    //     model is AccountModel ? model as AccountModel : null;
 
-    final Role role = doctorModel != null
-        ? Role.doctor
-        : schoolModel != null
-            ? Role.onlineSchool
-            : Role.user;
+    // final Role role = doctorModel != null
+    //     ? Role.doctor
+    //     : schoolModel != null
+    //         ? Role.onlineSchool
+    //         : Role.user;
 
-    logger.info('Role: $role');
+    logger.info('Role: $model.role');
 
-    logger.info(switch (role) {
-      Role.onlineSchool => 'school: ${schoolModel?.toJson()}',
-      Role.doctor => 'doctor: ${doctorModel?.toJson()}',
-      _ => 'User: ${userModel?.toJson()}',
+    logger.info(switch (model.role) {
+      Role.onlineSchool => 'school: ${model.toJson()}',
+      Role.doctor => 'doctor: ${model.toJson()}',
+      _ => 'User: ${model.toJson()}',
     });
 
-    return Scaffold(
-        extendBodyBehindAppBar: true,
-        body: DecoratedBox(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.gradientPurpleBackgroundScaffold,
-                  AppColors.gradientPurpleLighterBackgroundScaffold,
-                ],
-              ),
-            ),
-            child: Stack(children: [
-              ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  ProfilePhoto(
-                    isShowIcon: role == Role.user,
-                    onIconTap: () {},
-                    icon: const Material(
-                      shape: CircleBorder(),
-                      color: AppColors.primaryColor,
-                      child: Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Icon(
-                          AppIcons.bubbleLeftFill,
-                          size: 32,
-                          color: AppColors.whiteColor,
-                        ),
-                      ),
-                    ),
-                    photoUrl: switch (role) {
-                      Role.doctor => doctorModel?.account?.avatarUrl,
-                      Role.onlineSchool => schoolModel?.account?.avatarUrl,
-                      _ => userModel?.avatarUrl,
-                    },
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32),
-                      child: Column(
-                        children: [
-                          if (role == Role.onlineSchool) ...[
-                            Text(
-                              t.profile.onlineSchool,
-                              style: textTheme.headlineSmall?.copyWith(
-                                fontSize: 17,
-                                color: AppColors.greyBrighterColor,
-                              ),
-                            ),
-                            4.h,
-                          ],
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                switch (role) {
-                                  Role.doctor =>
-                                    doctorModel?.account?.name ?? '',
-                                  Role.onlineSchool =>
-                                    schoolModel?.account?.name ?? '',
-                                  _ => userModel?.name ?? '',
-                                },
-                                textAlign: TextAlign.center,
-                                style: textTheme.headlineSmall?.copyWith(
-                                  fontSize: 24,
-                                ),
-                              ),
-                              if (doctorModel?.profession != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 18),
-                                  child: ConsultationBadge(
-                                    title: doctorModel?.profession ?? '',
-                                  ),
-                                )
-                            ],
-                          ),
-                          if (role == Role.doctor)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, right: 16, top: 16),
-                              child: CustomButton(
-                                title: t.profile.consultationVariants,
-                                isSmall: false,
-                                // icon: IconModel(
-                                //   iconPath: Assets.icons.videoIcon,
-                                // ),
-                                icon: AppIcons.videoBubbleLeftFill,
-                                onTap: () {},
-                              ),
-                            ),
-                        ],
-                      )),
-                  BodyGroup(
-                      title: t.profile.titleInfo,
-                      isDecorated: true,
-                      items: [
-                        BodyItemWidget(
-                          item: CustomBodyItem(
-                              subTitleWidth: double.infinity,
-                              title: switch (role) {
-                                Role.onlineSchool =>
-                                  schoolModel?.account?.info ?? '',
-                                _ => userModel?.info ?? '',
-                              },
-                              subTitle: switch (role) {
-                                Role.onlineSchool => t.profile.aboutSchool,
-                                _ => t.profile.aboutMe2,
-                              }),
-                        )
-                      ]),
-                  _Body(
-                    store: context.watch(),
-                    role: role,
-                    userId: switch (role) {
-                      Role.doctor => doctorModel?.id ?? '',
-                      Role.onlineSchool => schoolModel?.id ?? '',
-                      _ => userModel?.id ?? '',
-                    },
-                    schoolId: schoolModel?.id ?? '',
-                  )
-                ],
-              ),
-              Positioned(
-                top: 50.0,
-                left: 0.0,
-                child: ButtonLeading(
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    size: 20.0,
-                    color: AppColors.blackColor,
-                  ),
-                  title: t.profile.backLeadingButton,
-                  labelStyle: textTheme.bodyMedium!
-                      .copyWith(fontWeight: FontWeight.w400),
-                  onTapButton: () async {
-                    context.pop();
-                  },
-                  borderRadius: const BorderRadius.horizontal(
-                    right: Radius.circular(20),
+    return Provider(
+      create: (context) => ProfileInfoViewStore(
+          apiClient: context.read<Dependencies>().apiClient),
+      builder: (context, child) {
+        final ProfileInfoViewStore store =
+            context.watch<ProfileInfoViewStore>();
+
+        return Scaffold(
+            extendBodyBehindAppBar: true,
+            body: DecoratedBox(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.gradientPurpleBackgroundScaffold,
+                      AppColors.gradientPurpleLighterBackgroundScaffold,
+                    ],
                   ),
                 ),
-              ),
-            ])));
+                child: Stack(children: [
+                  ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      ProfilePhoto(
+                        isShowIcon: model.role == Role.user,
+                        onIconTap: () {
+                          store.createChat(model.id!);
+                        },
+                        icon: const Material(
+                          shape: CircleBorder(),
+                          color: AppColors.primaryColor,
+                          child: Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(
+                              AppIcons.bubbleLeftFill,
+                              size: 32,
+                              color: AppColors.whiteColor,
+                            ),
+                          ),
+                        ),
+                        photoUrl: switch (model.role) {
+                          Role.doctor => model.avatarUrl,
+                          Role.onlineSchool => model.avatarUrl,
+                          _ => model.avatarUrl,
+                        },
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32),
+                          child: Column(
+                            children: [
+                              if (model.role == Role.onlineSchool) ...[
+                                Text(
+                                  t.profile.onlineSchool,
+                                  style: textTheme.headlineSmall?.copyWith(
+                                    fontSize: 17,
+                                    color: AppColors.greyBrighterColor,
+                                  ),
+                                ),
+                                4.h,
+                              ],
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    switch (model.role) {
+                                      Role.doctor => model.name,
+                                      Role.onlineSchool => model.name,
+                                      _ => model.name,
+                                    },
+                                    textAlign: TextAlign.center,
+                                    style: textTheme.headlineSmall?.copyWith(
+                                      fontSize: 24,
+                                    ),
+                                  ),
+                                  if (model.profession != null &&
+                                      model.profession!.isNotEmpty)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 18),
+                                      child: ConsultationBadge(
+                                        title: model.profession ?? '',
+                                      ),
+                                    )
+                                ],
+                              ),
+                              if (model.role == Role.doctor)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 16),
+                                  child: CustomButton(
+                                    title: t.profile.consultationVariants,
+                                    isSmall: false,
+                                    // icon: IconModel(
+                                    //   iconPath: Assets.icons.videoIcon,
+                                    // ),
+                                    icon: AppIcons.videoBubbleLeftFill,
+                                    onTap: () {},
+                                  ),
+                                ),
+                            ],
+                          )),
+                      BodyGroup(
+                          title: t.profile.titleInfo,
+                          isDecorated: true,
+                          items: [
+                            BodyItemWidget(
+                              item: CustomBodyItem(
+                                  subTitleWidth: double.infinity,
+                                  title: switch (model.role) {
+                                    Role.onlineSchool => model.info ?? '',
+                                    _ => model.info ?? '',
+                                  },
+                                  subTitle: switch (model.role) {
+                                    Role.onlineSchool => t.profile.aboutSchool,
+                                    _ => t.profile.aboutMe2,
+                                  }),
+                            )
+                          ]),
+                      _Body(
+                        store: context.watch(),
+                        role: model.role ?? Role.user,
+                        userId: switch (model.role) {
+                          Role.doctor => model.id ?? '',
+                          Role.onlineSchool => model.id ?? '',
+                          _ => model.id ?? '',
+                        },
+                        schoolId: model.id ?? '',
+                      )
+                    ],
+                  ),
+                  Positioned(
+                    top: 50.0,
+                    left: 0.0,
+                    child: ButtonLeading(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 20.0,
+                        color: AppColors.blackColor,
+                      ),
+                      title: t.profile.backLeadingButton,
+                      labelStyle: textTheme.bodyMedium!
+                          .copyWith(fontWeight: FontWeight.w400),
+                      onTapButton: () async {
+                        context.pop();
+                      },
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Radius.circular(20),
+                      ),
+                    ),
+                  ),
+                ])));
+      },
+    );
   }
 }
 

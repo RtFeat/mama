@@ -39,7 +39,11 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
                 .map((e) => FeedingCell.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 

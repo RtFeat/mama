@@ -38,7 +38,10 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
             final List<TrackModel>? data = (raw['music'] as List?)
                 ?.map((e) => TrackModel.fromJson(e))
                 .toList();
-            return data ?? [];
+            // return data ?? [];
+            return {
+              'main': data ?? [],
+            };
           },
         ) {
     audioPlayerStore.player.onPlayerStateChanged.listen((event) {

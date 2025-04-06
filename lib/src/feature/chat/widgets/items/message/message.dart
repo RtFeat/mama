@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -31,10 +32,35 @@ class MessageWidget extends StatelessWidget {
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          MessageAvatar(
-            isOnGroup: isOnGroup,
-            isUser: isUser,
-            avatarUrl: item.senderAvatarUrl,
+          GestureDetector(
+            onTap: () {
+              context.pushNamed(AppViews.profileInfo, extra: {
+                'model': AccountModel(
+                    gender: Gender.male,
+                    firstName: item.senderName,
+                    secondName: item.senderSurname,
+                    phone: '',
+                    id: item.senderId,
+                    avatarUrl: item.senderAvatarUrl,
+                    role: switch (item.senderProfession) {
+                      'USER' => Role.user,
+                      'ADMIN' => Role.admin,
+                      'MODERATOR' => Role.moderator,
+                      'DOCTOR' => Role.doctor,
+                      'ONLINE_SCHOOL' => Role.onlineSchool,
+                      _ => Role.doctor,
+                    }
+                    // role: Role.values.firstWhere(
+                    // (x) => x.name == item.senderProfession,
+                    // ),
+                    ),
+              });
+            },
+            child: MessageAvatar(
+              isOnGroup: isOnGroup,
+              isUser: isUser,
+              avatarUrl: item.senderAvatarUrl,
+            ),
           ),
           IntrinsicWidth(
             child: Content(

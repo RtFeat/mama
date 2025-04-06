@@ -36,7 +36,11 @@ abstract class _SleepCryStore extends TableStore<SleepCryCell> with Store {
                 .map((e) => SleepCryCell.fromJson(e))
                 .toList();
 
-            return data;
+            // return data;
+
+            return {
+              'main': data,
+            };
           },
         );
 
