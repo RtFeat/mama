@@ -113,9 +113,9 @@ abstract class _ChatBottomBarStore with Store {
     socket
         .sendMessage(
       files: uploadedFiles,
-      messageText: _messageText,
+      text: _messageText,
       chatId: store.chatId!,
-      replyMessageId: store.mentionedMessage?.id ?? '',
+      replyId: store.mentionedMessage?.id ?? '',
     )
         .then((v) {
       messageController.value = '';

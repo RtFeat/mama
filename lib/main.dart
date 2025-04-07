@@ -9,12 +9,11 @@ final iSpectify = ISpectify();
 void main() {
   ISpect.run(
     () => logger.runLogging(
-      () => runZonedGuarded(
-        () => const AppRunner().initializeAndRun(),
-        logger.logZoneError,
-      ),
-      const LogOptions(),
-    ),
+        () => runZonedGuarded(
+              () => const AppRunner().initializeAndRun(),
+              logger.logZoneError,
+            ),
+        const LogOptions()),
     logger: iSpectify,
   );
 }

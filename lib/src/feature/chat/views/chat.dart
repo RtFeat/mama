@@ -60,7 +60,7 @@ class __BodyState extends State<_Body> {
     widget.store.init();
 
     logger.info('${widget.item.runtimeType}');
-    widget.socket.readMessage();
+    widget.socket.markMessagesAsRead();
 
     widget.store.setChatId(widget.item is SingleChatItem
         ? widget.item?.id
@@ -88,7 +88,7 @@ class __BodyState extends State<_Body> {
   }
 
   void readMessage() async {
-    await widget.socket.readMessage();
+    await widget.socket.markMessagesAsRead();
     final store = context.watch<ChatsViewStore>();
     store.loadAllChats();
     store.loadAllGroups(context.watch<UserStore>().selectedChild?.id);

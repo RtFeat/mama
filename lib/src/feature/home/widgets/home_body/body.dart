@@ -8,7 +8,7 @@ import 'home_specialist_body.dart';
 import 'user_body.dart';
 
 class HomeBodyWidget extends StatelessWidget {
-  final CustomAppBar appBar;
+  final PreferredSizeWidget appBar;
   final TabController tabController;
   const HomeBodyWidget({
     super.key,

@@ -5,7 +5,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:ispect/ispect.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/main.dart';
 
 /// [MaterialContext] is an entry point to the material context.
 ///
@@ -15,7 +14,7 @@ class MaterialContext extends StatefulWidget {
 
   // This global key is needed for [MaterialApp]
   // to work properly when Widgets Inspector is enabled.
-  static final _globalKey = GlobalKey();
+  // static final _globalKey = GlobalKey();
 
   @override
   State<MaterialContext> createState() => _MaterialContextState();
@@ -29,11 +28,11 @@ class _MaterialContextState extends State<MaterialContext> {
 
   @override
   void initState() {
-    router.routerDelegate.addListener(() {
-      final String location =
-          router.routerDelegate.currentConfiguration.last.matchedLocation;
-      iSpectify.route(location);
-    });
+    // router.routerDelegate.addListener(() {
+    //   final String location =
+    //       router.routerDelegate.currentConfiguration.last.matchedLocation;
+    //   iSpectify.route(location);
+    // });
     super.initState();
   }
 
@@ -71,83 +70,6 @@ class _MaterialContextState extends State<MaterialContext> {
             child = ISpectBuilder(
               options: ISpectOptions(
                 locale: TranslationProvider.of(context).flutterLocale,
-                panelButtons: [
-                  (
-                    icon: Icons.copy_rounded,
-                    label: 'Token',
-                    onTap: (context) {
-                      _controller.toggle(context);
-                      debugPrint('Token copied');
-                    },
-                  ),
-                ],
-                panelItems: [
-                  (
-                    icon: Icons.home,
-                    enableBadge: false,
-                    onTap: (context) {
-                      debugPrint('Home');
-                    },
-                  ),
-                ],
-                actionItems: [
-                  ISpectifyActionItem(
-                    title: 'Test',
-                    icon: Icons.account_tree_rounded,
-                    onTap: (context) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const Scaffold(
-                            body: Center(
-                              child: Text('Test'),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              theme: ISpectTheme(
-                pageTitle: 'Custom Name',
-                logDescriptions: [
-                  LogDescription(
-                    key: 'bloc-event',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'bloc-transition',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'bloc-close',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'bloc-create',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'bloc-state',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'riverpod-add',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'riverpod-update',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'riverpod-dispose',
-                    isDisabled: true,
-                  ),
-                  LogDescription(
-                    key: 'riverpod-fail',
-                    isDisabled: true,
-                  ),
-                ],
               ),
               observer: _observer,
               controller: _controller,

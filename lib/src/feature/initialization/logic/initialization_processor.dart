@@ -9,7 +9,6 @@ import 'package:fresh_dio/fresh_dio.dart';
 import 'package:intl/intl.dart';
 import 'package:ispectify_dio/ispectify_dio.dart';
 import 'package:mama/main.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
@@ -118,25 +117,26 @@ final class InitializationProcessor {
       baseUrl: const AppConfig().apiUrl,
       followRedirects: true,
     ));
-    dio.interceptors.add(PrettyDioLogger(
-        requestBody: true,
-        request: true,
-        responseBody: true,
-        requestHeader: true));
+    // dio.interceptors.add(PrettyDioLogger(
+    //     requestBody: true,
+    //     request: true,
+    //     responseBody: true,
+    //     requestHeader: true));
     dio.interceptors.add(storage);
 
     dio.interceptors.add(
       ISpectifyDioLogger(
         iSpectify: iSpectify,
         settings: ISpectifyDioLoggerSettings(
-            // requestFilter: (requestOptions) =>
-            //     requestOptions.path != '/post3s/1',
-            // responseFilter: (response) => response.statusCode != 404,
-            // errorFilter: (response) => response.response?.statusCode != 404,
-            // errorFilter: (response) {
-            //   return (response.message?.contains('This exception was thrown because')) == false;
-            // },
-            ),
+          enabled: false,
+          // requestFilter: (requestOptions) =>
+          //     requestOptions.path != '/post3s/1',
+          // responseFilter: (response) => response.statusCode != 404,
+          // errorFilter: (response) => response.response?.statusCode != 404,
+          // errorFilter: (response) {
+          //   return (response.message?.contains('This exception was thrown because')) == false;
+          // },
+        ),
       ),
     );
 

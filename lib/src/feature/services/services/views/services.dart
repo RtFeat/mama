@@ -3,7 +3,7 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
 class ServicesView extends StatelessWidget {
-  final CustomAppBar appBar;
+  final PreferredSizeWidget appBar;
 
   const ServicesView({
     super.key,

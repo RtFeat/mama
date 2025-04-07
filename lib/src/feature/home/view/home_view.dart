@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -50,43 +49,43 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     super.initState();
     isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
-    widget.socket.initializeSocket();
+    widget.socket.initialize();
     widget.firebaseMessageStore.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    final CustomAppBar appBar = CustomAppBar(
-      leading: Observer(builder: (context) {
-        return ProfileWidget(
-          onTap: () {
-            router.pushNamed(AppViews.profile);
-          },
-          alignment: Alignment.centerLeft,
-          avatarUrl: widget.userStore.account.avatarUrl ?? '',
-        );
-      }),
-      action: ProfileWidget(
-        isShowText: true,
-        onTapSwitch: () {
-          switch (_tabController.index) {
-            case 2:
-              if (widget.userStore.role == Role.user) {
-                final store =
-                    Provider.of<ChatsViewStore>(context, listen: false);
+    // final CustomAppBar appBar = CustomAppBar(
+    //   leading: Observer(builder: (context) {
+    //     return ProfileWidget(
+    //       onTap: () {
+    //         router.pushNamed(AppViews.profile);
+    //       },
+    //       alignment: Alignment.centerLeft,
+    //       avatarUrl: widget.userStore.account.avatarUrl ?? '',
+    //     );
+    //   }),
+    //   action: ProfileWidget(
+    //     isShowText: true,
+    //     onTapSwitch: () {
+    //       switch (_tabController.index) {
+    //         case 2:
+    //           if (widget.userStore.role == Role.user) {
+    //             final store =
+    //                 Provider.of<ChatsViewStore>(context, listen: false);
 
-                store.groups.resetPagination();
+    //             store.groups.resetPagination();
 
-                store.loadAllGroups(
-                  widget.userStore.selectedChild?.id,
-                );
-              }
-              break;
-            default:
-          }
-        },
-      ),
-    );
+    //             store.loadAllGroups(
+    //               widget.userStore.selectedChild?.id,
+    //             );
+    //           }
+    //           break;
+    //         default:
+    //       }
+    //     },
+    //   ),
+    // );
 
     return Scaffold(
         body: TabBarView(
@@ -94,16 +93,7 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           children: [
             HomeBodyWidget(
               tabController: _tabController,
-              appBar: CustomAppBar(
-                leading: Observer(builder: (context) {
-                  return ProfileWidget(
-                    onTap: () {
-                      router.pushNamed(AppViews.profile);
-                    },
-                    alignment: Alignment.centerLeft,
-                    avatarUrl: widget.userStore.account.avatarUrl ?? '',
-                  );
-                }),
+              appBar: HomeAppBar(
                 action: switch (widget.userStore.role) {
                   Role.user => ProfileWidget(
                       isShowText: true,
@@ -117,18 +107,30 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
                     ),
                   _ => null,
                 },
-                // action: widget.userStore.role,
               ),
             ),
             if (isUser)
               TrackersView(
-                appBar: appBar,
+                appBar: HomeAppBar(),
               ),
             ChatsListScreen(
-              appBar: appBar,
+              appBar: HomeAppBar(
+                onTapSwitch: () {
+                  if (widget.userStore.role == Role.user) {
+                    final store =
+                        Provider.of<ChatsViewStore>(context, listen: false);
+
+                    store.groups.resetPagination();
+
+                    store.loadAllGroups(
+                      widget.userStore.selectedChild?.id,
+                    );
+                  }
+                },
+              ),
             ),
             ServicesView(
-              appBar: appBar,
+              appBar: HomeAppBar(),
             ),
           ],
         ),

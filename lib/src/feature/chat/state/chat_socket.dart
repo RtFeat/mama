@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:fresh_dio/fresh_dio.dart';
@@ -12,105 +14,205 @@ class ChatSocket {
   final ChatsViewStore chatsViewStore;
   final Fresh tokenStorage;
 
-  ChatSocket(
-      {required this.store,
-      required this.tokenStorage,
-      required this.chatsViewStore});
+  WebSocketChannel? _channel;
+  StreamSubscription? _socketSub;
+  String? _accessToken;
 
-  WebSocketChannel? channel;
-  StreamSubscription? _socketSubscription;
-  String? accessToken;
-
-  bool isConnected = false;
-  bool isClosed = false;
-
+  bool _isConnected = false;
+  bool _isClosed = false;
   int _reconnectAttempts = 0;
   final int _maxReconnectAttempts = 5;
 
-  void close() {
-    isClosed = true;
-    channel?.sink.close();
+  // Очередь сообщений и операций
+  final _messageQueue = Queue<Map<String, dynamic>>();
+  final _pendingCompleters = Queue<Completer<void>>();
+  bool _isProcessingQueue = false;
+
+  ChatSocket({
+    required this.store,
+    required this.tokenStorage,
+    required this.chatsViewStore,
+  });
+
+  // Основные публичные методы ==============================================
+
+  Future<void> initialize() async {
+    if (_isClosed) return;
+
+    await _disconnect();
+
+    try {
+      _accessToken = await _getToken();
+      if (_accessToken == null) throw Exception('No access token');
+
+      _channel = WebSocketChannel.connect(
+        Uri.parse('wss://api.mama-api.ru/api/v1/chat/ws'),
+      );
+
+      _setupListeners();
+      await _sendHandshake();
+
+      _isConnected = true;
+      _reconnectAttempts = 0;
+      _processQueue(); // Запускаем обработку очереди после подключения
+    } catch (e) {
+      _handleError(e);
+    }
   }
 
-  Future<void> initializeSocket() async {
-    await _socketSubscription?.cancel();
-    accessToken = await tokenStorage.token.then((token) => token?.accessToken);
+  Future<void> sendMessage({
+    required String text,
+    required String chatId,
+    String replyId = '',
+    List<MessageFile>? files,
+  }) async {
+    final completer = Completer<void>();
+    _pendingCompleters.add(completer);
 
-    channel = WebSocketChannel.connect(
-      Uri.parse('wss://api.mama-api.ru/api/v1/chat/ws'),
-    );
-
-    _socketSubscription = channel?.stream.listen(
-      (data) {
-        isConnected = true;
-        logger.info('onData: $data', runtimeType: runtimeType);
-        final dataInfo = SocketResponse.fromJson(jsonDecode(data));
-
-        if (dataInfo.error != null && dataInfo.error == 'invalid token') {
-          refreshToken().then((_) => reconnect());
-          return;
-        }
-
-        if (dataInfo.event == 'message') {
-          handleMessage(dataInfo);
-        } else if (dataInfo.event == 'delete_message') {
-          handleDeleteMessage(dataInfo);
-        }
-      },
-      onError: (error) {
-        isConnected = false;
-        logger.error('onError: $error');
-        reconnect();
-      },
-      onDone: () {
-        isConnected = false;
-        if (!isClosed) reconnect();
-      },
-    );
-
-    final data = json.encode({
-      'event': 'join',
-      'type_chat': 'solo',
+    _messageQueue.add({
+      'event': 'message',
+      'type_chat': store.chatType,
       'data': {
-        'access_token': 'Bearer $accessToken',
-      },
+        'message': text,
+        'chat_id': chatId,
+        'reply': replyId,
+        if (files != null) 'upload_data': files,
+      }
     });
-    channel?.sink.add(data);
 
-    final data2 = json.encode({
-      'event': 'join',
-      'type_chat': 'group',
-      'data': {
-        'access_token': 'Bearer $accessToken',
-      },
-    });
-    channel?.sink.add(data2);
+    _processQueue();
+    return completer.future;
   }
 
-  Future<OAuth2Token?> refreshToken() async {
+  Future<void> deleteMessage(String messageId) async {
+    final completer = Completer<void>();
+    _pendingCompleters.add(completer);
+
+    _messageQueue.add({
+      'event': 'delete_message',
+      'type_chat': store.chatType,
+      'data': {
+        'message_id': messageId,
+      }
+    });
+
+    _processQueue();
+    return completer.future;
+  }
+
+  Future<void> pinMessage(String messageId, bool pin) async {
+    final completer = Completer<void>();
+    _pendingCompleters.add(completer);
+
+    _messageQueue.add({
+      'event': pin ? 'pin_message' : 'unpin_message',
+      'type_chat': store.chatType,
+      'data': {
+        'message_id': messageId,
+        'chat_id': store.chatId,
+      }
+    });
+
+    _processQueue();
+    return completer.future;
+  }
+
+  Future<void> markAsRead() async {
+    final completer = Completer<void>();
+    _pendingCompleters.add(completer);
+
+    _messageQueue.add({
+      'event': 'read_messages',
+      'type_chat': store.chatType,
+      'data': {
+        'chat_id': store.chatId,
+      }
+    });
+
+    _processQueue();
+    return completer.future;
+  }
+
+  Future<void> close() async {
+    _isClosed = true;
+    await _disconnect();
+    for (var c in _pendingCompleters) {
+      c.completeError(Exception('Socket closed'));
+    }
+    _pendingCompleters.clear();
+  }
+
+  // Приватные методы ======================================================
+
+  Future<void> _processQueue() async {
+    if (_isProcessingQueue || !_isConnected || _messageQueue.isEmpty) return;
+
+    _isProcessingQueue = true;
+
+    try {
+      while (_messageQueue.isNotEmpty && _isConnected && !_isClosed) {
+        final message = _messageQueue.first;
+
+        try {
+          // Обновляем токен перед каждой операцией
+          _accessToken = await _getToken();
+          if (_accessToken == null) throw Exception('Invalid token');
+
+          // Добавляем токен в сообщение
+          message['data']['access_token'] = 'Bearer $_accessToken';
+
+          // Отправляем сообщение
+          _channel?.sink.add(json.encode(message));
+          _messageQueue.removeFirst();
+
+          // Завершаем соответствующий completer
+          if (_pendingCompleters.isNotEmpty) {
+            _pendingCompleters.removeFirst().complete();
+          }
+
+          // Небольшая задержка между сообщениями
+          await Future.delayed(Duration(milliseconds: 50));
+        } catch (e) {
+          logger.error('Failed to send message: $e');
+          await _reconnect();
+          break;
+        }
+      }
+    } finally {
+      _isProcessingQueue = false;
+    }
+  }
+
+  Future<void> _disconnect() async {
+    await _socketSub?.cancel();
+    await _channel?.sink.close();
+    _isConnected = false;
+  }
+
+  Future<String?> _getToken() async {
+    final token = await tokenStorage.token;
+    if (token != null && !_isTokenExpired(token)) {
+      return token.accessToken;
+    }
+    return await _refreshToken();
+  }
+
+  bool _isTokenExpired(OAuth2Token token) {
+    // Реализуйте проверку срока действия токена
+    return false;
+  }
+
+  Future<String?> _refreshToken() async {
     try {
       final currentToken = await tokenStorage.token;
       if (currentToken == null) return null;
 
-      final dio = Dio(BaseOptions(
-        baseUrl: const AppConfig().apiUrl,
-        followRedirects: true,
-      ));
-
+      final dio = Dio();
       final response = await dio.get(
         '${const AppConfig().apiUrl}${Endpoint().accessToken}',
         options: Options(
-          headers: {'Refresh-Token': 'Bearer ${currentToken.refreshToken}'},
-          followRedirects: true,
-          contentType: 'application/json',
-          responseType: ResponseType.json,
-        ),
+            headers: {'Refresh-Token': 'Bearer ${currentToken.refreshToken}'}),
       );
-
-      if (response.statusCode == 401) {
-        await tokenStorage.clearToken();
-        return null;
-      }
 
       final newToken = OAuth2Token(
         accessToken: response.data['access_token'],
@@ -118,188 +220,133 @@ class ChatSocket {
       );
 
       await tokenStorage.setToken(newToken);
-      return newToken;
+      return newToken.accessToken;
     } catch (e) {
-      logger.error('Error refreshing token: $e');
+      logger.error('Token refresh failed: $e');
       return null;
     }
   }
 
-  Future<void> reconnect() async {
-    if (_reconnectAttempts >= _maxReconnectAttempts) {
-      logger.error('Max reconnect attempts reached');
+  void _setupListeners() {
+    _socketSub = _channel?.stream.listen(
+      _handleMessage,
+      onError: (error) {
+        print('Socket error: $error');
+        _reconnect();
+      },
+      onDone: () {
+        if (!_isClosed) _reconnect();
+      },
+    );
+  }
+
+  Future<void> _sendHandshake() async {
+    if (_channel == null || _accessToken == null) return;
+
+    final messages = [
+      {
+        'event': 'join',
+        'type_chat': 'solo',
+        'data': {'access_token': 'Bearer $_accessToken'},
+      },
+      {
+        'event': 'join',
+        'type_chat': 'group',
+        'data': {'access_token': 'Bearer $_accessToken'},
+      }
+    ];
+
+    for (final msg in messages) {
+      _channel?.sink.add(json.encode(msg));
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+  }
+
+  void _handleMessage(dynamic data) {
+    try {
+      final jsonData = jsonDecode(data);
+      final response = SocketResponse.fromJson(jsonData);
+
+      if (response.error == 'invalid_token') {
+        _refreshToken().then((_) => _reconnect());
+        return;
+      }
+
+      switch (response.event) {
+        case 'message':
+          _handleNewMessage(response);
+          break;
+        case 'delete_message':
+          _handleDeletedMessage(response);
+          break;
+        default:
+          logger.error('Unhandled event: ${response.event}');
+      }
+    } catch (e) {
+      logger.error('Error handling message: $e');
+    }
+  }
+
+  void _handleNewMessage(SocketResponse response) {
+    final message = response.data?.message;
+    if (message == null) return;
+
+    if (store.messages.any((m) => m.id == message.id)) {
+      logger.info('Duplicate message: ${message.id}');
       return;
     }
+
+    store.addMessage(message);
+  }
+
+  Future<void> markMessagesAsRead(
+      //   {
+      //   List<String>? messageIds,
+      // }
+      ) async {
+    final completer = Completer<void>();
+    _pendingCompleters.add(completer);
+
+    _messageQueue.add({
+      'event': 'read_messages',
+      'type_chat': store.chatType,
+      'data': {
+        'chat_id': store.chatId,
+        // if (messageIds != null && messageIds.isNotEmpty)
+        //   'message_ids': messageIds,
+      }
+    });
+
+    unawaited(_processQueue());
+    return completer.future;
+  }
+
+  void _handleDeletedMessage(SocketResponse response) {
+    final messageId = response.data?.messageId;
+    if (messageId != null) {
+      store.removeMessage(messageId);
+    }
+  }
+
+  Future<void> _reconnect() async {
+    if (_isClosed || _reconnectAttempts >= _maxReconnectAttempts) return;
 
     _reconnectAttempts++;
-    logger.info('Attempting to reconnect (attempt $_reconnectAttempts)...');
+    final delay = Duration(seconds: min(_reconnectAttempts * 2, 10));
+
+    logger.info('Reconnecting in ${delay.inSeconds}s...');
+    await Future.delayed(delay);
 
     try {
-      await initializeSocket();
-      _reconnectAttempts = 0;
-      logger.info('Reconnected successfully!');
+      await initialize();
     } catch (e) {
-      logger.error('Reconnection failed: $e');
-      await Future.delayed(Duration(seconds: 5 * _reconnectAttempts));
-      if (!isClosed) reconnect();
+      logger.error('Reconnect failed: $e');
+      if (!_isClosed) _reconnect();
     }
   }
 
-  Future<void> ensureConnection() async {
-    if (!isConnected) {
-      logger.info('Connection lost. Reconnecting...', runtimeType: runtimeType);
-      await reconnect();
-    }
-  }
-
-  Future<void> sendMessage({
-    required String messageText,
-    required String chatId,
-    String replyMessageId = '',
-    List<MessageFile>? files,
-  }) async {
-    await ensureConnection();
-    if (channel == null || channel?.sink == null) {
-      logger.error('WebSocket channel is not initialized or sink is null');
-      return;
-    }
-
-    if (accessToken == null) {
-      logger.error('Access token is null, cannot send message.');
-      return;
-    }
-
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    final data = jsonEncode({
-      'event': 'message',
-      'type_chat': store.chatType,
-      'data': {
-        'access_token': 'Bearer $accessToken',
-        'message': messageText,
-        'chat_id': chatId,
-        'reply': replyMessageId,
-        if (files != null) 'upload_data': files
-      }
-    });
-
-    try {
-      logger.info('Sending message: $messageText');
-      channel?.sink.add(data);
-    } catch (e) {
-      logger.error('Error sending message: $e');
-    }
-  }
-
-  deleteMessage({
-    required String messageId,
-  }) async {
-    await ensureConnection();
-    var data = jsonEncode({
-      'event': 'delete_message',
-      'type_chat': store.chatType,
-      'data': {
-        'access_token': 'Bearer $accessToken',
-        'message_id': messageId,
-      }
-    });
-    channel?.sink.add(data);
-    store.removeMessage(messageId);
-  }
-
-  pinMessage({
-    required String messageId,
-    required bool isAttached,
-  }) async {
-    await ensureConnection();
-    var data = jsonEncode({
-      'event': isAttached ? 'unpin_message' : 'pin_message',
-      'type_chat': store.chatType,
-      'data': {
-        'access_token': 'Bearer $accessToken',
-        'message_id': messageId,
-        'chat_id': store.chatId,
-      }
-    });
-    channel?.sink.add(data);
-  }
-
-  iAmActive() async {
-    await ensureConnection();
-    var data = jsonEncode({
-      'event': 'i_am_active',
-      'data': {
-        'access_token': 'Bearer $accessToken',
-      }
-    });
-    channel?.sink.add(data);
-  }
-
-  deleteChat() async {
-    await ensureConnection();
-    var data = jsonEncode({
-      'event': 'delete_chat',
-      'type_chat': store.chatType,
-      'data': {
-        'access_token': 'Bearer $accessToken',
-        'chat_id': store.chatId,
-      }
-    });
-    channel?.sink.add(data);
-    chatsViewStore.deleteChat(store.chatId!, store.chatType!);
-  }
-
-  Future<void> readMessage() async {
-    await ensureConnection();
-    var data = jsonEncode({
-      'event': 'read_message',
-      'type_chat': store.chatType,
-      'data': {
-        'access_token': 'Bearer $accessToken',
-        'chat_id': store.chatId,
-      }
-    });
-    channel?.sink.add(data);
-  }
-
-  dynamic handleMessage(SocketResponse data) async {
-    final MessageItem message = MessageItem(
-      id: data.data?.message?.id ?? '',
-      chatId: data.data?.message?.chatId ?? '',
-      createdAt: data.data?.message?.createdAt,
-      text: data.data?.message?.text ?? '',
-      files: data.data?.message?.files,
-      readAt: data.data?.message?.readAt,
-      senderId: data.data?.message?.senderId ?? '',
-      reply: MessageItem(
-        id: data.data?.message?.reply?.id ?? '',
-        chatId: data.data?.message?.reply?.chatId ?? '',
-        createdAt: data.data?.message?.reply?.createdAt,
-        text: data.data?.message?.reply?.text ?? '',
-        files: data.data?.message?.reply?.files,
-        readAt: data.data?.message?.reply?.readAt,
-        senderId: data.data?.message?.reply?.senderId ?? '',
-      ),
-    );
-    logger.info('Received message with ID: ${data.data?.message?.id}');
-    if (store.messages.any((m) => m.id == message.id)) {
-      logger.warning('Duplicate message detected: ${message.id}');
-      return;
-    }
-
-    store.addMessage(data.data?.message ?? message);
-  }
-
-  dynamic handleDeleteMessage(SocketResponse data) async {
-    // final chatBloc = GetIt.instance.get<ChatBloc>();
-
-    // chatBloc.add(
-    //   ChatEvent.socketDeleteMessage(
-    //     data.data?.chatId ?? '',
-    //     data.typeChat ?? '',
-    //   ),
-    // );
-
-    store.removeMessage(data.data?.messageId ?? '');
+  void _handleError(dynamic error) {
+    logger.error('Socket error: $error');
+    if (!_isClosed) _reconnect();
   }
 }
