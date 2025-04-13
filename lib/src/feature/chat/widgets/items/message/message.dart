@@ -10,10 +10,14 @@ import 'reply.dart';
 class MessageWidget extends StatelessWidget {
   final MessageItem item;
   final MessagesStore? store;
+  final bool isAttachedMessages;
+  final bool isOnGroup;
   const MessageWidget({
     super.key,
     required this.item,
     required this.store,
+    this.isOnGroup = false,
+    this.isAttachedMessages = false,
   });
 
   @override
@@ -21,9 +25,18 @@ class MessageWidget extends StatelessWidget {
     final UserStore userStore = context.watch<UserStore>();
     final bool isUser = item.senderId == userStore.account.id;
 
-    final GroupUsersStore? groupUsersStore = context.watch();
+    // final GroupUsersStore? groupUsersStore = context.watch();
 
-    final bool isOnGroup = groupUsersStore?.chatId.isNotEmpty ?? false;
+    // final bool isOnGroup = groupUsersStore != null;
+
+    // final bool isOnGroup = groupUsersStore?.chatId.isNotEmpty ?? false;
+
+    final Widget content = Content(
+      item: item,
+      isOnGroup: isOnGroup,
+      isUser: isUser,
+      store: store,
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -32,44 +45,39 @@ class MessageWidget extends StatelessWidget {
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              context.pushNamed(AppViews.profileInfo, extra: {
-                'model': AccountModel(
-                    gender: Gender.male,
-                    firstName: item.senderName,
-                    secondName: item.senderSurname,
-                    phone: '',
-                    id: item.senderId,
+          isUser
+              ? const Spacer()
+              : GestureDetector(
+                  onTap: () {
+                    context.pushNamed(AppViews.profileInfo, extra: {
+                      'model': AccountModel(
+                          gender: Gender.male,
+                          firstName: item.senderName,
+                          secondName: item.senderSurname,
+                          phone: '',
+                          id: item.senderId,
+                          avatarUrl: item.senderAvatarUrl,
+                          role: switch (item.senderProfession) {
+                            'USER' => Role.user,
+                            'ADMIN' => Role.admin,
+                            'MODERATOR' => Role.moderator,
+                            'DOCTOR' => Role.doctor,
+                            'ONLINE_SCHOOL' => Role.onlineSchool,
+                            _ => Role.doctor,
+                          }),
+                    });
+                  },
+                  child: MessageAvatar(
+                    isOnGroup: isOnGroup,
+                    isUser: isUser,
                     avatarUrl: item.senderAvatarUrl,
-                    role: switch (item.senderProfession) {
-                      'USER' => Role.user,
-                      'ADMIN' => Role.admin,
-                      'MODERATOR' => Role.moderator,
-                      'DOCTOR' => Role.doctor,
-                      'ONLINE_SCHOOL' => Role.onlineSchool,
-                      _ => Role.doctor,
-                    }
-                    // role: Role.values.firstWhere(
-                    // (x) => x.name == item.senderProfession,
-                    // ),
-                    ),
-              });
-            },
-            child: MessageAvatar(
-              isOnGroup: isOnGroup,
-              isUser: isUser,
-              avatarUrl: item.senderAvatarUrl,
-            ),
-          ),
-          IntrinsicWidth(
-            child: Content(
-              item: item,
-              isOnGroup: isOnGroup,
-              isUser: isUser,
-              store: store,
-            ),
-          ),
+                  ),
+                ),
+          isAttachedMessages
+              ? Flexible(child: content)
+              : IntrinsicWidth(
+                  child: content,
+                ),
           ReplyButton(
             isUser: isUser,
             message: item,

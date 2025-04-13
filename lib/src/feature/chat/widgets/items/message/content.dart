@@ -96,13 +96,12 @@ class Content extends StatelessWidget {
             store?.setMentionedMessage(item);
           },
         ),
-        if (isAdmin)
+        if (isAdmin || kDebugMode)
           MenuItem(
             label: item.isAttached ? t.chat.unpin : t.chat.pin,
             icon: item.isAttached ? AppIcons.pinSlash : AppIcons.pin,
             onSelected: () {
-              socket.pinMessage(
-                  messageId: item.id!, isAttached: item.isAttached);
+              socket.pinMessage(item.id!, item.isAttached);
               item.setIsAttached(!item.isAttached);
             },
           ),
@@ -111,19 +110,18 @@ class Content extends StatelessWidget {
             label: t.chat.delete,
             icon: AppIcons.xmark,
             color: AppColors.redColor,
-            onSelected: () => socket.deleteMessage(messageId: item.id!),
+            onSelected: () => socket.deleteMessage(item.id!),
           ),
       ];
 
       return GestureDetector(
-  onTapDown: storePosition,
-  onSecondaryTapDown: storePosition,
-  onTap: () {
-    FocusManager.instance.primaryFocus?.unfocus(); // Unfocus keyboard
-    MenuShower.show(context, entries, pos);
-  },
-
- child: ConstrainedBox(
+        onTapDown: storePosition,
+        onSecondaryTapDown: storePosition,
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus(); // Unfocus keyboard
+          MenuShower.show(context, entries, pos);
+        },
+        child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width * 0.7,
           ),
@@ -146,11 +144,15 @@ class Content extends StatelessWidget {
                     ),
                   MessageAssets(item: item),
                   if (item.text != null && item.text!.isNotEmpty)
-                    IntrinsicWidth(
-                      child: MessageText(
-                        item: item,
-                        store: store,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: MessageText(
+                            item: item,
+                            store: store,
+                          ),
+                        ),
+                      ],
                     ),
                 ]),
           ),

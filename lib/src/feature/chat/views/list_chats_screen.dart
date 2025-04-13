@@ -3,7 +3,7 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
 class ChatsListScreen extends StatelessWidget {
-  final CustomAppBar appBar;
+  final PreferredSizeWidget appBar;
   const ChatsListScreen({
     super.key,
     required this.appBar,

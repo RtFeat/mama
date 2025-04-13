@@ -9,10 +9,10 @@ import 'package:fresh_dio/fresh_dio.dart';
 import 'package:intl/intl.dart';
 import 'package:ispectify_dio/ispectify_dio.dart';
 import 'package:mama/main.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
+import 'package:televerse/televerse.dart';
 
 final class InitializationProcessor {
   const InitializationProcessor(this.appConfig);
@@ -21,6 +21,7 @@ final class InitializationProcessor {
   final AppConfig appConfig;
 
   Future<Dependencies> _initDependencies() async {
+    final ID _chatId = ChatID(958930260);
     final sharedPreferences = await SharedPreferences.getInstance();
 
     await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
@@ -55,8 +56,26 @@ final class InitializationProcessor {
 
     final Faker faker = Faker.instance;
 
+    final bot = Bot(
+      '6621512389:AAF19-MPs9wV9z5FNnaKetcML85SR2xkGlw',
+      loggerOptions: LoggerOptions(
+        requestBody: true,
+        requestHeader: true,
+        responseBody: true,
+        methods: [
+          APIMethod.sendMessage,
+          APIMethod.sendPhoto,
+        ],
+      ),
+    );
+    FlutterError.onError = (e) {
+      bot.api.sendMessage(_chatId,
+          'Project Mama&Co\nFlutter error: ${e.exception}\n${e.stack}');
+    };
+
     return Dependencies(
       faker: faker,
+      bot: bot,
       sharedPreferences: sharedPreferences,
       settingsStore: settingsStore,
       // errorTrackingManager: errorTrackingManager,
@@ -118,25 +137,26 @@ final class InitializationProcessor {
       baseUrl: const AppConfig().apiUrl,
       followRedirects: true,
     ));
-    dio.interceptors.add(PrettyDioLogger(
-        requestBody: true,
-        request: true,
-        responseBody: true,
-        requestHeader: true));
+    // dio.interceptors.add(PrettyDioLogger(
+    //     requestBody: true,
+    //     request: true,
+    //     responseBody: true,
+    //     requestHeader: true));
     dio.interceptors.add(storage);
 
     dio.interceptors.add(
       ISpectifyDioLogger(
         iSpectify: iSpectify,
         settings: ISpectifyDioLoggerSettings(
-            // requestFilter: (requestOptions) =>
-            //     requestOptions.path != '/post3s/1',
-            // responseFilter: (response) => response.statusCode != 404,
-            // errorFilter: (response) => response.response?.statusCode != 404,
-            // errorFilter: (response) {
-            //   return (response.message?.contains('This exception was thrown because')) == false;
-            // },
-            ),
+          enabled: true,
+          // requestFilter: (requestOptions) =>
+          //     requestOptions.path != '/post3s/1',
+          // responseFilter: (response) => response.statusCode != 404,
+          // errorFilter: (response) => response.response?.statusCode != 404,
+          // errorFilter: (response) {
+          //   return (response.message?.contains('This exception was thrown because')) == false;
+          // },
+        ),
       ),
     );
 

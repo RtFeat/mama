@@ -17,22 +17,31 @@ class ProfileSwitch extends StatefulWidget {
     required this.children,
     this.alignment = Alignment.centerRight,
     this.isShowText = false,
-  }) : assert(children.length >= 2);
+  });
 
   @override
   State<ProfileSwitch> createState() => _ProfileSwitchState();
 }
 
 class _ProfileSwitchState extends State<ProfileSwitch> {
-  bool _isFirstCircleOnTop = true;
+  int _currentIndex = 0;
+  int _nextIndex = 1;
+  bool _isAnimating = false;
 
   void _toggleCircles() {
+    // if (_isAnimating) return;
     setState(() {
-      _isFirstCircleOnTop = !_isFirstCircleOnTop;
+      _isAnimating = !_isAnimating;
+
+      _currentIndex = (_currentIndex + 1) % widget.children.length;
+      _nextIndex = (_currentIndex + 1) % widget.children.length;
+      final selectedChild = widget.children[_currentIndex];
+      if (selectedChild != null) {
+        widget.userStore.selectChild(child: selectedChild);
+      }
     });
-    widget.userStore
-        .selectChild(child: widget.children[_isFirstCircleOnTop ? 0 : 1]!);
-    if (widget.onTap != null) widget.onTap!();
+
+    widget.onTap?.call();
   }
 
   @override
@@ -43,8 +52,8 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
     const double startPos = 25;
     const double endPos = 0;
 
-    final firstCircle = _isFirstCircleOnTop ? startPos : endPos;
-    final secondCircle = _isFirstCircleOnTop ? endPos : startPos;
+    final firstCircle = _isAnimating ? startPos : endPos;
+    final secondCircle = _isAnimating ? endPos : startPos;
 
     final bool isOnRight = widget.alignment == Alignment.centerRight;
 
@@ -59,10 +68,8 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
               child: Column(
                 children: [
                   AnimatedText(
-                    isSwitched: _isFirstCircleOnTop,
-                    title: _isFirstCircleOnTop
-                        ? widget.children[0]!.firstName
-                        : widget.children[1]!.firstName,
+                    isSwitched: _isAnimating,
+                    title: widget.children[_currentIndex]?.firstName ?? '',
                   ),
                   Text(
                     t.home.switch_hint,
@@ -74,7 +81,7 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
                 ],
               ),
             ),
-          // Нижний кружок
+          // Нижний аватар
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             left: !isOnRight ? firstCircle : null,
@@ -84,26 +91,26 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: CustomAvatar(
-                  radius: _isFirstCircleOnTop ? 25 : 20,
-                  key: ValueKey<bool>(!_isFirstCircleOnTop),
-                  avatarUrl: widget.children[0]?.avatarUrl,
+                  radius: _isAnimating ? 25 : 20,
+                  key: ValueKey<int>(_currentIndex),
+                  avatarUrl: widget.children[_currentIndex]?.avatarUrl,
                 ),
               ),
             ),
           ),
-          // Верхний кружок
+          // Верхний аватар
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             left: !isOnRight ? secondCircle : null,
-            right: isOnRight ? secondCircle : null, // Позиция по горизонтали
+            right: isOnRight ? secondCircle : null,
             child: GestureDetector(
               onTap: _toggleCircles,
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: CustomAvatar(
-                  key: ValueKey<bool>(_isFirstCircleOnTop),
-                  avatarUrl: widget.children[1]?.avatarUrl,
-                  radius: _isFirstCircleOnTop ? 20 : 25,
+                  key: ValueKey<int>(_nextIndex),
+                  avatarUrl: widget.children[_nextIndex]?.avatarUrl,
+                  radius: _isAnimating ? 20 : 25,
                 ),
               ),
             ),

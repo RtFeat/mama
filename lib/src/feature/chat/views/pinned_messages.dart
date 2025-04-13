@@ -3,10 +3,14 @@ import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
 class PinnedMessagesView extends StatelessWidget {
+  final bool isOnGroup;
   final MessagesStore? store;
   final ScrollController? scrollController;
   const PinnedMessagesView(
-      {super.key, required this.store, required this.scrollController});
+      {super.key,
+      required this.store,
+      required this.isOnGroup,
+      required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +44,10 @@ class PinnedMessagesView extends StatelessWidget {
                   scrollController: scrollController!),
               itemBuilder: (context, item, _) {
                 return MessageWidget(
+                  isAttachedMessages: true,
                   item: item,
                   store: store,
+                  isOnGroup: isOnGroup,
                 );
               },
             )

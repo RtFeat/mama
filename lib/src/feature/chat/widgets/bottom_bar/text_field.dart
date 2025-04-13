@@ -18,7 +18,7 @@ class BottomBarTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           child: GestureDetector(
             onTap: () {
               barStore.setIsShowEmojiPanel(!barStore.isShowEmojiPanel);
@@ -29,6 +29,7 @@ class BottomBarTextField extends StatelessWidget {
                 color: barStore.isShowEmojiPanel
                     ? AppColors.primaryColor
                     : AppColors.greyLighterColor,
+                size: 34,
               );
             }),
           ),
@@ -59,7 +60,7 @@ class BottomBarTextField extends StatelessWidget {
           }
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: GestureDetector(
               onTap: () {
                 barStore.sendMessage();
@@ -67,6 +68,7 @@ class BottomBarTextField extends StatelessWidget {
               child: const Icon(
                 AppIcons.send,
                 color: AppColors.primaryColor,
+                size: 32,
               ),
             ),
           );

@@ -4,7 +4,7 @@ import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
 class TrackersView extends StatelessWidget {
-  final CustomAppBar appBar;
+  final PreferredSizeWidget appBar;
   const TrackersView({super.key, required this.appBar});
 
   @override

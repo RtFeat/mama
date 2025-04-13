@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skit/skit.dart';
+import 'package:televerse/televerse.dart';
 
 /// Dependencies container
 base class Dependencies {
@@ -13,10 +14,13 @@ base class Dependencies {
     required this.apiClient,
     required this.tokenStorage,
     required this.faker,
+    required this.bot,
   });
 
   /// [SharedPreferences] instance, used to store Key-Value pairs.
   final SharedPreferences sharedPreferences;
+
+  final Bot bot;
 
   /// [SettingsStore] instance, used to manage theme and locale.
   final SettingsStore settingsStore;

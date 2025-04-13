@@ -5,7 +5,7 @@ description: >
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 0.2.3+97
+version: 0.2.3+107
 
 environment:
   sdk: ">=3.0.5 <4.0.0"
@@ -52,6 +52,7 @@ dependencies:
   ispect: ^4.0.7
   stack_trace: ^1.11.0
   ispectify_dio: ^4.0.7
+  televerse: ^2.4.4
   # sentry_flutter: ^8.9.0
   # logging: ^1.2.0
 
@@ -172,7 +173,6 @@ icons_launcher:
       enable: true
     ios:
       enable: true
-
-dependency_overrides:
-  skit:
-    path: /Users/nikondrat/Documents/work/projects/apps/skit
+# dependency_overrides:
+#   skit:
+#     path: /Users/nikondrat/Documents/work/projects/apps/skit

@@ -60,6 +60,9 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
               return {
                 'main': data ?? [],
+                //  'attached': (raw['attached'] as List?)
+                //   ?.map((e) => MessageItem.fromJson(e))
+                //   .toList() ?? [],
               };
             });
 

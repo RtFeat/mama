@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mama/src/core/core.dart';
-import 'package:mama/src/feature/feature.dart';
-import 'package:skit/skit.dart';
+import 'package:mama/src/data.dart';
 
 class ChatItemWidget extends StatelessWidget {
   final ChatItem item;
@@ -14,161 +12,165 @@ class ChatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextTheme textTheme = theme.textTheme;
-
-    final bool isChat = item is SingleChatItem;
-
-    final AccountModel? participant = isChat
+    final isChat = item is SingleChatItem;
+    final participant = isChat
         ? (item as SingleChatItem).participant2
         : (item as GroupItem).participant;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        item.setUnreadMessages(0);
-        context.pushNamed(AppViews.chatView, extra: {
-          'item': item,
-        });
-      },
-      child: Row(
-        children: [
-          AvatarWidget(
-              url: isChat
+    return Material(
+      type: MaterialType.transparency,
+      child: GestureDetector(
+        onTap: () {
+          item.setUnreadMessages(0);
+          context.pushNamed(AppViews.chatView, extra: {'item': item});
+        },
+        child: Row(
+          children: [
+            _AvatarPart(
+              avatarUrl: isChat
                   ? participant?.avatarUrl
                   : (item as GroupItem).groupInfo?.avatarUrl,
-              // isChat
-              //     ? (item as SingleChatItem).participant2?.avatarUrl
-              //     : (item as GroupItem).groupInfo?.avatarUrl,
-              size: const Size(56, 56),
-              radius: 28),
-          8.w,
-          Flexible(
-            flex: 6,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _TitleRow(
+                    item: item,
+                    isChat: isChat,
+                    participant: participant,
+                  ),
+                  if (item.lastMessage != null)
+                    _MessagePreview(
+                      item: item,
+                      isChat: isChat,
+                      participant: participant,
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarPart extends StatelessWidget {
+  final String? avatarUrl;
+
+  const _AvatarPart({required this.avatarUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return AvatarWidget(
+      url: avatarUrl,
+      size: const Size(56, 56),
+      radius: 28,
+    );
+  }
+}
+
+class _TitleRow extends StatelessWidget {
+  final ChatItem item;
+  final bool isChat;
+  final AccountModel? participant;
+
+  const _TitleRow({
+    required this.item,
+    required this.isChat,
+    required this.participant,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Observer(
+      builder: (context) {
+        return Row(
+          children: [
+            Expanded(
+              child: Text(
+                isChat
+                    ? participant?.name ?? ''
+                    : (item as GroupItem).groupInfo?.name ?? '',
+                style: textTheme.bodyMedium?.copyWith(fontSize: 14),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (isChat && participant?.profession?.isNotEmpty == true)
+              ConsultationBadge(title: participant!.profession!),
+            if (item.unreadMessages != null && item.unreadMessages! > 0)
+              UnreadBox(unread: item.unreadMessages),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _MessagePreview extends StatelessWidget {
+  final ChatItem item;
+  final bool isChat;
+  final AccountModel? participant;
+
+  const _MessagePreview({
+    required this.item,
+    required this.isChat,
+    required this.participant,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text.rich(
+            TextSpan(
               children: [
-                Observer(builder: (context) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: RichText(
-                          maxLines: 2,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: isChat
-                                    ? participant?.name
-                                    : (item as GroupItem).groupInfo?.name,
-                                // isChat
-                                //     ? '${(item as SingleChatItem).participant2?.name}'
-                                //     : (item as GroupItem).groupInfo?.name,
-                                style: textTheme.bodyMedium?.copyWith(
-                                  fontSize: 14,
-                                ),
-                              ),
-                              if (isChat)
-                                if (participant?.profession != null &&
-                                    participant!.profession!.isNotEmpty)
-                                  // if ((item as SingleChatItem)
-                                  //             .participant2
-                                  //             ?.profession !=
-                                  //         null &&
-                                  //     (item as SingleChatItem)
-                                  //         .participant2!
-                                  //         .profession!
-                                  //         .isNotEmpty)
-                                  // if (chatEntity == ChatEntity.singleChat)
-                                  //   if (chatItem.profession != null &&
-                                  //       chatItem.profession!.isNotEmpty)
-                                  WidgetSpan(
-                                    child: ConsultationBadge(
-                                      title: (item as SingleChatItem)
-                                          .participant1!
-                                          .profession!,
-                                    ),
-                                  ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (item.unreadMessages != null &&
-                          item.unreadMessages! > 0)
-                        UnreadBox(
-                          unread: item.unreadMessages,
-                        ),
-                    ],
-                  );
-                }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    (item.lastMessage != null)
-                        ? Flexible(
-                            flex: 7,
-                            child: RichText(
-                              maxLines: 2,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: item.lastMessage?.nickname?.trim(),
-                                    style: textTheme.labelMedium,
-                                  ),
-                                  if (!isChat)
-                                    if (participant?.profession != null &&
-                                        participant!.profession!.isNotEmpty)
-                                      // if ((item as GroupItem).participant?.profession !=
-                                      //         null &&
-                                      //     (item as GroupItem)
-                                      //         .participant!
-                                      //         .profession!
-                                      //         .isNotEmpty)
-                                      // if (chatEntity == ChatEntity.groupChat)
-                                      //   if (chatItem.profession != null &&
-                                      //       chatItem.profession!.isNotEmpty)
-                                      WidgetSpan(
-                                        child: ConsultationBadge(
-                                          title: (item as GroupItem)
-                                              .participant!
-                                              .profession!,
-                                        ),
-                                      ),
-                                  TextSpan(
-                                    text: ': ',
-                                    style: textTheme.labelMedium,
-                                  ),
-                                  TextSpan(
-                                    text: item.lastMessage?.text,
-                                    style: textTheme.labelMedium!.copyWith(
-                                        color: AppColors.greyBrighterColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    if (item.lastMessage != null &&
-                        item.lastMessage?.filePath != null &&
-                        item.lastMessage!.filePath!.isNotEmpty)
-                      const Icon(
-                        AppIcons.paperclip,
-                        size: 22,
-                        color: AppColors.greyBrighterColor,
-                      )
-                  ],
+                if (item.lastMessage?.nickname?.trim().isNotEmpty == true)
+                  TextSpan(
+                    text: '${item.lastMessage?.nickname?.trim()}: ',
+                    style: textTheme.labelMedium,
+                  ),
+                TextSpan(
+                  text: item.lastMessage?.text ?? '',
+                  style: textTheme.labelMedium?.copyWith(
+                    color: AppColors.greyBrighterColor,
+                  ),
                 ),
+                if (!isChat && participant?.profession?.isNotEmpty == true)
+                  WidgetSpan(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: ConsultationBadge(
+                        title: participant!.profession!,
+                        // compact: true,
+                      ),
+                    ),
+                  ),
               ],
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          8.w,
-        ],
-      ),
+        ),
+        if (item.lastMessage?.filePath?.isNotEmpty == true)
+          const Padding(
+            padding: EdgeInsets.only(left: 4),
+            child: Icon(
+              AppIcons.paperclip,
+              size: 22,
+              color: AppColors.greyBrighterColor,
+            ),
+          ),
+      ],
     );
   }
 }

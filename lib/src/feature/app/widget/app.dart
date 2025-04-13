@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mama/src/feature/trackers/state/medicine.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart' as skit;
@@ -35,6 +34,7 @@ class App extends StatelessWidget {
           ),
           Provider(
               create: (context) => ChatSocket(
+                    bot: context.read<Dependencies>().bot,
                     chatsViewStore: context.read<ChatsViewStore>(),
                     store: context.read<MessagesStore>(),
                     tokenStorage: context.read<Dependencies>().tokenStorage,

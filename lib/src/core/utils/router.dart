@@ -398,8 +398,11 @@ final GoRouter router = GoRouter(
                   final ScrollController? scrollController =
                       extra?['scrollController'] as ScrollController?;
 
+                  final bool isOnGroup = extra?['isOnGroup'] as bool? ?? false;
+
                   return PinnedMessagesView(
                     store: store,
+                    isOnGroup: isOnGroup,
                     scrollController: scrollController,
                   );
                 },

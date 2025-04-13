@@ -18,13 +18,31 @@ class ChatsBodyWidget extends StatefulWidget {
 }
 
 class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
+  late final ObservableFuture future;
+  // @override
+  // void initState()
+  //   // widget.store.loadAllGroups(
+  //   //   widget.childId,
+  //   // );
+  //   // widget.store.loadAllChats();
+  //   // future = Future.wait([
+  //   //        widget.store.loadAllGroups(widget.childId),
+  //   //        widget.store.loadAllChats(),
+  //   //      ]);
+  //   super.initState();
+  // }
+  //
+  //
   @override
-  void initState() {
-    widget.store.loadAllGroups(
-      widget.childId,
-    );
-    widget.store.loadAllChats();
-
+  initState() {
+    // widget.store.loadAllGroups(
+    //   widget.childId,
+    // );
+    // widget.store.loadAllChats();
+    future = ObservableFuture(Future.wait([
+      widget.store.loadAllGroups(widget.childId),
+      widget.store.loadAllChats(),
+    ]));
     super.initState();
   }
 
@@ -35,11 +53,8 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
     );
 
     return LoadingWidget(
-        future: ObservableFuture(Future.wait([
-          widget.store.chats.fetchFuture,
-          widget.store.groups.fetchFuture,
-        ])),
-        builder: (_) => CustomScrollView(slivers: [
+        future: future,
+        builder: (_) => CustomScrollView(cacheExtent: 1000, slivers: [
               _GroupsList(store: widget.store, separator: separator),
               _ChatsList(store: widget.store, separator: separator),
             ]));
@@ -61,6 +76,8 @@ class _GroupsList extends StatelessWidget {
           title: t.chat.groupChatsListTitle,
           child: CustomScrollView(
               shrinkWrap: true,
+              cacheExtent: 1000,
+              semanticChildCount: store.groups.listData.length,
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 PaginatedLoadingWidget(
@@ -111,7 +128,9 @@ class __ChatsListState extends State<_ChatsList> {
         ),
         child: CustomScrollView(
             shrinkWrap: true,
+            cacheExtent: 1000,
             physics: const NeverScrollableScrollPhysics(),
+            semanticChildCount: widget.store.chats.filteredChats.length,
             slivers: [
               PaginatedLoadingWidget(
                 isFewLists: true,

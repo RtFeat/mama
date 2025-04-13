@@ -9,68 +9,84 @@ import 'package:skit/skit.dart';
 
 class AssetItemWidget extends StatelessWidget {
   final MessageFile asset;
-  final bool? needIcon;
+  final bool isCanDelete;
   final VoidCallback onTapDelete;
   const AssetItemWidget(
       {super.key,
       required this.asset,
       required this.onTapDelete,
-      this.needIcon = false});
+      this.isCanDelete = false});
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextTheme textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     const double size = 64;
 
     return SizedBox(
       width: size,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
-            alignment: Alignment.topRight,
-            clipBehavior: Clip.none,
-            children: [
-              GestureDetector(
-                  onTap: () async {
-                    var file = await DefaultCacheManager().getSingleFile(
-                        '${const AppConfig().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}');
-                    OpenFilex.open(file.path);
-                  },
-                  child: _Asset(asset: asset, size: size)),
-              Positioned(
-                right: -5,
-                top: -5,
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      onTapDelete();
-                    },
-                    child: const CircleAvatar(
-                      radius: 10,
-                      backgroundColor: AppColors.redColor,
-                      child: Icon(Icons.close,
-                          size: 15, color: AppColors.whiteColor),
+      child:
+          // _Body(asset: asset),
+          isCanDelete
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Stack(
+                      alignment: Alignment.topRight,
+                      clipBehavior: Clip.none,
+                      children: [
+                        _Body(asset: asset),
+                        Positioned(
+                          right: -5,
+                          top: -5,
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: GestureDetector(
+                              onTap: () {
+                                onTapDelete();
+                              },
+                              child: const CircleAvatar(
+                                radius: 10,
+                                backgroundColor: AppColors.redColor,
+                                child: Icon(Icons.close,
+                                    size: 15, color: AppColors.whiteColor),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Text(
-            maxLines: 1,
-            asset.filename ?? '',
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.labelSmall!.copyWith(
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
+                    Text(
+                      maxLines: 1,
+                      asset.filename ?? '',
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.labelSmall!.copyWith(
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                )
+              : _Body(asset: asset),
     );
+  }
+}
+
+class _Body extends StatelessWidget {
+  final MessageFile asset;
+  const _Body({
+    required this.asset,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const double size = 64;
+    return GestureDetector(
+        onTap: () async {
+          var file = await DefaultCacheManager().getSingleFile(
+              '${const AppConfig().apiUrl}chat/message/file/${asset.fileUrl!}.${asset.typeFile}');
+          OpenFilex.open(file.path);
+        },
+        child: _Asset(asset: asset, size: size));
   }
 }
 

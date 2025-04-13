@@ -146,6 +146,7 @@ class ChatsAppBar extends StatelessWidget {
                         color: AppColors.lavenderBlue,
                       ),
                       PinnedMessages(
+                        isOnGroup: item is GroupItem,
                         store: store,
                         scrollController: scrollController,
                       ),

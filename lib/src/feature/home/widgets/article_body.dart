@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mama/src/data.dart';
@@ -144,8 +146,7 @@ class _WebBody extends StatefulWidget {
 class __WebBodyState extends State<_WebBody> {
   late final WebViewController controller;
   late Future future;
-
-  late final String payload;
+  late String payload;
 
   Future<String> loadFontBase64() async {
     ByteData fontData = await rootBundle.load(Assets.fonts.sFProTextMedium);
@@ -156,46 +157,78 @@ class __WebBodyState extends State<_WebBody> {
   Future<void> setupWebView() async {
     String base64Font = await loadFontBase64();
     String fontFace = '''
-    @font-face {
-      font-family: 'SF Pro Text';
-      src: url(data:font/ttf;base64,$base64Font) format('truetype');
-    }
-    body {
-      font-family: 'SF Pro Text', sans-serif;
-    }
-  ''';
+      @font-face {
+        font-family: 'SF Pro Text';
+        src: url(data:font/ttf;base64,$base64Font) format('truetype');
+      }
+    ''';
 
     payload = '''
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <title>Document</title>
-        <style>
-            $fontFace
-            body {
-                margin: 0;
-                padding: 0;
-                overflow-x: hidden;
-            }
-            img {
-                max-width: 100%;
-                height: auto;
-                display: block;
-                margin: 0 auto;
-            }
-        </style>
-    </head>
-    <body>
-      ${widget.data}
-    </body>
-    </html>
-  ''';
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+          <title>Document</title>
+          <style>
+              $fontFace
+              * {
+                  -webkit-touch-callout: none;
+                  -webkit-user-select: none;
+                  -khtml-user-select: none;
+                  -moz-user-select: none;
+                  -ms-user-select: none;
+                  user-select: none;
+                  caret-color: transparent !important;
+              }
+              body {
+                  margin: 0;
+                  padding: 0;
+                  overflow-x: hidden;
+                  font-family: 'SF Pro Text', sans-serif;
+                  background-color: transparent;
+              }
+              img {
+                  max-width: 100%;
+                  height: auto;
+                  display: block;
+                  margin: 0 auto;
+                  pointer-events: none;
+              }
+              input, textarea {
+                  display: none !important;
+              }
+          </style>
+          <script>
+              document.addEventListener('contextmenu', function(e) {
+                  e.preventDefault();
+              });
+              document.addEventListener('selectstart', function(e) {
+                  e.preventDefault();
+              });
+              document.addEventListener('mousedown', function(e) {
+                  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                      e.preventDefault();
+                  }
+              });
+          </script>
+      </head>
+      <body>
+        ${widget.data}
+      </body>
+      </html>
+    ''';
 
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..clearCache()
+      // ..enableZoom(false)
+      // ..setBackgroundColor(Colors.transparent)
+      // ..setNavigationDelegate(NavigationDelegate(
+      //   onNavigationRequest: (request) {
+      //     return NavigationDecision.prevent;
+      //   },
+      // ))
       ..loadHtmlString(payload);
   }
 
@@ -208,12 +241,25 @@ class __WebBodyState extends State<_WebBody> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return WebViewWidget(controller: controller);
-          }
-          return const SizedBox.shrink();
-        });
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return AbsorbPointer(
+            child: WebViewWidget(
+              controller: controller,
+              gestureRecognizers: {
+                Factory<VerticalDragGestureRecognizer>(
+                    () => VerticalDragGestureRecognizer()
+                      ..onStart = (_) {}
+                      ..onDown = (_) {}
+                      ..onUpdate = (_) {}
+                      ..onEnd = (_) {}),
+              },
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 }
