@@ -31,6 +31,7 @@ class AssetsInBottomWidget extends StatelessWidget {
             PlatformFile file = barStore.files[index];
 
             return AssetItemWidget(
+              isCanDelete: true,
               asset: MessageFile(
                   typeFile: file.extension.toString(),
                   fileUrl: file.path.toString(),

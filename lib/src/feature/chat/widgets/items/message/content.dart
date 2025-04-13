@@ -96,7 +96,7 @@ class Content extends StatelessWidget {
             store?.setMentionedMessage(item);
           },
         ),
-        if (isAdmin)
+        if (isAdmin || kDebugMode)
           MenuItem(
             label: item.isAttached ? t.chat.unpin : t.chat.pin,
             icon: item.isAttached ? AppIcons.pinSlash : AppIcons.pin,

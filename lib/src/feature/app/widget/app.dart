@@ -34,6 +34,7 @@ class App extends StatelessWidget {
           ),
           Provider(
               create: (context) => ChatSocket(
+                    bot: context.read<Dependencies>().bot,
                     chatsViewStore: context.read<ChatsViewStore>(),
                     store: context.read<MessagesStore>(),
                     tokenStorage: context.read<Dependencies>().tokenStorage,

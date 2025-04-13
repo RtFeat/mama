@@ -84,10 +84,14 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
     final ChatBottomBarStore barStore = context.watch();
 
     final mic = Observer(builder: (_) {
-      return Positioned(
+      return AnimatedPositioned(
+        duration: Duration(milliseconds: 300),
         right:
-            widget.barStore.isRecording ? -28 + widget.barStore.dragOffset : 10,
-        top: widget.barStore.isRecording ? -28 : 12,
+            widget.barStore.isRecording ? -28 + widget.barStore.dragOffset : 0,
+        top: -24,
+        // right:
+        //     widget.barStore.isRecording ? -28 + widget.barStore.dragOffset : 10,
+        // top: widget.barStore.isRecording ? -28 : 12,
         child: ReactiveFormConsumer(builder: (context, form, child) {
           final String? value = form.control('message').value;
           final bool isNotEmpty = value != null && value != '';
@@ -113,6 +117,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
                         child: const Icon(
                           AppIcons.send,
                           color: AppColors.primaryColor,
+                          size: 32,
                         ),
                       )
                     : GestureDetector(
@@ -124,6 +129,7 @@ class _ChatBottomBarBodyState extends State<ChatBottomBarBody>
                         child: const Icon(
                           AppIcons.paperclip,
                           color: AppColors.greyLighterColor,
+                          size: 26,
                         ),
                       ),
                 20.w,

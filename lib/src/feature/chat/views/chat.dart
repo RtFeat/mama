@@ -128,6 +128,8 @@ class __BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isGroup = widget.item is GroupItem;
+
     return Observer(builder: (context) {
       return Scaffold(
           backgroundColor: AppColors.purpleLighterBackgroundColor,
@@ -191,6 +193,7 @@ class __BodyState extends State<_Body> {
                               // key: _messageKeys[index],
                               item: item,
                               store: widget.store,
+                              isOnGroup: isGroup,
                             ),
                           ),
                         ],
@@ -201,6 +204,7 @@ class __BodyState extends State<_Body> {
                         controller: widget.store.scrollController!,
                         key: ValueKey(item.id),
                         child: MessageWidget(
+                          isOnGroup: isGroup,
                           // key: _messageKeys[index],
                           item: item,
                           store: widget.store,

@@ -10,10 +10,14 @@ import 'reply.dart';
 class MessageWidget extends StatelessWidget {
   final MessageItem item;
   final MessagesStore? store;
+  final bool isAttachedMessages;
+  final bool isOnGroup;
   const MessageWidget({
     super.key,
     required this.item,
     required this.store,
+    this.isOnGroup = false,
+    this.isAttachedMessages = false,
   });
 
   @override
@@ -21,9 +25,11 @@ class MessageWidget extends StatelessWidget {
     final UserStore userStore = context.watch<UserStore>();
     final bool isUser = item.senderId == userStore.account.id;
 
-    final GroupUsersStore? groupUsersStore = context.watch();
+    // final GroupUsersStore? groupUsersStore = context.watch();
 
-    final bool isOnGroup = groupUsersStore?.chatId.isNotEmpty ?? false;
+    // final bool isOnGroup = groupUsersStore != null;
+
+    // final bool isOnGroup = groupUsersStore?.chatId.isNotEmpty ?? false;
 
     final Widget content = Content(
       item: item,
@@ -67,7 +73,7 @@ class MessageWidget extends StatelessWidget {
                     avatarUrl: item.senderAvatarUrl,
                   ),
                 ),
-          item.isAttached
+          isAttachedMessages
               ? Flexible(child: content)
               : IntrinsicWidth(
                   child: content,

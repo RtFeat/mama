@@ -4,7 +4,7 @@ import 'package:ispect/ispect.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
-final iSpectify = ISpectify();
+final iSpectify = ISpectify(options: ISpectifyOptions());
 
 void main() {
   ISpect.run(

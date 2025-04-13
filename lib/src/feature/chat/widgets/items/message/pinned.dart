@@ -7,8 +7,12 @@ import 'package:mama/src/data.dart';
 class PinnedMessages extends StatelessWidget {
   final MessagesStore store;
   final ScrollController scrollController;
+  final bool isOnGroup;
   const PinnedMessages(
-      {super.key, required this.store, required this.scrollController});
+      {super.key,
+      required this.store,
+      required this.isOnGroup,
+      required this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +122,7 @@ class PinnedMessages extends StatelessWidget {
                       context.pushNamed(AppViews.pinnedMessagesView, extra: {
                         'store': store,
                         'scrollController': scrollController,
+                        'isOnGroup': isOnGroup,
                       });
                     },
                     icon: const Icon(

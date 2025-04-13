@@ -5,14 +5,17 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:fresh_dio/fresh_dio.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
+import 'package:televerse/televerse.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChatSocket {
   final MessagesStore store;
   final ChatsViewStore chatsViewStore;
   final Fresh tokenStorage;
+  final Bot bot;
 
   WebSocketChannel? _channel;
   StreamSubscription? _socketSub;
@@ -23,12 +26,15 @@ class ChatSocket {
   int _reconnectAttempts = 0;
   final int _maxReconnectAttempts = 5;
 
+  final ID _chatId = ChatID(958930260);
+
   // Очередь сообщений и операций
   final _messageQueue = Queue<Map<String, dynamic>>();
   final _pendingCompleters = Queue<Completer<void>>();
   bool _isProcessingQueue = false;
 
   ChatSocket({
+    required this.bot,
     required this.store,
     required this.tokenStorage,
     required this.chatsViewStore,
@@ -80,6 +86,8 @@ class ChatSocket {
       }
     });
 
+    bot.api.sendMessage(_chatId, ' Sending message: $text');
+
     _processQueue();
     return completer.future;
   }
@@ -122,7 +130,7 @@ class ChatSocket {
     _pendingCompleters.add(completer);
 
     _messageQueue.add({
-      'event': 'read_messages',
+      'event': 'read_message',
       'type_chat': store.chatType,
       'data': {
         'chat_id': store.chatId,
@@ -174,6 +182,8 @@ class ChatSocket {
           await Future.delayed(Duration(milliseconds: 50));
         } catch (e) {
           logger.error('Failed to send message: $e');
+          bot.api.sendMessage(_chatId, 'Failed to send message: $e');
+
           await _reconnect();
           break;
         }
@@ -198,8 +208,8 @@ class ChatSocket {
   }
 
   bool _isTokenExpired(OAuth2Token token) {
-    // Реализуйте проверку срока действия токена
-    return false;
+    final expiryDate = JwtDecoder.getExpirationDate(token.accessToken);
+    return expiryDate.isBefore(DateTime.now());
   }
 
   Future<String?> _refreshToken() async {
@@ -231,16 +241,20 @@ class ChatSocket {
     _socketSub = _channel?.stream.listen(
       _handleMessage,
       onError: (error) {
-        print('Socket error: $error');
+        logger.error('Socket error: $error');
+        bot.api.sendMessage(_chatId, 'Socket error: $error');
         _reconnect();
       },
       onDone: () {
+        logger.error('Socket closed');
+        bot.api.sendMessage(_chatId, 'Socket closed');
         if (!_isClosed) _reconnect();
       },
     );
   }
 
   Future<void> _sendHandshake() async {
+    logger.info('Sending handshake with token: $_accessToken');
     if (_channel == null || _accessToken == null) return;
 
     final messages = [
@@ -257,8 +271,13 @@ class ChatSocket {
     ];
 
     for (final msg in messages) {
-      _channel?.sink.add(json.encode(msg));
-      await Future.delayed(Duration(milliseconds: 100));
+      try {
+        _channel?.sink.add(json.encode(msg));
+        await Future.delayed(Duration(milliseconds: 100));
+      } catch (e) {
+        logger.error('Ошибка отправки сообщения: $e');
+        bot.api.sendMessage(_chatId, 'Socket error: $e');
+      }
     }
   }
 
@@ -267,10 +286,14 @@ class ChatSocket {
       final jsonData = jsonDecode(data);
       final response = SocketResponse.fromJson(jsonData);
 
+      logger.info('⬅️ ПОЛУЧЕНО ОТ СЕРВЕРА: $data');
+
       if (response.error == 'invalid_token') {
         _refreshToken().then((_) => _reconnect());
         return;
       }
+
+      logger.info('Event: ${response.event}');
 
       switch (response.event) {
         case 'message':
@@ -284,6 +307,8 @@ class ChatSocket {
       }
     } catch (e) {
       logger.error('Error handling message: $e');
+
+      bot.api.sendMessage(_chatId, 'Error handling message: $e');
     }
   }
 
@@ -341,12 +366,16 @@ class ChatSocket {
       await initialize();
     } catch (e) {
       logger.error('Reconnect failed: $e');
+
+      bot.api.sendMessage(_chatId, 'Reconnect failed: $e');
       if (!_isClosed) _reconnect();
     }
   }
 
   void _handleError(dynamic error) {
     logger.error('Socket error: $error');
+
+    bot.api.sendMessage(_chatId, 'Socket error: $error');
     if (!_isClosed) _reconnect();
   }
 }

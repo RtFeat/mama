@@ -24,6 +24,7 @@ class _MaterialContextState extends State<MaterialContext> {
   final _controller = DraggablePanelController();
   final _observer = ISpectNavigatorObserver(
     isLogModals: false,
+    isLogPages: false,
   );
 
   @override

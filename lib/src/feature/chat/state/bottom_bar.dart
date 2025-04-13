@@ -49,6 +49,9 @@ abstract class _ChatBottomBarStore with Store {
   @observable
   int seconds = 0; // Время записи в секундах
 
+  @observable
+  int milliseconds = 0;
+
   @computed
   String get formattedDuration {
     final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
@@ -75,6 +78,7 @@ abstract class _ChatBottomBarStore with Store {
 
     if (dragOffset >= maxDragDistance) {
       stopRecording(isCanSend: false); // Отмена записи
+      setIsRecording(false);
     }
   }
 
@@ -139,8 +143,6 @@ abstract class _ChatBottomBarStore with Store {
       }),
     );
 
-    print(multipartFiles.first); // Debugging
-
     FormData formData = FormData.fromMap({
       'file': multipartFiles,
     });
@@ -174,10 +176,6 @@ abstract class _ChatBottomBarStore with Store {
   Future startRecording() async {
     try {
       isRecording = false;
-      if (isRecording) {
-        logger.warning('Запись уже идёт');
-        return;
-      }
 
       final filePath = await _generateFilePath();
 
@@ -187,11 +185,10 @@ abstract class _ChatBottomBarStore with Store {
         return;
       }
 
-      final isRecordingNow = await record.isRecording();
-      if (isRecordingNow) {
+      if (await record.isRecording()) {
         logger.warning(
             'Попытка начать запись, но уже идёт другая запись. Сбрасываем.');
-        await stopRecording();
+        await record.stop(); // Останавливаем предыдущую запись
       }
 
       logger.info('Запускаем запись, файл: $filePath');
@@ -211,8 +208,6 @@ abstract class _ChatBottomBarStore with Store {
   @action
   Future stopRecording({bool isCanSend = false}) async {
     if (!isRecording) return;
-
-    _stopTimer();
 
     final filePath = await record.stop();
     if (filePath != null) {
@@ -238,8 +233,10 @@ abstract class _ChatBottomBarStore with Store {
       sendMessage(filePath: filePath);
     }
 
+    _stopTimer();
     setIsRecording(false);
     seconds = 0;
+    milliseconds = 0;
   }
 
   @action
@@ -259,8 +256,9 @@ abstract class _ChatBottomBarStore with Store {
   @action
   void _startTimer() {
     if (_timer != null) return;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      seconds++;
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      milliseconds += 100;
+      seconds = milliseconds ~/ 1000;
     });
   }
 
