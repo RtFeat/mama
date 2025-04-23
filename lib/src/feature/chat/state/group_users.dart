@@ -13,8 +13,7 @@ class GroupUsersStore extends _GroupUsersStore with _$GroupUsersStore {
   });
 }
 
-abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
-    with Store {
+abstract class _GroupUsersStore extends PaginatedListStore with Store {
   final String chatId;
 
   _GroupUsersStore({
@@ -22,6 +21,7 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
     required this.chatId,
     required super.faker,
   }) : super(
+            pageSize: 100,
             testDataGenerator: () {
               return AccountModel(
                 id: faker.datatype.uuid(),
@@ -42,10 +42,6 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
                         ?.map((e) => AccountModel.fromJson(e))
                         .toList() ??
                     [],
-                'specialists': (raw['specialists'] as List?)
-                        ?.map((e) => AccountModel.fromJson(e))
-                        .toList() ??
-                    [],
               };
 
               // final List<AccountModel>? data = (raw['users'] as List?)
@@ -61,19 +57,8 @@ abstract class _GroupUsersStore extends PaginatedListStore<AccountModel>
             });
 
   @computed
-  ObservableList<AccountModel> get specialists => dataLists['specialists']!;
-
-  @computed
-  ObservableList<AccountModel> get doctors =>
-      ObservableList.of(listData.where((e) => e.role != Role.user));
-
-  @computed
-  ObservableList<AccountModel> get users =>
-      ObservableList.of(listData.where((e) => e.role == Role.user));
-
-  @computed
-  ObservableList<AccountModel> get filteredUsers =>
-      ObservableList.of(filteredList.where((e) => e.role == Role.user));
+  ObservableList<AccountModel> get filteredUsers => ObservableList.of(
+      filteredList.where((e) => e.role == Role.user) as List<AccountModel>);
 
   @observable
   String? query;

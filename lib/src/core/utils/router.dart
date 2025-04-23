@@ -381,9 +381,12 @@ final GoRouter router = GoRouter(
                   final Map? extra = state.extra as Map?;
                   final GroupUsersStore? store =
                       extra?['store'] as GroupUsersStore?;
+                  final GroupSpecialistsStore? specialistsStore =
+                      extra?['specialistsStore'] as GroupSpecialistsStore?;
                   final GroupChatInfo? groupInfo = extra?['groupInfo'];
                   return GroupUsersView(
                     store: store,
+                    specialistsStore: specialistsStore,
                     groupInfo: groupInfo,
                   );
                 },
@@ -426,9 +429,13 @@ final GoRouter router = GoRouter(
           builder: (context, state) {
             final Map? extra = state.extra as Map?;
             final AccountModel? model = extra?['model'];
+            final String? schoolId = extra?['schoolId'];
+            final bool? hasChat = extra?['hasChat'];
 
             return ProfileInfoView(
               model: model!,
+              schoolId: schoolId,
+              hasChat: hasChat,
             );
           },
         )

@@ -11,6 +11,7 @@ class ChatsAppBar extends StatelessWidget {
   final ChatItem? item;
   final MessagesStore store;
   final GroupUsersStore? groupUsersStore;
+  final GroupSpecialistsStore? specialistsStore;
 
   final ScrollController scrollController;
 
@@ -23,6 +24,7 @@ class ChatsAppBar extends StatelessWidget {
     required this.store,
     required this.groupUsersStore,
     required this.scrollController,
+    required this.specialistsStore,
   });
 
   @override
@@ -119,10 +121,12 @@ class ChatsAppBar extends StatelessWidget {
                 if (item is SingleChatItem) {
                   context.pushNamed(AppViews.profileInfo, extra: {
                     'model': (item as SingleChatItem).participant2,
+                    'hasChat': true,
                   });
                 } else if (groupUsersStore != null) {
                   context.pushNamed(AppViews.groupUsers, extra: {
                     'store': groupUsersStore,
+                    'specialistsStore': specialistsStore,
                     'groupInfo': (item as GroupItem).groupInfo,
                   });
                 }

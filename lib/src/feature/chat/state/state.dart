@@ -4,3 +4,4 @@ export 'group_users.dart';
 export 'bottom_bar.dart';
 export 'chat_socket.dart';
 export 'firebase.dart';
+export 'group_specialists.dart';

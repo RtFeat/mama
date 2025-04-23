@@ -101,8 +101,9 @@ class Content extends StatelessWidget {
             label: item.isAttached ? t.chat.unpin : t.chat.pin,
             icon: item.isAttached ? AppIcons.pinSlash : AppIcons.pin,
             onSelected: () {
-              socket.pinMessage(item.id!, item.isAttached);
               item.setIsAttached(!item.isAttached);
+              store?.resetSelectedPinnedMessage(!item.isAttached);
+              socket.pinMessage(item.id!, item.isAttached);
             },
           ),
         if (isAdmin || kDebugMode)

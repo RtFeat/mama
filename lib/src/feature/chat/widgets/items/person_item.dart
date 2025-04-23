@@ -7,7 +7,9 @@ import 'package:substring_highlight/substring_highlight.dart';
 class PersonItem extends StatelessWidget {
   final GroupUsersStore? store;
   final AccountModel person;
-  const PersonItem({super.key, required this.store, required this.person});
+  final String? schoolId;
+  const PersonItem(
+      {super.key, required this.store, required this.person, this.schoolId});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +23,7 @@ class PersonItem extends StatelessWidget {
         onTap: () {
           context.pushNamed(AppViews.profileInfo, extra: {
             'model': person,
+            'schoolId': schoolId,
           });
         },
         child: Row(

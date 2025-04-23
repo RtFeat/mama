@@ -8,6 +8,7 @@ hintSearchParticipant: Найти участника
 pinned: Закрепленное сообщение
 pinnedMessages: Закрепленные сообщения
 voice: Голосовое сообщение
+photo: Фото
 recording(rich): "Идет запись ${duration(v)}"
 cancelRecording: Влево – отмена
 reply: Ответить

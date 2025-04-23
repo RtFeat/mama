@@ -16,16 +16,14 @@ class AvatarWidget extends StatelessWidget {
         child: url != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(radius),
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return Image.network(
-                    url!,
-                    fit: BoxFit.cover,
-                    cacheHeight: (constraints.maxHeight * 2).toInt(),
-                    filterQuality: FilterQuality.low,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _NoAvatar(radius: radius),
-                  );
-                }))
+                child: Image.network(
+                  url!,
+                  fit: BoxFit.cover,
+                  cacheHeight: 256,
+                  filterQuality: FilterQuality.low,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _NoAvatar(radius: radius),
+                ))
             : _NoAvatar(radius: radius));
   }
 }

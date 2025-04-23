@@ -74,6 +74,7 @@ class Endpoint {
   String get groups => '$chat/group';
 
   String get groupUsers => '${groups}s/all';
+  String get groupSpecialists => '${groups}s/allSpecialists';
 
   String get messages => '$chat/message';
   String get readMessages => '$chat/read_message';

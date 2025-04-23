@@ -11,6 +11,7 @@ enum Gender {
   female,
   @JsonValue('MALE')
   male,
+  other,
 }
 
 enum Childbirth {

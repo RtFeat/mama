@@ -177,19 +177,19 @@ class SubAccountDoctor extends _SubAccountDoctor with _$SubAccountDoctor {
   });
 
   @JsonKey(name: 'account_id')
-  String accountId;
+  String? accountId;
 
   @JsonKey(name: 'created_at')
   String? createdAt;
 
   @JsonKey(name: 'id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'is_consultation')
   bool isConsultation = true;
 
   @JsonKey(name: 'profession')
-  String profession;
+  String? profession;
 
   @JsonKey(name: 'updated_at')
   String? updatedAt;
@@ -214,16 +214,16 @@ class SubAccountOnlineSchool extends _SubAccountOnlineSchool
   });
 
   @JsonKey(name: 'account_id')
-  String accountId;
+  String? accountId;
 
   @JsonKey(name: 'created_at')
   String? createdAt;
 
   @JsonKey(name: 'id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'name')
-  String name;
+  String? name;
 
   @JsonKey(name: 'updated_at')
   String? updatedAt;

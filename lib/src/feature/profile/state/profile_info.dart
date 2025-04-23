@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
@@ -8,16 +9,26 @@ class ProfileInfoViewStore extends _ProfileInfoViewStore
     with _$ProfileInfoViewStore {
   ProfileInfoViewStore({
     required super.apiClient,
+    required super.chatsViewStore,
+    required super.messagesStore,
+    required super.socket,
   });
 }
 
 abstract class _ProfileInfoViewStore with Store {
   final ApiClient apiClient;
+  final ChatsViewStore chatsViewStore;
+  final MessagesStore messagesStore;
+  final ChatSocket socket;
 
   _ProfileInfoViewStore({
     required this.apiClient,
+    required this.chatsViewStore,
+    required this.messagesStore,
+    required this.socket,
   });
 
+  @action
   Future createChat(String userId) async {
     apiClient.post(Endpoint().createChat, body: {
       'account_id': userId,
@@ -29,8 +40,25 @@ abstract class _ProfileInfoViewStore with Store {
       if (map != null) {
         final SingleChatItem chat = SingleChatItem.fromJson(map);
 
-        router.pushNamed(AppViews.chatView, extra: {'item': chat});
+        chatsViewStore.chats.listData.insert(0, chat);
+
+        messagesStore.setChatId(chat.id);
+        chatsViewStore.setSelectedChat(chat);
+
+        socket.initialize(forceReconnect: true);
+
+        router.goNamed(AppViews.chatView, extra: {'item': chat});
       }
     });
+  }
+
+  @action
+  Future deleteChat() async {
+    final chatId = messagesStore.chatId;
+    if (chatId != null) {
+      socket.deleteChat(chatId);
+      chatsViewStore.deleteChat(chatId);
+      router.goNamed(AppViews.homeScreen);
+    }
   }
 }

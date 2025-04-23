@@ -3,6 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
+import 'school.dart';
+
 part 'account.g.dart';
 
 @JsonSerializable()
@@ -16,7 +18,7 @@ class AccountModel extends _AccountModel with _$AccountModel {
   @JsonKey(name: 'last_active_at')
   String? lastActiveAt;
 
-  Gender gender;
+  Gender? gender;
 
   @JsonKey(includeToJson: false)
   final Role? role;
@@ -24,9 +26,18 @@ class AccountModel extends _AccountModel with _$AccountModel {
   @JsonKey(includeToJson: false)
   final Status? status;
 
+  @JsonKey(includeToJson: false, name: 'account')
+  final AccountModel? account;
+
+  @JsonKey(includeToJson: false, name: 'doctor')
+  final SubAccountDoctor? subAccountDoctor;
+
+  @JsonKey(includeToJson: false, name: 'online_school')
+  final SubAccountOnlineSchool? subAccountOnlineSchool;
+
   AccountModel({
     this.fcmToken = '',
-    required this.gender,
+    this.gender,
     required super.firstName,
     required super.secondName,
     required super.phone,
@@ -37,6 +48,9 @@ class AccountModel extends _AccountModel with _$AccountModel {
     super.profession,
     this.role,
     this.status,
+    this.account,
+    this.subAccountDoctor,
+    this.subAccountOnlineSchool,
   });
 
   factory AccountModel.mock(faker.Faker faker) {

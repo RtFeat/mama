@@ -8,6 +8,7 @@ hintSearchParticipant: Find participant
 pinned: Pinned message
 pinnedMessages: Pinned messages
 voice: Voice message
+photo: Photo
 recording(rich): "Recording ${duration(v)}"
 cancelRecording: In left - cancel
 reply: Reply

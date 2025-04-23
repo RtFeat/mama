@@ -12,6 +12,7 @@ class ProfilePhoto extends StatelessWidget {
   final double? height;
   final bool isShowIcon;
   final BorderRadius? borderRadius;
+  final Function()? onDeleteTap;
   const ProfilePhoto({
     super.key,
     this.photoUrl,
@@ -20,6 +21,7 @@ class ProfilePhoto extends StatelessWidget {
     this.isShowIcon = true,
     this.height,
     this.borderRadius,
+    this.onDeleteTap,
   });
 
   @override
@@ -49,6 +51,28 @@ class ProfilePhoto extends StatelessWidget {
             ),
           );
         }),
+        if (onDeleteTap != null)
+          Positioned.fill(
+              bottom: -32,
+              left: 32,
+              child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: RawMaterialButton(
+                    shape: const CircleBorder(),
+                    fillColor: AppColors.redColor,
+                    padding: const EdgeInsets.all(20),
+                    onPressed: () {
+                      onDeleteTap?.call();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: const Icon(
+                        Icons.delete,
+                        size: 32,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ))),
         if (isShowIcon)
           Positioned.fill(
             bottom: -32,

@@ -100,6 +100,9 @@ class MessageItem extends _MessageItem with _$MessageItem {
   @JsonKey(name: 'sender_surname')
   final String? senderSurname;
 
+  String? get senderFullName =>
+      senderName != null ? '$senderName ${senderSurname ?? ''}' : null;
+
   @JsonKey(name: 'sender_profession')
   final String? senderProfession;
 

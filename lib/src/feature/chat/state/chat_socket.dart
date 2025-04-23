@@ -42,8 +42,14 @@ class ChatSocket {
 
   // Основные публичные методы ==============================================
 
-  Future<void> initialize() async {
-    if (_isClosed) return;
+  Future<void> initialize({bool forceReconnect = false}) async {
+    if (!forceReconnect) {
+      if (_isClosed) return;
+      if (_isConnected) return;
+    }
+    // if (_isClosed) return;
+
+    // if (_isConnected) return;
 
     await _disconnect();
 
@@ -75,6 +81,8 @@ class ChatSocket {
     final completer = Completer<void>();
     _pendingCompleters.add(completer);
 
+    await initialize();
+
     _messageQueue.add({
       'event': 'message',
       'type_chat': store.chatType,
@@ -86,8 +94,6 @@ class ChatSocket {
       }
     });
 
-    bot.api.sendMessage(_chatId, ' Sending message: $text');
-
     _processQueue();
     return completer.future;
   }
@@ -95,6 +101,8 @@ class ChatSocket {
   Future<void> deleteMessage(String messageId) async {
     final completer = Completer<void>();
     _pendingCompleters.add(completer);
+
+    await initialize();
 
     _messageQueue.add({
       'event': 'delete_message',
@@ -108,18 +116,40 @@ class ChatSocket {
     return completer.future;
   }
 
+  Future<void> deleteChat(String chatId) async {
+    final completer = Completer<void>();
+    _pendingCompleters.add(completer);
+
+    await initialize();
+
+    _messageQueue.add({
+      'event': 'delete_chat',
+      // 'type_chat': store.chatType,
+      'data': {
+        'chat_id': chatId,
+      }
+    });
+
+    _processQueue();
+    return completer.future;
+  }
+
   Future<void> pinMessage(String messageId, bool pin) async {
     final completer = Completer<void>();
     _pendingCompleters.add(completer);
 
-    _messageQueue.add({
+    await initialize();
+
+    final Map<String, dynamic> data = {
       'event': pin ? 'pin_message' : 'unpin_message',
       'type_chat': store.chatType,
       'data': {
         'message_id': messageId,
         'chat_id': store.chatId,
       }
-    });
+    };
+
+    _messageQueue.add(data);
 
     _processQueue();
     return completer.future;
@@ -171,6 +201,7 @@ class ChatSocket {
 
           // Отправляем сообщение
           _channel?.sink.add(json.encode(message));
+          logger.info('➡️ ОТПРАВЛЕНО НА СЕРВЕР: ${json.encode(message)}');
           _messageQueue.removeFirst();
 
           // Завершаем соответствующий completer
@@ -284,6 +315,8 @@ class ChatSocket {
   void _handleMessage(dynamic data) {
     try {
       final jsonData = jsonDecode(data);
+
+      // logger.info('⬅️ ПОЛУЧЕНО ОТ СЕРВЕРА: $data');
       final response = SocketResponse.fromJson(jsonData);
 
       logger.info('⬅️ ПОЛУЧЕНО ОТ СЕРВЕРА: $data');
@@ -314,6 +347,7 @@ class ChatSocket {
 
   void _handleNewMessage(SocketResponse response) {
     final message = response.data?.message;
+
     if (message == null) return;
 
     if (store.messages.any((m) => m.id == message.id)) {
@@ -322,6 +356,7 @@ class ChatSocket {
     }
 
     store.addMessage(message);
+    chatsViewStore.selectedChat?.setLastMessage(message);
   }
 
   Future<void> markMessagesAsRead(
@@ -333,7 +368,7 @@ class ChatSocket {
     _pendingCompleters.add(completer);
 
     _messageQueue.add({
-      'event': 'read_messages',
+      'event': 'read_message',
       'type_chat': store.chatType,
       'data': {
         'chat_id': store.chatId,
@@ -350,6 +385,7 @@ class ChatSocket {
     final messageId = response.data?.messageId;
     if (messageId != null) {
       store.removeMessage(messageId);
+      chatsViewStore.selectedChat?.setLastMessage(store.messages.first);
     }
   }
 

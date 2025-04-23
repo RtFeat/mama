@@ -19,6 +19,8 @@ class PinnedMessages extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
+    // final MessageItem? pinnedMessage = store.pinnedMessage;
+
     return Observer(builder: (_) {
       if (store.attachedMessages.isNotEmpty) {
         return Material(
@@ -37,15 +39,7 @@ class PinnedMessages extends StatelessWidget {
                   t.chat.pinned,
                   style: textTheme.labelLarge,
                 ),
-                subtitle: Text(
-                  store.pinnedMessage?.text ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.labelSmall?.copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                subtitle: _Title(store: store),
                 leading: SizedBox(
                   width: 20,
                   child: store.attachedMessages.length <= 3
@@ -87,35 +81,7 @@ class PinnedMessages extends StatelessWidget {
                           },
                         ),
                 ),
-                trailing:
-                    // Padding(
-                    //     padding: const EdgeInsets.only(
-                    //         right: AppConstants.kDefaultPadding),
-                    //     child:
-                    // IconButton(
-                    //     onPressed: () {
-                    // if (store.attachedMessages.length == 1) {
-                    // final message =
-                    //     pinnedMessageStore.selectedPinnedMessage;
-                    // message.togglePinned();
-                    // store.updateMessage(message);
-                    // } else {
-                    // context.goNamed(AppViews.pinnedMessages,
-                    //     pathParameters: {
-                    //       'itemId': homeViewStore.selectedItem!.id!
-                    //     });
-                    // }
-                    // },
-                    // splashRadius: 20,
-                    // icon:
-                    // Observer(builder: (context) {
-                    //   return store.attachedMessages.length == 1
-                    //       ? const Icon(
-                    //           Icons.close,
-                    //           color: AppColors.greyLighterColor,
-                    //         )
-                    //       :
-                    Padding(
+                trailing: Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: IconButton(
                     onPressed: () {
@@ -129,15 +95,43 @@ class PinnedMessages extends StatelessWidget {
                       AppIcons.pinFill,
                       color: AppColors.greyLighterColor,
                     ),
-                    // );
-                    // }
                   ),
-                ))
-            // )
-            // ),
-            );
+                )));
       }
       return const SizedBox.shrink();
     });
+  }
+}
+
+class _Title extends StatelessWidget {
+  final MessagesStore store;
+  const _Title({
+    required this.store,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+    return Observer(
+      builder: (context) {
+        final MessageItem? pinnedMessage = store.pinnedMessage;
+        final String? asset =
+            switch (pinnedMessage?.files?.firstOrNull?.typeFile) {
+          'jpg' || 'jpeg' || 'png' => t.chat.photo,
+          'm4a' => t.chat.voice,
+          _ => null,
+        };
+        return Text(
+          asset ?? pinnedMessage?.text ?? '',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.labelSmall?.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
+        );
+      },
+    );
   }
 }

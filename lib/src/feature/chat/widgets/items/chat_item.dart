@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 
 class ChatItemWidget extends StatelessWidget {
   final ChatItem item;
@@ -12,6 +13,7 @@ class ChatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ChatsViewStore store = context.watch();
     final isChat = item is SingleChatItem;
     final participant = isChat
         ? (item as SingleChatItem).participant2
@@ -22,6 +24,7 @@ class ChatItemWidget extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           item.setUnreadMessages(0);
+          store.setSelectedChat(item);
           context.pushNamed(AppViews.chatView, extra: {'item': item});
         },
         child: Row(
@@ -33,22 +36,24 @@ class ChatItemWidget extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _TitleRow(
-                    item: item,
-                    isChat: isChat,
-                    participant: participant,
-                  ),
-                  if (item.lastMessage != null)
-                    _MessagePreview(
+              child: Observer(builder: (_) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _TitleRow(
                       item: item,
                       isChat: isChat,
                       participant: participant,
                     ),
-                ],
-              ),
+                    if (item.lastMessage != null)
+                      _MessagePreview(
+                        item: item,
+                        isChat: isChat,
+                        participant: participant,
+                      ),
+                  ],
+                );
+              }),
             ),
             const SizedBox(width: 8),
           ],
@@ -88,28 +93,26 @@ class _TitleRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Observer(
-      builder: (context) {
-        return Row(
-          children: [
-            Expanded(
-              child: Text(
-                isChat
-                    ? participant?.name ?? ''
-                    : (item as GroupItem).groupInfo?.name ?? '',
-                style: textTheme.bodyMedium?.copyWith(fontSize: 14),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+    return Observer(builder: (_) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              isChat
+                  ? participant?.name ?? ''
+                  : (item as GroupItem).groupInfo?.name ?? '',
+              style: textTheme.bodyMedium?.copyWith(fontSize: 14),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            if (isChat && participant?.profession?.isNotEmpty == true)
-              ConsultationBadge(title: participant!.profession!),
-            if (item.unreadMessages != null && item.unreadMessages! > 0)
-              UnreadBox(unread: item.unreadMessages),
-          ],
-        );
-      },
-    );
+          ),
+          if (isChat && participant?.profession?.isNotEmpty == true)
+            ConsultationBadge(title: participant!.profession!),
+          if (item.unreadMessages != null && item.unreadMessages! > 0)
+            UnreadBox(unread: item.unreadMessages),
+        ],
+      );
+    });
   }
 }
 
@@ -128,49 +131,54 @@ class _MessagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Row(
-      children: [
-        Expanded(
-          child: Text.rich(
-            TextSpan(
-              children: [
-                if (item.lastMessage?.nickname?.trim().isNotEmpty == true)
+    final MessageItem? lastMessage = item.lastMessage;
+
+    return Observer(builder: (_) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  // if (item.lastMessage?.nickname?.trim().isNotEmpty == true)
                   TextSpan(
-                    text: '${item.lastMessage?.nickname?.trim()}: ',
+                    text:
+                        '${lastMessage?.senderFullName?.trim() ?? lastMessage?.nickname?.trim()}: ',
                     style: textTheme.labelMedium,
                   ),
-                TextSpan(
-                  text: item.lastMessage?.text ?? '',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: AppColors.greyBrighterColor,
-                  ),
-                ),
-                if (!isChat && participant?.profession?.isNotEmpty == true)
-                  WidgetSpan(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: ConsultationBadge(
-                        title: participant!.profession!,
-                        // compact: true,
-                      ),
+                  TextSpan(
+                    text: lastMessage?.text ?? '',
+                    style: textTheme.labelMedium?.copyWith(
+                      color: AppColors.greyBrighterColor,
                     ),
                   ),
-              ],
+                  if (!isChat && participant?.profession?.isNotEmpty == true)
+                    WidgetSpan(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: ConsultationBadge(
+                          title: participant!.profession!,
+                          // compact: true,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        if (item.lastMessage?.filePath?.isNotEmpty == true)
-          const Padding(
-            padding: EdgeInsets.only(left: 4),
-            child: Icon(
-              AppIcons.paperclip,
-              size: 22,
-              color: AppColors.greyBrighterColor,
+          if (lastMessage?.filePath?.isNotEmpty == true)
+            const Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Icon(
+                AppIcons.paperclip,
+                size: 22,
+                color: AppColors.greyBrighterColor,
+              ),
             ),
-          ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }

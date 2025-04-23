@@ -7,6 +7,8 @@ extension GenderExtension on Gender {
         return t.profile.male;
       case Gender.female:
         return t.profile.female;
+      case Gender.other:
+        return '';
     }
   }
 }

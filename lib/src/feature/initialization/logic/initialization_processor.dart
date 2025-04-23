@@ -69,8 +69,11 @@ final class InitializationProcessor {
       ),
     );
     FlutterError.onError = (e) {
+      if (kDebugMode) {
+        return;
+      }
       bot.api.sendMessage(_chatId,
-          'Project Mama&Co\nFlutter error: ${e.exception}\n${e.stack}');
+          'Project Mama&Co\nFlutter error:\n${e.exception.toString().limit(150)} \n${e.stack.toString().limit(300)}');
     };
 
     return Dependencies(

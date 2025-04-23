@@ -47,32 +47,7 @@ class MessageWidget extends StatelessWidget {
         children: [
           isUser
               ? const Spacer()
-              : GestureDetector(
-                  onTap: () {
-                    context.pushNamed(AppViews.profileInfo, extra: {
-                      'model': AccountModel(
-                          gender: Gender.male,
-                          firstName: item.senderName,
-                          secondName: item.senderSurname,
-                          phone: '',
-                          id: item.senderId,
-                          avatarUrl: item.senderAvatarUrl,
-                          role: switch (item.senderProfession) {
-                            'USER' => Role.user,
-                            'ADMIN' => Role.admin,
-                            'MODERATOR' => Role.moderator,
-                            'DOCTOR' => Role.doctor,
-                            'ONLINE_SCHOOL' => Role.onlineSchool,
-                            _ => Role.doctor,
-                          }),
-                    });
-                  },
-                  child: MessageAvatar(
-                    isOnGroup: isOnGroup,
-                    isUser: isUser,
-                    avatarUrl: item.senderAvatarUrl,
-                  ),
-                ),
+              : _Callback(item: item, isOnGroup: isOnGroup, isUser: isUser),
           isAttachedMessages
               ? Flexible(child: content)
               : IntrinsicWidth(
@@ -84,6 +59,48 @@ class MessageWidget extends StatelessWidget {
             store: store,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _Callback extends StatelessWidget {
+  const _Callback({
+    required this.item,
+    required this.isOnGroup,
+    required this.isUser,
+  });
+
+  final MessageItem item;
+  final bool isOnGroup;
+  final bool isUser;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.pushNamed(AppViews.profileInfo, extra: {
+          'model': AccountModel(
+              gender: Gender.male,
+              firstName: item.senderName,
+              secondName: item.senderSurname,
+              phone: '',
+              id: item.senderId,
+              avatarUrl: item.senderAvatarUrl,
+              role: switch (item.senderProfession) {
+                'USER' => Role.user,
+                'ADMIN' => Role.admin,
+                'MODERATOR' => Role.moderator,
+                'DOCTOR' => Role.doctor,
+                'ONLINE_SCHOOL' => Role.onlineSchool,
+                _ => Role.doctor,
+              }),
+        });
+      },
+      child: MessageAvatar(
+        isOnGroup: isOnGroup,
+        isUser: isUser,
+        avatarUrl: item.senderAvatarUrl,
       ),
     );
   }

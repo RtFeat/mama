@@ -1,4 +1,5 @@
 import 'package:faker_dart/faker_dart.dart';
+import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
@@ -40,6 +41,12 @@ abstract class _ChatsViewStore with Store {
   @action
   void setFetchFuture(ObservableFuture? value) => fetchFuture = value;
 
+  @observable
+  ChatItem? selectedChat;
+
+  @action
+  void setSelectedChat(ChatItem? value) => selectedChat = value;
+
   Future loadAllChats() async {
     await chats.loadPage();
   }
@@ -59,7 +66,7 @@ abstract class _ChatsViewStore with Store {
   }
 
   @action
-  void deleteChat(String id, String chatType) {
+  void deleteChat(String id, {String chatType = 'chat'}) {
     if (chatType == 'group') {
       groups.deleteGroup(id);
     } else {

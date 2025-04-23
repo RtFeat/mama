@@ -111,12 +111,21 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   @computed
   MessageItem? get pinnedMessage => attachedMessages.isNotEmpty
-      ? attachedMessages[selectedPinnedMessageIndex]
+      ? selectedPinnedMessageIndex <= attachedMessages.length - 1
+          ? attachedMessages[selectedPinnedMessageIndex]
+          : attachedMessages.first
       : null;
 
   @computed
   ObservableList<MessageItem> get attachedMessages =>
       ObservableList.of(listData.where((e) => e.isAttached));
+
+  @action
+  void resetSelectedPinnedMessage(bool isPin) {
+    if (selectedPinnedMessageIndex < attachedMessages.length - 1) {
+      selectedPinnedMessageIndex = isPin ? attachedMessages.length - 1 : 0;
+    }
+  }
 
   @action
   void nextPinnedMessage() {

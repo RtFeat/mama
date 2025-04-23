@@ -2,16 +2,19 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:skit/skit.dart';
 
 class GroupUsersView extends StatefulWidget {
   final GroupUsersStore? store;
   final GroupChatInfo? groupInfo;
+  final GroupSpecialistsStore? specialistsStore;
   const GroupUsersView({
     super.key,
     required this.store,
     required this.groupInfo,
+    required this.specialistsStore,
   });
 
   @override
@@ -19,20 +22,11 @@ class GroupUsersView extends StatefulWidget {
 }
 
 class _GroupUsersViewState extends State<GroupUsersView> {
-  // Map<String, bool Function(AccountModel)> filters = {};
-
   @override
   void initState() {
-    widget.store?.loadPage();
-    // filters = {
-    //   'query': (AccountModel e) {
-    //     if (widget.store?.query == null || (widget.store?.query)!.isEmpty) {
-    //       return true;
-    //     }
-    //     return e.name.contains(widget.store?.query ?? '');
-    //   }
-    // };
     super.initState();
+    widget.store?.loadPage();
+    widget.specialistsStore?.loadPage();
   }
 
   @override
@@ -93,12 +87,16 @@ class _GroupUsersViewState extends State<GroupUsersView> {
               ),
             ),
             SliverToBoxAdapter(
-              child: _OtherRoles(store: widget.store),
+              child: _OtherRoles(
+                store: widget.store,
+                specialistsStore: widget.specialistsStore,
+              ),
             ),
             SliverToBoxAdapter(
               child: Observer(builder: (_) {
                 return _Users(
                   store: widget.store,
+                  // scrollController: _scrollController,
                 );
               }),
             ),
@@ -117,10 +115,6 @@ class _Users extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final TextTheme textTheme = theme.textTheme;
-    final TextStyle titleStyle = textTheme.labelLarge!;
-
     return ReactiveForm(
         formGroup: store!.formGroup,
         child: CustomScrollView(
@@ -128,22 +122,8 @@ class _Users extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  bottom: 8,
-                  top: 8,
-                ),
-                child: Text(
-                  t.chat.groupChatsListTitle,
-                  style: titleStyle,
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
               child: CardWidget(
                   elevation: 0,
-                  // title: t.chat.groupChatsListTitle,
                   child: CustomScrollView(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -179,6 +159,9 @@ class _Users extends StatelessWidget {
                             );
                           }),
                         ),
+                        SliverToBoxAdapter(
+                          child: 10.h,
+                        ),
                         PaginatedLoadingWidget(
                           isFewLists: true,
                           store: store!,
@@ -206,8 +189,10 @@ class _Users extends StatelessWidget {
 
 class _OtherRoles extends StatelessWidget {
   final GroupUsersStore? store;
+  final GroupSpecialistsStore? specialistsStore;
   const _OtherRoles({
     required this.store,
+    required this.specialistsStore,
   });
 
   @override
@@ -235,10 +220,10 @@ class _OtherRoles extends StatelessWidget {
                 ),
               ),
             ),
-            if (store!.doctors.isEmpty)
-              const SliverToBoxAdapter(
-                  child: Center(child: Text('There are no specialists'))),
-            if (store!.doctors.isNotEmpty)
+            // if (store!.specialists.isEmpty)
+            //   const SliverToBoxAdapter(
+            //       child: Center(child: Text('There are no specialists'))),
+            if (specialistsStore?.listData.isNotEmpty ?? false)
               SliverToBoxAdapter(
                 child: CardWidget(
                     elevation: 0,
@@ -248,15 +233,20 @@ class _OtherRoles extends StatelessWidget {
                         slivers: [
                           PaginatedLoadingWidget(
                             isFewLists: true,
-                            store: store!,
-                            listData: () {
-                              return store!.doctors;
-                            },
+                            store: specialistsStore!,
+                            // listData: () {
+                            //   return store!.specialists;
+                            // },
                             // separator: (_, __) => separator,
-                            itemBuilder: (context, item, _) {
+                            itemBuilder: (context, item, index) {
+                              // return Text('sdf');
+                              // return Text('$index');
                               return PersonItem(
-                                person: item,
+                                person: item.account ??
+                                    AccountModel.mock(
+                                        context.read<Dependencies>().faker),
                                 store: store,
+                                schoolId: item.onlineSchool?.id,
                               );
                             },
                           ),

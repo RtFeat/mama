@@ -14,21 +14,36 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (_) => GroupUsersStore(
-          faker: context.read<Dependencies>().faker,
-          apiClient: context.read<Dependencies>().apiClient,
-          chatId:
-              (item is GroupItem) ? (item as GroupItem).groupChatId ?? '' : ''),
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) {
+          return GroupUsersStore(
+              faker: context.read<Dependencies>().faker,
+              apiClient: context.read<Dependencies>().apiClient,
+              chatId: (item is GroupItem)
+                  ? (item as GroupItem).groupChatId ?? ''
+                  : '');
+        }),
+        Provider(create: (_) {
+          return GroupSpecialistsStore(
+              faker: context.read<Dependencies>().faker,
+              apiClient: context.read<Dependencies>().apiClient,
+              chatId: (item is GroupItem)
+                  ? (item as GroupItem).groupChatId ?? ''
+                  : '');
+        }),
+      ],
       builder: (context, child) {
         final MessagesStore store = context.watch();
         final GroupUsersStore? groupUsersStore = context.watch();
+        final GroupSpecialistsStore? specialistsStore = context.watch();
 
         return _Body(
           socket: context.watch(),
           store: store,
           item: item,
           groupUsersStore: groupUsersStore,
+          specialistsStore: specialistsStore,
         );
       },
     );
@@ -39,6 +54,7 @@ class _Body extends StatefulWidget {
   final MessagesStore store;
   final ChatItem? item;
   final GroupUsersStore? groupUsersStore;
+  final GroupSpecialistsStore? specialistsStore;
   final ChatSocket socket;
 
   const _Body({
@@ -46,6 +62,7 @@ class _Body extends StatefulWidget {
     required this.store,
     required this.item,
     this.groupUsersStore,
+    this.specialistsStore,
   });
 
   @override
@@ -60,7 +77,6 @@ class __BodyState extends State<_Body> {
     widget.store.init();
 
     logger.info('${widget.item.runtimeType}');
-    widget.socket.markMessagesAsRead();
 
     widget.store.setChatId(widget.item is SingleChatItem
         ? widget.item?.id
@@ -82,16 +98,11 @@ class __BodyState extends State<_Body> {
       },
     );
 
+    widget.socket.markMessagesAsRead();
+
     // widget.store.scrollController?.addListener(_updateCurrentDate);
 
     super.initState();
-  }
-
-  void readMessage() async {
-    await widget.socket.markMessagesAsRead();
-    final store = context.watch<ChatsViewStore>();
-    store.loadAllChats();
-    store.loadAllGroups(context.watch<UserStore>().selectedChild?.id);
   }
 
   @override
@@ -99,7 +110,9 @@ class __BodyState extends State<_Body> {
     super.dispose();
     // _messageKeys.clear();
     // widget.store.scrollController?.removeListener(_updateCurrentDate);
-    widget.store.dispose();
+    if (context.mounted) {
+      widget.store.dispose();
+    }
   }
 
   // void _updateCurrentDate() {
@@ -144,6 +157,7 @@ class __BodyState extends State<_Body> {
                       item: widget.item,
                       scrollController: widget.store.scrollController!,
                       store: widget.store,
+                      specialistsStore: widget.specialistsStore,
                       groupUsersStore: widget.groupUsersStore),
                 ),
           bottomNavigationBar: ChatBottomBar(
