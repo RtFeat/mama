@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -144,95 +145,104 @@ class __BodyState extends State<_Body> {
     final bool isGroup = widget.item is GroupItem;
 
     return Observer(builder: (context) {
-      return Scaffold(
-          backgroundColor: AppColors.purpleLighterBackgroundColor,
-          appBar: widget.store.isSearching
-              ? ChatSearchBar(store: widget.store) as PreferredSizeWidget
-              : PreferredSize(
-                  preferredSize: Size.fromHeight(
-                      widget.store.attachedMessages.isNotEmpty
-                          ? kToolbarHeight * 2
-                          : kToolbarHeight),
-                  child: ChatsAppBar(
-                      item: widget.item,
-                      scrollController: widget.store.scrollController!,
-                      store: widget.store,
-                      specialistsStore: widget.specialistsStore,
-                      groupUsersStore: widget.groupUsersStore),
-                ),
-          bottomNavigationBar: ChatBottomBar(
-            store: context.watch(),
-          ),
-          body: Observer(builder: (_) {
-            return Stack(
-              children: [
-                PaginatedLoadingWidget(
-                  scrollController: widget.store.scrollController,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  store: widget.store,
-                  isReversed: true,
-                  emptyData: const SizedBox.shrink(),
-                  separator: (index, item) => DateSeparatorInChat(
-                      index: index,
-                      item: item,
-                      store: widget.store,
-                      scrollController: widget.store.scrollController!),
-                  listData: () => widget.store.isSearching
-                      ? widget.store.filteredList
-                      : widget.store.messages,
-                  itemBuilder: (context, item, _) {
-                    final index = widget.store.messages.indexOf(item);
-                    // _messageKeys[index] = GlobalKey();
-
-                    // Для первого элемента добавляем дату в начало
-                    if (index == widget.store.messages.length - 1) {
-                      final firstDate = (item).createdAt?.toLocal();
-
-                      if (firstDate == null) return const SizedBox.shrink();
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ChatDateWidget(
-                            scrollController: widget.store.scrollController!,
-                            date: firstDate,
-                            padding: const EdgeInsets.only(
-                              bottom: 10,
-                            ),
-                          ),
-                          AutoScrollTag(
-                            index: index,
-                            controller: widget.store.scrollController!,
-                            key: ValueKey(item.id),
-                            child: MessageWidget(
-                              // key: _messageKeys[index],
-                              item: item,
-                              store: widget.store,
-                              isOnGroup: isGroup,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return AutoScrollTag(
+      return GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
+          }
+        },
+        child: Scaffold(
+            backgroundColor: AppColors.purpleLighterBackgroundColor,
+            appBar: widget.store.isSearching
+                ? ChatSearchBar(store: widget.store) as PreferredSizeWidget
+                : PreferredSize(
+                    preferredSize: Size.fromHeight(
+                        widget.store.attachedMessages.isNotEmpty
+                            ? kToolbarHeight * 2
+                            : kToolbarHeight),
+                    child: ChatsAppBar(
+                        item: widget.item,
+                        scrollController: widget.store.scrollController!,
+                        store: widget.store,
+                        specialistsStore: widget.specialistsStore,
+                        groupUsersStore: widget.groupUsersStore),
+                  ),
+            bottomNavigationBar: ChatBottomBar(
+              store: context.watch(),
+            ),
+            body: Observer(builder: (_) {
+              return Stack(
+                children: [
+                  PaginatedLoadingWidget(
+                    scrollController: widget.store.scrollController,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    store: widget.store,
+                    isReversed: true,
+                    emptyData: const SizedBox.shrink(),
+                    separator: (index, item) => DateSeparatorInChat(
                         index: index,
-                        controller: widget.store.scrollController!,
-                        key: ValueKey(item.id),
-                        child: MessageWidget(
-                          isOnGroup: isGroup,
-                          // key: _messageKeys[index],
-                          item: item,
-                          store: widget.store,
-                        ));
-                  },
-                ),
-                if (widget.store.currentShowingMessage != null)
-                  ChatDateWidget(
-                      scrollController: widget.store.scrollController!,
-                      date: widget.store.currentShowingMessage!.createdAt!
-                          .toLocal()),
-              ],
-            );
-          }));
+                        item: item,
+                        store: widget.store,
+                        scrollController: widget.store.scrollController!),
+                    listData: () => widget.store.isSearching
+                        ? widget.store.filteredList
+                        : widget.store.messages,
+                    itemBuilder: (context, item, _) {
+                      final index = widget.store.messages.indexOf(item);
+                      // _messageKeys[index] = GlobalKey();
+
+                      // Для первого элемента добавляем дату в начало
+                      if (index == widget.store.messages.length - 1) {
+                        final firstDate = (item).createdAt?.toLocal();
+
+                        if (firstDate == null) return const SizedBox.shrink();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ChatDateWidget(
+                              scrollController: widget.store.scrollController!,
+                              date: firstDate,
+                              padding: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                            ),
+                            AutoScrollTag(
+                              index: index,
+                              controller: widget.store.scrollController!,
+                              key: ValueKey(item.id),
+                              child: MessageWidget(
+                                // key: _messageKeys[index],
+                                item: item,
+                                store: widget.store,
+                                isOnGroup: isGroup,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return AutoScrollTag(
+                          index: index,
+                          controller: widget.store.scrollController!,
+                          key: ValueKey(item.id),
+                          child: MessageWidget(
+                            isOnGroup: isGroup,
+                            // key: _messageKeys[index],
+                            item: item,
+                            store: widget.store,
+                          ));
+                    },
+                  ),
+                  if (widget.store.currentShowingMessage != null)
+                    ChatDateWidget(
+                        scrollController: widget.store.scrollController!,
+                        date: widget.store.currentShowingMessage!.createdAt!
+                            .toLocal()),
+                ],
+              );
+            })),
+      );
     });
   }
 }

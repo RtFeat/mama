@@ -1,9 +1,7 @@
 {
-  "dart.additionalAnalyzerFileExtensions": [
-    "drift"
-  ],
+  "dart.additionalAnalyzerFileExtensions": ["drift"],
   "dart.lineLength": 80,
-  "dart.flutterSdkPath": ".fvm/versions/3.27.3",
+  "dart.flutterSdkPath": "~/fvm/versions/3.32.0",
   "cmake.ignoreCMakeListsMissing": true,
   "java.configuration.updateBuildConfiguration": "interactive"
 }

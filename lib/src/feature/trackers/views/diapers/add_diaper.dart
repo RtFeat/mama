@@ -86,7 +86,9 @@ class _AddDiaperState extends State<AddDiaper> {
                   children: [
                     AddButton(
                       title: t.trackers.add.title,
-                      onTap: () {},
+                      onTap: () {
+                        logger.info(selectedIndex);
+                      },
                     ),
                   ],
                 ),

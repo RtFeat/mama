@@ -61,7 +61,6 @@ everythingFine:
 goodAfternoon:
   title: "Good afternoon!"
 
-
 FiveMonthsEighteenDays:
   title: "5 months and 18 days"
 
@@ -147,8 +146,16 @@ tutorFullNameOne:
 
 yourArticles: Your articles
 
+allGood: All good
 
 or: or
+
+years:
+  one: "1 year"
+  two: "$n years"
+  few: "$n years"
+  many: "$n years"
+  other: "$n years"
 
 months:
   one: "1 month"
@@ -164,7 +171,6 @@ days:
   many: $n days
   other: $n days
 
-
 weeks:
   one: $n week
   two: $n weeks
@@ -172,20 +178,46 @@ weeks:
   many: $n weeks
   other: $n weeks
 
-
 today: Today
 tomorrow: Tomorrow
 
 yesterday: Yesterday
 
-monthsData: 
-  withNumbers: [january, february, march, april, may, june, july, august, september, october, november, december]
-  title: [january, february, march, april, may, june, july, august, september, october, november, december]
+monthsData:
+  withNumbers:
+    [
+      january,
+      february,
+      march,
+      april,
+      may,
+      june,
+      july,
+      august,
+      september,
+      october,
+      november,
+      december,
+    ]
+  title:
+    [
+      january,
+      february,
+      march,
+      april,
+      may,
+      june,
+      july,
+      august,
+      september,
+      october,
+      november,
+      december,
+    ]
 
 clickToSeeMore: Click to see more
 
 toFavorites: To favorites
-
 
 ageCategory:
   halfYear: 0-6 months
@@ -193,12 +225,9 @@ ageCategory:
   twoYear: 1-2 years
   older: ">2 years"
 
-
 list_of_weeks: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
 
-
 no_work: There are no scheduled counseling sessions yet
-
 
 backToToday: Back to today
 

@@ -25,7 +25,6 @@ final class InitializationProcessor {
     final sharedPreferences = await SharedPreferences.getInstance();
 
     await FlutterDownloader.initialize(debug: kDebugMode, ignoreSsl: true);
-
     await Firebase.initializeApp();
 
     final storage = AuthStorageImpl(storage: const FlutterSecureStorage());

@@ -140,7 +140,16 @@ tutorFullNameOne:
 
 yourArticles: Ваши статьи
 
+allGood: Все хорошо
+
 or: или
+
+years:
+  one: "1 год"
+  two: "$n года"
+  few: "$n года"
+  many: "$n лет"
+  other: "$n лет"
 
 months:
   one: "1 месяц"

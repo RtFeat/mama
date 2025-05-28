@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:ispect/ispect.dart';
@@ -42,47 +41,38 @@ class _MaterialContextState extends State<MaterialContext> {
     final settings = Provider.of<Dependencies>(context).settingsStore;
 
     return Observer(builder: (_) {
-      return GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus &&
-              currentFocus.focusedChild != null) {
-            SystemChannels.textInput.invokeMethod('TextInput.hide');
-          }
+      return MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
+        theme: settings.lightTheme,
+        darkTheme: settings.darkTheme,
+        themeMode: ThemeMode.light,
+        localizationsDelegates: ISpectLocalizations.localizationDelegates([
+          GlobalMaterialLocalizations.delegate,
+        ]),
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        locale: TranslationProvider.of(context).flutterLocale,
+        // builder: (context, child) => MediaQuery.withClampedTextScaling(
+        //   key: _globalKey,
+        //   minScaleFactor: 1.0,
+        //   maxScaleFactor: 2.0,
+        //   child: child!,
+        // ),
+        builder: (context, child) {
+          child = ISpectBuilder(
+            options: ISpectOptions(
+              locale: TranslationProvider.of(context).flutterLocale,
+            ),
+            observer: _observer,
+            controller: _controller,
+            initialPosition: (x: 0, y: 200),
+            onPositionChanged: (x, y) {
+              debugPrint('x: $x, y: $y');
+            },
+            child: child ?? const SizedBox(),
+          );
+          return child;
         },
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          routerConfig: router,
-          theme: settings.lightTheme,
-          darkTheme: settings.darkTheme,
-          themeMode: ThemeMode.light,
-          localizationsDelegates: ISpectLocalizations.localizationDelegates([
-            GlobalMaterialLocalizations.delegate,
-          ]),
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          locale: TranslationProvider.of(context).flutterLocale,
-          // builder: (context, child) => MediaQuery.withClampedTextScaling(
-          //   key: _globalKey,
-          //   minScaleFactor: 1.0,
-          //   maxScaleFactor: 2.0,
-          //   child: child!,
-          // ),
-          builder: (context, child) {
-            child = ISpectBuilder(
-              options: ISpectOptions(
-                locale: TranslationProvider.of(context).flutterLocale,
-              ),
-              observer: _observer,
-              controller: _controller,
-              initialPosition: (x: 0, y: 200),
-              onPositionChanged: (x, y) {
-                debugPrint('x: $x, y: $y');
-              },
-              child: child ?? const SizedBox(),
-            );
-            return child;
-          },
-        ),
       );
     });
   }

@@ -202,9 +202,15 @@ abstract class _ChildModel with Store {
     int days = difference.inDays - (months * 30);
 
     int weeks = difference.inDays ~/ 7;
+    String formattedDifference = '';
 
-    String formattedDifference =
-        '${t.home.months(n: months)} ${t.home.days(n: days)}';
+    if (months >= 12) {
+      formattedDifference =
+          '${t.home.years(n: months ~/ 12)} ${t.home.months(n: months % 12)}';
+    } else {
+      formattedDifference =
+          '${t.home.months(n: months)} ${t.home.days(n: days)}';
+    }
     String formattedWeeks = t.home.weeks(n: weeks);
 
     return '$formattedDifference ${t.home.or} $formattedWeeks';

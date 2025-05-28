@@ -39,7 +39,7 @@ class ChildStatusWidget extends StatelessWidget {
                             AppColors.blueChildStatusBackgroundColor,
                           ChildStatusType.good =>
                             AppColors.purpleChildStatusBackgroundColor,
-                          _ => AppColors.yellowColor,
+                          _ => AppColors.purpleChildStatusBackgroundColor,
                         },
                       ],
                     ).createShader(bounds);
@@ -54,7 +54,7 @@ class ChildStatusWidget extends StatelessWidget {
                           AppColors.blueChildStatusBackgroundColor,
                         ChildStatusType.good =>
                           AppColors.purpleChildStatusBackgroundColor,
-                        _ => AppColors.yellowColor,
+                        _ => AppColors.purpleChildStatusBackgroundColor,
                       },
                       borderRadius: const BorderRadius.all(
                         Radius.circular(16),
@@ -109,7 +109,7 @@ class ChildStatusWidget extends StatelessWidget {
                   ChildStatusType.drug => '💊',
                   ChildStatusType.vaccination => '💉',
                   ChildStatusType.good => '🙂',
-                  _ => '🥳',
+                  _ => '🙂',
                 },
                 style: const TextStyle(fontSize: 50),
               ),
@@ -153,12 +153,18 @@ class _Title extends StatelessWidget {
           return t.home.fourMonths.title;
         } else if (ageInDays < 153) {
           return t.home.fiveMonths.title;
-        } else if (ageInDays < 214) {
+        } else if (ageInDays < 182) {
           return t.home.soonSixMonths.title;
+        } else if (ageInDays < 214) {
+          return t.home.sixMonths.title;
         } else if (ageInDays < 365) {
           return t.home.alreadySixMonths.title;
+        } else if (ageInDays < 548) {
+          return t.home.soonOneAndHalfYear.title;
+        } else if (ageInDays < 730) {
+          return t.home.oneAndHalfHear.title;
         } else {
-          return '';
+          return t.home.allGood;
         }
       }
 
