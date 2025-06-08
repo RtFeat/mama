@@ -1,6 +1,7 @@
 import 'package:faker_dart/faker_dart.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:skit/skit.dart';
 import 'package:televerse/televerse.dart';
@@ -15,6 +16,7 @@ base class Dependencies {
     required this.tokenStorage,
     required this.faker,
     required this.bot,
+    required this.imagePicker,
   });
 
   /// [SharedPreferences] instance, used to store Key-Value pairs.
@@ -30,6 +32,8 @@ base class Dependencies {
 
   /// [Faker] instance, used to generate fake data.
   final Faker faker;
+
+  final ImagePicker imagePicker;
 
   // /// [ErrorTrackingManager] instance, used to report errors.
   // final ErrorTrackingManager errorTrackingManager;

@@ -28,6 +28,17 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
   int _nextIndex = 1;
   bool _isAnimating = false;
 
+  ChildModel? _selectedChild;
+  ChildModel? _nextChild;
+
+  @override
+  void initState() {
+    super.initState();
+    _nextIndex = (_currentIndex + 1) % widget.children.length;
+    _selectedChild = widget.children[_currentIndex];
+    _nextChild = widget.children[_nextIndex];
+  }
+
   void _toggleCircles() {
     // if (_isAnimating) return;
     setState(() {
@@ -36,6 +47,8 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
       _currentIndex = (_currentIndex + 1) % widget.children.length;
       _nextIndex = (_currentIndex + 1) % widget.children.length;
       final selectedChild = widget.children[_currentIndex];
+      _selectedChild = selectedChild;
+      _nextChild = widget.children[_nextIndex];
       if (selectedChild != null) {
         widget.userStore.selectChild(child: selectedChild);
       }
@@ -69,7 +82,7 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
                 children: [
                   AnimatedText(
                     isSwitched: _isAnimating,
-                    title: widget.children[_currentIndex]?.firstName ?? '',
+                    title: _selectedChild?.firstName ?? '',
                   ),
                   Text(
                     t.home.switch_hint,
@@ -93,7 +106,9 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
                 child: CustomAvatar(
                   radius: _isAnimating ? 25 : 20,
                   key: ValueKey<int>(_currentIndex),
-                  avatarUrl: widget.children[_currentIndex]?.avatarUrl,
+                  avatarUrl: _isAnimating
+                      ? _selectedChild?.avatarUrl
+                      : _nextChild?.avatarUrl,
                 ),
               ),
             ),
@@ -109,7 +124,9 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
                 duration: const Duration(milliseconds: 300),
                 child: CustomAvatar(
                   key: ValueKey<int>(_nextIndex),
-                  avatarUrl: widget.children[_nextIndex]?.avatarUrl,
+                  avatarUrl: _isAnimating
+                      ? _nextChild?.avatarUrl
+                      : _selectedChild?.avatarUrl,
                   radius: _isAnimating ? 20 : 25,
                 ),
               ),

@@ -27,33 +27,41 @@ class ProfilePhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch();
+    final ImagePicker picker = context.watch<Dependencies>().imagePicker;
 
     return Stack(
-      clipBehavior: Clip.none,
-      children: <Widget>[
-        Observer(builder: (_) {
-          return Container(
-            height: height ?? 390,
-            decoration: BoxDecoration(
-              borderRadius: borderRadius ??
-                  const BorderRadius.only(
-                    bottomLeft: Radius.circular(32),
-                    bottomRight: Radius.circular(32),
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              Observer(builder: (_) {
+                return Container(
+                  height: height ?? 390,
+                  decoration: BoxDecoration(
+                    borderRadius: borderRadius ??
+                        const BorderRadius.only(
+                          bottomLeft: Radius.circular(32),
+                          bottomRight: Radius.circular(32),
+                        ),
+                    image: DecorationImage(
+                        filterQuality: FilterQuality.low,
+                        image: ResizeImage(
+                            NetworkImage(
+                              photoUrl ?? userStore.account.avatarUrl ?? '',
+                            ),
+                            height: 390),
+                        fit: BoxFit.cover),
                   ),
-              image: DecorationImage(
-                  filterQuality: FilterQuality.low,
-                  image: ResizeImage(
-                      NetworkImage(
-                        photoUrl ?? userStore.account.avatarUrl ?? '',
-                      ),
-                      height: 390),
-                  fit: BoxFit.cover),
-            ),
-          );
-        }),
+                );
+              }),
+            ],
+          ),
+        ),
         if (onDeleteTap != null)
           Positioned.fill(
-              bottom: -32,
+              // bottom: -32,
               left: 32,
               child: Align(
                   alignment: Alignment.bottomLeft,
@@ -75,7 +83,7 @@ class ProfilePhoto extends StatelessWidget {
                   ))),
         if (isShowIcon)
           Positioned.fill(
-            bottom: -32,
+            // bottom: -32,
             right: 32,
             child: Align(
               alignment: Alignment.bottomRight,
@@ -84,10 +92,8 @@ class ProfilePhoto extends StatelessWidget {
                 fillColor: AppColors.primaryColor,
                 padding: const EdgeInsets.all(20),
                 onPressed: onIconTap ??
-                    () {
-                      final ImagePicker picker = ImagePicker();
-
-                      picker
+                    () async {
+                      await picker
                           .pickImage(source: ImageSource.gallery)
                           .then((value) {
                         if (value != null) {

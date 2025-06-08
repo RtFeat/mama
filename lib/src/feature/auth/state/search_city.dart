@@ -50,7 +50,8 @@ abstract class _SearchCityStore with Store {
 
     fetchCitiesFuture = ObservableFuture(future);
 
-    return cities = ObservableList.of(await future);
+    final Set<City> uniqueCities = (await future).toSet();
+    return cities = ObservableList.of(uniqueCities.toList());
   }
 
   void dispose() {

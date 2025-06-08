@@ -164,6 +164,18 @@ class _Users extends StatelessWidget {
                         ),
                         PaginatedLoadingWidget(
                           isFewLists: true,
+                          initialLoadingWidget: SliverToBoxAdapter(
+                            child: SizedBox.shrink(),
+                          ),
+                          additionalLoadingWidget: SliverToBoxAdapter(
+                            child: SizedBox.shrink(),
+                          ),
+                          errorWidget: SliverToBoxAdapter(
+                            child: SizedBox.shrink(),
+                          ),
+                          emptyData: SliverToBoxAdapter(
+                            child: SizedBox.shrink(),
+                          ),
                           store: store!,
                           listData: () {
                             if (store!.query != null &&
@@ -234,6 +246,18 @@ class _OtherRoles extends StatelessWidget {
                           PaginatedLoadingWidget(
                             isFewLists: true,
                             store: specialistsStore!,
+                            initialLoadingWidget: SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            ),
+                            additionalLoadingWidget: SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            ),
+                            errorWidget: SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            ),
+                            emptyData: SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            ),
                             // listData: () {
                             //   return store!.specialists;
                             // },

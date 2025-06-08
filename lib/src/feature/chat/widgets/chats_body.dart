@@ -81,6 +81,7 @@ class _GroupsList extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               slivers: [
                 PaginatedLoadingWidget(
+                  emptyData: const SliverToBoxAdapter(child: SizedBox.shrink()),
                   isFewLists: true,
                   store: store.groups,
                   separator: (_, __) => separator,
@@ -133,6 +134,7 @@ class __ChatsListState extends State<_ChatsList> {
             semanticChildCount: widget.store.chats.filteredChats.length,
             slivers: [
               PaginatedLoadingWidget(
+                emptyData: const SliverToBoxAdapter(child: SizedBox.shrink()),
                 isFewLists: true,
                 separator: (_, __) => widget.separator,
                 store: widget.store.chats,

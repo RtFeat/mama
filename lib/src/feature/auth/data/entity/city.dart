@@ -24,4 +24,13 @@ class City {
   factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
 
   Map<String, dynamic> toJson() => _$CityToJson(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is City && other.name == name;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 }

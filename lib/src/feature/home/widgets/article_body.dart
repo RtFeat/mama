@@ -25,7 +25,7 @@ class ArticleBody extends StatelessWidget {
 
     return LoadingWidget(
         future: store.fetchFuture,
-        builder: (context) {
+        builder: (model) {
           return Padding(
             padding: const EdgeInsets.only(
               left: 12,
@@ -119,7 +119,7 @@ class ArticleBody extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: 20.h,
                 ),
-                SliverFillRemaining(
+                SliverToBoxAdapter(
                     child: _WebBody(
                         data: store.data?.articles
                                 ?.where((e) => e.data != null)
@@ -147,6 +147,7 @@ class __WebBodyState extends State<_WebBody> {
   late final WebViewController controller;
   late Future future;
   late String payload;
+  double webViewHeight = 1;
 
   Future<String> loadFontBase64() async {
     ByteData fontData = await rootBundle.load(Assets.fonts.sFProTextMedium);
@@ -229,7 +230,25 @@ class __WebBodyState extends State<_WebBody> {
       //     return NavigationDecision.prevent;
       //   },
       // ))
+      ..setNavigationDelegate(NavigationDelegate(
+        onPageFinished: (_) {
+          _updateWebViewHeight();
+        },
+      ))
       ..loadHtmlString(payload);
+  }
+
+  Future<void> _updateWebViewHeight() async {
+    final String heightScript = "document.documentElement.scrollHeight";
+    final dynamic result =
+        await controller.runJavaScriptReturningResult(heightScript);
+
+    if (mounted) {
+      setState(() {
+        // Parse the height and add some padding
+        webViewHeight = double.parse(result.toString()) + 20;
+      });
+    }
   }
 
   @override
@@ -245,16 +264,19 @@ class __WebBodyState extends State<_WebBody> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return AbsorbPointer(
-            child: WebViewWidget(
-              controller: controller,
-              gestureRecognizers: {
-                Factory<VerticalDragGestureRecognizer>(
-                    () => VerticalDragGestureRecognizer()
-                      ..onStart = (_) {}
-                      ..onDown = (_) {}
-                      ..onUpdate = (_) {}
-                      ..onEnd = (_) {}),
-              },
+            child: SizedBox(
+              height: webViewHeight,
+              child: WebViewWidget(
+                controller: controller,
+                gestureRecognizers: {
+                  Factory<VerticalDragGestureRecognizer>(
+                      () => VerticalDragGestureRecognizer()
+                        ..onStart = (_) {}
+                        ..onDown = (_) {}
+                        ..onUpdate = (_) {}
+                        ..onEnd = (_) {}),
+                },
+              ),
             ),
           );
         }

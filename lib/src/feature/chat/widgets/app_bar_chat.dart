@@ -180,12 +180,16 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
         child: Observer(builder: (_) {
           return Finder(
               value: store.query,
-              onSearchIconPressed: () => store.setIsSearching(false),
+              onSearchIconPressed: () {
+                store.setIsSearching(false);
+              },
               inputBorder: const OutlineInputBorder(
                 borderSide: BorderSide.none,
               ),
               onChanged: (v) {
-                store.setQuery(v);
+                if (v != store.query) {
+                  store.setQuery(v);
+                }
                 // store.setFilters({
                 //   'query': (e) {
                 //     if (v.isEmpty) return true;
@@ -212,22 +216,4 @@ class ChatSearchBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-// }
-
-// String formatLastSeen(String isoTime) {
-//   try {
-//     print(isoTime);
-//     DateTime dateTime = DateTime.parse(isoTime);
-//     print(isoTime);
-
-//     // Create a DateFormat object with the desired pattern and locale
-//     DateFormat formatter = DateFormat('d MMMM HH:mm', 'ru');
-
-//     // Format the date into a string
-//     String formattedDate = formatter.format(dateTime);
-//     return 'Был(а) в $formattedDate';
-//   } catch (e) {
-//     return 'Invalid time format';
-//   }
-// }
 }

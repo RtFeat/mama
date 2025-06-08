@@ -92,12 +92,18 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
 
   @action
   void addMessage(MessageItem message) {
-    listData.insert(0, message);
+    // Добавляем сообщение и сортируем по времени
+    listData.add(message);
+    listData.sort((a, b) => (b.createdAt ?? DateTime.now())
+        .compareTo(a.createdAt ?? DateTime.now()));
   }
 
   @action
   void removeMessage(String messageId) {
-    listData.removeWhere((e) => e.id == messageId);
+    final index = listData.indexWhere((e) => e.id == messageId);
+    if (index != -1) {
+      listData.removeAt(index);
+    }
   }
 
   @observable

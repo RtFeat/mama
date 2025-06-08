@@ -54,7 +54,7 @@ class _HomeUserBodyState extends State<HomeUserBody> {
             24.h,
             const ChildInfo(),
           ],
-          26.h,
+          14.h,
 
           /// #services
           CustomBackground(

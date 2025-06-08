@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fresh_dio/fresh_dio.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ispectify_dio/ispectify_dio.dart';
 import 'package:mama/main.dart';
@@ -76,6 +77,7 @@ final class InitializationProcessor {
     };
 
     return Dependencies(
+      imagePicker: ImagePicker(),
       faker: faker,
       bot: bot,
       sharedPreferences: sharedPreferences,

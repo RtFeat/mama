@@ -33,7 +33,7 @@ class _VerifyInputWidgetState extends State<VerifyInputWidget> {
 
   @override
   void dispose() {
-    controller.dispose();
+    if (context.mounted) controller.dispose();
     focusNode.dispose();
     super.dispose();
   }

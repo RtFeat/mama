@@ -31,6 +31,16 @@ class ChildBarWidget extends StatelessWidget {
     final ChildStore childStore = context.watch();
     final UserStore userStore = context.watch();
 
+    final ImagePicker picker = context.watch<Dependencies>().imagePicker;
+
+    Future updateAvatar() async {
+      return await picker.pickImage(source: ImageSource.gallery).then((value) {
+        if (value != null) {
+          childStore.updateAvatar(file: value, model: child);
+        }
+      });
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -144,50 +154,52 @@ class ChildBarWidget extends StatelessWidget {
             ],
           ),
         ),
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Observer(builder: (context) {
-              return child.avatarUrl != null
-                  ? CircleAvatar(
-                      radius: 64,
-                      backgroundImage: NetworkImage(child.avatarUrl!),
-                    )
-                  : const CircleAvatar(
-                      radius: 64,
-                      backgroundColor: AppColors.purpleLighterBackgroundColor,
-                      child: Icon(
-                        AppIcons.faceDashed,
-                        size: 56,
-                        color: AppColors.whiteColor,
-                      ),
-                    );
-            }),
-            Positioned(
-              bottom: -30,
-              right: 16,
-              left: 16,
-              child: RawMaterialButton(
-                onPressed: () {
-                  final ImagePicker picker = ImagePicker();
-
-                  picker.pickImage(source: ImageSource.gallery).then((value) {
-                    if (value != null) {
-                      childStore.updateAvatar(file: value, model: child);
-                    }
-                  });
-                },
-                fillColor: AppColors.primaryColor,
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(16),
-                child: const Icon(
-                  AppIcons.cameraOnRectangleFill,
-                  color: AppColors.whiteColor,
-                  size: 32,
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () async {
+            await updateAvatar();
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Observer(builder: (context) {
+                  return child.avatarUrl != null
+                      ? CircleAvatar(
+                          radius: 64,
+                          backgroundImage: NetworkImage(child.avatarUrl!),
+                        )
+                      : const CircleAvatar(
+                          radius: 64,
+                          backgroundColor:
+                              AppColors.purpleLighterBackgroundColor,
+                          child: Icon(
+                            AppIcons.faceDashed,
+                            size: 56,
+                            color: AppColors.whiteColor,
+                          ),
+                        );
+                }),
+                Positioned(
+                  bottom: -30,
+                  right: 16,
+                  left: 16,
+                  child: RawMaterialButton(
+                    onPressed: null,
+                    fillColor: AppColors.primaryColor,
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(16),
+                    child: const Icon(
+                      AppIcons.cameraOnRectangleFill,
+                      color: AppColors.whiteColor,
+                      size: 32,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );

@@ -41,7 +41,7 @@ abstract class _ChatItem extends SkitBaseModel with Store {
   MessageItem? lastMessage;
 
   @action
-  void setLastMessage(MessageItem message) => lastMessage = message;
+  void setLastMessage(MessageItem? message) => lastMessage = message;
 
   @observable
   @JsonKey(name: 'last_message_at')
