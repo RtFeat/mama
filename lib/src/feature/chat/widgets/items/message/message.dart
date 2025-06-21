@@ -86,6 +86,7 @@ class _Callback extends StatelessWidget {
               secondName: item.senderSurname,
               phone: '',
               id: item.senderId,
+              profession: item.senderProfession,
               avatarUrl: item.senderAvatarUrl,
               role: switch (item.senderProfession) {
                 'USER' => Role.user,
@@ -95,6 +96,8 @@ class _Callback extends StatelessWidget {
                 'ONLINE_SCHOOL' => Role.onlineSchool,
                 _ => Role.doctor,
               }),
+          'schoolId':
+              item.senderProfession == 'ONLINE_SCHOOL' ? item.senderId : null,
         });
       },
       child: MessageAvatar(

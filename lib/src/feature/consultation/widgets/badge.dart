@@ -25,7 +25,7 @@ class ConsultationBadge extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             child: Text(
-              title,
+              title == 'ONLINE_SCHOOL' ? t.profile.onlineSchool : title,
               maxLines: 1,
               style:
                   textTheme.labelSmall!.copyWith(color: AppColors.primaryColor),

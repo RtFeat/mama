@@ -9,7 +9,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
-    final ChatSocket socket = context.watch<ChatSocket>();
+    final ChatSocketFactory socket = context.watch<ChatSocketFactory>();
     final FirebaseMessageStore firebaseMessageStore = context.watch();
 
     return LoadHomeData(
@@ -25,7 +25,7 @@ class HomeView extends StatelessWidget {
 
 class _Body extends StatefulWidget {
   final UserStore userStore;
-  final ChatSocket socket;
+  final ChatSocketFactory socket;
   final HomeViewStore store;
   final FirebaseMessageStore firebaseMessageStore;
   const _Body({
@@ -49,44 +49,12 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     super.initState();
     isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
-    widget.socket.initialize();
+    widget.socket.socket.initialize();
     widget.firebaseMessageStore.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final CustomAppBar appBar = CustomAppBar(
-    //   leading: Observer(builder: (context) {
-    //     return ProfileWidget(
-    //       onTap: () {
-    //         router.pushNamed(AppViews.profile);
-    //       },
-    //       alignment: Alignment.centerLeft,
-    //       avatarUrl: widget.userStore.account.avatarUrl ?? '',
-    //     );
-    //   }),
-    //   action: ProfileWidget(
-    //     isShowText: true,
-    //     onTapSwitch: () {
-    //       switch (_tabController.index) {
-    //         case 2:
-    //           if (widget.userStore.role == Role.user) {
-    //             final store =
-    //                 Provider.of<ChatsViewStore>(context, listen: false);
-
-    //             store.groups.resetPagination();
-
-    //             store.loadAllGroups(
-    //               widget.userStore.selectedChild?.id,
-    //             );
-    //           }
-    //           break;
-    //         default:
-    //       }
-    //     },
-    //   ),
-    // );
-
     return Scaffold(
         body: TabBarView(
           controller: _tabController,

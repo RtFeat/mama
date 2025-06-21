@@ -18,6 +18,7 @@ class LoadHomeData extends StatefulWidget {
 class _LoadHomeDataState extends State<LoadHomeData> {
   @override
   void initState() {
+    widget.userStore.setUserData(null);
     widget.userStore.loadData();
     super.initState();
   }

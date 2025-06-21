@@ -13,18 +13,24 @@ class KnowledgeFilterWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: RawChip(
+        // defaultProperties: ChipThemeData(selectedColor: AppColors.primaryColor),
         onPressed: () {
           filter.onTap();
         },
         showCheckmark: false,
-        color: const WidgetStatePropertyAll(AppColors.lightBlue),
+        // color: const WidgetStatePropertyAll(AppColors.lightBlue),
         selected: filter.isSelected,
         selectedColor: AppColors.primaryColor,
         labelStyle: textTheme.titleSmall?.copyWith(
           color: filter.isSelected ? AppColors.whiteColor : null,
         ),
-        label: Text(
-          filter.title,
+        label: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 200,
+          ),
+          child: Text(
+            filter.title,
+          ),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(32),

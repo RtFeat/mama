@@ -2,15 +2,21 @@ import 'package:faker_dart/faker_dart.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
-class HomeViewStore {
+import 'package:mobx/mobx.dart';
+
+part 'home_view_state.g.dart';
+
+class HomeViewStore extends _HomeViewStore with _$HomeViewStore {
   final ArticlesStore allArticlesStore;
   final ArticlesStore forMeArticlesStore;
   final ArticlesStore ownArticlesStore;
 
   final CoursesStore coursesStore;
 
+  // final ApiClient apiClient;
+
   HomeViewStore({
-    required ApiClient apiClient,
+    required super.apiClient,
     required String? userId,
     required Faker faker,
   })  : allArticlesStore = ArticlesStore(
@@ -49,8 +55,18 @@ class HomeViewStore {
           ),
         );
 
-  Future<void> loadAllArticles() async {
-    await allArticlesStore.loadPage();
+  Future<void> loadAllArticles({
+    String? schoolId,
+  }) async {
+    List<SkitFilter> filters = [];
+    if (schoolId != null) {
+      filters.add(SkitFilter(
+          field: 'school_id',
+          operator: FilterOperator.equals,
+          value: schoolId));
+    }
+
+    await allArticlesStore.loadPage(newFilters: filters);
   }
 
   Future<void> loadForMeArticles(String accountId) async {
@@ -70,5 +86,23 @@ class HomeViewStore {
             value: schoolId),
       ],
     );
+  }
+}
+
+abstract class _HomeViewStore with Store {
+  final ApiClient apiClient;
+
+  _HomeViewStore({
+    required this.apiClient,
+  });
+
+  @observable
+  DoctorData? doctorData;
+
+  @action
+  Future loadDoctorData(String id) async {
+    await apiClient.get('${Endpoint.doctor}/$id').then((v) {
+      doctorData = DoctorData.fromJson(v!);
+    });
   }
 }

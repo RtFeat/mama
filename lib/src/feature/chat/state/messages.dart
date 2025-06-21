@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
@@ -13,16 +14,22 @@ class MessagesStore extends _MessagesStore with _$MessagesStore {
     required super.chatType,
     super.pageSize = 20,
     required super.faker,
+    required super.chatsViewStore,
+    required super.userStore,
   });
 }
 
 abstract class _MessagesStore extends PaginatedListStore<MessageItem>
     with Store {
+  final ChatsViewStore chatsViewStore;
+  final UserStore userStore;
   _MessagesStore({
     required super.apiClient,
     required this.chatType,
     required super.pageSize,
     required super.faker,
+    required this.chatsViewStore,
+    required this.userStore,
   }) : super(
             testDataGenerator: () {
               return MessageItem(
@@ -91,11 +98,32 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
   }
 
   @action
-  void addMessage(MessageItem message) {
+  void addMessage(MessageItem message, {bool notRead = false, String? chatId}) {
     // Добавляем сообщение и сортируем по времени
     listData.add(message);
     listData.sort((a, b) => (b.createdAt ?? DateTime.now())
         .compareTo(a.createdAt ?? DateTime.now()));
+
+    if (notRead && chatId != null) {
+      final bool isUser = message.senderId == userStore.account.id;
+
+      logger.info('Sender ID: ${message.senderId}');
+      logger.info('User ID: ${userStore.account.id}');
+      logger.info('isUser: $isUser');
+      logger.info('Добавляем непрочитанное сообщение в чат $chatId');
+      final group = chatsViewStore.groups.listData
+          .firstWhereIndexedOrNull((e, i) => i.groupChatId == chatId);
+      final chat = chatsViewStore.chats.listData
+          .firstWhereIndexedOrNull((e, i) => i.id == chatId);
+
+      if (group != null) {
+        group.setLastMessage(message);
+        group.setUnreadMessages((group.unreadMessages ?? 0) + (isUser ? 0 : 1));
+      } else if (chat != null) {
+        chat.setLastMessage(message);
+        chat.setUnreadMessages((chat.unreadMessages ?? 0) + (isUser ? 0 : 1));
+      }
+    }
   }
 
   @action
@@ -190,6 +218,7 @@ abstract class _MessagesStore extends PaginatedListStore<MessageItem>
   }
 
   void dispose() {
+    resetPagination();
     scrollController?.dispose();
   }
 }

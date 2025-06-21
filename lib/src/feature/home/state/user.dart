@@ -50,6 +50,7 @@ abstract class _UserStore extends SingleDataStore<UserData> with Store {
       children = ObservableList.of(data.childs ?? []);
       selectedChild = children.isNotEmpty ? children.first : null;
     }
+    this.data = data;
   }
 
   @computed

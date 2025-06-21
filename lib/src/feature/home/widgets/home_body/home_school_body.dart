@@ -55,49 +55,50 @@ class _HomeSchoolBodyState extends State<HomeSchoolBody> {
               child: DateSubtitle()),
           24.h,
 
-          if (widget.homeViewStore.ownArticlesStore.listData.isNotEmpty)
+          // if (widget.homeViewStore.ownArticlesStore.listData.isNotEmpty)
 
-            /// #my articles
-            CustomBackground(
-              height: null,
-              padding: 0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  16.h,
+          /// #my articles
+          CustomBackground(
+            height: null,
+            padding: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                16.h,
 
-                  /// #article category text
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        t.home.yourArticles,
-                        style: textTheme.headlineSmall?.copyWith(fontSize: 24),
-                      )),
-                  16.h,
+                /// #article category text
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      t.home.yourArticles,
+                      style: textTheme.headlineSmall?.copyWith(fontSize: 24),
+                    )),
+                16.h,
 
-                  /// #articles
-                  // ArticlesListView(
-                  //   listData: widget.articleStore.ownListData.toList(),
-                  // ),
+                /// #articles
+                // ArticlesListView(
+                //   listData: widget.articleStore.ownListData.toList(),
+                // ),
 
-                  Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: SizedBox(
-                          height: 250,
-                          child: PaginatedLoadingWidget(
-                            scrollDirection: Axis.horizontal,
-                            store: widget.homeViewStore.ownArticlesStore,
-                            itemBuilder: (context, item, _) {
-                              return ArticleBox(
-                                model: item,
-                              );
-                            },
-                          ))),
+                Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: SizedBox(
+                        height: 250,
+                        child: PaginatedLoadingWidget(
+                          scrollDirection: Axis.horizontal,
+                          emptyData: SizedBox.shrink(),
+                          store: widget.homeViewStore.ownArticlesStore,
+                          itemBuilder: (context, item, _) {
+                            return ArticleBox(
+                              model: item,
+                            );
+                          },
+                        ))),
 
-                  24.h,
-                ],
-              ),
+                24.h,
+              ],
             ),
+          ),
         ],
       );
     });

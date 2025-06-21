@@ -83,7 +83,7 @@ class Content extends StatelessWidget {
     }
 
     final UserStore userStore = context.watch<UserStore>();
-    final ChatSocket socket = context.watch<ChatSocket>();
+    final ChatSocketFactory socket = context.watch<ChatSocketFactory>();
     final bool isAdmin =
         userStore.role == Role.admin || userStore.role == Role.moderator;
 
@@ -103,7 +103,7 @@ class Content extends StatelessWidget {
             onSelected: () {
               item.setIsAttached(!item.isAttached);
               store?.resetSelectedPinnedMessage(!item.isAttached);
-              socket.pinMessage(item.id!, item.isAttached);
+              socket.socket.pinMessage(item.id!, item.isAttached);
             },
           ),
         if (isAdmin || kDebugMode)
@@ -111,7 +111,7 @@ class Content extends StatelessWidget {
             label: t.chat.delete,
             icon: AppIcons.xmark,
             color: AppColors.redColor,
-            onSelected: () => socket.deleteMessage(item.id!),
+            onSelected: () => socket.socket.deleteMessage(item.id!),
           ),
       ];
 

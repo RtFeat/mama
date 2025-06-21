@@ -26,6 +26,9 @@ class ConsultationView extends StatelessWidget {
       create: (context) => ConsultationStore(
         faker: context.read<Dependencies>().faker,
         apiClient: context.read<Dependencies>().apiClient,
+        chatsViewStore: context.read(),
+        messagesStore: context.read(),
+        socket: context.read<ChatSocketFactory>().socket,
       ),
       builder: (context, child) => _Body(
         doctor: doctor,

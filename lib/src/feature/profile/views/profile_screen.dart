@@ -40,8 +40,10 @@ class ProfileScreen extends StatelessWidget {
 
     return Provider(
         create: (context) => ProfileViewStore(
-            model: userStore.account,
+            userStore: userStore,
+            // userStore: userStore.account,
             apiClient: context.read<Dependencies>().apiClient),
+        dispose: (context, value) => value.dispose(),
         builder: (context, _) {
           final ProfileViewStore store = context.watch();
 
@@ -171,6 +173,8 @@ class ProfileScreen extends StatelessWidget {
                             //     ),
                             //   ),
                             // );
+                            context.read<ChatSocketFactory>().reset();
+                            context.read<UserStore>().setUserData(null);
                             verifyStore.logout();
                           },
                           backgroundColor: AppColors.redLighterBackgroundColor,

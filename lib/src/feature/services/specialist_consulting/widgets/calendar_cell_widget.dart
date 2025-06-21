@@ -35,7 +35,7 @@ class CalendarCell extends StatelessWidget {
             });
           }
         } else {
-          if (event.first.description != null) {
+          if (event.isNotEmpty && event.first.description != null) {
             logger.info(event.first);
             context.pushNamed(AppViews.consultation, extra: {
               'consultation': Consultation(

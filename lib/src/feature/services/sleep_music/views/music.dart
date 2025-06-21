@@ -45,6 +45,7 @@ class __ContentState extends State<_Content>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.lightBlue,
       appBar: CustomAppBar(
         title: t.services.sleepMusic.title,
         height: 114,

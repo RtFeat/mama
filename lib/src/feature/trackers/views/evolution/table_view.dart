@@ -154,11 +154,12 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
             ],
           ),
         ),
-        SliverToBoxAdapter(
-          child: SkitTableWidget(
-            store: widget.store,
+        if (widget.store.listData.isNotEmpty)
+          SliverToBoxAdapter(
+            child: SkitTableWidget(
+              store: widget.store,
+            ),
           ),
-        ),
 // TODO виджет для добавления строк
       ],
     );

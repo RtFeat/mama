@@ -40,20 +40,23 @@ class ProfileWidget extends StatelessWidget {
           } else if (userStore.children.length == 1) {
             final ChildModel child = userStore.children.first;
 
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (isShowText)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(child.firstName),
+            return SizedBox(
+              height: 56,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (isShowText)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Text(child.firstName),
+                    ),
+                  GestureDetector(
+                    onTap: onTap,
+                    child: _Avatar(avatarUrl: child.avatarUrl),
                   ),
-                GestureDetector(
-                  onTap: onTap,
-                  child: _Avatar(avatarUrl: child.avatarUrl),
-                ),
-              ],
+                ],
+              ),
             );
           }
         }

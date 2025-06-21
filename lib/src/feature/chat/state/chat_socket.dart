@@ -17,6 +17,7 @@ class ChatSocket {
   final Fresh tokenStorage;
   final Bot bot;
   final ApiClient apiClient;
+  final UserStore userStore;
 
   WebSocketChannel? _channel;
   StreamSubscription? _socketSub;
@@ -41,6 +42,7 @@ class ChatSocket {
     required this.tokenStorage,
     required this.chatsViewStore,
     required this.apiClient,
+    required this.userStore,
     int maxReconnectAttempts = 5,
     Duration pingInterval = const Duration(seconds: 30),
   })  : _maxReconnectAttempts = maxReconnectAttempts,
@@ -134,7 +136,6 @@ class ChatSocket {
   Future<void> pinMessage(String messageId, bool pin) async {
     final completer = Completer<void>();
     _pendingCompleters.add(completer);
-    await initialize();
 
     final Map<String, dynamic> data = {
       'event': pin ? 'pin_message' : 'unpin_message',
@@ -153,6 +154,7 @@ class ChatSocket {
   Future<void> markAsRead() async {
     final completer = Completer<void>();
     _pendingCompleters.add(completer);
+    await initialize();
 
     _messageQueue.add({
       'event': 'read_message',
@@ -169,7 +171,12 @@ class ChatSocket {
   Future<void> close() async {
     _isClosed = true;
     _stopPing();
+    _messageQueue.clear();
+    _isConnected = false;
+    _accessToken = null;
+
     await _disconnect();
+
     for (var c in _pendingCompleters) {
       c.completeError(Exception('Socket closed'));
     }
@@ -181,7 +188,10 @@ class ChatSocket {
     if (_channel == null) return;
     _pingTimer = Timer.periodic(_pingInterval, (timer) {
       try {
-        final pingMsg = json.encode({'event': 'ping'});
+        final pingMsg = json.encode({
+          'event': 'i_am_active',
+          'data': {'access_token': 'Bearer $_accessToken'},
+        });
         _channel?.sink.add(pingMsg);
         logger.info('➡️ ПИНГ');
       } catch (e) {
@@ -311,14 +321,14 @@ class ChatSocket {
       _handleMessage,
       onError: (error) {
         logger.error('Socket error: $error');
-        bot.api.sendMessage(_chatId, 'Socket error: $error');
+        bot.api.sendMessage(_chatId, 'Project Mama&Co\nSocket error: $error');
         Future.delayed(const Duration(seconds: 1), () {
           _reconnect();
         });
       },
       onDone: () {
         logger.error('Socket closed');
-        bot.api.sendMessage(_chatId, 'Socket closed');
+        // bot.api.sendMessage(_chatId, 'Socket closed');
         if (!_isClosed) {
           Future.delayed(const Duration(seconds: 1), () {
             _reconnect();
@@ -417,8 +427,12 @@ class ChatSocket {
     }
 
     try {
-      store.addMessage(message);
-      chatsViewStore.selectedChat?.setLastMessage(message);
+      store.addMessage(
+        message,
+        notRead: true,
+        chatId: message.chatId,
+      );
+      // chatsViewStore.selectedChat?.setLastMessage(message);
     } catch (e) {
       logger.error('Error adding message to store: $e');
       // Пробуем переподключиться при ошибке добавления сообщения

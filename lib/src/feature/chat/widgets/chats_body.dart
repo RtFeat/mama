@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/chat/state/chats.dart';
 import 'package:mobx/mobx.dart';
+import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class ChatsBodyWidget extends StatefulWidget {
@@ -48,6 +49,7 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final UserStore userStore = context.watch<UserStore>();
     final Widget separator = Divider(
       indent: MediaQuery.of(context).size.width * .15,
     );
@@ -57,6 +59,9 @@ class _ChatsBodyWidgetState extends State<ChatsBodyWidget> {
         builder: (_) => CustomScrollView(cacheExtent: 1000, slivers: [
               _GroupsList(store: widget.store, separator: separator),
               _ChatsList(store: widget.store, separator: separator),
+              // SliverToBoxAdapter(
+              //   child: Text(userStore.user.id ?? ''),
+              // )
             ]));
   }
 }

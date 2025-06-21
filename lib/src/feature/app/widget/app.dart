@@ -21,19 +21,33 @@ class App extends StatelessWidget {
             create: (context) => result.dependencies,
           ),
           Provider(
-            create: (context) => MessagesStore(
-                faker: context.read<Dependencies>().faker,
-                apiClient: context.read<Dependencies>().apiClient,
-                chatType: 'solo'),
-          ),
-          Provider(
             create: (context) => ChatsViewStore(
               faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
             ),
           ),
           Provider(
+              create: (context) => VerifyStore(
+                    apiClient: context.read<Dependencies>().apiClient,
+                    tokenStorage: context.read<Dependencies>().tokenStorage,
+                  )),
+          Provider(
+            create: (context) => UserStore(
+                faker: context.read<Dependencies>().faker,
+                apiClient: context.read<Dependencies>().apiClient,
+                verifyStore: context.read()),
+          ),
+          Provider(
+            create: (context) => MessagesStore(
+                userStore: context.read(),
+                chatsViewStore: context.read(),
+                faker: context.read<Dependencies>().faker,
+                apiClient: context.read<Dependencies>().apiClient,
+                chatType: 'solo'),
+          ),
+          Provider(
               create: (context) => ChatSocket(
+                    userStore: context.read<UserStore>(),
                     apiClient: context.read<Dependencies>().apiClient,
                     bot: context.read<Dependencies>().bot,
                     chatsViewStore: context.read<ChatsViewStore>(),
@@ -49,19 +63,18 @@ class App extends StatelessWidget {
                     tokenStorage: context.read<Dependencies>().tokenStorage,
                   )),
           Provider(
-            create: (context) => AuthViewStore(),
-            dispose: (context, value) => value.dispose(),
+            create: (context) => ChatSocketFactory(
+              userStore: context.read(),
+              store: context.read<AuthStore>(),
+              dependencies: context.read<Dependencies>(),
+              messagesStore: context.read<MessagesStore>(),
+              chatsViewStore: context.read<ChatsViewStore>(),
+            ),
+            dispose: (context, factory) => factory.dispose(),
           ),
           Provider(
-              create: (context) => VerifyStore(
-                    apiClient: context.read<Dependencies>().apiClient,
-                    tokenStorage: context.read<Dependencies>().tokenStorage,
-                  )),
-          Provider(
-            create: (context) => UserStore(
-                faker: context.read<Dependencies>().faker,
-                apiClient: context.read<Dependencies>().apiClient,
-                verifyStore: context.read()),
+            create: (context) => AuthViewStore(),
+            dispose: (context, value) => value.dispose(),
           ),
           Provider(
             create: (context) => ChildStore(

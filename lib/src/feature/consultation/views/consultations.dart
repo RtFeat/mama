@@ -31,6 +31,7 @@ class _ConsultationsViewState extends State<ConsultationsView>
         final ConsultationViewStore store = context.watch();
 
         return Scaffold(
+            backgroundColor: AppColors.lightBlue,
             appBar: CustomAppBar(
               title: t.consultation.title,
               height: 114,

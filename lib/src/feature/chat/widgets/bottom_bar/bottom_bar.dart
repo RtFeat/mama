@@ -19,7 +19,7 @@ class ChatBottomBar extends StatelessWidget {
         child: Provider(
           create: (context) => ChatBottomBarStore(
             store: store,
-            socket: context.read<ChatSocket>(),
+            socket: context.read<ChatSocketFactory>(),
             apiClient: context.read<Dependencies>().apiClient,
           ),
           builder: (context, child) {

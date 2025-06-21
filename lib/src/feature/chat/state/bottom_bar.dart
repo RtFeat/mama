@@ -24,7 +24,7 @@ class ChatBottomBarStore extends _ChatBottomBarStore with _$ChatBottomBarStore {
 
 abstract class _ChatBottomBarStore with Store {
   final MessagesStore store;
-  final ChatSocket socket;
+  final ChatSocketFactory socket;
   final ApiClient apiClient;
 
   final record = AudioRecorder();
@@ -114,7 +114,7 @@ abstract class _ChatBottomBarStore with Store {
       );
     }
 
-    socket
+    socket.socket
         .sendMessage(
       files: uploadedFiles,
       text: _messageText,

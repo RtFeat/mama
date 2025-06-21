@@ -199,6 +199,12 @@ class __WebBodyState extends State<_WebBody> {
               input, textarea {
                   display: none !important;
               }
+              li::before {
+                content: '•';
+                color: #000;
+                font-size: 1em;
+                padding-right: 14px;
+              }
           </style>
           <script>
               document.addEventListener('contextmenu', function(e) {

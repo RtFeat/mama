@@ -44,6 +44,7 @@ class _SchoolsViewState extends State<SchoolsView> {
                   AppViews.profileInfo,
                   extra: {
                     'model': schoolModel?.account,
+                    'schoolId': schoolModel?.id,
                   },
                 );
               },

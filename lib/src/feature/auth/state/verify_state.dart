@@ -83,7 +83,7 @@ abstract class _VerifyStore with Store {
   }) async {
     final String? token = await FirebaseMessaging.instance.getToken();
 
-    apiClient.post(Endpoint().login, body: {
+    await apiClient.post(Endpoint().login, body: {
       'code': code,
       'phone': phoneNumber,
       'fcm_token': token
@@ -97,9 +97,6 @@ abstract class _VerifyStore with Store {
       final String? role = v?['role'] as String?;
 
       if (refreshToken != null) {
-        await tokenStorage
-            .setToken(OAuth2Token(accessToken: '', refreshToken: refreshToken));
-
         logger.info('Status: $state');
 
         if (role != null) {
@@ -111,6 +108,8 @@ abstract class _VerifyStore with Store {
           isRegistered = true;
         }
         logger.info('isRegistered: $isRegistered');
+        await tokenStorage
+            .setToken(OAuth2Token(accessToken: '', refreshToken: refreshToken));
       } else {
         error = t.auth.invalidPassword;
       }
@@ -144,7 +143,7 @@ abstract class _VerifyStore with Store {
     // await tokenStorage.clearTokenPair();
 
     apiClient.get(Endpoint().logout).then((_) async {
-      await tokenStorage.setToken(null);
+      await tokenStorage.clearToken();
       router.pushReplacementNamed(AppViews.startScreen);
     });
   }

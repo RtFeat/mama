@@ -7,26 +7,29 @@ part 'profile_view.g.dart';
 
 class ProfileViewStore extends _ProfileViewStore with _$ProfileViewStore {
   ProfileViewStore({
-    required super.model,
+    required super.userStore,
     required super.apiClient,
   });
 }
 
 abstract class _ProfileViewStore with Store {
-  final AccountModel model;
+  final UserStore userStore;
   final ApiClient apiClient;
 
   _ProfileViewStore({
-    required this.model,
+    required this.userStore,
     required this.apiClient,
   });
 
   late final FormGroup formGroup;
 
+  @computed
+  AccountModel get model => userStore.account;
+
   void init() {
     formGroup = FormGroup({
       'name': FormControl<String>(
-        value: '${model.firstName} ${model.secondName}',
+        value: model.name,
         validators: [Validators.required],
       ),
       'phone': FormControl<String>(
@@ -93,6 +96,7 @@ abstract class _ProfileViewStore with Store {
   }
 
   void dispose() {
+    userStore.setUserData(null);
     formGroup.dispose();
   }
 

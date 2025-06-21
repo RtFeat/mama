@@ -22,6 +22,8 @@ class MyConsultationWidget extends StatelessWidget {
 
     final UserStore userStore = context.watch();
 
+    final ConsultationStore? store = context.watch<ConsultationStore>();
+
     final Role role = userStore.role;
 
     return Observer(builder: (context) {
@@ -105,7 +107,11 @@ class MyConsultationWidget extends StatelessWidget {
 
                   // ),
                   title: t.consultation.chatWithUser,
-                  onTap: () {},
+                  onTap: () {
+                    if (store != null && consultation.patient?.id != null) {
+                      store.createChat(consultation.patient!.id!);
+                    }
+                  },
                 ),
               _ => CustomButton(
                   isSmall: false,
