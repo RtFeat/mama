@@ -50,7 +50,9 @@ final class InitializationProcessor {
           });
         });
 
-    final apiClient = await _initApiClient(tokenStorage);
+    final dio = await _initDio(tokenStorage);
+    final apiClient = ApiClientDio(baseUrl: const AppConfig().apiUrl, dio: dio);
+    final restClient = RestClient(dio, baseUrl: AppConfig().apiUrl);
     // final errorTrackingManager = await _initErrorTrackingManager();
     final settingsStore = await _initSettingsStore(sharedPreferences);
 
@@ -85,6 +87,7 @@ final class InitializationProcessor {
       // errorTrackingManager: errorTrackingManager,
       apiClient: apiClient,
       tokenStorage: tokenStorage,
+      restClient: restClient,
     );
   }
 
@@ -136,7 +139,7 @@ final class InitializationProcessor {
 
   // Initializes the REST client with the provided FlutterSecureStorage.
 
-  Future<ApiClient> _initApiClient(Fresh storage) async {
+  Future<Dio> _initDio(Fresh storage) async {
     final dio = Dio(BaseOptions(
       baseUrl: const AppConfig().apiUrl,
       followRedirects: true,
@@ -164,7 +167,9 @@ final class InitializationProcessor {
       ),
     );
 
-    return ApiClientDio(baseUrl: const AppConfig().apiUrl, dio: dio);
+    return dio;
+
+    // return ApiClientDio(baseUrl: const AppConfig().apiUrl, dio: dio);
   }
 
   /// Initializes dependencies and returns the result of the initialization.

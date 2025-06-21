@@ -7105,6 +7105,18 @@
                         "name": "ids",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "enum": [
+                            "first",
+                            "second",
+                            "third"
+                        ],
+                        "type": "string",
+                        "description": "Age group",
+                        "name": "age_group",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -12695,6 +12707,9 @@
                 "id": {
                     "type": "string"
                 },
+                "profession_id": {
+                    "type": "string"
+                },
                 "read_at": {
                     "type": "string"
                 },
@@ -12737,6 +12752,9 @@
                     }
                 },
                 "id": {
+                    "type": "string"
+                },
+                "profession_id": {
                     "type": "string"
                 },
                 "read_at": {

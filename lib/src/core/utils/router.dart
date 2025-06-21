@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/views/feeding/bottle/add_bottle_screen.dart';
 import 'package:mama/src/feature/home/view/day_work.dart';
+import 'package:provider/provider.dart';
 
 abstract class AppViews {
   static const String startScreen = 'startScreen';
@@ -79,6 +80,8 @@ abstract class AppViews {
   static const ages = 'ages';
   static const author = 'author';
   static const savedFiles = 'savedFiles';
+
+  static const addNote = 'addNote';
 }
 
 final GlobalKey<NavigatorState> navKey = GlobalKey();
@@ -469,6 +472,15 @@ final GoRouter router = GoRouter(
           );
         }),
     GoRoute(
+      path: _Paths.addNote,
+      name: AppViews.addNote,
+      builder: (context, state) {
+        return AddNoteView(
+          store: context.watch(),
+        );
+      },
+    ),
+    GoRoute(
       path: _Paths.registerFillBabyName,
       name: AppViews.registerFillBabyName,
       builder: (context, state) {
@@ -591,4 +603,10 @@ abstract class _Paths {
   static const categories = AppViews.categories;
   static const ages = AppViews.ages;
   static const author = AppViews.author;
+
+  // static const addWeight = AppViews.addWeight;
+  // static const addGrowth = AppViews.addGrowth;
+  // static const addHead = AppViews.addHead;
+
+  static const addNote = '/${AppViews.addNote}';
 }

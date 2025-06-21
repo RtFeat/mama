@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class AddDiaper extends StatefulWidget {
@@ -12,6 +14,8 @@ class AddDiaper extends StatefulWidget {
 class _AddDiaperState extends State<AddDiaper> {
   int selectedIndex = 0;
   bool isPopupVisible = false;
+
+  DateTime? _selectedTime = DateTime.now();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -28,6 +32,9 @@ class _AddDiaperState extends State<AddDiaper> {
 
   @override
   Widget build(BuildContext context) {
+    final RestClient restClient = context.watch<Dependencies>().restClient;
+    final AddNoteStore store = context.watch<AddNoteStore>();
+
     return Scaffold(
       backgroundColor: AppColors.diapersBackroundColor,
       appBar: CustomAppBar(
@@ -63,7 +70,11 @@ class _AddDiaperState extends State<AddDiaper> {
                     Expanded(
                       child: CustomButton(
                         type: CustomButtonType.outline,
-                        onTap: () {},
+                        onTap: () {
+                          context.pushNamed(
+                            AppViews.addNote,
+                          );
+                        },
                         maxLines: 1,
                         title: t.trackers.note.title,
                         icon: AppIcons.pencil,
@@ -80,13 +91,22 @@ class _AddDiaperState extends State<AddDiaper> {
                   ],
                 ),
                 16.h,
-                const DateTimeSelectorWidget(),
+                DateTimeSelectorWidget(
+                  onChanged: (value) {
+                    _selectedTime = value;
+                  },
+                ),
                 16.h,
                 Row(
                   children: [
                     AddButton(
                       title: t.trackers.add.title,
                       onTap: () {
+                        restClient.diaper.postDiaper(
+                            dto: DiapersCreateDiaperDto(
+                                notes: store.content,
+                                timeToEnd:
+                                    _selectedTime?.toUtc().toIso8601String()));
                         logger.info(selectedIndex);
                       },
                     ),

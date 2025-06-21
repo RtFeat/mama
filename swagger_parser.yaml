@@ -1,6 +1,6 @@
 swagger_parser:
   schema_url: https://api.mama-api.ru/api/v1/swagger/doc.json
-  output_directory: lib/api
+  output_directory: lib/src/core/api
   language: dart
   json_serializer: json_serializable
   root_client_name: RestClient

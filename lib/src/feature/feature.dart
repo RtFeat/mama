@@ -9,3 +9,4 @@ export 'trackers/views/feeding/feeding.dart';
 export 'home/home.dart';
 export 'docs/docs.dart';
 export 'consultation/consultation.dart';
+export 'notes/notes.dart';

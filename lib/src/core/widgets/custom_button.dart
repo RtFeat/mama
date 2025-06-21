@@ -108,7 +108,7 @@ class CustomButton extends StatelessWidget {
             if (icon != null) ...[
               Icon(
                 icon,
-                color: iconColor,
+                color: onTap == null ? textColor : iconColor,
                 size: iconSize ?? 24,
               ),
               // IconWidget(
@@ -121,7 +121,7 @@ class CustomButton extends StatelessWidget {
             Flexible(
               child: AutoSizeText(
                 title!,
-                style: textStyle ??
+                style: textStyle?.copyWith(color: textColor) ??
                     textTheme.titleMedium!.copyWith(
                       color: textColor,
                       fontWeight: FontWeight.w600,
