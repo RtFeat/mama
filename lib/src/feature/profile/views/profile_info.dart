@@ -127,7 +127,7 @@ class ProfileInfoView extends StatelessWidget {
                               if (model.role == Role.doctor)
                                 _GetConsultation(
                                   store: context.watch(),
-                                  doctorId: model.id ?? '',
+                                  doctorId: model.professionId ?? '',
                                 ),
                             ],
                           )),
@@ -218,9 +218,9 @@ class _GetConsultationState extends State<_GetConsultation> {
           // ),
           icon: AppIcons.videoBubbleLeftFill,
           onTap: () {
-            context.pushNamed(AppViews.consultation, extra: {
-              'doctor': widget.store.doctorData,
-            });
+            final data = widget.store.doctorData;
+            context.pushNamed(AppViews.consultation,
+                extra: {'doctor': data?.doctor});
           },
         ),
       );

@@ -8,10 +8,19 @@ class CustomPopupWidget extends StatefulWidget {
   const CustomPopupWidget({
     super.key,
     required this.selectedIndex,
+    this.countSelected,
+    this.typeOfDiaperSelected,
     this.closeButton,
+    required this.onCountSelected,
+    required this.onTypeOfDiaperSelected,
   });
   final int selectedIndex;
+  final String? countSelected;
+  final String? typeOfDiaperSelected;
   final void Function()? closeButton;
+
+  final Function(String option) onCountSelected;
+  final Function(String option) onTypeOfDiaperSelected;
 
   @override
   _CustomPopupWidgetState createState() => _CustomPopupWidgetState();
@@ -23,10 +32,22 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
   List<String> options = [];
 
   @override
+  initState() {
+    super.initState();
+    selectedOption = widget.selectedIndex == 0
+        ? widget.countSelected ?? ''
+        : widget.typeOfDiaperSelected ?? '';
+  }
+
+  @override
   Widget build(BuildContext context) {
     widget.selectedIndex == 0
         ? options = [...t.trackers.list_of_wet]
         : options = [...t.trackers.list_of_mixed];
+
+    selectedOption = widget.selectedIndex == 0
+        ? widget.countSelected ?? ''
+        : widget.typeOfDiaperSelected ?? '';
     return Stack(
       children: [
         Column(
@@ -76,6 +97,7 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
                           labelStyle: AppTextStyles.f17w400.copyWith(
                             color: AppColors.primaryColor,
                           ),
+                          checkmarkColor: AppColors.primaryColor,
                           selected: selectedOption == option,
                           selectedColor: AppColors.primaryColor,
                           color: const WidgetStatePropertyAll(
@@ -84,6 +106,12 @@ class _CustomPopupWidgetState extends State<CustomPopupWidget> {
                             setState(() {
                               selectedOption = selected ? option : '';
                             });
+
+                            if (widget.selectedIndex == 0) {
+                              widget.onCountSelected(selectedOption);
+                            } else {
+                              widget.onTypeOfDiaperSelected(selectedOption);
+                            }
                           },
                           shape: RoundedRectangleBorder(
                             side:

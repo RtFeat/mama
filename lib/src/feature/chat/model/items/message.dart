@@ -91,6 +91,9 @@ class MessageItem extends _MessageItem with _$MessageItem {
 
   final String? text;
 
+  @JsonKey(name: 'profession_id')
+  final String? professionId;
+
   @JsonKey(name: 'sender_avatar')
   final String? senderAvatarUrl;
 
@@ -128,6 +131,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
     super.createdAt,
     super.updatedAt,
     super.isAttached,
+    this.professionId,
   });
 
   factory MessageItem.fromJson(Map<String, dynamic> json) =>
@@ -155,6 +159,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isAttached,
+    String? professionId,
   }) =>
       MessageItem(
         id: id ?? this.id,
@@ -175,6 +180,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         isAttached: isAttached ?? this.isAttached,
+        professionId: professionId ?? this.professionId,
       );
 
   @override
@@ -199,6 +205,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
           typeFile == other.typeFile &&
           createdAt == other.createdAt &&
           updatedAt == other.updatedAt &&
+          professionId == other.professionId &&
           isAttached == other.isAttached;
 
   @override
@@ -220,6 +227,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
       typeFile.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
+      professionId.hashCode ^
       isAttached.hashCode;
 }
 

@@ -6,12 +6,14 @@ class TableSleepHistory extends StatefulWidget {
   final SleepCryStore store;
   final bool showTitle;
   final String? title;
+  final String? childId;
 
   const TableSleepHistory({
     super.key,
     required this.store,
     required this.showTitle,
     this.title,
+    this.childId,
   });
 
   @override
@@ -21,7 +23,12 @@ class TableSleepHistory extends StatefulWidget {
 class _TableSleepHistoryState extends State<TableSleepHistory> {
   @override
   void initState() {
-    widget.store.loadPage();
+    widget.store.loadPage(newFilters: [
+      SkitFilter(
+          field: 'child_id',
+          operator: FilterOperator.equals,
+          value: widget.childId),
+    ]);
     super.initState();
   }
 

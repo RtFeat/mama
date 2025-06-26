@@ -20,7 +20,7 @@ abstract class DiaperClient {
   /// Добавить показатель подгузников.
   ///
   /// [dto] - Add diaper.
-  @POST('/diaper')
+  @POST('/diaper/')
   Future<DiapersResponseInsertDto> postDiaper({
     @Body() required DiapersCreateDiaperDto dto,
   });

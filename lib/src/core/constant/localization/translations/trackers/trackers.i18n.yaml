@@ -264,6 +264,11 @@ m:
 diaper:
   diapers: Diapers
   add: Add diaper
+  averageCount(param=n):
+    one: 1 diaper in a day
+    two: $n diapers in a day
+    few: $n diapers in a day
+    other: $n diapers in a day
 
 wet:
   wet: Wet
@@ -319,12 +324,11 @@ dailyreminders: Daily reminders
 
 report: Report
 
-feedTableTitles: 
+feedTableTitles:
   title1: Date
   title2: Breastfeeding time
   title3: Total fluid, mL
   title4: Total lure, g
-
 
 evolution:
   attention: Pay attention

@@ -9,3 +9,4 @@ export 'vaccine_model.dart';
 export 'vaccine.dart';
 export 'entity_diapers_main.dart';
 export 'entity_diapers_sub_main.dart';
+export 'health/health.dart';

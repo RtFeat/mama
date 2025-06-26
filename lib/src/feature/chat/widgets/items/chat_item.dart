@@ -24,9 +24,9 @@ class ChatItemWidget extends StatelessWidget {
       type: MaterialType.transparency,
       child: GestureDetector(
         onTap: () {
-          socket.socket.markAsRead();
           item.setUnreadMessages(0);
           store.setSelectedChat(item);
+          socket.socket.markAsRead();
           context.pushNamed(AppViews.chatView, extra: {'item': item});
         },
         child: Row(

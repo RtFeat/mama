@@ -11,6 +11,8 @@ class DiapersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO нужно учесть utc время и переход на следующий день - где-то в slots.dart есть реализация.
+    // TODO Нужно
     return MultiProvider(
         providers: [
           Provider(
@@ -116,8 +118,8 @@ class _BodyState extends State<_Body> {
           SliverToBoxAdapter(
             child: DateRangeSelectorWidget(
               startDate: widget.store.startOfWeek,
-              // Todo add localization and text from design
-              subtitle: '${widget.store.averageOfDiapers}',
+              subtitle: t.trackers.diaper
+                  .averageCount(n: widget.store.averageOfDiapers),
               onLeftTap: () {
                 widget.store.resetPagination();
                 widget.store.setSelectedDate(
@@ -181,14 +183,28 @@ class _BodyState extends State<_Body> {
             store: widget.store,
             isFewLists: true,
             itemBuilder: (context, item, index) {
-              final DiapersMain diapersMain = item as DiapersMain;
+              final EntityDiapersMain diapersMain = item as EntityDiapersMain;
 
               return BuildDaySection(
-                  date: diapersMain.data ?? '$index',
+                  date: diapersMain.data,
+                  // date: diapersMain.data ?? '$index',
                   items: diapersMain.diapersSub?.map((e) {
-                    return BuilldGridItem(
-                      time: 'time',
-                      type: e.typeOfDiapers,
+                    final dateTime = DateTime.utc(
+                      0,
+                      0,
+                      0,
+                      int.parse(e.time!.split(':')[0]),
+                      int.parse(e.time!.split(':')[1]),
+                    ).toLocal();
+
+                    return BuildGridItem(
+                      time: dateTime.formattedTime,
+                      title: e.typeOfDiapers ?? '',
+                      // type: switch (e.typeOfDiapers) {
+                      //   ''
+                      // },
+                      // type: e.typeOfDiapers ?? '',
+                      type: TypeOfDiapers.dirty,
                       description: e.howMuch ?? '',
                       // AppColors.purpleLighterBackgroundColor,
                       // AppColors.primaryColor,

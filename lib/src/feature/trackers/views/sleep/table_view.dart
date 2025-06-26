@@ -20,6 +20,7 @@ class TableScreen extends StatelessWidget {
             store: context.watch(),
             showTitle: true,
             title: t.trackers.report,
+            childId: context.watch<UserStore>().selectedChild?.id,
           ),
         ),
       ),

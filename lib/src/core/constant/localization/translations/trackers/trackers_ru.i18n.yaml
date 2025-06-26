@@ -264,6 +264,11 @@ m:
 diaper:
   diapers: Подгузники
   add: Добавить подгузник
+  averageCount(param=n):
+    one: 1 подгузник в день в среднем
+    two: $n подгузника в день в среднем
+    few: $n подгузника в день в среднем
+    other: $n подгузников в день в среднем
 
 wet:
   wet: Мокрый
@@ -319,7 +324,7 @@ dailyreminders: Ежедневные напоминания
 
 report: Сводка
 
-feedTableTitles: 
+feedTableTitles:
   title1: Дата
   title2: Время ГВ
   title3: Всего жидкости, мл

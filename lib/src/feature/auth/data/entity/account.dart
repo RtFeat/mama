@@ -26,6 +26,9 @@ class AccountModel extends _AccountModel with _$AccountModel {
   @JsonKey(includeToJson: false)
   final Status? status;
 
+  @JsonKey(includeToJson: false, includeFromJson: false, name: 'profession_id')
+  final String? professionId;
+
   @JsonKey(includeToJson: false, name: 'account')
   final AccountModel? account;
 
@@ -51,6 +54,7 @@ class AccountModel extends _AccountModel with _$AccountModel {
     this.account,
     this.subAccountDoctor,
     this.subAccountOnlineSchool,
+    this.professionId,
   });
 
   factory AccountModel.mock(faker.Faker faker) {

@@ -167,6 +167,8 @@ final class InitializationProcessor {
       ),
     );
 
+    // dio.interceptors.add(TrailingSlashInterceptor());
+
     return dio;
 
     // return ApiClientDio(baseUrl: const AppConfig().apiUrl, dio: dio);

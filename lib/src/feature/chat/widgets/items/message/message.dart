@@ -88,6 +88,7 @@ class _Callback extends StatelessWidget {
               id: item.senderId,
               profession: item.senderProfession,
               avatarUrl: item.senderAvatarUrl,
+              professionId: item.professionId,
               role: switch (item.senderProfession) {
                 'USER' => Role.user,
                 'ADMIN' => Role.admin,

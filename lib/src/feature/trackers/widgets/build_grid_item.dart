@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
-class BuilldGridItem extends StatelessWidget {
-  const BuilldGridItem({
+class BuildGridItem extends StatelessWidget {
+  const BuildGridItem({
     required this.time,
     required this.type,
     required this.description,
+    required this.title,
     // this.color,
     // this.textColor,
     super.key,
@@ -14,6 +15,7 @@ class BuilldGridItem extends StatelessWidget {
 
   final String time;
   final TypeOfDiapers? type;
+  final String title;
   final String description;
 
   @override
@@ -39,8 +41,8 @@ class BuilldGridItem extends StatelessWidget {
             style: AppTextStyles.f10w400,
           ),
           Text(
-            // TODO Localize
-            type?.name.capitalizeFirstLetter() ?? '',
+            // type?.name.capitalizeFirstLetter() ?? '',
+            title.capitalizeFirstLetter(),
             style: AppTextStyles.f14w700.copyWith(
                 color: switch (type) {
               TypeOfDiapers.mixed => AppColors.greenLightTextColor,

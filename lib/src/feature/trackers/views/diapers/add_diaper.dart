@@ -16,11 +16,17 @@ class _AddDiaperState extends State<AddDiaper> {
   bool isPopupVisible = false;
 
   DateTime? _selectedTime = DateTime.now();
+  String? _selectedTypeOfDiaper;
+  String? _countOfDiaper;
 
   void _onItemTapped(int index) {
     setState(() {
+      if (isPopupVisible && index == selectedIndex) {
+        _closeButton();
+      } else {
+        isPopupVisible = true;
+      }
       selectedIndex = index;
-      isPopupVisible = true;
     });
   }
 
@@ -32,6 +38,7 @@ class _AddDiaperState extends State<AddDiaper> {
 
   @override
   Widget build(BuildContext context) {
+    final UserStore userStore = context.watch<UserStore>();
     final RestClient restClient = context.watch<Dependencies>().restClient;
     final AddNoteStore store = context.watch<AddNoteStore>();
 
@@ -56,7 +63,17 @@ class _AddDiaperState extends State<AddDiaper> {
                 if (isPopupVisible)
                   CustomPopupWidget(
                     selectedIndex: selectedIndex,
+                    countSelected: _countOfDiaper,
+                    typeOfDiaperSelected: _selectedTypeOfDiaper,
                     closeButton: () => _closeButton(),
+                    onCountSelected: (option) {
+                      _countOfDiaper = option;
+                      _closeButton();
+                    },
+                    onTypeOfDiaperSelected: (option) {
+                      _selectedTypeOfDiaper = option;
+                      _closeButton();
+                    },
                   ),
                 16.h,
                 DiaperStateSwitch(
@@ -104,10 +121,14 @@ class _AddDiaperState extends State<AddDiaper> {
                       onTap: () {
                         restClient.diaper.postDiaper(
                             dto: DiapersCreateDiaperDto(
+                                childId: userStore.selectedChild?.id,
+                                howMuch: _countOfDiaper,
+                                typeOfDiapers: _selectedTypeOfDiaper,
                                 notes: store.content,
-                                timeToEnd:
-                                    _selectedTime?.toUtc().toIso8601String()));
-                        logger.info(selectedIndex);
+                                timeToEnd: _selectedTime
+                                    ?.toUtc()
+                                    .toString()
+                                    .replaceAll('Z', '')));
                       },
                     ),
                   ],

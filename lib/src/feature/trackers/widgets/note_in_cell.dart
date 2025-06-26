@@ -13,6 +13,7 @@ class NoteIconWidget extends StatelessWidget {
       child: Icon(
         AppIcons.pencil,
         color: AppColors.greyLighterColor,
+        size: 26,
       ),
     );
   }

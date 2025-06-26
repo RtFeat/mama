@@ -14,7 +14,8 @@ part 'account_avatar_client.g.dart';
 
 @RestApi()
 abstract class AccountAvatarClient {
-  factory AccountAvatarClient(Dio dio, {String? baseUrl}) = _AccountAvatarClient;
+  factory AccountAvatarClient(Dio dio, {String? baseUrl}) =
+      _AccountAvatarClient;
 
   /// Изменить аватарку.
   ///

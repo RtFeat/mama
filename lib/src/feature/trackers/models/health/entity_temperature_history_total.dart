@@ -12,15 +12,16 @@ part 'entity_temperature_history_total.g.dart';
 class EntityTemperatureHistoryTotal {
   const EntityTemperatureHistoryTotal({
     this.temperatureHistory,
-    this.timeToMonths,
+    this.title,
   });
-  
-  factory EntityTemperatureHistoryTotal.fromJson(Map<String, Object?> json) => _$EntityTemperatureHistoryTotalFromJson(json);
-  
+
+  factory EntityTemperatureHistoryTotal.fromJson(Map<String, Object?> json) =>
+      _$EntityTemperatureHistoryTotalFromJson(json);
+
   @JsonKey(name: 'temperature_history')
   final List<EntityTemperatureHistory>? temperatureHistory;
   @JsonKey(name: 'time_to_months')
-  final String? timeToMonths;
+  final String? title;
 
   Map<String, Object?> toJson() => _$EntityTemperatureHistoryTotalToJson(this);
 }

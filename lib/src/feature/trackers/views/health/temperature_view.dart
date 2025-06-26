@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class TemperatureView extends StatelessWidget {
@@ -10,99 +11,45 @@ class TemperatureView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<List> tableData = [
-      ['06 сентября', '09:30', '36,9'],
-      ['', '09:30', '36,9'],
-      ['', '09:30', '36,9'],
-      ['', '09:30', '36,9'],
-      ['05 сентября', '09:30', '36,9'],
-      ['', '09:30', '36,9'],
-      ['', '09:30', '36,9'],
-      ['', '09:30', '36,9'],
-    ];
-    final phonePadding = MediaQuery.of(context).padding;
-    return TrackerBody(
-      learnMoreWidgetText: t.trackers.findOutMoreTextTemp,
-      onPressClose: () {},
-      onPressLearnMore: () {},
-      stackWidget:
+    return Provider(
+      create: (context) {
+        return TemperatureStore(
+            apiClient: context.read<Dependencies>().apiClient,
+            faker: context.read<Dependencies>().faker);
+      },
+      builder: (context, child) {
+        final TemperatureStore store = context.watch();
 
-          /// #bottom buttons
-          Align(
-        alignment: Alignment.bottomCenter,
-        child: ButtonsLearnPdfAdd(
-          onTapLearnMore: () {},
-          onTapPDF: () {},
-          onTapAdd: () {
-            context.pushNamed(AppViews.trackersHealthAddMedicineView);
-          },
-          iconAddButton: AppIcons.thermometer,
-        ),
-      ),
-      children: [
-        SliverToBoxAdapter(child: 14.h),
+        return TrackerBody(
+          learnMoreWidgetText: t.trackers.findOutMoreTextTemp,
+          onPressClose: () {},
+          onPressLearnMore: () {},
+          stackWidget:
 
-        /// #tabel header
-        SliverToBoxAdapter(
-          child: Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: Text(
-                  t.trackers.date.title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.greyBrighterColor,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  t.trackers.time.title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.greyBrighterColor,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  t.trackers.temperature.title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.greyBrighterColor,
-                  ),
-                ),
-              ),
-            ],
+              /// #bottom buttons
+              Align(
+            alignment: Alignment.bottomCenter,
+            child: ButtonsLearnPdfAdd(
+              onTapLearnMore: () {},
+              onTapPDF: () {},
+              onTapAdd: () {
+                context.pushNamed(AppViews.trackersHealthAddMedicineView);
+              },
+              iconAddButton: AppIcons.thermometer,
+            ),
           ),
-        ),
-        SliverToBoxAdapter(child: const SizedBox(height: 5)),
+          children: [
+            SliverToBoxAdapter(child: 14.h),
 
-        /// #actual table
-        SliverToBoxAdapter(
-          child: Table(
-            children: tableData
-                .map(
-                  (row) => TableRow(
-                    children: row
-                        .map(
-                          (cell) => Text(cell),
-                        )
-                        .toList(),
-                  ),
-                )
-                .toList(),
-          ),
-        ),
-
-        SliverToBoxAdapter(child: SizedBox(height: phonePadding.bottom + 16)),
-      ],
+            /// #actual table
+            SliverToBoxAdapter(
+                child: TemperatureHistory(
+              store: context.watch(),
+              childId: context.watch<UserStore>().selectedChild?.id,
+            )),
+          ],
+        );
+      },
     );
   }
 }

@@ -14,7 +14,8 @@ class DiapersStore extends _DiapersStore with _$DiapersStore {
   });
 }
 
-abstract class _DiapersStore extends LearnMoreStore<DiapersMain> with Store {
+abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
+    with Store {
   _DiapersStore({
     required super.onLoad,
     required super.onSet,
@@ -25,15 +26,17 @@ abstract class _DiapersStore extends LearnMoreStore<DiapersMain> with Store {
             final format = DateFormat('dd MMMM',
                 LocaleSettings.currentLocale.flutterLocale.toLanguageTag());
 
-            return DiapersMain(
-                data: format.format(faker.datatype.dateTime()),
+            //
+
+            return EntityDiapersMain(
+                data: '',
                 diapersSub:
-                    List.generate(faker.datatype.number(min: 3, max: 10), (_) {
-                  return DiapersSubMain(
-                    data: faker.lorem.word(),
-                    howMuch: faker.datatype.number(max: 20).toString(),
-                    typeOfDiapers: TypeOfDiapers.values[faker.datatype
-                        .number(min: 0, max: TypeOfDiapers.values.length)],
+                    List.generate(faker.datatype.number(min: 5, max: 20), (_) {
+                  return EntityDiapersSubMain(
+                    howMuch: 'Много',
+                    notes: faker.lorem.sentence(),
+                    time: format.format(DateTime.now()),
+                    typeOfDiapers: TypeOfDiapers.mixed.name,
                   );
                 }));
           },
@@ -42,14 +45,12 @@ abstract class _DiapersStore extends LearnMoreStore<DiapersMain> with Store {
               apiClient.get(path, queryParams: params),
           pageSize: 20,
           transformer: (raw) {
-            final data = List.from(raw['list'] ?? [])
-                .map((e) => DiapersMain.fromJson(e))
-                .toList();
+            final data = DiapersResponseListDiapers.fromJson(raw);
 
             // return data;
 
             return {
-              'main': data,
+              'main': data.list ?? [],
             };
           },
         );

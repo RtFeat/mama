@@ -14,7 +14,6 @@ import '../models/health_delete_drug.dart';
 import '../models/health_delete_vaccination.dart';
 import '../models/health_insert_temperature_dto.dart';
 import '../models/health_respone_list_doc_vaccination.dart';
-import '../models/health_response_history_temperature.dart';
 import '../models/health_response_insert_dto.dart';
 import '../models/health_response_list_cons_doctor.dart';
 import '../models/health_response_list_drug.dart';
@@ -254,26 +253,6 @@ abstract class HealthClient {
   @POST('/health/temperature')
   Future<HealthResponseInsertDto> postHealthTemperature({
     @Body() required HealthInsertTemperatureDto dto,
-  });
-
-  /// Вывести историю температуры.
-  ///
-  /// [limit] - Limit.
-  ///
-  /// [offset] - Offset.
-  ///
-  /// [page] - Page.
-  ///
-  /// [pageSize] - Page size.
-  ///
-  /// [childId] - child id.
-  @GET('/health/temperature/history')
-  Future<HealthResponseHistoryTemperature> getHealthTemperatureHistory({
-    @Query('child_id') required String childId,
-    @Query('limit') int? limit,
-    @Query('offset') int? offset,
-    @Query('page') int? page,
-    @Query('page_size') int? pageSize,
   });
 
   /// Добавить прививку.
