@@ -13,7 +13,6 @@ class ChatItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ChatSocketFactory socket = context.watch<ChatSocketFactory>();
     final ChatsViewStore store = context.watch();
     final isChat = item is SingleChatItem;
     final participant = isChat
@@ -26,7 +25,6 @@ class ChatItemWidget extends StatelessWidget {
         onTap: () {
           item.setUnreadMessages(0);
           store.setSelectedChat(item);
-          socket.socket.markAsRead();
           context.pushNamed(AppViews.chatView, extra: {'item': item});
         },
         child: Row(

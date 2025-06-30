@@ -53,7 +53,7 @@ class Endpoint {
 
   static const String article = 'article';
 
-  String get articles => '$article/list';
+  String get articles => '$article/all';
 
   String get favoriteArticles => '$article/favorite';
 

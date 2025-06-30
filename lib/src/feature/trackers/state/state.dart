@@ -15,3 +15,4 @@ export 'diapers/diapers.dart';
 export 'learn_more/learn_more_dao.dart';
 export 'learn_more/learn_more.dart';
 export 'health/health.dart';
+export 'drugs/drugs.dart';

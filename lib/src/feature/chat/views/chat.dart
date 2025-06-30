@@ -73,20 +73,23 @@ class __BodyState extends State<_Body> {
     final store = context.read<MessagesStore>();
     store.init();
 
+    final isSingleChat = widget.item is SingleChatItem;
+
     logger.info('${widget.item.runtimeType}');
 
-    store.setChatId(widget.item is SingleChatItem
+    store.setChatId(isSingleChat
         ? widget.item?.id
         : (widget.item as GroupItem).groupChatId);
 
     logger.info('${widget.item?.id}');
 
-    store.setChatType(widget.item is SingleChatItem ? 'solo' : 'group');
+    store.setChatType(isSingleChat ? 'solo' : 'group');
+
+    widget.socket.socket.markAsRead();
 
     store.loadPage(
       fetchFunction: (filters, apiClient, path) {
-        return apiClient.get(
-            '$path/${widget.item is SingleChatItem ? 'solo' : 'group'}',
+        return apiClient.get('$path/${isSingleChat ? 'solo' : 'group'}',
             queryParams: {'limit': '10', 'chat_id': store.chatId, ...filters});
       },
     );
@@ -100,11 +103,13 @@ class __BodyState extends State<_Body> {
     return Observer(builder: (context) {
       return GestureDetector(
         onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus &&
-              currentFocus.focusedChild != null) {
-            SystemChannels.textInput.invokeMethod('TextInput.hide');
-          }
+          // FocusScopeNode currentFocus = FocusScope.of(context);
+          // if (!currentFocus.hasPrimaryFocus &&
+          //     currentFocus.focusedChild != null) {
+          //   SystemChannels.textInput.invokeMethod('TextInput.hide');
+          // }
+
+          FocusScope.of(context).unfocus();
         },
         child: Scaffold(
             backgroundColor: AppColors.purpleLighterBackgroundColor,

@@ -56,14 +56,14 @@ class HomeViewStore extends _HomeViewStore with _$HomeViewStore {
         );
 
   Future<void> loadAllArticles({
-    String? schoolId,
+    String? accountId,
   }) async {
     List<SkitFilter> filters = [];
-    if (schoolId != null) {
+    if (accountId != null) {
       filters.add(SkitFilter(
-          field: 'school_id',
+          field: 'account_id',
           operator: FilterOperator.equals,
-          value: schoolId));
+          value: accountId));
     }
 
     await allArticlesStore.loadPage(newFilters: filters);

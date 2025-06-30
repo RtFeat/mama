@@ -65,10 +65,7 @@ class MedicineScreen extends StatelessWidget {
                 children: [
                   AutoSizeText(
                     t.trackers.showCompleted.title,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
-                    ),
+                    style: AppTextStyles.f17w400,
                   ),
 
                   /// #

@@ -249,13 +249,13 @@ class __BodyState extends State<_Body> {
   void initState() {
     switch (widget.role) {
       case Role.doctor:
-        widget.store.loadAllArticles(schoolId: widget.userId);
+        widget.store.loadAllArticles(accountId: widget.userId);
         break;
       case Role.onlineSchool:
-        widget.store.ownArticlesStore.resetPagination();
+        widget.store.allArticlesStore.resetPagination();
         widget.store.coursesStore.resetPagination();
-        widget.store.loadAllArticles(schoolId: widget.schoolId);
         widget.store.loadSchoolCourses(widget.schoolId);
+        widget.store.loadAllArticles(accountId: widget.userId);
         break;
       case _:
     }
@@ -275,126 +275,136 @@ class __BodyState extends State<_Body> {
               builder: (context) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        BodyGroup(
-                            title: t.profile.titleCourses,
-                            isDecorated: false,
-                            items: [
-                              CustomScrollView(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                slivers: [
-                                  PaginatedLoadingWidget(
-                                    emptyData: SliverToBoxAdapter(
-                                        child: SizedBox.shrink()),
-                                    isFewLists: true,
-                                    store: widget.store.coursesStore,
-                                    itemBuilder: (context, item, index) {
-                                      return SizedBox(
-                                          height: 120,
-                                          child: BodyItemDecoration(
-                                              borderRadius: 32.r,
-                                              padding: const EdgeInsets.only(
-                                                  left: 10),
-                                              child: BodyItemWidget(
-                                                  item: CustomBodyItem(
-                                                      bodyAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      title: item.title ?? '',
-                                                      titleStyle: textTheme
-                                                          .headlineSmall
-                                                          ?.copyWith(
-                                                        fontSize: 20,
-                                                      ),
-                                                      subTitleLines: 2,
-                                                      hintStyle:
-                                                          textTheme.titleSmall,
-                                                      subTitle:
-                                                          item.shortDescription ??
-                                                              '',
-                                                      subTitleWidth:
-                                                          double.infinity,
-                                                      body: GestureDetector(
-                                                        onTap: () {
-                                                          context.pushNamed(
-                                                              AppViews.webView,
-                                                              extra: {
-                                                                'url':
-                                                                    item.link,
-                                                              });
-                                                        },
-                                                        child: SizedBox(
-                                                          width: 70,
-                                                          child: DecoratedBox(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: AppColors
-                                                                    .lightBlueBackgroundStatus,
-                                                                borderRadius:
-                                                                    32.r,
-                                                              ),
-                                                              child: Center(
-                                                                  child:
-                                                                      IconWidget(
-                                                                model:
-                                                                    IconModel(
-                                                                  icon: Icons
-                                                                      .language,
-                                                                  color: AppColors
-                                                                      .primaryColor,
-                                                                ),
-                                                              ))),
+                        if (widget.store.coursesStore.listData.isNotEmpty) ...[
+                          BodyGroup(
+                              title: t.profile.titleCourses,
+                              isDecorated: false,
+                              items: [
+                                CustomScrollView(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  slivers: [
+                                    PaginatedLoadingWidget(
+                                      emptyData: SliverToBoxAdapter(
+                                          child: SizedBox.shrink()),
+                                      isFewLists: true,
+                                      store: widget.store.coursesStore,
+                                      itemBuilder: (context, item, index) {
+                                        return SizedBox(
+                                            height: 120,
+                                            child: BodyItemDecoration(
+                                                borderRadius: 32.r,
+                                                padding: const EdgeInsets.only(
+                                                    left: 10),
+                                                child: BodyItemWidget(
+                                                    item: CustomBodyItem(
+                                                        bodyAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        title: item.title ?? '',
+                                                        titleStyle: textTheme
+                                                            .headlineSmall
+                                                            ?.copyWith(
+                                                          fontSize: 20,
                                                         ),
-                                                      )))));
-                                    },
-                                  ),
-                                ],
+                                                        subTitleLines: 2,
+                                                        hintStyle: textTheme
+                                                            .titleSmall,
+                                                        subTitle:
+                                                            item.shortDescription ??
+                                                                '',
+                                                        subTitleWidth:
+                                                            double.infinity,
+                                                        body: GestureDetector(
+                                                          onTap: () {
+                                                            context.pushNamed(
+                                                                AppViews
+                                                                    .webView,
+                                                                extra: {
+                                                                  'url':
+                                                                      item.link,
+                                                                });
+                                                          },
+                                                          child: SizedBox(
+                                                            width: 70,
+                                                            child: DecoratedBox(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: AppColors
+                                                                      .lightBlueBackgroundStatus,
+                                                                  borderRadius:
+                                                                      32.r,
+                                                                ),
+                                                                child: Center(
+                                                                    child:
+                                                                        IconWidget(
+                                                                  model:
+                                                                      IconModel(
+                                                                    icon: Icons
+                                                                        .language,
+                                                                    color: AppColors
+                                                                        .primaryColor,
+                                                                  ),
+                                                                ))),
+                                                          ),
+                                                        )))));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                // if (widget
+                                //     .store.ownArticlesStore.listData.isNotEmpty)
+                              ])
+                        ],
+                        if (widget
+                            .store.allArticlesStore.listData.isNotEmpty) ...[
+                          30.h,
+                          BodyGroup(title: t.profile.titleArticle, items: [
+                            SizedBox(
+                              height: 250,
+                              child: PaginatedLoadingWidget(
+                                padding: EdgeInsets.only(left: 16),
+                                emptyData: SliverToBoxAdapter(
+                                    child: SizedBox.shrink()),
+                                scrollDirection: Axis.horizontal,
+                                store: widget.store.allArticlesStore,
+                                itemBuilder: (context, item, _) {
+                                  return ArticleBox(
+                                    model: item,
+                                  );
+                                },
                               ),
-                              // if (widget
-                              //     .store.ownArticlesStore.listData.isNotEmpty)
-                            ]),
-                        30.h,
-                        BodyGroup(title: t.profile.titleArticle, items: [
-                          SizedBox(
-                            height: 250,
-                            child: PaginatedLoadingWidget(
-                              padding: EdgeInsets.only(left: 16),
-                              emptyData:
-                                  SliverToBoxAdapter(child: SizedBox.shrink()),
-                              scrollDirection: Axis.horizontal,
-                              store: widget.store.allArticlesStore,
-                              itemBuilder: (context, item, _) {
-                                return ArticleBox(
-                                  model: item,
-                                );
-                              },
-                            ),
-                          )
-                        ])
+                            )
+                          ])
+                        ]
                       ])),
         );
 
       case Role.doctor:
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 30),
-          child: Observer(
-              builder: (context) =>
-                  BodyGroup(title: t.profile.titleArticle, items: [
-                    SizedBox(
-                      height: 250,
-                      child: PaginatedLoadingWidget(
-                        padding: EdgeInsets.only(left: 16),
-                        emptyData: SliverToBoxAdapter(child: SizedBox.shrink()),
-                        scrollDirection: Axis.horizontal,
-                        store: widget.store.allArticlesStore,
-                        itemBuilder: (context, item, _) {
-                          return ArticleBox(
-                            model: item,
-                          );
-                        },
-                      ),
-                    )
-                  ])),
+          child: Observer(builder: (context) {
+            if (widget.store.allArticlesStore.listData.isNotEmpty) {
+              return BodyGroup(title: t.profile.titleArticle, items: [
+                SizedBox(
+                  height: 250,
+                  child: PaginatedLoadingWidget(
+                    padding: EdgeInsets.only(left: 16),
+                    emptyData: SliverToBoxAdapter(child: SizedBox.shrink()),
+                    scrollDirection: Axis.horizontal,
+                    store: widget.store.allArticlesStore,
+                    itemBuilder: (context, item, _) {
+                      return ArticleBox(
+                        model: item,
+                      );
+                    },
+                  ),
+                )
+              ]);
+            }
+
+            return SizedBox.shrink();
+          }),
         );
       default:
         return const SizedBox.shrink();

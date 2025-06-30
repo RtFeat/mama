@@ -16,7 +16,7 @@ import '../models/health_insert_temperature_dto.dart';
 import '../models/health_respone_list_doc_vaccination.dart';
 import '../models/health_response_insert_dto.dart';
 import '../models/health_response_list_cons_doctor.dart';
-import '../models/health_response_list_drug.dart';
+import '../../../feature/trackers/models/drugs/health_response_list_drug.dart';
 import '../models/health_response_list_vaccination.dart';
 
 part 'health_client.g.dart';

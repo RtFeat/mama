@@ -20,30 +20,36 @@ class Header extends StatelessWidget {
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (isOnGroup && !isUser) ...[
+        if (isOnGroup && !isUser)
           Expanded(
-            child: Text(
-              '${item.senderName} ${item.senderSurname != null && item.senderSurname!.isNotEmpty ? '${item.senderSurname}' : ''}',
-              maxLines: 2,
-              style: textTheme.titleSmall?.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Flexible(
+                    child: Text(
+                      '${item.senderName} ${item.senderSurname != null && item.senderSurname!.isNotEmpty ? '${item.senderSurname}' : ''}',
+                      maxLines: 2,
+                      style: textTheme.titleSmall?.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (item.senderProfession != null &&
+                      item.senderProfession!.isNotEmpty &&
+                      item.senderProfession != 'USER')
+                    Padding(
+                        padding: const EdgeInsets.only(left: 3.0, bottom: 18),
+                        child: ConsultationBadge(
+                          title: item.senderProfession!,
+                          // title: item.senderId.profession ?? '',
+                        )),
+                ]),
           ),
-          if (item.senderProfession != null &&
-              item.senderProfession!.isNotEmpty &&
-              item.senderProfession != 'USER')
-            Padding(
-                padding: const EdgeInsets.only(left: 3.0, bottom: 18),
-                child: ConsultationBadge(
-                  title: item.senderProfession!,
-                  // title: item.senderId.profession ?? '',
-                )),
-        ],
         10.w,
         Text(
           item.createdAt?.formattedTime ?? '',

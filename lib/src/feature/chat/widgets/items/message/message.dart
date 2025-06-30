@@ -97,8 +97,9 @@ class _Callback extends StatelessWidget {
                 'ONLINE_SCHOOL' => Role.onlineSchool,
                 _ => Role.doctor,
               }),
-          'schoolId':
-              item.senderProfession == 'ONLINE_SCHOOL' ? item.senderId : null,
+          'schoolId': item.senderProfession == 'ONLINE_SCHOOL'
+              ? item.professionId
+              : null,
         });
       },
       child: MessageAvatar(

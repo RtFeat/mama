@@ -86,7 +86,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ? null
                       : Colors.transparent;
                 }),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                // padding: const EdgeInsets.symmetric(horizontal: 12),
                 isScrollable: isScrollable ?? true,
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorColor: Colors.transparent,
@@ -97,30 +97,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 indicator: const ShapeDecoration(
                   color: Colors.white,
                   shape: WaveContainer(),
-                  // borderRadius: const BorderRadius.only(
-                  //   topLeft: Radius.circular(8),
-                  //   topRight: Radius.circular(8),
-                  // ),
-                  // shadows: [
-                  //   BoxShadow(
-                  //     color: AppColors.deepBlue.withOpacity(0.1),
-                  //     blurRadius: 1.0,
-                  //     offset: const Offset(
-                  //       0,
-                  //       2,
-                  //     ),
-                  //   ),
-                  //   BoxShadow(
-                  //     color: AppColors.skyBlue.withOpacity(0.15),
-                  //     blurRadius: 8.0,
-                  //     offset: const Offset(
-                  //       0,
-                  //       3,
-                  //     ),
-                  //   ),
-                  // ],
-                  // color: AppColors.whiteColor,
                 ),
+                labelStyle: AppTextStyles.f17w400,
+                unselectedLabelStyle: AppTextStyles.f17w400,
                 tabs: tabs!.map((e) => Tab(text: e)).toList(),
               )
             ]
