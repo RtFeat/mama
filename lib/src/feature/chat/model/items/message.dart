@@ -109,6 +109,9 @@ class MessageItem extends _MessageItem with _$MessageItem {
   @JsonKey(name: 'sender_profession')
   final String? senderProfession;
 
+  @JsonKey(name: 'sender_info')
+  final String? senderInfo;
+
   @JsonKey(name: 'type_file')
   final String? typeFile;
 
@@ -126,6 +129,7 @@ class MessageItem extends _MessageItem with _$MessageItem {
     this.senderSurname,
     this.senderProfession,
     this.senderId,
+    this.senderInfo,
     this.text,
     this.typeFile,
     super.createdAt,

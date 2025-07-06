@@ -28,6 +28,8 @@ class ProfileInfoView extends StatelessWidget {
       _ => 'User: ${model.toJson()}',
     });
 
+    logger.info('info: ${model.info}');
+
     logger.info('schoolId: ${schoolId}');
 
     return Provider(
@@ -135,18 +137,21 @@ class ProfileInfoView extends StatelessWidget {
                           title: t.profile.titleInfo,
                           isDecorated: true,
                           items: [
-                            BodyItemWidget(
-                              item: CustomBodyItem(
-                                  subTitleWidth: double.infinity,
-                                  title: switch (model.role) {
-                                    Role.onlineSchool => model.info ?? '',
-                                    _ => model.info ?? '',
-                                  },
-                                  subTitle: switch (model.role) {
-                                    Role.onlineSchool => t.profile.aboutSchool,
-                                    _ => t.profile.aboutMe2,
-                                  }),
-                            )
+                            Observer(builder: (_) {
+                              return BodyItemWidget(
+                                item: CustomBodyItem(
+                                    subTitleWidth: double.infinity,
+                                    title: switch (model.role) {
+                                      Role.onlineSchool => model.info ?? '',
+                                      _ => model.info ?? '',
+                                    },
+                                    subTitle: switch (model.role) {
+                                      Role.onlineSchool =>
+                                        t.profile.aboutSchool,
+                                      _ => t.profile.aboutMe2,
+                                    }),
+                              );
+                            })
                           ]),
                       _Body(
                         store: context.watch(),

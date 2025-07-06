@@ -2,7 +2,7 @@ import 'package:mama/src/data.dart';
 
 import 'package:mobx/mobx.dart';
 
-part 'drugs.g.dart';
+part 'drugs_store.g.dart';
 
 class DrugsStore extends _DrugsStore with _$DrugsStore {
   DrugsStore({
