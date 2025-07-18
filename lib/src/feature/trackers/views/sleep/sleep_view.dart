@@ -18,7 +18,7 @@ class SleepScreen extends StatelessWidget {
         onPressClose: () {},
         onPressLearnMore: () {},
         children: const [
-          SliverToBoxAdapter(child: AddSleepingWidget()),
+          SliverToBoxAdapter(child: SleepWidget()),
           SliverToBoxAdapter(child: CalendarSleeping()),
           SliverToBoxAdapter(child: TableWidgetSleepCry()),
           // TableHistory(

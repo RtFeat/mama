@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 
@@ -16,11 +17,12 @@ class ChatsListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.purpleLighterBackgroundColor,
       appBar: appBar,
-      body: SubscribeBlockItem(
-          child: ChatsBodyWidget(
-        store: store,
-        childId: context.watch<UserStore>().selectedChild?.id,
-      )),
+      body: SubscribeBlockItem(child: Observer(builder: (context) {
+        return ChatsBodyWidget(
+          store: store,
+          childId: context.watch<UserStore>().selectedChild?.id,
+        );
+      })),
     );
   }
 }

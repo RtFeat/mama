@@ -33,7 +33,7 @@ class _AddSleepingScreenManuallyState extends State<AddSleepingScreenManually> {
 
   @override
   Widget build(BuildContext context) {
-    final AddSleeping addSleeping = context.watch<AddSleeping>();
+    final SleepStore addSleeping = context.watch<SleepStore>();
     formGroup.control('sleepStart').value =
         DateFormat('HH:mm').format(addSleeping.manualStartTime);
     formGroup.control('sleepEnd').value =

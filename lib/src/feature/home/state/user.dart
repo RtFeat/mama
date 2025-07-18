@@ -12,15 +12,18 @@ class UserStore<UserData> extends _UserStore with _$UserStore {
     required super.apiClient,
     required super.verifyStore,
     required super.faker,
+    required super.chatsViewStore,
   });
 }
 
 abstract class _UserStore extends SingleDataStore<UserData> with Store {
   final VerifyStore verifyStore;
+  final ChatsViewStore chatsViewStore;
   _UserStore({
     required super.apiClient,
     required this.verifyStore,
     required super.faker,
+    required this.chatsViewStore,
   }) : super(
           transformer: (raw) {
             if (raw != null) {
@@ -107,6 +110,10 @@ abstract class _UserStore extends SingleDataStore<UserData> with Store {
       if (profession != null) 'profession': profession,
     }).then((v) {
       account.setIsChanged(false);
+      children.where((element) => element.isChanged).forEach((element) {
+        chatsViewStore.groups.resetPagination();
+        chatsViewStore.loadAllGroups(element.id);
+      });
     });
   }
 

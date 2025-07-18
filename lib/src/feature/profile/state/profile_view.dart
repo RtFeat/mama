@@ -15,7 +15,6 @@ class ProfileViewStore extends _ProfileViewStore with _$ProfileViewStore {
 abstract class _ProfileViewStore with Store {
   final UserStore userStore;
   final ApiClient apiClient;
-
   _ProfileViewStore({
     required this.userStore,
     required this.apiClient,

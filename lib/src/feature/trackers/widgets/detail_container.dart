@@ -10,7 +10,7 @@ class DetailContainer extends StatelessWidget {
   final String detail;
   final bool filled;
   final bool isEdited;
-  final VoidCallback? onChanged;
+  final Function(String?)? onChanged;
 
   const DetailContainer(
       {super.key,
@@ -58,7 +58,7 @@ class DetailContainer extends StatelessWidget {
                         fontWeight: FontWeight.w400, color: Colors.black),
                     onTapOutside: (event) {},
                     onChanged: (value) {
-                      onChanged!();
+                      onChanged!(value.value as String?);
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,

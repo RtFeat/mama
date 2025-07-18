@@ -33,6 +33,7 @@ class App extends StatelessWidget {
                   )),
           Provider(
             create: (context) => UserStore(
+                chatsViewStore: context.read(),
                 faker: context.read<Dependencies>().faker,
                 apiClient: context.read<Dependencies>().apiClient,
                 verifyStore: context.read()),

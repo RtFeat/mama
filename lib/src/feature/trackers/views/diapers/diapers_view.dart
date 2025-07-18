@@ -182,6 +182,7 @@ class _BodyState extends State<_Body> {
           skit.PaginatedLoadingWidget(
             store: widget.store,
             isFewLists: true,
+            emptyData: SliverToBoxAdapter(child: SizedBox.shrink()),
             itemBuilder: (context, item, index) {
               final EntityDiapersMain diapersMain = item as EntityDiapersMain;
 

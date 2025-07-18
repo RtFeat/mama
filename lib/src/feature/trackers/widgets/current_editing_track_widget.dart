@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class CurrentEditingTrackWidget extends StatelessWidget {
@@ -34,6 +36,8 @@ class CurrentEditingTrackWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
+    final SleepStore store = context.watch();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -49,6 +53,12 @@ class CurrentEditingTrackWidget extends StatelessWidget {
           isTimerStarted: isTimerStarted,
           formControlNameStart: formControlNameStart,
           formControlNameEnd: formControlNameEnd,
+          onStartTimeChanged: (v) {
+            if (v != null) store.updateStartTime(v.timeToDateTime);
+          },
+          onEndTimeChanged: (v) {
+            if (v != null) store.updateEndTime(v.timeToDateTime);
+          },
         ),
         20.h,
         Row(

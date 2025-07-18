@@ -103,10 +103,10 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
             30.h,
             EditTimeRow(
               timerStart: timerStart,
-              onStartTimeChanged: () {
+              onStartTimeChanged: (v) {
                 onStartTimeChanged!();
               },
-              onEndTimeChanged: () {
+              onEndTimeChanged: (v) {
                 onEndTimeChanged!();
               },
               timerEnd: timerEnd,

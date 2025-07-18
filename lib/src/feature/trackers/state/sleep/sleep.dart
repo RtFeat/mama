@@ -1,13 +1,21 @@
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
-part 'add_sleeping.g.dart';
+part 'sleep.g.dart';
 
-class AddSleeping extends _AddSleeping with _$AddSleeping {
-  AddSleeping();
+class SleepStore extends _SleepStore with _$SleepStore {
+  SleepStore();
 }
 
-abstract class _AddSleeping with Store {
+abstract class _SleepStore with Store {
+  static final _dateTimeFormat = DateFormat('HH:mm');
+
+  FormGroup formGroup = FormGroup({
+    'sleepStart': FormControl(),
+    'sleepEnd': FormControl(),
+  });
+
   @observable
   bool timerSleepStart = false;
 
@@ -34,17 +42,15 @@ abstract class _AddSleeping with Store {
 
   @action
   setTimeStartManually(String value) {
-    DateFormat format = DateFormat('HH:mm');
     if (value.length == 5) {
-      manualStartTime = format.parse(value);
+      manualStartTime = _dateTimeFormat.parse(value);
     }
   }
 
   @action
   setTimeEndManually(String value) {
-    DateFormat format = DateFormat('HH:mm');
     if (value.length == 5) {
-      manualStartTime = format.parse(value);
+      manualStartTime = _dateTimeFormat.parse(value);
     }
   }
 
@@ -56,7 +62,8 @@ abstract class _AddSleeping with Store {
     confirmSleepTimer = false;
     showEditMenu = true;
     timerSleepStart = !timerSleepStart;
-    timerSleepStart ? timerEndTime = null : timerEndTime = DateTime.now();
+    // timerSleepStart ? timerEndTime = null :
+    timerEndTime = DateTime.now();
   }
 
   @action
@@ -82,5 +89,26 @@ abstract class _AddSleeping with Store {
   @action
   cancelSleepingClose() {
     isSleepCanceled = false;
+  }
+
+  @action
+  updateStartTime(DateTime? value) {
+    timerStartTime = value ?? DateTime.now();
+  }
+
+  @action
+  updateEndTime(DateTime? value) {
+    timerEndTime = value;
+  }
+
+  void init() {
+    formGroup.control('sleepStart').value =
+        _dateTimeFormat.format(DateTime.now());
+    formGroup.control('sleepEnd').value =
+        _dateTimeFormat.format(DateTime.now());
+  }
+
+  void dispose() {
+    formGroup.dispose();
   }
 }
