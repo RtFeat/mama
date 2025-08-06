@@ -9,3 +9,4 @@ export 'bottom_app_bar.dart';
 export 'custom_toggle_button.dart';
 export 'avatar.dart';
 export 'items_line.dart';
+export 'photo_widget.dart';

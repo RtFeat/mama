@@ -19,7 +19,7 @@ class SleepScreen extends StatelessWidget {
         onPressLearnMore: () {},
         children: const [
           SliverToBoxAdapter(child: SleepWidget()),
-          SliverToBoxAdapter(child: CalendarSleeping()),
+          SliverToBoxAdapter(child: WeekTableWidget()),
           SliverToBoxAdapter(child: TableWidgetSleepCry()),
           // TableHistory(
           //   listOfData: listOfData,
@@ -160,6 +160,7 @@ class CalendarSleeping extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
+
     return CalendarControllerProvider(
         controller: EventController()..addAll(_events),
         child: SizedBox(

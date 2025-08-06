@@ -30,7 +30,7 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
 
             return EntityDiapersMain(
                 data: '',
-                diapersSub:
+                diapersSub: ObservableList.of(
                     List.generate(faker.datatype.number(min: 5, max: 20), (_) {
                   return EntityDiapersSubMain(
                     howMuch: 'Много',
@@ -38,7 +38,7 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
                     time: format.format(DateTime.now()),
                     typeOfDiapers: TypeOfDiapers.mixed.name,
                   );
-                }));
+                })));
           },
           basePath: Endpoint.diaperList,
           fetchFunction: (params, path) =>

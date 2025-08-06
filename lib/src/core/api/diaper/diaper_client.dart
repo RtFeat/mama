@@ -8,7 +8,7 @@ import 'package:retrofit/retrofit.dart';
 import '../models/diapers_create_diaper_dto.dart';
 import '../models/diapers_delete_diaper.dart';
 import '../models/diapers_response_insert_dto.dart';
-import '../models/diapers_response_list_diapers.dart';
+import '../../../feature/trackers/models/diapers/diapers_response_list_diapers.dart';
 import '../models/diapers_update_diaper_dto.dart';
 
 part 'diaper_client.g.dart';

@@ -192,7 +192,7 @@ abstract class _ChildModel with Store {
   }
 
   @computed
-  String get birthDateCounter {
+  String get formattedDifference {
     DateTime currentDate = DateTime.now();
 
     Duration difference =
@@ -201,7 +201,6 @@ abstract class _ChildModel with Store {
     int months = (difference.inDays / 30).floor();
     int days = difference.inDays - (months * 30);
 
-    int weeks = difference.inDays ~/ 7;
     String formattedDifference = '';
 
     if (months >= 12) {
@@ -211,6 +210,16 @@ abstract class _ChildModel with Store {
       formattedDifference =
           '${t.home.months(n: months)} ${t.home.days(n: days)}';
     }
+    return formattedDifference;
+  }
+
+  @computed
+  String get birthDateCounter {
+    DateTime currentDate = DateTime.now();
+
+    Duration difference =
+        currentDate.difference(birthDate?.toLocal() ?? DateTime.now());
+    int weeks = difference.inDays ~/ 7;
     String formattedWeeks = t.home.weeks(n: weeks);
 
     return '$formattedDifference ${t.home.or} $formattedWeeks';

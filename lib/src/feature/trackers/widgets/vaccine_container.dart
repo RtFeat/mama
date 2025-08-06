@@ -1,119 +1,136 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:skit/skit.dart';
 
 class VaccineContainer extends StatelessWidget {
-  final String nameVaccine;
-  final String recommendedAge;
-  final String? recommendedAgeSubtitle;
-  final VoidCallback? onTapAdd;
-  final String? timeDate;
-  final bool isDone;
+  final EntityVaccinationMain model;
 
   const VaccineContainer({
     super.key,
-    required this.recommendedAge,
-    this.recommendedAgeSubtitle,
-    this.timeDate,
-    required this.isDone,
-    required this.nameVaccine,
-    this.onTapAdd,
+    required this.model,
   });
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.whiteDarkerButtonColor,
-        borderRadius: BorderRadius.all(Radius.circular(16)),
-      ),
-      child: SizedBox(
-        width: MediaQuery.sizeOf(context).width,
+        decoration: const BoxDecoration(
+          color: AppColors.whiteDarkerButtonColor,
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.4,
-                child: AutoSizeText(
-                  nameVaccine,
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        fontSize: 14,
-                      ),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.25,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    /// #rec age title
-                    AutoSizeText(
-                      recommendedAge,
-                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            fontSize: 14,
-                          ),
-                    ),
-                    5.h,
-
-                    /// #rec age description
-                    recommendedAgeSubtitle != null
-                        ? AutoSizeText(
-                            recommendedAgeSubtitle!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(fontWeight: FontWeight.w400),
-                          )
-                        : const SizedBox.shrink(),
-                  ],
-                ),
-              ),
-              isDone
-                  ? SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //TODO добавить еще иконку в шрифты
-                          SvgPicture.asset(
-                            Assets.images.done,
-                          ),
-                          AutoSizeText(
-                            timeDate!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(
-                                  fontSize: 14,
-                                ),
-                          )
-                        ],
-                      ),
-                    )
-                  : SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: GestureDetector(
-                          onTap: () => onTapAdd!(),
-                          child: const Icon(
-                            AppIcons.plus,
-                            size: 30,
-                            color: AppColors.greyColor,
-                          ),
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          model.name ?? '',
+                          style:
+                              Theme.of(context).textTheme.titleSmall!.copyWith(
+                                    fontSize: 14,
+                                  ),
                         ),
                       ),
-                    ),
-            ],
-          ),
-        ),
-      ),
-    );
+                    ],
+                  ),
+                ),
+                6.w,
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      /// #rec age title
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              model.age ?? '',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(
+                                    fontSize: 14,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      5.h,
+
+                      /// #rec age description
+                      model.ageDescription != null &&
+                              model.ageDescription!.isNotEmpty
+                          ? AutoSizeText(
+                              model.ageDescription!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(fontWeight: FontWeight.w400),
+                            )
+                          : const SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                6.w,
+                Expanded(
+                  flex: 4,
+                  child: Observer(builder: (context) {
+                    return model.mark != null && model.mark!.isNotEmpty
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Spacer(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  //TODO добавить еще иконку в шрифты
+                                  SvgPicture.asset(
+                                    Assets.images.done,
+                                  ),
+                                  Text(
+                                    model.mark ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall!
+                                        .copyWith(
+                                          fontSize: 14,
+                                        ),
+                                  ),
+                                  Text(model.markDescription ?? '',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall!)
+                                ],
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Spacer(
+                                flex: 2,
+                              ),
+                              const Icon(
+                                AppIcons.plus,
+                                size: 30,
+                                color: AppColors.greyColor,
+                              ),
+                              Spacer(),
+                            ],
+                          );
+                  }),
+                ),
+              ],
+            )));
   }
 }

@@ -9,7 +9,7 @@ final class DiapersDataSourceLocal extends PreferencesDao
 
   @override
   Future<bool> getIsShow() async {
-    return _diapers.read() ?? false;
+    return _diapers.read() ?? true;
   }
 
   @override

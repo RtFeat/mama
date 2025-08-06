@@ -24,6 +24,7 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final double? iconSize;
   final double? width;
+  final double? iconPadding;
 
   final CustomButtonType type;
 
@@ -44,6 +45,7 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.width,
     this.padding,
+    this.iconPadding,
     this.contentPadding,
     this.borderRadius,
     this.textStyle,
@@ -116,7 +118,7 @@ class CustomButton extends StatelessWidget {
               //     color: iconColor,
               //   ),
               // ),
-              8.w,
+              (iconPadding ?? 8).w,
             ],
             Flexible(
               child: AutoSizeText(

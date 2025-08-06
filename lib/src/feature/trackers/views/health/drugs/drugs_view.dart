@@ -90,8 +90,9 @@ class MedicineScreen extends StatelessWidget {
                         },
                         child: PillAndDocVisitContainer(
                           title: t.trackers.pillTitleOne.title,
-                          subTitle: t.trackers.pillDescriptionOne.title,
-                          timeDate: t.trackers.pillExactTimeOne.title,
+                          // subTitle: t.trackers.pillDescriptionOne.title,
+                          // timeDate: t.trackers.pillExactTimeOne.title,
+                          timeDate: null,
                           description: t.trackers.pillRemainingTimeOne.title,
                         ),
                       ),

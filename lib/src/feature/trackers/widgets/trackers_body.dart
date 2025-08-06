@@ -37,12 +37,14 @@ class TrackerBody extends StatelessWidget {
           child: Observer(builder: (context) {
             return CustomScrollView(
               slivers: [
-                if (learnMoreStore != null &&
-                    (learnMoreStore?.isShowInfo ?? true)) ...[
+                if (learnMoreStore?.isShowInfo ?? true) ...[
                   SliverToBoxAdapter(child: 16.h),
                   SliverToBoxAdapter(
                     child: LearnMoreWidget(
-                      onPressClose: () => onPressClose(),
+                      onPressClose: () {
+                        learnMoreStore?.setIsShowInfo(false);
+                        onPressClose();
+                      },
                       onPressButton: () => onPressLearnMore(),
                       title: learnMoreWidgetText,
                     ),

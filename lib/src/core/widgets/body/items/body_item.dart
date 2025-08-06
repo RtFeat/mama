@@ -34,6 +34,7 @@ class BodyItemWidget extends StatelessWidget {
             bottom: 4,
           ),
           child: BodyItemDecoration(
+              padding: (item as InputItem).decorationPadding,
               backgroundBorder: backgroundBorder,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

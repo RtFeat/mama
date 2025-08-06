@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 
 extension DateTimeExtension on DateTime {
@@ -23,5 +24,13 @@ extension DateTimeExtension on DateTime {
       return '$hours${t.trackers.hours} $minutes${t.trackers.min} $seconds${t.trackers.sec}';
     }
     return '$minutes${t.trackers.min} $seconds${t.trackers.sec}';
+  }
+
+  String get dateWithMonth {
+    final DateFormat formatter = DateFormat(
+      'd MMMM',
+      LocaleSettings.currentLocale.flutterLocale.toLanguageTag(),
+    );
+    return formatter.format(this);
   }
 }

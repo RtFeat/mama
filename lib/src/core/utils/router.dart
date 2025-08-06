@@ -26,6 +26,9 @@ abstract class AppViews {
 
   static const trackersHealthView = 'trackersHealthView';
   static const addTemperature = 'addTemperature';
+  static const addVaccine = 'addVaccine';
+  static const addVisit = 'addVisit';
+  static const vaccinesCalendar = 'vaccinesCalendar';
 
   static const trackersHealthAddMedicineView = 'trackersHealthAddMedicineView';
 
@@ -352,7 +355,42 @@ final GoRouter router = GoRouter(
               name: AppViews.trackersHealthAddMedicineView,
               path: _Paths.trackersHealthAddTemperaturePath,
               builder: (context, state) => const AddTemperature(),
-            )
+            ),
+            GoRoute(
+              path: _Paths.addVisit,
+              name: AppViews.addVisit,
+              builder: (context, state) {
+                final Map? extra = state.extra as Map?;
+                final EntityMainDoctor? data = extra?['data'];
+                final DoctorVisitsStore? store = extra?['store'];
+
+                return AddDocVisit(
+                  model: data,
+                  store: store,
+                );
+              },
+            ),
+            GoRoute(
+              path: _Paths.vaccinesCalendar,
+              name: AppViews.vaccinesCalendar,
+              builder: (context, state) {
+                return CalendarVaccines();
+              },
+            ),
+            GoRoute(
+              path: _Paths.addVaccine,
+              name: AppViews.addVaccine,
+              builder: (context, state) {
+                final Map? extra = state.extra as Map?;
+                final EntityVaccinationMain? data = extra?['data'];
+                final VaccinesStore? store = extra?['store'];
+
+                return AddVaccine(
+                  data: data,
+                  store: store,
+                );
+              },
+            ),
           ],
         ),
         GoRoute(
@@ -363,7 +401,15 @@ final GoRouter router = GoRouter(
               GoRoute(
                   path: _Paths.addDiapers,
                   name: AppViews.addDiaper,
-                  builder: (context, state) => const AddDiaper())
+                  builder: (context, state) {
+                    final Map? extra = state.extra as Map?;
+                    final Function(DiapersCreateDiaperDto data) onSave =
+                        extra?['onSave'];
+
+                    return AddDiaper(
+                      onSave: (data) => onSave(data),
+                    );
+                  })
             ]),
         GoRoute(
             path: _Paths.chat,
@@ -554,6 +600,9 @@ abstract class _Paths {
   static const trackersHealthPath = AppViews.trackersHealthView;
   static const trackersHealthAddTemperaturePath = AppViews.addTemperature;
 
+  static const addVisit = AppViews.addVisit;
+  static const vaccinesCalendar = AppViews.vaccinesCalendar;
+  static const addVaccine = AppViews.addVaccine;
   // static const healthMedicine = AppViews.healthMedicine;
   // static const addMedicine = AppViews.addMedicine;
 

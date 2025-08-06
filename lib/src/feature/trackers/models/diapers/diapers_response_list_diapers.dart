@@ -13,9 +13,10 @@ class DiapersResponseListDiapers {
   const DiapersResponseListDiapers({
     this.list,
   });
-  
-  factory DiapersResponseListDiapers.fromJson(Map<String, Object?> json) => _$DiapersResponseListDiapersFromJson(json);
-  
+
+  factory DiapersResponseListDiapers.fromJson(Map<String, Object?> json) =>
+      _$DiapersResponseListDiapersFromJson(json);
+
   final List<EntityDiapersMain>? list;
 
   Map<String, Object?> toJson() => _$DiapersResponseListDiapersToJson(this);

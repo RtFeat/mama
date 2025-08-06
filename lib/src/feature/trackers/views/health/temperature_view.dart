@@ -36,6 +36,10 @@ class TemperatureView extends StatelessWidget {
                 context.pushNamed(AppViews.trackersHealthAddMedicineView);
               },
               iconAddButton: AppIcons.thermometer,
+              addButtonTextStyle:
+                  Theme.of(context).textTheme.titleMedium!.copyWith(
+                        fontSize: 17,
+                      ),
             ),
           ),
           children: [

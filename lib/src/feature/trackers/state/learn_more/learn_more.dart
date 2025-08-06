@@ -42,7 +42,7 @@ abstract class _LearnMoreStore<T> extends PaginatedListStore<T> with Store {
 
   @action
   Future setIsShowInfo(bool value) async {
-    onSet(value);
     isShowInfo = value;
+    onSet(value);
   }
 }

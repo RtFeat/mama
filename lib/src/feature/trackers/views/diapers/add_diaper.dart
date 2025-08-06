@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class AddDiaper extends StatefulWidget {
-  const AddDiaper({super.key});
+  final Function(DiapersCreateDiaperDto data) onSave;
+  const AddDiaper({super.key, required this.onSave});
 
   @override
   State<AddDiaper> createState() => _AddDiaperState();
@@ -119,16 +120,21 @@ class _AddDiaperState extends State<AddDiaper> {
                     AddButton(
                       title: t.trackers.add.title,
                       onTap: () {
-                        restClient.diaper.postDiaper(
-                            dto: DiapersCreateDiaperDto(
-                                childId: userStore.selectedChild?.id,
-                                howMuch: _countOfDiaper,
-                                typeOfDiapers: _selectedTypeOfDiaper,
-                                notes: store.content,
-                                timeToEnd: _selectedTime
-                                    ?.toUtc()
-                                    .toString()
-                                    .replaceAll('Z', '')));
+                        final dto = DiapersCreateDiaperDto(
+                            childId: userStore.selectedChild?.id,
+                            howMuch: _countOfDiaper,
+                            typeOfDiapers: _selectedTypeOfDiaper,
+                            notes: store.content,
+                            timeToEnd: _selectedTime
+                                ?.toUtc()
+                                .toString()
+                                .replaceAll('Z', ''));
+                        restClient.diaper.postDiaper(dto: dto).then((value) {
+                          if (context.mounted) {
+                            context.pop();
+                            widget.onSave(dto);
+                          }
+                        });
                       },
                     ),
                   ],

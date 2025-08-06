@@ -13,6 +13,7 @@ class InputItem extends BodyItem {
   final TextEditingController? controller;
 
   final EdgeInsets? contentPadding;
+  final EdgeInsets? decorationPadding;
   final InputBorder? border;
   final InputBorder? errorBorder;
   final TextAlign? textAlign;
@@ -53,6 +54,7 @@ class InputItem extends BodyItem {
     this.isCollapsed = false,
     this.backgroundColor,
     this.contentPadding,
+    this.decorationPadding,
     this.needBackgroundOnFocus = false,
   });
 }

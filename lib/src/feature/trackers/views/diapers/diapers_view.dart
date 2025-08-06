@@ -1,10 +1,13 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/state/diapers/diapers_dao_impl.dart';
+import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart' as skit;
+import 'package:skit/skit.dart';
 
 class DiapersView extends StatelessWidget {
   const DiapersView({super.key});
@@ -12,7 +15,7 @@ class DiapersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO нужно учесть utc время и переход на следующий день - где-то в slots.dart есть реализация.
-    // TODO Нужно
+
     return MultiProvider(
         providers: [
           Provider(
@@ -109,7 +112,39 @@ class _BodyState extends State<_Body> {
           },
           onTapPDF: () {},
           onTapAdd: () {
-            context.pushNamed(AppViews.addDiaper);
+            context.pushNamed(AppViews.addDiaper, extra: {
+              'onSave': (DiapersCreateDiaperDto data) {
+                logger.info('Time: ${data.timeToEnd}');
+                DateTime? time = DateTime.tryParse(data.timeToEnd ?? '');
+
+                final String day =
+                    '${time?.day} ${t.home.monthsData.withNumbers[(time?.month ?? 1) - 1]}';
+
+                final EntityDiapersMain? item = widget.store.listData
+                    .firstWhereOrNull((element) => element.data == day);
+
+                if (item != null) {
+                  item.diapersSub?.add(EntityDiapersSubMain(
+                    howMuch: data.howMuch,
+                    notes: data.howMuch,
+                    time: time?.formattedTime ?? 'time',
+                    typeOfDiapers: data.typeOfDiapers,
+                  ));
+                } else {
+                  widget.store.listData.add(EntityDiapersMain(
+                      data:
+                          '${time?.day} ${t.home.monthsData.withNumbers[(time?.month ?? 1) - 1]}',
+                      diapersSub: ObservableList.of([
+                        EntityDiapersSubMain(
+                          howMuch: data.howMuch,
+                          notes: data.howMuch,
+                          time: time?.formattedTime ?? 'time',
+                          typeOfDiapers: data.typeOfDiapers,
+                        )
+                      ])));
+                }
+              }
+            });
           },
           iconAddButton: AppIcons.diaperFill,
         ),

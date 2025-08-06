@@ -9,7 +9,7 @@ final class TemperatureDataSourceLocal extends PreferencesDao
 
   @override
   Future<bool> getIsShow() async {
-    return _temperature.read() ?? false;
+    return _temperature.read() ?? true;
   }
 
   @override

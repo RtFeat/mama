@@ -23,6 +23,8 @@ class ChatSocket {
   StreamSubscription? _socketSub;
   String? _accessToken;
 
+  String get accessToken => _accessToken ?? '';
+
   bool _isConnected = false;
   bool _isClosed = false;
   int _reconnectAttempts = 0;

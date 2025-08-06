@@ -15,9 +15,9 @@ import '../models/health_delete_vaccination.dart';
 import '../models/health_insert_temperature_dto.dart';
 import '../models/health_respone_list_doc_vaccination.dart';
 import '../models/health_response_insert_dto.dart';
-import '../models/health_response_list_cons_doctor.dart';
+import '../../../feature/trackers/models/health/visits/health_response_list_cons_doctor.dart';
 import '../../../feature/trackers/models/drugs/health_response_list_drug.dart';
-import '../models/health_response_list_vaccination.dart';
+import '../../../feature/trackers/models/health/vaccine/health_response_list_vaccination.dart';
 
 part 'health_client.g.dart';
 
@@ -41,7 +41,7 @@ abstract class HealthClient {
   @POST('/health/cons_doctor')
   Future<void> postHealthConsDoctor({
     @Part(name: 'child_id') required String childId,
-    @Part(name: 'photo') File? photo,
+    @Part(name: 'photos') List<File>? photos,
     @Part(name: 'data_start') String? dataStart,
     @Part(name: 'doctor') String? doctor,
     @Part(name: 'clinic') String? clinic,
@@ -74,7 +74,7 @@ abstract class HealthClient {
   /// Удалить консультация к врачу.
   ///
   /// [dto] - DTO delete cons doctor.
-  @DELETE('/health/cons_doctor/')
+  @DELETE('/health/cons_doctor')
   Future<void> deleteHealthConsDoctor({
     @Body() required HealthDeleteConsDoctor dto,
   });
@@ -304,7 +304,7 @@ abstract class HealthClient {
   /// Удалить прививку.
   ///
   /// [dto] - DTO delete vaccination.
-  @DELETE('/health/vaccination/')
+  @DELETE('/health/vaccination')
   Future<void> deleteHealthVaccination({
     @Body() required HealthDeleteVaccination dto,
   });

@@ -8,21 +8,27 @@ part 'entity_main_doctor.g.dart';
 
 @JsonSerializable()
 class EntityMainDoctor {
-  const EntityMainDoctor({
-    this.data,
+  EntityMainDoctor({
+    this.date,
     this.doctor,
     this.id,
     this.notes,
-    this.photo,
+    this.photos,
+    this.clinic,
+    this.isLocal = false,
   });
-  
-  factory EntityMainDoctor.fromJson(Map<String, Object?> json) => _$EntityMainDoctorFromJson(json);
-  
-  final String? data;
-  final String? doctor;
-  final String? id;
-  final String? notes;
-  final String? photo;
+
+  factory EntityMainDoctor.fromJson(Map<String, Object?> json) =>
+      _$EntityMainDoctorFromJson(json);
+
+  DateTime? date;
+  String? doctor;
+  String? id;
+  String? notes;
+  List<String>? photos;
+  String? clinic;
+
+  bool isLocal;
 
   Map<String, Object?> toJson() => _$EntityMainDoctorToJson(this);
 }

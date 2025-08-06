@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -7,6 +9,7 @@ import 'package:provider/provider.dart';
 
 class ProfilePhoto extends StatelessWidget {
   final String? photoUrl;
+  final String? photoPath;
   final Function()? onIconTap;
   final Widget? icon;
   final double? height;
@@ -16,6 +19,7 @@ class ProfilePhoto extends StatelessWidget {
   const ProfilePhoto({
     super.key,
     this.photoUrl,
+    this.photoPath,
     this.onIconTap,
     this.icon,
     this.isShowIcon = true,
@@ -37,23 +41,11 @@ class ProfilePhoto extends StatelessWidget {
             clipBehavior: Clip.none,
             children: <Widget>[
               Observer(builder: (_) {
-                return Container(
-                  height: height ?? 390,
-                  decoration: BoxDecoration(
-                    borderRadius: borderRadius ??
-                        const BorderRadius.only(
-                          bottomLeft: Radius.circular(32),
-                          bottomRight: Radius.circular(32),
-                        ),
-                    image: DecorationImage(
-                        filterQuality: FilterQuality.low,
-                        image: ResizeImage(
-                            NetworkImage(
-                              photoUrl ?? userStore.account.avatarUrl ?? '',
-                            ),
-                            height: 390),
-                        fit: BoxFit.cover),
-                  ),
+                return PhotoWidget(
+                  photoUrl: photoUrl,
+                  photoPath: photoPath,
+                  height: height,
+                  borderRadius: borderRadius,
                 );
               }),
             ],

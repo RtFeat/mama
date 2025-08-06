@@ -107,8 +107,8 @@ class Endpoint {
   static const String health = 'health';
 
   static const String medicine = 'health/drug';
-  static const String doctorVisit = 'health/doctorVisit';
-  static const String vaccine = 'health/vaccine';
+  static const String doctorVisit = 'health/cons_doctor/list';
+  static const String vaccines = 'health/vaccination/list';
   static const String temperatureHistory = 'health/temperature/history';
 
   String get drug => '$health/drug';

@@ -13,9 +13,10 @@ class HealthResponseListVaccination {
   const HealthResponseListVaccination({
     this.list,
   });
-  
-  factory HealthResponseListVaccination.fromJson(Map<String, Object?> json) => _$HealthResponseListVaccinationFromJson(json);
-  
+
+  factory HealthResponseListVaccination.fromJson(Map<String, Object?> json) =>
+      _$HealthResponseListVaccinationFromJson(json);
+
   final List<EntityVaccinationMain>? list;
 
   Map<String, Object?> toJson() => _$HealthResponseListVaccinationToJson(this);
