@@ -26,9 +26,10 @@ class AddGrowth extends StatelessWidget {
           ),
           8.h,
           CustomBlog(
+            value: '',
+            onChangedValue: (p0) {},
             measure: UnitMeasures.height,
             onPressedElevated: () {},
-            onPressedOutlined: () {},
           ),
           8.h,
         ],

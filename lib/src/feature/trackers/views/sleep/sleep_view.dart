@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
+import 'package:mobx/mobx.dart';
 
 class SleepScreen extends StatelessWidget {
   const SleepScreen({super.key});
@@ -14,8 +15,8 @@ class SleepScreen extends StatelessWidget {
     // String tracker = DateFormat('dd MMMM').format(input);
 
     return TrackerBody(
+        isShowInfo: false,
         learnMoreWidgetText: t.trackers.findOutMoreTextSleep,
-        onPressClose: () {},
         onPressLearnMore: () {},
         children: const [
           SliverToBoxAdapter(child: SleepWidget()),

@@ -192,13 +192,13 @@ abstract class HealthClient {
     @Part(name: 'data_start') String? dataStart,
     @Part(name: 'data_end') String? dataEnd,
     @Part(name: 'is_end') bool? isEnd,
-    @Part(name: 'reminder') String? reminder,
+    @Part(name: 'reminder') List<String>? reminder,
   });
 
   /// Удалить лекарство.
   ///
   /// [dto] - DTO delete drug.
-  @DELETE('/health/drug/')
+  @DELETE('/health/drug')
   Future<void> deleteHealthDrug({
     @Body() required HealthDeleteDrug dto,
   });

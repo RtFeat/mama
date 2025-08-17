@@ -25,9 +25,10 @@ class AddHead extends StatelessWidget {
           ),
           8.h,
           CustomBlog(
+            value: '',
+            onChangedValue: (p0) {},
             measure: UnitMeasures.height,
             onPressedElevated: () {},
-            onPressedOutlined: () {},
             verticalSwitch: Text(
               t.trackers.cm.title,
               style: AppTextStyles.f14w700.copyWith(

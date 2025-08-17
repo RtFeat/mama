@@ -109,7 +109,6 @@ class ButtonsLearnPdfAdd extends StatelessWidget {
                 iconSize: 28,
                 textStyle: addButtonTextStyle ??
                     Theme.of(context).textTheme.titleMedium!.copyWith(
-                          fontSize: 10,
                           letterSpacing: -.1,
                         ),
               ),

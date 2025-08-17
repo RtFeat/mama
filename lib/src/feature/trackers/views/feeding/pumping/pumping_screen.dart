@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
 import 'package:mama/src/data.dart';
@@ -14,8 +15,8 @@ class PumpingScreen extends StatelessWidget {
     final listOfData = historyOfPumping;
 
     return TrackerBody(
+      isShowInfo: (false),
       learnMoreWidgetText: t.trackers.findOutMoreTextPumping,
-      onPressClose: () {},
       onPressLearnMore: () {},
       children: [
         SliverToBoxAdapter(child: const PumpingGraphicWidget()),

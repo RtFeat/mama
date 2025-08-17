@@ -51,6 +51,9 @@ abstract class _AddVaccineViewStore with Store {
   @observable
   XFile? image;
 
+  @observable
+  String? imageUrl;
+
   @action
   Future<void> pickImage() async {
     final pickedFile = await picker.pickMedia();
@@ -71,30 +74,37 @@ abstract class _AddVaccineViewStore with Store {
   void init(EntityVaccinationMain? model) {
     this.model = model;
 
+    if (model != null) {
+      selectedDate = model.date!;
+      if (model.photo != null) {
+        imageUrl = model.photo;
+      }
+    }
+
     // if (model != null && model.photos != null && model.photos!.isNotEmpty) {
     //   imagesUrls = ObservableList.of(model.photos!.map((e) => e));
     // }
 
     formGroup = FormGroup({
       'vaccine': FormControl<String>(
-        // value: model == null ? '' : '${model.doctor}',
+        value: model == null ? '' : '${model.name}',
         validators: [Validators.required],
       ),
       'dataStart': FormControl<String>(
-        // value: model == null || model. == null
-        //     ? ''
-        //     : DateFormat(
-        //         'd MMMM y',
-        //         LocaleSettings.currentLocale.flutterLocale.toLanguageTag(),
-        //       ).format(model.date!),
+        value: model == null || model.date == null
+            ? ''
+            : DateFormat(
+                'd MMMM',
+                LocaleSettings.currentLocale.flutterLocale.toLanguageTag(),
+              ).format(model.date!),
         validators: [Validators.required],
       ),
       'clinic': FormControl<String>(
-        // value: model == null ? '' : model.clinic,
+        value: model == null ? '' : model.clinic,
         validators: [Validators.required],
       ),
       'comment': FormControl<String>(
-        // value: model == null ? '' : '${model.notes}',
+        value: model == null ? '' : '${model.notes}',
         validators: [Validators.required],
       ),
     });

@@ -5,26 +5,25 @@ import 'package:skit/skit.dart';
 
 class TrackerBody extends StatelessWidget {
   final List<Widget> children;
-  final VoidCallback onPressClose;
   final VoidCallback onPressLearnMore;
   final PreferredSizeWidget? appBar;
   final Widget? stackWidget;
-  final bool isShowLearnMore;
   final String learnMoreWidgetText;
   final Widget? bottomNavigatorBar;
 
-  final LearnMoreStore? learnMoreStore;
+  final bool isShowInfo;
+  final Function(bool)? setIsShowInfo;
+
   const TrackerBody(
       {super.key,
-      this.learnMoreStore,
-      this.isShowLearnMore = true,
       required this.children,
       this.bottomNavigatorBar,
       required this.learnMoreWidgetText,
       this.stackWidget,
       this.appBar,
-      required this.onPressClose,
-      required this.onPressLearnMore});
+      required this.onPressLearnMore,
+      this.isShowInfo = true,
+      this.setIsShowInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +36,12 @@ class TrackerBody extends StatelessWidget {
           child: Observer(builder: (context) {
             return CustomScrollView(
               slivers: [
-                if (learnMoreStore?.isShowInfo ?? true) ...[
+                if (isShowInfo) ...[
                   SliverToBoxAdapter(child: 16.h),
                   SliverToBoxAdapter(
                     child: LearnMoreWidget(
                       onPressClose: () {
-                        learnMoreStore?.setIsShowInfo(false);
-                        onPressClose();
+                        setIsShowInfo?.call(false);
                       },
                       onPressButton: () => onPressLearnMore(),
                       title: learnMoreWidgetText,

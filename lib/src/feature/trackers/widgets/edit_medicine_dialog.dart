@@ -3,15 +3,22 @@ import 'package:mama/src/core/widgets/body/decoration.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
-class EditMedicineDialog extends StatelessWidget {
+class EditMedicineDialog extends StatefulWidget {
   final String medicineName;
   final String dateAndTime;
-  final VoidCallback onPressFinishMedicine;
+  final Function(DateTime?) onPressFinishMedicine;
   const EditMedicineDialog(
       {super.key,
       required this.medicineName,
       required this.dateAndTime,
       required this.onPressFinishMedicine});
+
+  @override
+  State<EditMedicineDialog> createState() => _EditMedicineDialogState();
+}
+
+class _EditMedicineDialogState extends State<EditMedicineDialog> {
+  DateTime? _selectedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +57,7 @@ class EditMedicineDialog extends StatelessWidget {
                   ),
                   8.h,
                   Text(
-                    medicineName,
+                    widget.medicineName,
                     textAlign: TextAlign.center,
                     style: textTheme.headlineSmall!.copyWith(
                       fontSize: 24,
@@ -63,10 +70,15 @@ class EditMedicineDialog extends StatelessWidget {
                     style: textTheme.titleSmall,
                   ),
                   16.h,
-                  DateSwitchContainer(
-                    title1: t.trackers.now.title,
-                    title2: t.trackers.sixTeenThirtyTwo.title,
-                    title3: t.trackers.fourteensOfSeptember.title,
+                  // DateSwitchContainer(
+                  //   title1: t.trackers.now.title,
+                  //   title2: t.trackers.sixTeenThirtyTwo.title,
+                  //   title3: t.trackers.fourteensOfSeptember.title,
+                  // ),
+                  DateTimeSelectorWidget(
+                    onChanged: (value) {
+                      _selectedTime = value;
+                    },
                   ),
                   20.h,
                   Text(
@@ -89,7 +101,7 @@ class EditMedicineDialog extends StatelessWidget {
                     maxLines: 1,
                     textStyle: textTheme.bodyMedium!
                         .copyWith(color: AppColors.primaryColor),
-                    onTap: () => onPressFinishMedicine(),
+                    onTap: () => widget.onPressFinishMedicine(_selectedTime),
                     icon: AppIcons.pillsFill,
                     iconSize: 28,
                     iconColor: AppColors.primaryColor,

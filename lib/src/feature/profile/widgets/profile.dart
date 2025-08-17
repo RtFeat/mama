@@ -78,7 +78,9 @@ class _MomsProfileState extends State<MomsProfile> {
       return Column(children: [
         widget.accountModel.avatarUrl == null
             ? const DashedPhotoProfile()
-            : const ProfilePhoto(),
+            : ProfilePhoto(
+                photoUrl: widget.accountModel.avatarUrl,
+              ),
         Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

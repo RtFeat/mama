@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
 class LureScreen extends StatefulWidget {
@@ -19,8 +20,8 @@ class _LureScreenState extends State<LureScreen> {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
     return TrackerBody(
+      isShowInfo: false,
       learnMoreWidgetText: t.trackers.findOutMoreTextLure,
-      onPressClose: () {},
       onPressLearnMore: () {},
       bottomNavigatorBar: Padding(
         padding: const EdgeInsets.all(15),

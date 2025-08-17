@@ -34,6 +34,7 @@ abstract class AppViews {
 
   // static const healthMedicine = '/';
   static const addMedicine = 'addMedicine';
+  static const addDrug = 'addDrug';
 
   static const servicesUserView = 'servicesUserView';
   static const servicesSleepMusicView = 'servicesSleepMusicView';
@@ -354,7 +355,15 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: AppViews.trackersHealthAddMedicineView,
               path: _Paths.trackersHealthAddTemperaturePath,
-              builder: (context, state) => const AddTemperature(),
+              builder: (context, state) {
+                final Map? extra = state.extra as Map?;
+                // final EntityMainDoctor? data = extra?['data'];
+                final TemperatureStore? store = extra?['store'];
+
+                return AddTemperature(
+                  store: store,
+                );
+              },
             ),
             GoRoute(
               path: _Paths.addVisit,
@@ -387,6 +396,20 @@ final GoRouter router = GoRouter(
 
                 return AddVaccine(
                   data: data,
+                  store: store,
+                );
+              },
+            ),
+            GoRoute(
+              path: _Paths.addDrug,
+              name: AppViews.addDrug,
+              builder: (context, state) {
+                final Map? extra = state.extra as Map?;
+                final EntityMainDrug? data = extra?['data'];
+                final DrugsStore? store = extra?['store'];
+
+                return AddDrugView(
+                  model: data,
                   store: store,
                 );
               },
@@ -603,6 +626,7 @@ abstract class _Paths {
   static const addVisit = AppViews.addVisit;
   static const vaccinesCalendar = AppViews.vaccinesCalendar;
   static const addVaccine = AppViews.addVaccine;
+  static const addDrug = AppViews.addDrug;
   // static const healthMedicine = AppViews.healthMedicine;
   // static const addMedicine = AppViews.addMedicine;
 

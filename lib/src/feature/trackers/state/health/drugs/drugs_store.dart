@@ -21,14 +21,20 @@ abstract class _DrugsStore extends LearnMoreStore<EntityMainDrug> with Store {
     required super.faker,
   }) : super(
           testDataGenerator: () {
-            // final format = DateFormat('dd MMMM',
-            //     LocaleSettings.currentLocale.flutterLocale.toLanguageTag());
-
             //
 
-            return EntityMainDrug();
+            return EntityMainDrug(
+              // id: faker.guid(),
+              // name: faker.person.name(),
+              // avatarUrl: faker.internet.avatar(),
+              // dataStart: format.format(DateTime.now()),
+              // dataEnd: format.format(DateTime.now().add(const Duration(days: 1))),
+
+              reminder: ObservableList(),
+              reminderAfter: ObservableList(),
+            );
           },
-          basePath: Endpoint.diaperList,
+          basePath: Endpoint.drugs,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
           pageSize: 20,
@@ -42,4 +48,17 @@ abstract class _DrugsStore extends LearnMoreStore<EntityMainDrug> with Store {
             };
           },
         );
+
+  @observable
+  bool isShowCompleted = false;
+
+  @action
+  void setIsShowCompleted(bool value) {
+    isShowCompleted = value;
+  }
+
+  @computed
+  ObservableList get completedList => ObservableList.of(listData
+      .where((e) => e is EntityMainDrug && (e.isEnd ?? false))
+      .toList());
 }

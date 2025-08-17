@@ -3,9 +3,11 @@ import 'package:mama/src/data.dart';
 
 class SelectPhotoWidget extends StatelessWidget {
   final Future Function() onTap;
+  final double height;
   const SelectPhotoWidget({
     super.key,
     required this.onTap,
+    this.height = 200,
   });
 
   @override
@@ -15,7 +17,7 @@ class SelectPhotoWidget extends StatelessWidget {
       onIconTap: () async {
         await onTap();
       },
-      height: 200,
+      height: height,
       iconHeight: 26,
       text: t.trackers.addPhoto,
       borderRadius: const BorderRadius.all(

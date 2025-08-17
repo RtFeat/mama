@@ -4,7 +4,7 @@ import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
-part 'temperature.g.dart';
+part 'temperature_store.g.dart';
 
 class TemperatureStore extends _TemperatureStore with _$TemperatureStore {
   TemperatureStore({
@@ -53,6 +53,7 @@ abstract class _TemperatureStore
   );
 
   @override
+  @computed
   TableData get tableData => TableData(
         headerTitle: '',
         columnHeaders: [
@@ -76,6 +77,7 @@ abstract class _TemperatureStore
       );
 
   @override
+  @computed
   ObservableList<List<TableItem>> get rows {
     final List<List<TableItem>> result = [];
     for (final entity in listData) {
@@ -91,7 +93,7 @@ abstract class _TemperatureStore
             column: 1,
           ),
           TableItem(
-            title: temp.time,
+            title: temp.time.toString(),
             row: result.length + 1,
             column: 2,
             trailing: hasNote

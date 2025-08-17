@@ -65,7 +65,9 @@ class _BodyState extends State<_Body> {
           value: widget.childId),
     ]);
 
-    widget.store.getIsShowInfo();
+    widget.store.getIsShowInfo().then((v) {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -73,10 +75,14 @@ class _BodyState extends State<_Body> {
   Widget build(BuildContext context) {
     return TrackerBody(
       learnMoreWidgetText: t.trackers.findOutMoreTextDoctorVisit,
-      learnMoreStore: widget.store,
-      onPressClose: () {},
+      // learnMoreStore: widget.store,
       onPressLearnMore: () {},
-      isShowLearnMore: true,
+      isShowInfo: widget.store.isShowInfo,
+      setIsShowInfo: (v) {
+        widget.store.setIsShowInfo(v).then((v) {
+          setState(() {});
+        });
+      },
       bottomNavigatorBar:
 
           /// #bottom buttons

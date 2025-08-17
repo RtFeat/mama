@@ -73,27 +73,20 @@ class __BodyState extends State<_Body> {
             .copyWith(fontSize: 17, color: AppColors.blueDark),
       ),
       backgroundColor: AppColors.primaryColorBright,
-      body: Stack(
+      bottomNavigationBar: SafeArea(
+        child: VisitSaveButton(
+          type: widget.type,
+          store: widget.store,
+          doctorVisitsStore: widget.doctorVisitsStore,
+        ),
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(16),
         children: [
-          ListView(
-            padding: EdgeInsets.all(16),
-            children: [
-              VisitPhotoWidget(store: widget.store),
-              20.h,
-              VisitInputsWidget(store: widget.store),
-              16.h,
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: VisitSaveButton(
-                type: widget.type,
-                store: widget.store,
-                doctorVisitsStore: widget.doctorVisitsStore,
-              ),
-            ),
-          ),
+          VisitPhotoWidget(store: widget.store),
+          20.h,
+          VisitInputsWidget(store: widget.store),
+          16.h,
         ],
       ),
     );

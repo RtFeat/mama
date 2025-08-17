@@ -247,8 +247,12 @@ showCompleted:
 pillTitleOne:
   title: Сироп Нурофен детский
 
-pillDescriptionOne:
-  title: 1 ложку после еды
+pillDescription:
+  averageCount(param=n):
+    one: 1 ложку после еды
+    two: $n ложки после еды
+    few: $n ложек после еды
+    other: $n ложек после еды
 
 pillExactTimeOne:
   title: В 20:00

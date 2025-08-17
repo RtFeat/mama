@@ -83,137 +83,133 @@ class _BodyState extends State<_Body> {
               .copyWith(fontSize: 17, color: AppColors.blueDark),
         ),
         backgroundColor: AppColors.primaryColorBright,
-        body: Stack(
+        bottomNavigationBar: SafeArea(
+            child: VaccineSaveButton(
+                isEdit: (widget.model?.mark?.isEmpty ?? false),
+                isAdd: isAdd,
+                store: widget.addVaccineViewStore,
+                vaccinesStore: widget.store)),
+        body: ListView(
+          padding: EdgeInsets.all(16),
           children: [
-            ListView(
-              padding: EdgeInsets.all(16),
-              children: [
-                isAdd
-                    ? const SizedBox.shrink()
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (widget.model?.name != null)
-                            AutoSizeText(
-                              widget.model?.name ?? '',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(
-                                    fontSize: 24,
-                                  ),
-                            ),
-                          10.h,
-                          AutoSizeText(
-                            '${t.trackers.vaccines.recommendedAge} ${widget.model?.age}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(letterSpacing: -0.5),
-                          ),
-                          10.h,
-                        ],
+            isAdd
+                ? const SizedBox.shrink()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.model?.name != null)
+                        AutoSizeText(
+                          widget.model?.name ?? '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(
+                                fontSize: 24,
+                              ),
+                        ),
+                      10.h,
+                      AutoSizeText(
+                        '${t.trackers.vaccines.recommendedAge} ${widget.model?.age}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(letterSpacing: -0.5),
                       ),
-                widget.addVaccineViewStore.image == null
-                    ? SelectPhotoWidget(
-                        onTap: widget.addVaccineViewStore.pickImage,
-                      )
-                    : GestureDetector(
-                        onTap: widget.addVaccineViewStore.pickImage,
-                        child: PhotoWidget(
-                          height: 200,
-                          borderRadius: BorderRadius.circular(16),
-                          photoPath: widget.addVaccineViewStore.image?.path,
+                      10.h,
+                    ],
+                  ),
+            widget.addVaccineViewStore.image != null ||
+                    (widget.addVaccineViewStore.imageUrl != null &&
+                        widget.addVaccineViewStore.imageUrl!.isNotEmpty)
+                ? GestureDetector(
+                    onTap: widget.addVaccineViewStore.pickImage,
+                    child: PhotoWidget(
+                      height: 200,
+                      borderRadius: BorderRadius.circular(16),
+                      photoUrl: widget.addVaccineViewStore.imageUrl,
+                      photoPath: widget.addVaccineViewStore.image?.path,
+                    ),
+                  )
+                : SelectPhotoWidget(
+                    onTap: widget.addVaccineViewStore.pickImage,
+                  ),
+            20.h,
+            BodyGroup(
+              formGroup: widget.addVaccineViewStore.formGroup,
+              items: [
+                !isAdd
+                    ? const SizedBox.shrink()
+                    : BodyItemWidget(
+                        item: InputItem(
+                          controlName: 'vaccine',
+                          inputHint: t.trackers.vaccines.addNewVacField1Title,
+                          hintText: t.trackers.vaccines.addNewVacField1Hint,
+                          inputHintStyle: textTheme.bodySmall!
+                              .copyWith(letterSpacing: -0.5),
+                          titleStyle: textTheme.bodySmall!
+                              .copyWith(color: AppColors.blackColor),
+                          maxLines: 1,
+                          onChanged: (value) {
+                            // nameVaccine = value;
+                            // widget.widget.store.updateData();
+                          },
                         ),
                       ),
-                20.h,
-                BodyGroup(
-                  formGroup: widget.addVaccineViewStore.formGroup,
-                  items: [
-                    !isAdd
-                        ? const SizedBox.shrink()
-                        : BodyItemWidget(
-                            item: InputItem(
-                              controlName: 'vaccine',
-                              inputHint:
-                                  t.trackers.vaccines.addNewVacField1Title,
-                              hintText: t.trackers.vaccines.addNewVacField1Hint,
-                              inputHintStyle: textTheme.bodySmall!
-                                  .copyWith(letterSpacing: -0.5),
-                              titleStyle: textTheme.bodySmall!
-                                  .copyWith(color: AppColors.blackColor),
-                              maxLines: 1,
-                              onChanged: (value) {
-                                // nameVaccine = value;
-                                // widget.widget.store.updateData();
-                              },
-                            ),
-                          ),
-                    BodyItemWidget(
-                      item: InputItem(
-                        controlName: 'dataStart',
-                        inputHint: t.trackers.doctor.addNewVisitField2Title,
-                        hintText: t.trackers.doctor.addNewVisitField2Hint,
-                        inputHintStyle:
-                            textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
-                        titleStyle: textTheme.bodySmall!
-                            .copyWith(color: AppColors.blackColor),
-                        maxLines: 1,
-                        // controller: dateStartController,
-                        readOnly: true,
-                        onTap: (value) async {
-                          widget.addVaccineViewStore.selectDate(context);
-                          setState(() {});
-                          // dateStartController.text = widget.store.formattedDateTime;
-                          // widget.store.formattedDateTime;
-                          // widget.store.updateData();
-                        },
-                        decorationPadding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                      ),
-                    ),
-                    BodyItemWidget(
-                      item: InputItem(
-                        controlName: 'clinic',
-                        inputHint: t.trackers.vaccines.addNewVacField3Title,
-                        hintText: t.trackers.vaccines.addNewVacField3Hint,
-                        inputHintStyle:
-                            textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
-                        titleStyle: textTheme.bodySmall!
-                            .copyWith(color: AppColors.blackColor),
-                        maxLines: 1,
-                        onChanged: (value) {
-                          // clinicValue = value;
-                        },
-                      ),
-                    ),
-                    BodyItemWidget(
-                      item: InputItem(
-                        controlName: 'comment',
-                        inputHint: t.trackers.vaccines.addNewVacField4Title,
-                        hintText: t.trackers.vaccines.addNewVacField4Hint,
-                        inputHintStyle:
-                            textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
-                        titleStyle: textTheme.bodySmall!
-                            .copyWith(color: AppColors.blackColor),
-                        maxLines: 1,
-                        onChanged: (value) {
-                          // commentValue = value;
-                        },
-                      ),
-                    ),
-                  ],
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'dataStart',
+                    inputHint: t.trackers.doctor.addNewVisitField2Title,
+                    hintText: t.trackers.doctor.addNewVisitField2Hint,
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
+                    maxLines: 1,
+                    // controller: dateStartController,
+                    readOnly: true,
+                    onTap: (value) async {
+                      widget.addVaccineViewStore.selectDate(context);
+                      setState(() {});
+                      // dateStartController.text = widget.store.formattedDateTime;
+                      // widget.store.formattedDateTime;
+                      // widget.store.updateData();
+                    },
+                    decorationPadding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  ),
                 ),
-                16.h,
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'clinic',
+                    inputHint: t.trackers.vaccines.addNewVacField3Title,
+                    hintText: t.trackers.vaccines.addNewVacField3Hint,
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
+                    maxLines: 1,
+                    onChanged: (value) {
+                      // clinicValue = value;
+                    },
+                  ),
+                ),
+                BodyItemWidget(
+                  item: InputItem(
+                    controlName: 'comment',
+                    inputHint: t.trackers.vaccines.addNewVacField4Title,
+                    hintText: t.trackers.vaccines.addNewVacField4Hint,
+                    inputHintStyle:
+                        textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
+                    titleStyle: textTheme.bodySmall!
+                        .copyWith(color: AppColors.blackColor),
+                    maxLines: 1,
+                    onChanged: (value) {
+                      // commentValue = value;
+                    },
+                  ),
+                ),
               ],
             ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: SafeArea(
-                    child: VaccineSaveButton(
-                        isEdit: (widget.model?.mark?.isEmpty ?? false),
-                        isAdd: isAdd,
-                        store: widget.addVaccineViewStore,
-                        vaccinesStore: widget.store))),
+            16.h,
           ],
         ),
       );

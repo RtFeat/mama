@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
@@ -8,15 +9,19 @@ class CustomBlog extends StatefulWidget {
   const CustomBlog({
     super.key,
     this.onPressedElevated,
-    this.onPressedOutlined,
     this.controller,
     this.verticalSwitch,
     this.measure,
+    this.onChangedTime,
+    required this.onChangedValue,
+    required this.value,
   });
 
+  final String value;
+  final Function(String) onChangedValue;
+  final Function(DateTime?)? onChangedTime;
   final UnitMeasures? measure;
   final void Function()? onPressedElevated;
-  final void Function()? onPressedOutlined;
   final TextEditingController? controller;
   final Widget? verticalSwitch;
 
@@ -31,6 +36,9 @@ class _CustomBlogState extends State<CustomBlog> {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
+
+    final isTemperature = widget.measure == null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
@@ -54,7 +62,13 @@ class _CustomBlogState extends State<CustomBlog> {
               // КГ / Г кнопки (вертикально)
               Row(
                 children: [
-                  widget.measure == null
+                  // NumberField(
+                  //   value: widget.value,
+                  //   onChanged: widget.onChangedValue,
+                  //   decimals: 1,
+                  //   unit: '°С',
+                  // ),
+                  isTemperature
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
@@ -77,28 +91,38 @@ class _CustomBlogState extends State<CustomBlog> {
                         ),
                   8.w,
                   Expanded(
-                    child: TextFormField(
-                      controller: widget.controller,
-                      keyboardType: TextInputType.phone,
-                      textAlign: TextAlign.center,
-                      decoration: const InputDecoration(),
-                      style: AppTextStyles.f44w400.copyWith(
-                        color: AppColors.primaryColor,
-                      ),
+                    child: NumberField(
+                      value: widget.value,
+                      onChanged: widget.onChangedValue,
+                      decimals: 1,
+                      inputFormatters: [
+                        TemperatureInputFormatter(),
+                      ],
                     ),
+                    // isTemperature
+                    //     ? TemperatureField(
+                    //         value: widget.value,
+                    //         onChanged: widget.onChangedValue,
+                    //       )
+                    //     : TextFormField(
+                    //         controller: widget.controller,
+                    //         keyboardType: TextInputType.number,
+                    //         textAlign: TextAlign.center,
+                    //         decoration: const InputDecoration(),
+                    //         style: AppTextStyles.f44w400.copyWith(
+                    //           color: AppColors.primaryColor,
+                    //         ),
+                    //         onChanged: widget.onChangedValue,
+                    //       ),
                   ),
                   16.w,
                 ],
               ),
 
-              10.h,
+              18.h,
 
-              DateSwitchContainer(
-                title1: t.trackers.now.title,
-                title2: t.trackers.sixTeenThirtyTwo.title,
-                title3: t.trackers.fourteensOfSeptember.title,
-              ),
-              10.h,
+              DateTimeSelectorWidget(onChanged: widget.onChangedTime),
+              18.h,
 
               // кнопки "Заметка" и "Добавить"
               Row(
@@ -107,7 +131,11 @@ class _CustomBlogState extends State<CustomBlog> {
                     flex: 2,
                     child: CustomButton(
                       type: CustomButtonType.outline,
-                      onTap: widget.onPressedOutlined,
+                      onTap: () {
+                        context.pushNamed(
+                          AppViews.addNote,
+                        );
+                      },
                       maxLines: 1,
                       title: t.trackers.note.title,
                       icon: AppIcons.pencil,

@@ -75,12 +75,12 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
 
     final totalDiapers = listData.map((e) {
       if (e == null) return 0;
-      return e.diapersSub.length;
+      return e.diapersSub?.length;
     }).reduce((a, b) {
       if (a == null || b == null) return 0;
       return a + b;
     });
 
-    return totalDiapers ~/ listData.length;
+    return (totalDiapers ?? 0) ~/ listData.length;
   }
 }

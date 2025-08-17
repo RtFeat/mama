@@ -20,7 +20,6 @@ class CalendarVaccineContainer extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(16)),
       ),
       child: SizedBox(
-        width: MediaQuery.sizeOf(context).width,
         height: 116,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -28,17 +27,17 @@ class CalendarVaccineContainer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7,
+              Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AutoSizeText(
+                    Text(
                       nameCalendar,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     5.h,
-                    AutoSizeText(
+                    Text(
                       t.trackers.vaccines.calendarViewVOZ,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                             fontSize: 14,
@@ -48,6 +47,7 @@ class CalendarVaccineContainer extends StatelessWidget {
                   ],
                 ),
               ),
+              10.w,
               GestureDetector(
                 onTap: () => onTapPDF(),
                 child: Container(

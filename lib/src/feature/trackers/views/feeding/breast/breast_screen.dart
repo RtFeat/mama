@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/data/repository/history_repository.dart';
+import 'package:mobx/mobx.dart';
 
 class BreastScreen extends StatelessWidget {
   const BreastScreen({super.key});
@@ -10,8 +11,8 @@ class BreastScreen extends StatelessWidget {
     final listOfData = historyOfFeedings;
 
     return TrackerBody(
+      isShowInfo: false,
       learnMoreWidgetText: t.trackers.findOutMoreTextBrist,
-      onPressClose: () {},
       onPressLearnMore: () {},
       children: [
         SliverToBoxAdapter(child: const AddFeedingWidget()),

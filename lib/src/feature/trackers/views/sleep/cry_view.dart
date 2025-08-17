@@ -10,7 +10,6 @@ class CryScreen extends StatelessWidget {
     final listOfData = historyOfFeedings;
 
     return TrackerBody(
-      onPressClose: () {},
       onPressLearnMore: () {},
       learnMoreWidgetText: t.trackers.findOutMoreTextCry,
       children: [

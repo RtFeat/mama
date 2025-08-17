@@ -78,7 +78,9 @@ class _BodyState extends State<_Body> {
         // }
         );
 
-    widget.store.getIsShowInfo();
+    widget.store.getIsShowInfo().then((v) {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -86,12 +88,15 @@ class _BodyState extends State<_Body> {
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
       return TrackerBody(
-        learnMoreStore: widget.store,
-        learnMoreWidgetText: t.trackers.findOutMoreTextDiapers,
-        isShowLearnMore: widget.store.isShowInfo,
-        onPressClose: () {
-          widget.store.setIsShowInfo(false);
+        // learnMoreStore: widget.store,
+
+        isShowInfo: widget.store.isShowInfo,
+        setIsShowInfo: (v) {
+          widget.store.setIsShowInfo(v).then((v) {
+            setState(() {});
+          });
         },
+        learnMoreWidgetText: t.trackers.findOutMoreTextDiapers,
         onPressLearnMore: () {},
         appBar: CustomAppBar(
           appBarColor: AppColors.deeperAppBarColor,

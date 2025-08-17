@@ -14,9 +14,13 @@ class EntityVaccinationMain extends _EntityVaccinationMain
     this.age,
     this.ageDescription,
     this.id,
-    this.mark,
-    this.markDescription,
+    super.mark,
+    super.markDescription,
     this.name,
+    this.clinic,
+    this.notes,
+    this.photo,
+    this.date,
   });
 
   factory EntityVaccinationMain.fromJson(Map<String, Object?> json) =>
@@ -25,15 +29,22 @@ class EntityVaccinationMain extends _EntityVaccinationMain
   final String? age;
   @JsonKey(name: 'age_description')
   final String? ageDescription;
+  final String? clinic;
   final String? id;
-  final String? mark;
-  final String? markDescription;
   final String? name;
+  final String? notes;
+  final String? photo;
+  @JsonKey(name: 'time_vaccination')
+  final DateTime? date;
 
   Map<String, Object?> toJson() => _$EntityVaccinationMainToJson(this);
 }
 
 abstract class _EntityVaccinationMain with Store {
+  _EntityVaccinationMain({
+    this.mark,
+    this.markDescription,
+  });
   @observable
   String? mark;
 

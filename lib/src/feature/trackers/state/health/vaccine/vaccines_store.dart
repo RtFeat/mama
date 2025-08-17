@@ -35,7 +35,7 @@ abstract class _VaccinesStore extends LearnMoreStore<EntityVaccinationMain>
           basePath: Endpoint.vaccines,
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
-          pageSize: 20,
+          pageSize: 40,
           transformer: (raw) {
             final data = HealthResponseListVaccination.fromJson(raw);
 

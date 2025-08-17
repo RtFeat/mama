@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/views/evolution/table_view.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
+import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
 class EvolutionView extends StatefulWidget {
@@ -63,8 +64,8 @@ class WeightT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TrackerBody(
+      isShowInfo: false,
       learnMoreWidgetText: trackerType.knowMoreTitle,
-      onPressClose: () {},
       onPressLearnMore: () {},
       children: [
         SliverToBoxAdapter(child: 10.h),

@@ -14,9 +14,10 @@ class EntityTemperatureHistory {
     this.temperatures,
     this.time,
   });
-  
-  factory EntityTemperatureHistory.fromJson(Map<String, Object?> json) => _$EntityTemperatureHistoryFromJson(json);
-  
+
+  factory EntityTemperatureHistory.fromJson(Map<String, Object?> json) =>
+      _$EntityTemperatureHistoryFromJson(json);
+
   @JsonKey(name: 'is_bad')
   final bool? isBad;
   final String? notes;

@@ -25,9 +25,10 @@ class AddWeight extends StatelessWidget {
               kgOrG: t.trackers.g.title, painter: CustomPointG()),
           8.h,
           CustomBlog(
+            value: '',
+            onChangedValue: (p0) {},
             measure: UnitMeasures.weight,
             onPressedElevated: () {},
-            onPressedOutlined: () {},
           ),
           8.h,
         ],

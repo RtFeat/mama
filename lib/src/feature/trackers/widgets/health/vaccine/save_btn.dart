@@ -81,22 +81,7 @@ class VaccineSaveButton extends StatelessWidget {
               //         : null,
 
               onTap: () {
-                if (isEdit) {
-                  store.update().then((v) {
-                    final EntityVaccinationMain vaccine = vaccinesStore
-                        ?.listData
-                        .firstWhere((e) => e.id == store.model!.id);
-                    vaccine.setMark(DateFormat(
-                      'd MMMM y',
-                      LocaleSettings.currentLocale.flutterLocale
-                          .toLanguageTag(),
-                    ).format(store.selectedDate));
-                    vaccine.setMarkDescription(
-                        userStore.selectedChild!.formattedDifference);
-
-                    if (context.mounted) context.pop();
-                  });
-                } else if (isAdd) {
+                if (isAdd) {
                   store.add(userStore.selectedChild!.id!).then((value) {
                     vaccinesStore?.listData.add(EntityVaccinationMain(
                       id: value,
@@ -109,6 +94,21 @@ class VaccineSaveButton extends StatelessWidget {
                           userStore.selectedChild!.formattedDifference,
                       name: store.vaccine?.value,
                     ));
+                    if (context.mounted) context.pop();
+                  });
+                } else {
+                  store.update().then((v) {
+                    final EntityVaccinationMain? vaccine = vaccinesStore
+                        ?.listData
+                        .firstWhere((e) => e.id == store.model!.id);
+                    vaccine?.setMark(DateFormat(
+                      'd MMMM y',
+                      LocaleSettings.currentLocale.flutterLocale
+                          .toLanguageTag(),
+                    ).format(store.selectedDate));
+                    vaccine?.setMarkDescription(
+                        userStore.selectedChild!.formattedDifference);
+
                     if (context.mounted) context.pop();
                   });
                 }

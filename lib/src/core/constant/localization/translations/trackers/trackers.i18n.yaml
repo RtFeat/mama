@@ -246,8 +246,12 @@ showCompleted:
 pillTitleOne:
   title: Сироп Нурофен детский
 
-pillDescriptionOne:
-  title: 1 spoon after a meal
+pillDescription:
+  averageCount(param=n):
+    one: 1 spoon after meals
+    two: $n spoons after meals
+    few: $n spoons after meals
+    other: $n spoons after meals
 
 pillExactTimeOne:
   title: В 20:00

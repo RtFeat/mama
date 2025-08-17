@@ -9,10 +9,9 @@ class RemindItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // TODO добавить напоминание по времени
-        Container(
+    return Container(
       height: 44,
+      margin: EdgeInsets.only(right: 10),
       decoration: BoxDecoration(
         color: AppColors.primaryColorBrighter,
         borderRadius: BorderRadius.circular(8),
