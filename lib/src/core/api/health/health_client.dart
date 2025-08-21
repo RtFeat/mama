@@ -160,7 +160,7 @@ abstract class HealthClient {
     @Part(name: 'dose') String? dose,
     @Part(name: 'notes') String? notes,
     @Part(name: 'is_end') bool? isEnd,
-    @Part(name: 'reminder') String? reminder,
+    @Part(name: 'reminder') List<String>? reminder,
   });
 
   /// Изменить данные лекарства reminder = 20:00:00.

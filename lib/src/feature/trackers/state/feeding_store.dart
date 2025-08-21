@@ -20,6 +20,7 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
     required super.apiClient,
     required super.faker,
   }) : super(
+          pageSize: 50,
           testDataGenerator: () {
             return FeedingCell(table: [
               FeedingCellTable(

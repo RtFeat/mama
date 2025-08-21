@@ -21,6 +21,7 @@ abstract class _EvolutionStore extends TableStore<EvolutionCell> with Store {
     required super.apiClient,
     required super.faker,
   }) : super(
+          pageSize: 50,
           testDataGenerator: () {
             return EvolutionCell(
               title: '${faker.datatype.number(max: 30).toString()} сентября',

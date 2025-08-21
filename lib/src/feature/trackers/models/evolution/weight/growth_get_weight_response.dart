@@ -13,9 +13,10 @@ class GrowthGetWeightResponse {
   const GrowthGetWeightResponse({
     this.list,
   });
-  
-  factory GrowthGetWeightResponse.fromJson(Map<String, Object?> json) => _$GrowthGetWeightResponseFromJson(json);
-  
+
+  factory GrowthGetWeightResponse.fromJson(Map<String, Object?> json) =>
+      _$GrowthGetWeightResponseFromJson(json);
+
   final EntityTableWeight? list;
 
   Map<String, Object?> toJson() => _$GrowthGetWeightResponseToJson(this);

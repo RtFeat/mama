@@ -5,14 +5,12 @@ import 'package:mama/src/data.dart';
 class NumberField extends StatefulWidget {
   final String? value;
   final void Function(String)? onChanged;
-  final int decimals;
   final List<TextInputFormatter>? inputFormatters;
 
   const NumberField({
     super.key,
     this.value,
     this.onChanged,
-    this.decimals = 1,
     this.inputFormatters,
   });
 

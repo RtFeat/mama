@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class CustomBlog extends StatefulWidget {
@@ -39,6 +40,12 @@ class _CustomBlogState extends State<CustomBlog> {
 
     final isTemperature = widget.measure == null;
 
+    final AddWeightViewStore? addWeightViewStore =
+        context.watch<AddWeightViewStore?>();
+
+    final AddGrowthViewStore? addGrowthViewStore =
+        context.watch<AddGrowthViewStore?>();
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
@@ -62,12 +69,6 @@ class _CustomBlogState extends State<CustomBlog> {
               // КГ / Г кнопки (вертикально)
               Row(
                 children: [
-                  // NumberField(
-                  //   value: widget.value,
-                  //   onChanged: widget.onChangedValue,
-                  //   decimals: 1,
-                  //   unit: '°С',
-                  // ),
                   isTemperature
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -81,6 +82,12 @@ class _CustomBlogState extends State<CustomBlog> {
                       : VericalToogleCustom(
                           measure: widget.measure!,
                           onChange: (int index) {
+                            addWeightViewStore?.switchWeightUnit(
+                                index == 0 ? WeightUnit.kg : WeightUnit.g);
+
+                            addGrowthViewStore?.switchGrowthUnit(
+                                index == 0 ? GrowthUnit.cm : GrowthUnit.m);
+
                             setState(() {
                               for (int i = 0; i < isSelected.length; i++) {
                                 isSelected[i] = i == index;
@@ -94,26 +101,19 @@ class _CustomBlogState extends State<CustomBlog> {
                     child: NumberField(
                       value: widget.value,
                       onChanged: widget.onChangedValue,
-                      decimals: 1,
                       inputFormatters: [
-                        TemperatureInputFormatter(),
+                        if (isTemperature) TemperatureInputFormatter(),
+                        if (widget.measure == UnitMeasures.weight &&
+                            isSelected[0])
+                          KilogramInputFormatter(),
+                        if ((widget.measure == UnitMeasures.weight) &&
+                            isSelected[1])
+                          GramInputFormatter(),
+                        if (widget.measure == UnitMeasures.height &&
+                            isSelected[1])
+                          MetersInputFormatter(),
                       ],
                     ),
-                    // isTemperature
-                    //     ? TemperatureField(
-                    //         value: widget.value,
-                    //         onChanged: widget.onChangedValue,
-                    //       )
-                    //     : TextFormField(
-                    //         controller: widget.controller,
-                    //         keyboardType: TextInputType.number,
-                    //         textAlign: TextAlign.center,
-                    //         decoration: const InputDecoration(),
-                    //         style: AppTextStyles.f44w400.copyWith(
-                    //           color: AppColors.primaryColor,
-                    //         ),
-                    //         onChanged: widget.onChangedValue,
-                    //       ),
                   ),
                   16.w,
                 ],

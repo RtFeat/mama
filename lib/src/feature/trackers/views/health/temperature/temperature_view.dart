@@ -89,33 +89,28 @@ class _BodyState extends State<_Body> {
         });
       },
       onPressLearnMore: () {},
-      stackWidget:
-
-          /// #bottom buttons
-          Align(
-        alignment: Alignment.bottomCenter,
-        child: ButtonsLearnPdfAdd(
-          onTapLearnMore: () {},
-          onTapPDF: () {},
-          onTapAdd: () {
-            context.pushNamed(AppViews.trackersHealthAddMedicineView, extra: {
-              'store': widget.store,
-            });
-          },
-          iconAddButton: AppIcons.thermometer,
-          addButtonTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                fontSize: 17,
-              ),
-        ),
+      bottomNavigatorBar: ButtonsLearnPdfAdd(
+        onTapLearnMore: () {},
+        onTapPDF: () {},
+        onTapAdd: () {
+          context.pushNamed(AppViews.trackersHealthAddMedicineView, extra: {
+            'store': widget.store,
+          });
+        },
+        iconAddButton: AppIcons.thermometer,
+        addButtonTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
+              fontSize: 17,
+            ),
       ),
       children: [
         SliverToBoxAdapter(child: 14.h),
 
         /// #actual table
         SliverToBoxAdapter(
-            child: TemperatureHistory(
-          store: context.watch(),
-        )),
+          child: SkitTableWidget(
+            store: widget.store,
+          ),
+        ),
       ],
     );
   }

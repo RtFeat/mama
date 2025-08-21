@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 
+class RulerConfig {
+  final double? height;
+  final double? mainDashHeight;
+  final double? longDashHeight;
+  final double? shortDashHeight;
+
+  final double width;
+
+  RulerConfig({
+    this.height,
+    this.width = 16,
+    this.mainDashHeight,
+    this.longDashHeight,
+    this.shortDashHeight,
+  });
+}
+
 class UniversalRuler extends StatefulWidget {
+  final RulerConfig? config;
   final double min;
   final double max;
   final double step;
@@ -13,6 +31,7 @@ class UniversalRuler extends StatefulWidget {
 
   const UniversalRuler({
     super.key,
+    this.config,
     required this.min,
     required this.max,
     this.value = 0,
@@ -31,7 +50,7 @@ class UniversalRuler extends StatefulWidget {
 class _UniversalRulerState extends State<UniversalRuler> {
   late ScrollController _controller;
   late int _activeIndex;
-  final double _itemWidth = 16;
+  double _itemWidth = 16;
 
   int get _itemCount => ((widget.max - widget.min) / widget.step).round() + 1;
 
@@ -41,6 +60,7 @@ class _UniversalRulerState extends State<UniversalRuler> {
   @override
   void initState() {
     super.initState();
+    _itemWidth = widget.config?.width ?? 16;
     _activeIndex = ((widget.initial - widget.min) / widget.step).round();
     _controller = ScrollController(
       initialScrollOffset: _activeIndex * _itemWidth,
@@ -80,7 +100,7 @@ class _UniversalRulerState extends State<UniversalRuler> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 220,
+      height: widget.config?.height ?? 220,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -104,10 +124,12 @@ class _UniversalRulerState extends State<UniversalRuler> {
                     ? (widget.labelBuilder?.call(value) ??
                         (value).toStringAsFixed(0))
                     : null;
+
                 return _StickBlock(
                   isLong: isLong,
                   label: label,
                   itemWidth: _itemWidth,
+                  config: widget.config,
                 );
               },
             ),
@@ -118,7 +140,7 @@ class _UniversalRulerState extends State<UniversalRuler> {
                 children: [
                   Container(
                     width: 4,
-                    height: 163,
+                    height: widget.config?.mainDashHeight ?? 163,
                     decoration: BoxDecoration(
                       color: Colors.deepPurple,
                       borderRadius: BorderRadius.circular(3),
@@ -150,16 +172,19 @@ class _StickBlock extends StatelessWidget {
   final bool isLong;
   final String? label;
   final double itemWidth;
+  final RulerConfig? config;
 
   const _StickBlock({
     required this.isLong,
     required this.label,
     required this.itemWidth,
+    this.config,
   });
 
   @override
   Widget build(BuildContext context) {
-    double height = isLong ? 143 : 55;
+    double height =
+        isLong ? config?.longDashHeight ?? 143 : config?.shortDashHeight ?? 55;
     Color color = isLong ? Colors.black : Colors.grey[400]!;
 
     return SizedBox(

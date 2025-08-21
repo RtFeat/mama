@@ -17,7 +17,7 @@ import '../models/growth_delete_weight_dto.dart';
 import '../models/growth_get_circle_response.dart';
 import '../models/growth_get_height_response.dart';
 import '../models/growth_get_table_response.dart';
-import '../models/growth_get_weight_response.dart';
+import '../../../feature/trackers/models/evolution/weight/growth_get_weight_response.dart';
 import '../models/growth_insert_circle_dto.dart';
 import '../models/growth_insert_height_dto.dart';
 import '../models/growth_insert_weight_dto.dart';

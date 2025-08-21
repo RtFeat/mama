@@ -103,6 +103,7 @@ class Endpoint {
 
   static const String evolution = 'growth';
   String get evolutionTable => '$evolution/table';
+  static const String weight = '$evolution/weight';
 
   static const String health = 'health';
 

@@ -19,6 +19,7 @@ abstract class _SleepCryStore extends TableStore<SleepCryCell> with Store {
     required super.apiClient,
     required super.faker,
   }) : super(
+          pageSize: 50,
           testDataGenerator: () {
             return SleepCryCell(
               title: faker.lorem.word(),

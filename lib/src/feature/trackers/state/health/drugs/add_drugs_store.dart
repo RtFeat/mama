@@ -164,8 +164,8 @@ abstract class _AddDrugsViewStore with Store {
       dataStart: selectedDate.toString(),
       dose: '$numberOfSpoons',
       nameDrug: name?.value,
-      reminder: notificationTime != null
-          ? '${notificationTime?.hour}:${notificationTime?.minute}:00'
+      reminder: model != null && model!.reminder.isNotEmpty
+          ? model!.reminder.map((e) => e is String ? '$e:00' : '').toList()
           : null,
       isEnd: false,
       notes: comment?.value,

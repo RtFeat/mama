@@ -64,7 +64,7 @@ class WeightT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TrackerBody(
-      isShowInfo: false,
+      isShowInfo: true,
       learnMoreWidgetText: trackerType.knowMoreTitle,
       onPressLearnMore: () {},
       children: [

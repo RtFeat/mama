@@ -19,6 +19,7 @@ abstract class _TemperatureStore
     required super.apiClient,
     required super.faker,
   }) : super(
+          pageSize: 50,
           testDataGenerator: () {
             return EntityTemperatureHistoryTotal();
             // return SleepCryCell(

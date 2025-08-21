@@ -51,7 +51,7 @@ class VericalToogleCustom extends StatelessWidget {
             child: Center(
               child: Text(
                 measure == UnitMeasures.weight
-                    ? t.trackers.g.title
+                    ? t.trackers.kg.title
                     : t.trackers.cm.title,
                 style: TextStyle(
                   color: isSelected[0]
@@ -73,7 +73,7 @@ class VericalToogleCustom extends StatelessWidget {
             child: Center(
               child: Text(
                 measure == UnitMeasures.weight
-                    ? t.trackers.kg.title
+                    ? t.trackers.g.title
                     : t.trackers.m.title,
                 style: TextStyle(
                   color: isSelected[1]
