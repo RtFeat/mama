@@ -7,30 +7,23 @@ import 'package:skit/skit.dart';
 
 class AddWeightView extends StatelessWidget {
   final WeightStore? store;
-  const AddWeightView({
-    super.key,
-    this.store
-  });
+  final WeightTableStore? tableStore;
+  const AddWeightView({super.key, this.store, this.tableStore});
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-        create: (context) => AddWeightViewStore(
-            store: store,
-            restClient: context.read<Dependencies>().restClient),
-        builder: (context, child) => _Body(
-              addWeightViewStore: context.watch(),
-            ));
+    return
+        //  Provider(
+        //     create: (context) => AddWeightViewStore(
+        //         store: store, restClient: context.read<Dependencies>().restClient),
+        //     builder: (context, child) =>
+        _Body(
+            // )
+            );
   }
 }
 
 class _Body extends StatefulWidget {
-  const _Body({
-    this.addWeightViewStore,
-  });
-
-  final AddWeightViewStore? addWeightViewStore;
-
   @override
   State<_Body> createState() => _BodyState();
 }
@@ -40,6 +33,12 @@ class _BodyState extends State<_Body> {
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
     final AddNoteStore noteStore = context.watch<AddNoteStore>();
+
+    final AddWeightViewStore addWeightViewStore =
+        context.watch<AddWeightViewStore>();
+
+    final WeightStore store = context.watch<WeightStore>();
+    final WeightTableStore tableStore = context.watch<WeightTableStore>();
 
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
@@ -65,11 +64,11 @@ class _BodyState extends State<_Body> {
             min: 0,
             max: 10,
             step: 0.1,
-            value: widget.addWeightViewStore?.kilograms.toDouble() ?? 0.0,
+            value: addWeightViewStore.kilograms.toDouble(),
             labelStep: 10,
             unit: t.trackers.kg.title,
             onChanged: (v) {
-              widget.addWeightViewStore?.updateKilograms(v.toInt());
+              addWeightViewStore.updateKilograms(v.toInt());
               setState(() {});
             },
           ),
@@ -85,12 +84,12 @@ class _BodyState extends State<_Body> {
             min: 0,
             max: 1000,
             step: 10,
-            initial: widget.addWeightViewStore?.grams.toDouble() ?? 0,
-            value: widget.addWeightViewStore?.grams.toDouble() ?? 0.0,
+            initial: addWeightViewStore.grams.toDouble(),
+            value: addWeightViewStore.grams.toDouble(),
             labelStep: 10,
             unit: t.trackers.g.title,
             onChanged: (v) {
-              widget.addWeightViewStore?.updateGrams(v.toInt());
+              addWeightViewStore.updateGrams(v.toInt());
               setState(() {});
             },
           ),
@@ -98,20 +97,24 @@ class _BodyState extends State<_Body> {
           Observer(builder: (context) {
             return CustomBlog(
               measure: UnitMeasures.weight,
-              value: widget.addWeightViewStore?.inputValue ?? '',
+              value: addWeightViewStore.inputValue,
               onChangedValue: (v) {
-                widget.addWeightViewStore?.updateWeightRaw(v);
+                addWeightViewStore.updateWeightRaw(v);
                 logger.info(v);
                 setState(() {});
               },
-              onChangedTime: widget.addWeightViewStore?.updateDateTime,
-              onPressedElevated: widget.addWeightViewStore?.isFormValid ?? false
-                  ? () {
-                      widget.addWeightViewStore
-                          ?.add(userStore.selectedChild!.id!, noteStore.content)
-                          .then((v) {
+              onChangedTime: addWeightViewStore.updateDateTime,
+              onPressedElevated: addWeightViewStore.isFormValid
+                  ? () async {
+                      addWeightViewStore
+                          .add(userStore.selectedChild!.id!, noteStore.content)
+                          .then((v) async {
                         if (context.mounted) {
                           context.pop();
+                          if (context.mounted) {
+                            await store.fetchWeightDetails();
+                            await tableStore.refresh();
+                          }
                         }
                       });
                     }

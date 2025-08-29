@@ -5,9 +5,13 @@ import 'package:provider/provider.dart';
 
 class AddNoteView extends StatefulWidget {
   final AddNoteStore? store;
+  final String? initialValue;
+  final Function(String value)? onSaved;
   const AddNoteView({
     super.key,
     this.store,
+    this.initialValue,
+    this.onSaved,
   });
 
   @override
@@ -20,7 +24,8 @@ class _AddNoteViewState extends State<AddNoteView> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(text: widget.store?.content);
+    controller = TextEditingController(
+        text: widget.initialValue ?? widget.store?.content);
   }
 
   @override
@@ -44,6 +49,7 @@ class _AddNoteViewState extends State<AddNoteView> {
       ),
       bottomNavigationBar: _BtmBarWidget(
         controller: controller,
+        onSaved: widget.onSaved,
       ),
     );
   }
@@ -51,8 +57,10 @@ class _AddNoteViewState extends State<AddNoteView> {
 
 class _BtmBarWidget extends StatelessWidget {
   final TextEditingController? controller;
+  final Function(String value)? onSaved;
   const _BtmBarWidget({
     required this.controller,
+    this.onSaved,
   });
 
   @override
@@ -76,6 +84,7 @@ class _BtmBarWidget extends StatelessWidget {
                 backgroundColor: AppColors.redLighterBackgroundColor,
                 onTap: () {
                   store.setContent(null);
+                  onSaved?.call('');
                   context.pop();
                 },
               )),
@@ -89,6 +98,7 @@ class _BtmBarWidget extends StatelessWidget {
                               ? null
                               : () {
                                   store.setContent(controller?.text);
+                                  onSaved?.call(controller!.text);
                                   context.pop();
                                 },
                           maxLines: 1,

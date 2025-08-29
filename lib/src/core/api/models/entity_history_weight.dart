@@ -8,7 +8,7 @@ part 'entity_history_weight.g.dart';
 
 @JsonSerializable()
 class EntityHistoryWeight {
-  const EntityHistoryWeight({
+  EntityHistoryWeight({
     this.allData,
     this.data,
     this.id,
@@ -17,15 +17,16 @@ class EntityHistoryWeight {
     this.weeks,
     this.weight,
   });
-  
-  factory EntityHistoryWeight.fromJson(Map<String, Object?> json) => _$EntityHistoryWeightFromJson(json);
-  
+
+  factory EntityHistoryWeight.fromJson(Map<String, Object?> json) =>
+      _$EntityHistoryWeightFromJson(json);
+
   @JsonKey(name: 'all_data')
   final String? allData;
   final String? data;
   final String? id;
   final String? normal;
-  final String? notes;
+  String? notes;
   final String? weeks;
   final String? weight;
 

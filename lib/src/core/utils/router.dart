@@ -272,26 +272,68 @@ final GoRouter router = GoRouter(
                     const SpecialistConsultationsView()),
           ],
         ),
-        GoRoute(
-            path: _Paths.evolutionView,
-            name: AppViews.evolutionView,
-            builder: (context, state) => const EvolutionView(),
+        ShellRoute(
+            builder: (context, state, child) {
+              return MultiProvider(
+                providers: [
+                  Provider(
+                    create: (context) => WeightDataSourceLocal(
+                      sharedPreferences:
+                          context.read<Dependencies>().sharedPreferences,
+                    ),
+                  ),
+                  Provider(
+                    create: (context) => WeightStore(
+                      apiClient: context.read<Dependencies>().apiClient,
+                      restClient: context.read<Dependencies>().restClient,
+                      faker: context.read<Dependencies>().faker,
+                      childId:
+                          context.read<UserStore>().selectedChild?.id ?? '',
+                      onLoad: () =>
+                          context.read<WeightDataSourceLocal>().getIsShow(),
+                      onSet: (value) =>
+                          context.read<WeightDataSourceLocal>().setShow(value),
+                    ),
+                  ),
+                  Provider(create: (context) {
+                    return WeightTableStore(
+                      store: context.read<WeightStore>(),
+                      restClient: context.read<Dependencies>().restClient,
+                      apiClient: context.read<Dependencies>().apiClient,
+                      faker: context.read<Dependencies>().faker,
+                    );
+                  }),
+                  Provider(
+                    create: (context) => AddWeightViewStore(
+                        // store: context.read<WeightStore>(),
+                        restClient: context.read<Dependencies>().restClient),
+                  )
+                ],
+                child: child,
+              );
+            },
             routes: [
               GoRoute(
-                name: AppViews.addWeightView,
-                path: _Paths.addWeightView,
-                builder: (context, state) => const AddWeightView(),
-              ),
-              GoRoute(
-                name: AppViews.addGrowthView,
-                path: _Paths.addGrowthView,
-                builder: (context, state) => const AddGrowthView(),
-              ),
-              GoRoute(
-                name: AppViews.addHeadView,
-                path: _Paths.addHeadView,
-                builder: (context, state) => const AddHead(),
-              )
+                  path: _Paths.evolutionView,
+                  name: AppViews.evolutionView,
+                  builder: (context, state) => const EvolutionView(),
+                  routes: [
+                    GoRoute(
+                      name: AppViews.addWeightView,
+                      path: _Paths.addWeightView,
+                      builder: (context, state) => const AddWeightView(),
+                    ),
+                    GoRoute(
+                      name: AppViews.addGrowthView,
+                      path: _Paths.addGrowthView,
+                      builder: (context, state) => const AddGrowthView(),
+                    ),
+                    GoRoute(
+                      name: AppViews.addHeadView,
+                      path: _Paths.addHeadView,
+                      builder: (context, state) => const AddHead(),
+                    )
+                  ]),
             ]),
         GoRoute(
           path: _Paths.sleeping,
@@ -544,8 +586,15 @@ final GoRouter router = GoRouter(
       path: _Paths.addNote,
       name: AppViews.addNote,
       builder: (context, state) {
+        final Map? extra = state.extra as Map?;
+        final String? initialValue = extra?['initialValue'] as String?;
+
+        final Function(String value)? onSaved = extra?['onSaved'];
+
         return AddNoteView(
           store: context.watch(),
+          initialValue: initialValue,
+          onSaved: onSaved,
         );
       },
     ),

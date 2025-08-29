@@ -58,4 +58,22 @@ class AppTextStyles {
     fontSize: 44,
     fontWeight: FontWeight.w400,
   );
+
+  static TextStyle f18w600 = const TextStyle(
+    fontFamily: 'SFProText',
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+  );
+
+  static TextStyle f16w400 = const TextStyle(
+    fontFamily: 'SFProText',
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+  );
+
+  static TextStyle f16w600 = const TextStyle(
+    fontFamily: 'SFProText',
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
 }

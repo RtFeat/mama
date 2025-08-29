@@ -9,6 +9,8 @@ class WeightTableStore extends _WeightTableStore with _$WeightTableStore {
   WeightTableStore({
     required super.apiClient,
     required super.faker,
+    required super.restClient,
+    required super.store,
   });
 }
 
@@ -17,6 +19,8 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
   _WeightTableStore({
     required super.apiClient,
     required super.faker,
+    required this.store,
+    required this.restClient,
   }) : super(
           testDataGenerator: () {
             return EntityHistoryWeight();
@@ -32,6 +36,24 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
             };
           },
         );
+  final RestClient restClient;
+  final WeightStore store;
+
+  @observable
+  String sortOrder = 'new'; // 'new' or 'old'
+
+  @observable
+  WeightUnit weightUnit = WeightUnit.kg; // 'kg' or 'g'
+
+  @action
+  void setSortOrder(int index) {
+    sortOrder = index == 0 ? 'new' : 'old';
+  }
+
+  @action
+  void setWeightUnit(WeightUnit unit) {
+    weightUnit = unit;
+  }
 
   @override
   TableData get tableData => TableData(
@@ -61,11 +83,119 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
         ),
       ));
 
+  void showAddRecordDialog(int index, List<EntityHistoryWeight> sortedList) {
+    showDialog(
+      context: navKey.currentContext!,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          // final WeightStore store = context.read<WeightStore>();
+          final currentEntity = sortedList[index];
+          final nextEntity =
+              sortedList.length > index + 1 ? sortedList[index + 1] : null;
+          final prevEntity = index > 0 ? sortedList[index - 1] : null;
+
+          final data = MeasurementDetails(
+            title: 'Вес',
+            currentWeek: '${currentEntity.weeks} неделя',
+            previousWeek: prevEntity?.data ?? '',
+            selectedWeek: currentEntity.data ?? '',
+            nextWeek: nextEntity?.data ?? '',
+            weight: '${currentEntity.weight} кг',
+            weightStatus: currentEntity.normal ?? '',
+            weightStatusColor: currentEntity.normal == 'Граница нормы'
+                ? AppColors.greenLightTextColor
+                : AppColors.orangeTextColor,
+            medianWeight: '234',
+            normWeightRange: '243-234',
+            weightToGain: '234',
+            note: currentEntity.notes,
+            onEdit: () {
+              Navigator.of(context).pop();
+              router.pushNamed(AppViews.addWeightView, extra: {
+                'entity': currentEntity,
+              });
+            },
+            onNextWeekTap: () {
+              setState(() {
+                index++;
+              });
+            },
+            onPreviousWeekTap: () {
+              setState(() {
+                index--;
+              });
+            },
+            onDelete: () {
+              restClient.growth
+                  .deleteGrowthWeightDeleteStats(
+                      dto: GrowthDeleteWeightDto(
+                id: currentEntity.id,
+              ))
+                  .then((v) {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  store.fetchWeightDetails();
+                  refresh();
+                }
+              });
+            },
+            onClose: () {
+              Navigator.of(context).pop();
+            },
+            onNoteDelete: () {
+              restClient.growth
+                  .deleteGrowthWeightDeleteNotes(
+                      dto: GrowthDeleteWeightDto(id: currentEntity.id))
+                  .then((v) {
+                currentEntity.notes = null;
+                setState(() {});
+                refresh();
+              });
+            },
+            onNoteEdit: () {
+              Navigator.of(context).pop();
+              router.pushNamed(AppViews.addNote, extra: {
+                'initialValue': currentEntity.notes,
+                'onSaved': (value) {
+                  if (value != currentEntity.notes) {
+                    restClient.growth.patchGrowthWeightNotes(
+                        dto: GrowthChangeNotesWeightDto(
+                      id: currentEntity.id,
+                      notes: value,
+                    ));
+                    refresh();
+                  }
+                },
+              });
+            },
+          );
+
+          return MeasurementOverlay(details: data);
+        });
+      },
+    );
+  }
+
   @override
   @computed
   ObservableList<List<TableItem>> get rows {
     final List<List<TableItem>> result = [];
-    for (final entity in listData) {
+
+    final sortedList = List<EntityHistoryWeight>.from(listData);
+    sortedList.sort((a, b) {
+      final dateStringA = a.allData ?? a.data ?? '';
+      final dateStringB = b.allData ?? b.data ?? '';
+
+      if (sortOrder == 'new') {
+        return dateStringB.compareTo(dateStringA);
+      } else {
+        return dateStringA.compareTo(dateStringB);
+      }
+    });
+
+    for (var i = 0; i < sortedList.length; i++) {
+      final entity = sortedList[i];
       // final temp = tempHistory[colIdx];
       final bool hasNote = entity.notes != null && entity.notes!.isNotEmpty;
 
@@ -81,8 +211,14 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
             )
           : null;
 
+      final weightValue = double.tryParse(entity.weight ?? '') ?? 0.0;
+      final displayWeight = weightUnit == WeightUnit.g
+          ? (weightValue * 1000).toStringAsFixed(0)
+          : entity.weight;
+
       result.add([
         TableItem(
+          onTap: () => showAddRecordDialog(i, sortedList),
           title: entity.data.toString(),
           row: result.length + 1,
           column: 1,
@@ -99,10 +235,11 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
               : null,
         ),
         TableItem(
+          onTap: () => showAddRecordDialog(i, sortedList),
           title: entity.normal,
           row: result.length + 1,
           column: 2,
-          trailing: SizedBox(
+          trailing: const SizedBox(
             height: 20,
           ),
           decoration: decoration?.copyWith(
@@ -113,6 +250,7 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
           )),
         ),
         TableItem(
+          onTap: () => showAddRecordDialog(i, sortedList),
           title: entity.weeks.toString(),
           row: result.length + 1,
           column: 2,
@@ -120,7 +258,8 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
           mainAxisAlignment: MainAxisAlignment.center,
         ),
         TableItem(
-          title: entity.weight,
+          onTap: () => showAddRecordDialog(i, sortedList),
+          title: displayWeight,
           row: result.length + 1,
           column: 3,
           decoration: decoration,

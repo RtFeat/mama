@@ -8,17 +8,14 @@ enum WeightUnit { kg, g }
 class AddWeightViewStore extends _AddWeightViewStore with _$AddWeightViewStore {
   AddWeightViewStore({
     required super.restClient,
-    required super.store,
   });
 }
 
 abstract class _AddWeightViewStore with Store {
   final RestClient restClient;
-  final WeightStore? store;
 
   _AddWeightViewStore({
     required this.restClient,
-    required this.store,
   });
 
   @observable
@@ -94,7 +91,5 @@ abstract class _AddWeightViewStore with Store {
     );
 
     await restClient.growth.postGrowthWeight(dto: dto);
-    await store?.fetchWeightDetails();
-    store?.loadPage();
   }
 }

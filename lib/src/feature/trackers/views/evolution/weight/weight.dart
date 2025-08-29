@@ -13,34 +13,7 @@ class WeightView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userStore = context.read<UserStore>();
-    return MultiProvider(
-      providers: [
-        Provider(
-          create: (context) => WeightDataSourceLocal(
-            sharedPreferences: context.read<Dependencies>().sharedPreferences,
-          ),
-        ),
-        Provider(create: (context) {
-          return WeightTableStore(
-            apiClient: context.read<Dependencies>().apiClient,
-            faker: context.read<Dependencies>().faker,
-          );
-        }),
-        Provider(
-          create: (context) => WeightStore(
-            apiClient: context.read<Dependencies>().apiClient,
-            restClient: context.read<Dependencies>().restClient,
-            faker: context.read<Dependencies>().faker,
-            childId: userStore.selectedChild?.id ?? '',
-            onLoad: () => context.read<WeightDataSourceLocal>().getIsShow(),
-            onSet: (value) =>
-                context.read<WeightDataSourceLocal>().setShow(value),
-          ),
-        ),
-      ],
-      child: const _Body(),
-    );
+    return const _Body();
   }
 }
 
@@ -58,11 +31,11 @@ class _BodyState extends State<_Body> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final store = context.read<WeightStore>();
       final tableStore = context.read<WeightTableStore>();
-
-      store.fetchWeightDetails();
       store.getIsShowInfo().then((v) {
         setState(() {});
       });
+      store.fetchWeightDetails();
+
       tableStore.loadPage(newFilters: [
         SkitFilter(
             field: 'child_id',
@@ -177,7 +150,10 @@ class _BodyState extends State<_Body> {
                 SwitchContainer(
                   title1: t.trackers.news.title,
                   title2: t.trackers.old.title,
-                  onSelected: (index) {},
+                  onSelected: (index) {
+                    tableStore.setSortOrder(index);
+                    setState(() {});
+                  },
                   // isTrue: false,
                 ),
                 trackerType.title == EvolutionCategory.head.title
@@ -185,7 +161,11 @@ class _BodyState extends State<_Body> {
                     : SwitchContainer(
                         title1: trackerType.switchContainerTitle1,
                         title2: trackerType.switchContainerTitle2,
-                        onSelected: (index) {},
+                        onSelected: (index) {
+                          tableStore.setWeightUnit(
+                              index == 0 ? WeightUnit.kg : WeightUnit.g);
+                          setState(() {});
+                        },
                       ),
               ],
             ),
