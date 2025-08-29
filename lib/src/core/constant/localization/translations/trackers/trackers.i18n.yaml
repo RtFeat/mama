@@ -346,3 +346,9 @@ evolutionTableTitles:
   title3: Wheight
   title4: Height
   title5: Circle
+
+daysAgo(param=n):
+  one: 1 day ago
+  two: $n days ago
+  few: $n days ago
+  other: $n days ago

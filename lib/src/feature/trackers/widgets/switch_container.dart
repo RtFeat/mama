@@ -6,10 +6,12 @@ class SwitchContainer extends StatefulWidget {
     super.key,
     required this.title1,
     required this.title2,
+    required this.onSelected,
   });
 
   final String title1;
   final String title2;
+  final Function(int index) onSelected;
 
   @override
   State<SwitchContainer> createState() => _SwitchContainerState();
@@ -64,6 +66,7 @@ class _SwitchContainerState extends State<SwitchContainer> {
               isSelected[i] = i == index; // Тандалган элементти өзгөртүү
             }
           });
+          widget.onSelected(index);
         },
       ),
     );

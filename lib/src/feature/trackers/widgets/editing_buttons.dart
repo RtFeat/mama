@@ -19,6 +19,7 @@ class EditingButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
+
     return Row(
       children: [
         Expanded(
@@ -43,7 +44,7 @@ class EditingButtons extends StatelessWidget {
             title: addBtnText,
             icon: iconAsset,
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+                const EdgeInsets.symmetric(horizontal: 5, vertical: 14),
             textStyle: textTheme.bodyMedium
                 ?.copyWith(fontSize: 15, color: AppColors.primaryColor),
           ),

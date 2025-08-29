@@ -1,57 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:skit/skit.dart' hide LocaleSettings;
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:intl/intl.dart';
 
-class WeightData {
-  final String month;
-  final double weight;
-  final String label;
+class ChartData {
+  final double x; // Numerical x-value (day of year)
+  final double value;
+  final String label; // Tooltip label (DD.MM)
+  final String xLabel; // Month name for axis labels
 
-  WeightData(this.month, this.weight, this.label);
+  ChartData(this.x, this.value, this.label, this.xLabel);
 }
 
 class FlProgressChart extends StatelessWidget {
-  const FlProgressChart({super.key});
+  final double min;
+  final double max;
+  final List<ChartData> chartData;
+
+  const FlProgressChart(
+      {super.key,
+      required this.min,
+      required this.max,
+      required this.chartData});
 
   @override
   Widget build(BuildContext context) {
-    final List<WeightData> chartData = [
-      WeightData('Январь', 2.35, '17.07'),
-      WeightData('Февраль', 3.25, '31.08'),
-      WeightData('Март', 5.25, '31.08'),
-      WeightData('Апрель', 4.25, '31.08'),
-      WeightData('Май', 6.25, '31.08'),
-      WeightData('Июнь', 6.25, '31.08'),
-      WeightData('Июль', 3.7, '13.05'),
-      WeightData('Август', 4.9, '03.07'),
-      WeightData('Сентябрь', 5.35, '17.07'),
-      WeightData('Октябрь', 6.25, '31.08'),
-      WeightData('Ноябрь', 3.7, '13.05'),
-      WeightData('Декабрь', 4.9, '03.07'),
-    ];
-
     return SfCartesianChart(
       plotAreaBackgroundColor: Colors.transparent,
-      enableAxisAnimation: true,
+      // enableAxisAnimation: true,
       zoomPanBehavior: ZoomPanBehavior(
         enablePanning: true,
         enableDoubleTapZooming: true,
       ),
-      primaryXAxis: CategoryAxis(
-        labelPlacement: LabelPlacement.onTicks,
+      primaryXAxis: NumericAxis(
+        axisLabelFormatter: (AxisLabelRenderDetails details) {
+          final date = DateTime(DateTime.now().year, 1, 1)
+              .add(Duration(days: details.value.toInt()));
+          return ChartAxisLabel(
+              DateFormat.MMMM(
+                LocaleSettings.currentLocale.flutterLocale.toLanguageTag(),
+              )
+                  .format(
+                    date,
+                  )
+                  .capitalizeFirstLetter(),
+              details.textStyle);
+        },
         axisLine: const AxisLine(color: Colors.transparent),
-        initialVisibleMaximum: 5,
         labelStyle: Theme.of(context)
             .textTheme
             .labelSmall!
             .copyWith(fontWeight: FontWeight.w400),
+        interval: 30,
       ),
       primaryYAxis: NumericAxis(
         majorGridLines: const MajorGridLines(
           color: Colors.transparent,
         ),
-        minimum: 2,
-        maximum: 9,
+        minorGridLines: MinorGridLines(
+          color: Colors.transparent,
+        ),
+        majorTickLines: MajorTickLines(
+          color: Colors.transparent,
+        ),
+        minorTickLines: MinorTickLines(
+          color: Colors.transparent,
+        ),
+        axisLine: const AxisLine(color: Colors.transparent),
+        minimum: min,
+        maximum: max,
         interval: 1,
         labelStyle: Theme.of(context)
             .textTheme
@@ -59,26 +77,26 @@ class FlProgressChart extends StatelessWidget {
             .copyWith(fontWeight: FontWeight.w400),
       ),
       series: [
-        SplineAreaSeries<WeightData, String>(
+        SplineAreaSeries<ChartData, double>(
           dataSource: chartData,
           color: Colors.white,
-          xValueMapper: (WeightData data, _) => data.month,
-          yValueMapper: (WeightData data, _) => data.weight,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.value,
           gradient: LinearGradient(
             colors: [
-              Colors.green.withValues(alpha: 0.1),
-              Colors.green.withValues(alpha: 0.3),
+              Colors.green.withOpacity(0.1),
+              Colors.green.withOpacity(0.3),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
-          borderColor: Colors.green.withValues(alpha: 0.3),
+          borderColor: Colors.green.withOpacity(0.3),
           borderWidth: 30,
         ),
-        LineSeries<WeightData, String>(
+        LineSeries<ChartData, double>(
           dataSource: chartData,
-          xValueMapper: (WeightData data, _) => data.month,
-          yValueMapper: (WeightData data, _) => data.weight,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.value,
           dataLabelSettings: DataLabelSettings(
               isVisible: true,
               labelAlignment: ChartDataLabelAlignment.top,

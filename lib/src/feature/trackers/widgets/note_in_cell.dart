@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 
 class NoteIconWidget extends StatelessWidget {
-  const NoteIconWidget();
+  final double? size;
+  const NoteIconWidget({
+    super.key,
+    this.size,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +17,7 @@ class NoteIconWidget extends StatelessWidget {
       child: Icon(
         AppIcons.pencil,
         color: AppColors.greyLighterColor,
-        size: 26,
+        size: size ?? 26,
       ),
     );
   }

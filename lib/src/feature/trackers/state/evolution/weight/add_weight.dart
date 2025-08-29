@@ -8,17 +8,17 @@ enum WeightUnit { kg, g }
 class AddWeightViewStore extends _AddWeightViewStore with _$AddWeightViewStore {
   AddWeightViewStore({
     required super.restClient,
-    // required super.store,
+    required super.store,
   });
 }
 
 abstract class _AddWeightViewStore with Store {
   final RestClient restClient;
-  // final WeightStore? store;
+  final WeightStore? store;
 
   _AddWeightViewStore({
     required this.restClient,
-    // required this.store,
+    required this.store,
   });
 
   @observable
@@ -40,6 +40,9 @@ abstract class _AddWeightViewStore with Store {
 
   @computed
   int get totalWeightGrams => (totalWeightKg * 1000).toInt();
+
+  @computed
+  bool get isFormValid => totalWeightGrams > 0;
 
   @computed
   String get inputValue =>
@@ -71,11 +74,6 @@ abstract class _AddWeightViewStore with Store {
       grams = totalGrams % 1000;
     }
   }
-  // @observable
-  // EntityWeightHistory? model;
-
-  // @computed
-  // bool get isAdd => model == null;
 
   @observable
   WeightUnit weightUnit = WeightUnit.kg;
@@ -87,90 +85,16 @@ abstract class _AddWeightViewStore with Store {
     }
   }
 
-  @action
-  void init(
-      // EntityWeightHistory? model
-      ) {
-    // this.model = model;
-
-    // if (model != null && model.photos != null && model.photos!.isNotEmpty) {
-    //   imagesUrls = ObservableList.of(model.photos!.map((e) => e));
-    // }
-
-    // Weight = double.tryParse(model?.Weights ?? '') ?? 36.6;
-    // WeightRaw = Weight.toStringAsFixed(1).replaceAll('.', ',');
-  }
-
-  Future _add(GrowthInsertWeightDto data) async {
-    return await restClient.growth.postGrowthWeight(dto: data);
-  }
-
-  Future add(String childId, String? notes) async {
-    //   final bool isBad = Weight > 37.5 || Weight < 36.5;
-    //   final HealthInsertWeightDto dto = HealthInsertWeightDto(
-    //     childId: childId,
-    //     Weight: Weight.toString(),
-    //     notes: notes,
-    //     isBad: isBad,
-    //     time: selectedDate?.toString(),
-    //   );
-    //   logger.info('Сохраняем данные для childId: $childId',
-    //       runtimeType: runtimeType);
-
-    final GrowthInsertWeightDto dto = GrowthInsertWeightDto(
+  Future<void> add(String childId, String? notes) async {
+    final dto = GrowthInsertWeightDto(
       childId: childId,
       weight: '$totalWeightKg',
       notes: notes,
       createdAt: selectedDate?.toString(),
     );
 
-    _add(dto).then((v) {
-      // _addToList(dto);
-    });
+    await restClient.growth.postGrowthWeight(dto: dto);
+    await store?.fetchWeightDetails();
+    store?.loadPage();
   }
-
-  // void _addToList(HealthInsertWeightDto? data) {
-  //   final String day =
-  //       '${selectedDate?.day} ${t.home.monthsData.withNumbers[(selectedDate?.month ?? 1) - 1]}';
-
-  //   final EntityWeightHistoryTotal? item =
-  //       store?.listData.firstWhereOrNull((element) => element.title == day);
-
-  //   final entity = EntityWeightHistory(
-  //     Weights: data?.Weight,
-  //     time: DateTime.tryParse(data?.time ?? '')?.formattedTime,
-  //     notes: data?.notes,
-  //     isBad: data?.isBad,
-  //   );
-
-  //   if (item != null) {
-  //     item.WeightHistory?.add(entity);
-  //   } else {
-  //     store?.listData.add(EntityWeightHistoryTotal(
-  //       title: day,
-  //       WeightHistory: [
-  //         entity,
-  //       ],
-  //     ));
-  //   }
-  // }
-
-  // Future update() async {
-  //   if (model != null) {
-  // return await restClient.health.patchHealthVaccination(
-  //   id: model?.id ?? '',
-  //   photo: image != null ? File(image!.path) : null,
-  //   dataStart: selectedDate.toString(),
-  //   clinic: clinic?.value,
-  //   notes: comment?.value,
-  // );
-  //   }
-  // }
-
-  // Future delete() async {
-  //   if (model != null) {
-  //     return await restClient.health.deleteHealthVaccination(
-  //         dto: HealthDeleteVaccination(id: model?.id ?? ''));
-  //   }
-  // }
 }

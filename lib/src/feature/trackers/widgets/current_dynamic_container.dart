@@ -3,16 +3,47 @@ import 'package:mama/src/core/constant/constant.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
 import 'package:skit/skit.dart';
 
+class Current {
+  final double value;
+  final String label;
+  final String isNormal;
+  final String days;
+
+  Current({
+    required this.value,
+    required this.label,
+    required this.isNormal,
+    required this.days,
+  });
+}
+
+class Dynamic {
+  final double value;
+  final String label;
+  final String days;
+  final String duration;
+
+  Dynamic({
+    required this.value,
+    required this.label,
+    required this.days,
+    required this.duration,
+  });
+}
+
 class CurrentAndDymanicContainer extends StatelessWidget {
   const CurrentAndDymanicContainer({
     super.key,
     required this.trackerType,
+    required this.current,
+    required this.dynamic,
   });
+  final Current current;
+  final Dynamic dynamic;
   final EvolutionCategory trackerType;
 
   @override
   Widget build(BuildContext context) {
-    //TODO мок данные
     return Row(
       children: [
         /// Current Container
@@ -42,7 +73,8 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      trackerType.currentLabel,
+                      '${current.value ~/ 1} ${t.trackers.kg.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
+                      // trackerType.currentLabel,
                       style: AppTextStyles.f17w400.copyWith(
                         color: AppColors.blackColor,
                       ),
@@ -51,7 +83,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: Text(
-                        'Вес в норме',
+                        current.isNormal,
                         style: AppTextStyles.f10w700.copyWith(
                           color: AppColors.greenTextColor,
                         ),
@@ -65,7 +97,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '1 сентября',
+                      current.label,
                       style: AppTextStyles.f10w700.copyWith(
                         color: AppColors.greyBrighterColor,
                       ),
@@ -74,7 +106,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: Text(
-                        '6 дней назад',
+                        t.trackers.daysAgo(n: int.tryParse(current.days) ?? 0),
                         style: AppTextStyles.f10w700.copyWith(
                           color: AppColors.orangeTextColor,
                         ),
@@ -115,7 +147,8 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      trackerType.dynamicLabel,
+                      '${dynamic.label} г',
+                      // trackerType.dynamicLabel,
                       style: AppTextStyles.f17w400.copyWith(
                         color: AppColors.blackColor,
                       ),
@@ -124,7 +157,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 1),
                       child: Text(
-                        'за 8 дней',
+                        'за ${dynamic.duration}', // 'за 8 дней',
                         style: AppTextStyles.f14w400.copyWith(
                           color: AppColors.greyBrighterColor,
                         ),
@@ -138,13 +171,14 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '19 г в сутки',
+                      '${(dynamic.value * 100).toInt()} г в сутки',
                       style: AppTextStyles.f10w700.copyWith(
                         color: AppColors.greenTextColor,
                       ),
                     ),
                     Text(
-                      '23 августа-31 августа',
+                      dynamic.days,
+                      // '23 августа-31 августа',
                       style: AppTextStyles.f10w700.copyWith(
                         color: AppColors.greyBrighterColor,
                       ),

@@ -347,3 +347,9 @@ evolutionTableTitles:
   title3: Вес
   title4: Рост
   title5: Голова
+
+daysAgo(param=n):
+  one: 1 день назад
+  two: $n дня назад
+  few: $n дней назад
+  other: $n дней назад

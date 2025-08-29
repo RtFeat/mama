@@ -44,15 +44,19 @@ class _EvolutionViewState extends State<EvolutionView>
             .headlineSmall!
             .copyWith(color: AppColors.trackerColor, fontSize: 20),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: EvolutionCategory.values.map((trackerType) {
-          if (trackerType == EvolutionCategory.table) {
-            return const TablePage();
-          }
-          return WeightT(trackerType: trackerType);
-        }).toList(),
-      ),
+      body: TabBarView(controller: _tabController, children: [
+        WeightView(),
+        WeightView(),
+        WeightView(),
+        WeightView(),
+      ]
+          // EvolutionCategory.values.map((trackerType) {
+          //   if (trackerType == EvolutionCategory.table) {
+          //     return const TablePage();
+          //   }
+          //   return WeightT(trackerType: trackerType);
+          // }).toList(),
+          ),
     );
   }
 }
@@ -71,11 +75,11 @@ class WeightT extends StatelessWidget {
         SliverToBoxAdapter(child: 10.h),
 
         /// Current and Dynamic Container
-        SliverToBoxAdapter(
-          child: CurrentAndDymanicContainer(
-            trackerType: trackerType,
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: CurrentAndDymanicContainer(
+        //     trackerType: trackerType,
+        //   ),
+        // ),
 
         /// KG Or gramm Container
         SliverToBoxAdapter(
@@ -88,10 +92,10 @@ class WeightT extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      SwitchContainer(
-                        title1: trackerType.switchContainerTitle1,
-                        title2: trackerType.switchContainerTitle2,
-                      ),
+                      // SwitchContainer(
+                      //   title1: trackerType.switchContainerTitle1,
+                      //   title2: trackerType.switchContainerTitle2,
+                      // ),
                     ],
                   ),
                 )
@@ -104,7 +108,7 @@ class WeightT extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 16, top: 0),
             child: SizedBox(
               height: 278,
-              child: FlProgressChart(),
+              // child: FlProgressChart(),
             ),
           ),
         ),
@@ -134,24 +138,24 @@ class WeightT extends StatelessWidget {
 
         const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
-        SliverToBoxAdapter(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SwitchContainer(
-                title1: t.trackers.news.title,
-                title2: t.trackers.old.title,
-                // isTrue: false,
-              ),
-              trackerType.title == EvolutionCategory.head.title
-                  ? const SizedBox()
-                  : SwitchContainer(
-                      title1: trackerType.switchContainerTitle1,
-                      title2: trackerType.switchContainerTitle2,
-                    ),
-            ],
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       SwitchContainer(
+        //         title1: t.trackers.news.title,
+        //         title2: t.trackers.old.title,
+        //         // isTrue: false,
+        //       ),
+        //       trackerType.title == EvolutionCategory.head.title
+        //           ? const SizedBox()
+        //           : SwitchContainer(
+        //               title1: trackerType.switchContainerTitle1,
+        //               title2: trackerType.switchContainerTitle2,
+        //             ),
+        //     ],
+        //   ),
+        // ),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
         SliverToBoxAdapter(
           child: RowStroriesData(

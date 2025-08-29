@@ -6,20 +6,19 @@ import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class AddWeightView extends StatelessWidget {
-  // final WeightViewStore? store;
+  final WeightStore? store;
   const AddWeightView({
     super.key,
-    // this.store
+    this.store
   });
 
   @override
   Widget build(BuildContext context) {
     return Provider(
         create: (context) => AddWeightViewStore(
-            // store: store,
+            store: store,
             restClient: context.read<Dependencies>().restClient),
         builder: (context, child) => _Body(
-              // store: store,
               addWeightViewStore: context.watch(),
             ));
   }
@@ -27,11 +26,9 @@ class AddWeightView extends StatelessWidget {
 
 class _Body extends StatefulWidget {
   const _Body({
-    // this.store,
     this.addWeightViewStore,
   });
 
-  // final WeightViewStore? store;
   final AddWeightViewStore? addWeightViewStore;
 
   @override
@@ -108,15 +105,17 @@ class _BodyState extends State<_Body> {
                 setState(() {});
               },
               onChangedTime: widget.addWeightViewStore?.updateDateTime,
-              onPressedElevated: () {
-                widget.addWeightViewStore
-                    ?.add(userStore.selectedChild!.id!, noteStore.content)
-                    .then((v) {
-                  if (context.mounted) {
-                    context.pop();
-                  }
-                });
-              },
+              onPressedElevated: widget.addWeightViewStore?.isFormValid ?? false
+                  ? () {
+                      widget.addWeightViewStore
+                          ?.add(userStore.selectedChild!.id!, noteStore.content)
+                          .then((v) {
+                        if (context.mounted) {
+                          context.pop();
+                        }
+                      });
+                    }
+                  : null,
             );
           }),
           8.h,
