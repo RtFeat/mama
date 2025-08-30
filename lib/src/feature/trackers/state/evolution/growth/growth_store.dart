@@ -1,10 +1,10 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
-part 'weight_store.g.dart';
+part 'growth_store.g.dart';
 
-class WeightStore extends _WeightStore with _$WeightStore {
-  WeightStore({
+class GrowthStore extends _GrowthStore with _$GrowthStore {
+  GrowthStore({
     required super.apiClient,
     required super.restClient,
     required super.faker,
@@ -14,9 +14,9 @@ class WeightStore extends _WeightStore with _$WeightStore {
   });
 }
 
-abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
+abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
     with Store {
-  _WeightStore({
+  _GrowthStore({
     required super.apiClient,
     required this.restClient,
     required super.faker,
@@ -25,16 +25,16 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
     required super.onSet,
   }) : super(
           testDataGenerator: () {
-            return EntityHistoryWeight();
+            return EntityHistoryHeight();
           },
           basePath: '',
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
           pageSize: 15,
           transformer: (raw) {
-            final data = GrowthResponseHistoryWeight.fromJson(raw);
+            final data = GrowthResponseHistoryHeight.fromJson(raw);
             return {
-              'main': data.list ?? <EntityHistoryWeight>[],
+              'main': data.list ?? <EntityHistoryHeight>[],
             };
           },
         );
@@ -43,14 +43,14 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
   final RestClient restClient;
 
   @observable
-  GrowthGetWeightResponse? weightDetails;
+  GrowthGetHeightResponse? growthDetails;
 
   @computed
   Current get current {
-    if (weightDetails?.list?.currentWeight != null) {
-      final current = weightDetails?.list?.currentWeight;
+    if (growthDetails?.list?.currentHeight != null) {
+      final current = growthDetails?.list?.currentHeight;
       return Current(
-        value: double.tryParse(current?.weight ?? '') ?? 0,
+        value: double.tryParse(current?.height ?? '') ?? 0,
         label: current?.data ?? '',
         isNormal: current?.normal ?? '',
         days: current?.days ?? '',
@@ -62,11 +62,11 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
 
   @computed
   Dynamic get dynamicValue {
-    if (weightDetails?.list?.dynamicsWeight != null) {
-      final dynamic = weightDetails?.list?.dynamicsWeight;
+    if (growthDetails?.list?.dynamicsHeight != null) {
+      final dynamic = growthDetails?.list?.dynamicsHeight;
       return Dynamic(
-        value: double.tryParse(dynamic?.weightGain ?? '') ?? 0,
-        label: dynamic?.weightToDay ?? '',
+        value: double.tryParse(dynamic?.heightGain ?? '') ?? 0,
+        label: dynamic?.heightToDay ?? '',
         days: dynamic?.days ?? '',
         duration: dynamic?.timeDuration ?? '',
       );
@@ -76,23 +76,23 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
   }
 
   @computed
-  double get minValue => weightUnit == WeightUnit.kg ? 2 : 2000;
+  double get minValue => growthUnit == GrowthUnit.m ? 0.5 : 50;
 
   @computed
-  double get maxValue => weightUnit == WeightUnit.kg ? 9 : 9000;
+  double get maxValue => growthUnit == GrowthUnit.m ? 1.5 : 150;
 
   @observable
-  WeightUnit weightUnit = WeightUnit.kg;
+  GrowthUnit growthUnit = GrowthUnit.cm;
 
   @action
-  void switchWeightUnit(WeightUnit unit) {
-    weightUnit = unit;
+  void switchGrowthUnit(GrowthUnit unit) {
+    growthUnit = unit;
   }
 
   @computed
   List<ChartData> get chartData {
-    if (weightDetails?.list?.table != null) {
-      final table = weightDetails?.list?.table;
+    if (growthDetails?.list?.table != null) {
+      final table = growthDetails?.list?.table;
       table?.sort((a, b) {
         final partsA = a.time?.split('.');
         final partsB = b.time?.split('.');
@@ -113,8 +113,8 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
       });
 
       return table!.map((e) {
-        var value = double.tryParse(e.weight ?? '') ?? 0;
-        value = weightUnit == WeightUnit.kg ? value : value * 1000;
+        var value = double.tryParse(e.height ?? '') ?? 0;
+        value = growthUnit == GrowthUnit.cm ? value : value / 100;
         final parts = e.time?.split('.');
         if (parts == null || parts.length != 2) {
           return ChartData(0, value, '', '');
@@ -140,10 +140,10 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
   bool isDetailsLoading = false;
 
   @action
-  Future<void> fetchWeightDetails() async {
+  Future<void> fetchGrowthDetails() async {
     isDetailsLoading = true;
     try {
-      weightDetails = await restClient.growth.getGrowthWeight(childId: childId);
+      growthDetails = await restClient.growth.getGrowthHeight(childId: childId);
     } catch (e) {
       print(e);
     } finally {

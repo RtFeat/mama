@@ -15,11 +15,9 @@ class AddGrowthViewStore extends _AddGrowthViewStore with _$AddGrowthViewStore {
 
 abstract class _AddGrowthViewStore with Store {
   final RestClient restClient;
-  // final GrowthStore? store;
 
   _AddGrowthViewStore({
     required this.restClient,
-    // required this.store,
   });
 
   @observable
@@ -30,17 +28,14 @@ abstract class _AddGrowthViewStore with Store {
     selectedDate = dateTime;
   }
 
-  // @observable
-  // EntityGrowthHistory? model;
-
-  // @computed
-  // bool get isAdd => model == null;
-
   @observable
   String growthRaw = '60';
 
   @observable
   double growth = 60;
+
+  @computed
+  bool get isFormValid => growth > 0;
 
   @computed
   String get growthValue =>
@@ -59,38 +54,15 @@ abstract class _AddGrowthViewStore with Store {
   @action
   void updateGrowthRaw(String val) {
     growth = double.tryParse(val) ?? 0;
-    // if (growthUnit == GrowthUnit.cm) {
-    //   growthRaw = val;
-    // } else {
-    //   final data = double.tryParse(val.replaceAll(',', '.'));
-    //   if (data != null) {
-    //     // final v = data * 10;
-    //     // if(v > 10 && v < 150) {
-    //     growthRaw = '$data';
-    //     // }
-    //   }
-    // }
   }
 
   @action
   void updateGrowth(double val) {
     growth = val;
-    // growthRaw = '$val';
   }
 
   @action
-  void init(
-      // EntityGrowthHistory? model
-      ) {
-    // this.model = model;
-
-    // if (model != null && model.photos != null && model.photos!.isNotEmpty) {
-    //   imagesUrls = ObservableList.of(model.photos!.map((e) => e));
-    // }
-
-    // growth = double.tryParse(model?.growths ?? '') ?? 36.6;
-    // growthRaw = growth.toStringAsFixed(1).replaceAll('.', ',');
-  }
+  void init() {}
 
   Future _add(GrowthInsertHeightDto data) async {
     return await restClient.growth.postGrowthHeight(dto: data);
@@ -110,47 +82,4 @@ abstract class _AddGrowthViewStore with Store {
       // _addToList(dto);
     });
   }
-
-  // void _addToList(GrowthInsertHeightDto? data) {
-
-  //   // final EntityGrowthHistoryTotal? item =
-  //   //     store?.listData.firstWhereOrNull((element) => element.title == day);
-
-  //   final entity = EntityGrowthHistory(
-  //     growths: data?.growth,
-  //     time: DateTime.tryParse(data?.time ?? '')?.formattedTime,
-  //     notes: data?.notes,
-  //     isBad: data?.isBad,
-  //   );
-
-  //   if (item != null) {
-  //     item.growthHistory?.add(entity);
-  //   } else {
-  //     store?.listData.add(EntityGrowthHistoryTotal(
-  //       title: day,
-  //       growthHistory: [
-  //         entity,
-  //       ],
-  //     ));
-  //   }
-  // // }
-
-  // Future update() async {
-  //   if (model != null) {
-  //     // return await restClient.health.patchHealthVaccination(
-  //     //   id: model?.id ?? '',
-  //     //   photo: image != null ? File(image!.path) : null,
-  //     //   dataStart: selectedDate.toString(),
-  //     //   clinic: clinic?.value,
-  //     //   notes: comment?.value,
-  //     // );
-  //   }
-  // }
-
-  // Future delete() async {
-  //   if (model != null) {
-  //     return await restClient.health.deleteHealthVaccination(
-  //         dto: HealthDeleteVaccination(id: model?.id ?? ''));
-  //   }
-  // }
 }

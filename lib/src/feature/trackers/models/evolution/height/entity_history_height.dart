@@ -8,7 +8,7 @@ part 'entity_history_height.g.dart';
 
 @JsonSerializable()
 class EntityHistoryHeight {
-  const EntityHistoryHeight({
+  EntityHistoryHeight({
     this.allData,
     this.data,
     this.height,
@@ -17,16 +17,17 @@ class EntityHistoryHeight {
     this.notes,
     this.weeks,
   });
-  
-  factory EntityHistoryHeight.fromJson(Map<String, Object?> json) => _$EntityHistoryHeightFromJson(json);
-  
+
+  factory EntityHistoryHeight.fromJson(Map<String, Object?> json) =>
+      _$EntityHistoryHeightFromJson(json);
+
   @JsonKey(name: 'all_data')
   final String? allData;
   final String? data;
   final String? height;
   final String? id;
   final String? normal;
-  final String? notes;
+  String? notes;
   final String? weeks;
 
   Map<String, Object?> toJson() => _$EntityHistoryHeightToJson(this);

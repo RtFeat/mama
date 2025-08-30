@@ -5,11 +5,9 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
-class AddGrowthView extends StatelessWidget {
-  // final GrowthViewStore? store;
-  const AddGrowthView({
+class AddCircleView extends StatelessWidget {
+  const AddCircleView({
     super.key,
-    // this.store
   });
 
   @override
@@ -29,16 +27,16 @@ class _BodyState extends State<_Body> {
     final UserStore userStore = context.watch<UserStore>();
     final AddNoteStore noteStore = context.watch<AddNoteStore>();
 
-    final AddGrowthViewStore addGrowthViewStore =
-        context.watch<AddGrowthViewStore>();
+    final AddCircleViewStore addCircleViewStore =
+        context.watch<AddCircleViewStore>();
 
-    final GrowthStore store = context.watch<GrowthStore>();
-    final GrowthTableStore tableStore = context.watch<GrowthTableStore>();
+    final CircleStore store = context.watch<CircleStore>();
+    final CircleTableStore tableStore = context.watch<CircleTableStore>();
 
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
-        title: t.trackers.growth.add,
+        title: t.trackers.head.add,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
               color: AppColors.trackerColor,
@@ -57,37 +55,37 @@ class _BodyState extends State<_Body> {
               shortDashHeight: 54,
             ),
             min: 10,
-            max: 150,
+            max: 50,
             step: 1,
-            initial: addGrowthViewStore.growth.toDouble(),
-            value: addGrowthViewStore.growth.toDouble(),
+            initial: addCircleViewStore.circle.toDouble(),
+            value: addCircleViewStore.circle.toDouble(),
             labelStep: 10,
             unit: t.trackers.cm.title,
             onChanged: (v) {
-              addGrowthViewStore.updateGrowth(v);
+              addCircleViewStore.updateCircle(v);
               setState(() {});
             },
           ),
           8.h,
           Observer(builder: (context) {
             return CustomBlog(
-              measure: UnitMeasures.height,
-              value: addGrowthViewStore.growthValue,
+              measure: UnitMeasures.head,
+              value: addCircleViewStore.circleValue,
               onChangedValue: (v) {
-                addGrowthViewStore.updateGrowthRaw(v);
+                addCircleViewStore.updateCircleRaw(v);
                 logger.info(v);
                 setState(() {});
               },
-              onChangedTime: addGrowthViewStore.updateDateTime,
-              onPressedElevated: addGrowthViewStore.isFormValid
+              onChangedTime: addCircleViewStore.updateDateTime,
+              onPressedElevated: addCircleViewStore.isFormValid
                   ? () async {
-                      addGrowthViewStore
+                      addCircleViewStore
                           .add(userStore.selectedChild!.id!, noteStore.content)
                           .then((v) async {
                         if (context.mounted) {
                           context.pop();
                           if (context.mounted) {
-                            await store.fetchGrowthDetails();
+                            await store.fetchCircleDetails();
                             await tableStore.refresh();
                           }
                         }

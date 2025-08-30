@@ -224,7 +224,7 @@ class _BodyState extends State<_Body> {
             isFewLists: true,
             emptyData: SliverToBoxAdapter(child: SizedBox.shrink()),
             itemBuilder: (context, item, index) {
-              final EntityDiapersMain diapersMain = item as EntityDiapersMain;
+              final EntityDiapersMain diapersMain = item;
 
               return BuildDaySection(
                   date: diapersMain.data,

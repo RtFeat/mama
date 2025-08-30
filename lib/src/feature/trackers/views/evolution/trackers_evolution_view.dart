@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/views/evolution/table_view.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
-import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
 class EvolutionView extends StatefulWidget {
@@ -46,8 +44,8 @@ class _EvolutionViewState extends State<EvolutionView>
       ),
       body: TabBarView(controller: _tabController, children: [
         WeightView(),
-        WeightView(),
-        WeightView(),
+        GrowthView(),
+        CircleView(),
         WeightView(),
       ]
           // EvolutionCategory.values.map((trackerType) {

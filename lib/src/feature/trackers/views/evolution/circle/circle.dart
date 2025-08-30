@@ -6,10 +6,10 @@ import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
-export 'add_growth.dart';
+export 'add_circle.dart';
 
-class GrowthView extends StatelessWidget {
-  const GrowthView({super.key});
+class CircleView extends StatelessWidget {
+  const CircleView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,12 @@ class _BodyState extends State<_Body> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final store = context.read<GrowthStore>();
-      final tableStore = context.read<GrowthTableStore>();
+      final store = context.read<CircleStore>();
+      final tableStore = context.read<CircleTableStore>();
       store.getIsShowInfo().then((v) {
         setState(() {});
       });
-      store.fetchGrowthDetails();
+      store.fetchCircleDetails();
 
       tableStore.loadPage(newFilters: [
         SkitFilter(
@@ -47,9 +47,9 @@ class _BodyState extends State<_Body> {
 
   @override
   Widget build(BuildContext context) {
-    final trackerType = EvolutionCategory.growth;
-    final store = context.watch<GrowthStore>();
-    final tableStore = context.watch<GrowthTableStore>();
+    final trackerType = EvolutionCategory.head;
+    final store = context.watch<CircleStore>();
+    final tableStore = context.watch<CircleTableStore>();
 
     return Observer(builder: (context) {
       return TrackerBody(
@@ -59,7 +59,7 @@ class _BodyState extends State<_Body> {
             setState(() {});
           });
         },
-        learnMoreWidgetText: t.trackers.findOutMoreTextHeight,
+        learnMoreWidgetText: t.trackers.findOutMoreTextHead,
         onPressLearnMore: () {},
         children: [
           SliverToBoxAdapter(child: 10.h),
@@ -71,31 +71,6 @@ class _BodyState extends State<_Body> {
               current: store.current,
               dynamic: store.dynamicValue,
             ),
-          ),
-
-          /// KG Or gramm Container
-          SliverToBoxAdapter(
-            child: trackerType == EvolutionCategory.growth
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 5,
-                      top: 16,
-                    ),
-                    child: Row(
-                      children: [
-                        SwitchContainer(
-                          title1: trackerType.switchContainerTitle1,
-                          title2: trackerType.switchContainerTitle2,
-                          onSelected: (index) {
-                            store.switchGrowthUnit(
-                                index == 0 ? GrowthUnit.cm : GrowthUnit.m);
-                            setState(() {});
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox(),
           ),
 
           /// Grafic
@@ -120,7 +95,7 @@ class _BodyState extends State<_Body> {
                 addBtnText: trackerType.addButtonTitle,
                 learnMoreTap: () {},
                 addButtonTap: () {
-                  context.pushNamed(AppViews.addGrowthView, extra: {
+                  context.pushNamed(AppViews.addHeadView, extra: {
                     'store': store,
                   });
                 }),
@@ -161,8 +136,8 @@ class _BodyState extends State<_Body> {
                         title1: trackerType.switchContainerTitle1,
                         title2: trackerType.switchContainerTitle2,
                         onSelected: (index) {
-                          tableStore.setGrowthUnit(
-                              index == 0 ? GrowthUnit.cm : GrowthUnit.m);
+                          tableStore.setCircleUnit(
+                              index == 0 ? CircleUnit.cm : CircleUnit.m);
                           setState(() {});
                         },
                       ),

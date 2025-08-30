@@ -6,9 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
 class AddWeightView extends StatelessWidget {
-  final WeightStore? store;
-  final WeightTableStore? tableStore;
-  const AddWeightView({super.key, this.store, this.tableStore});
+  const AddWeightView({super.key});
 
   @override
   Widget build(BuildContext context) {

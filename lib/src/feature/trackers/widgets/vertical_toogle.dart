@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 
-enum UnitMeasures {
-  weight,
-  height,
-}
+enum UnitMeasures { weight, height, head }
 
 class VericalToogleCustom extends StatelessWidget {
   final UnitMeasures measure;

@@ -1,10 +1,10 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 
-part 'weight_store.g.dart';
+part 'circle_store.g.dart';
 
-class WeightStore extends _WeightStore with _$WeightStore {
-  WeightStore({
+class CircleStore extends _CircleStore with _$CircleStore {
+  CircleStore({
     required super.apiClient,
     required super.restClient,
     required super.faker,
@@ -14,9 +14,9 @@ class WeightStore extends _WeightStore with _$WeightStore {
   });
 }
 
-abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
+abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     with Store {
-  _WeightStore({
+  _CircleStore({
     required super.apiClient,
     required this.restClient,
     required super.faker,
@@ -25,16 +25,16 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
     required super.onSet,
   }) : super(
           testDataGenerator: () {
-            return EntityHistoryWeight();
+            return EntityHistoryCircle();
           },
           basePath: '',
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
           pageSize: 15,
           transformer: (raw) {
-            final data = GrowthResponseHistoryWeight.fromJson(raw);
+            final data = GrowthResponseHistoryCircle.fromJson(raw);
             return {
-              'main': data.list ?? <EntityHistoryWeight>[],
+              'main': data.list ?? <EntityHistoryCircle>[],
             };
           },
         );
@@ -43,14 +43,14 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
   final RestClient restClient;
 
   @observable
-  GrowthGetWeightResponse? weightDetails;
+  GrowthGetCircleResponse? circleDetails;
 
   @computed
   Current get current {
-    if (weightDetails?.list?.currentWeight != null) {
-      final current = weightDetails?.list?.currentWeight;
+    if (circleDetails?.list?.currentCircle != null) {
+      final current = circleDetails?.list?.currentCircle;
       return Current(
-        value: double.tryParse(current?.weight ?? '') ?? 0,
+        value: double.tryParse(current?.circle ?? '') ?? 0,
         label: current?.data ?? '',
         isNormal: current?.normal ?? '',
         days: current?.days ?? '',
@@ -62,11 +62,11 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
 
   @computed
   Dynamic get dynamicValue {
-    if (weightDetails?.list?.dynamicsWeight != null) {
-      final dynamic = weightDetails?.list?.dynamicsWeight;
+    if (circleDetails?.list?.dynamicsCircle != null) {
+      final dynamic = circleDetails?.list?.dynamicsCircle;
       return Dynamic(
-        value: double.tryParse(dynamic?.weightGain ?? '') ?? 0,
-        label: dynamic?.weightToDay ?? '',
+        value: double.tryParse(dynamic?.circleGain ?? '') ?? 0,
+        label: dynamic?.circleToDay ?? '',
         days: dynamic?.days ?? '',
         duration: dynamic?.timeDuration ?? '',
       );
@@ -76,23 +76,23 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
   }
 
   @computed
-  double get minValue => weightUnit == WeightUnit.kg ? 2 : 2000;
+  double get minValue => circleUnit == CircleUnit.cm ? 30 : 300;
 
   @computed
-  double get maxValue => weightUnit == WeightUnit.kg ? 9 : 9000;
+  double get maxValue => circleUnit == CircleUnit.cm ? 50 : 500;
 
   @observable
-  WeightUnit weightUnit = WeightUnit.kg;
+  CircleUnit circleUnit = CircleUnit.cm;
 
   @action
-  void switchWeightUnit(WeightUnit unit) {
-    weightUnit = unit;
+  void switchCircleUnit(CircleUnit unit) {
+    circleUnit = unit;
   }
 
   @computed
   List<ChartData> get chartData {
-    if (weightDetails?.list?.table != null) {
-      final table = weightDetails?.list?.table;
+    if (circleDetails?.list?.table != null) {
+      final table = circleDetails?.list?.table;
       table?.sort((a, b) {
         final partsA = a.time?.split('.');
         final partsB = b.time?.split('.');
@@ -113,8 +113,8 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
       });
 
       return table!.map((e) {
-        var value = double.tryParse(e.weight ?? '') ?? 0;
-        value = weightUnit == WeightUnit.kg ? value : value * 1000;
+        var value = double.tryParse(e.circle ?? '') ?? 0;
+        value = circleUnit == CircleUnit.cm ? value : value * 10;
         final parts = e.time?.split('.');
         if (parts == null || parts.length != 2) {
           return ChartData(0, value, '', '');
@@ -140,10 +140,10 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight>
   bool isDetailsLoading = false;
 
   @action
-  Future<void> fetchWeightDetails() async {
+  Future<void> fetchCircleDetails() async {
     isDetailsLoading = true;
     try {
-      weightDetails = await restClient.growth.getGrowthWeight(childId: childId);
+      circleDetails = await restClient.growth.getGrowthCircle(childId: childId);
     } catch (e) {
       print(e);
     } finally {

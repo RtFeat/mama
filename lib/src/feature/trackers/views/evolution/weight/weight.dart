@@ -172,9 +172,10 @@ class _BodyState extends State<_Body> {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-          SliverToBoxAdapter(
-            child: SkitTableWidget(store: tableStore),
-          ),
+          if (tableStore.listData.isNotEmpty)
+            SliverToBoxAdapter(
+              child: SkitTableWidget(store: tableStore),
+            ),
 
           // SliverToBoxAdapter(
           //   child: Column(

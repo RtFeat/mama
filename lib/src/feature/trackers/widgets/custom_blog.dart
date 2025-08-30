@@ -69,33 +69,36 @@ class _CustomBlogState extends State<CustomBlog> {
               // КГ / Г кнопки (вертикально)
               Row(
                 children: [
-                  isTemperature
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            '°С',
-                            style: AppTextStyles.f14w700.copyWith(
-                              color: AppColors.primaryColor,
-                            ),
+                  switch (widget.measure) {
+                    UnitMeasures.height ||
+                    UnitMeasures.weight =>
+                      VericalToogleCustom(
+                        measure: widget.measure!,
+                        onChange: (int index) {
+                          addWeightViewStore?.switchWeightUnit(
+                              index == 0 ? WeightUnit.kg : WeightUnit.g);
+
+                          addGrowthViewStore?.switchGrowthUnit(
+                              index == 0 ? GrowthUnit.cm : GrowthUnit.m);
+
+                          setState(() {
+                            for (int i = 0; i < isSelected.length; i++) {
+                              isSelected[i] = i == index;
+                            }
+                          });
+                        },
+                        isSelected: isSelected,
+                      ),
+                    _ => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.measure == UnitMeasures.head ? 'см' : '°С',
+                          style: AppTextStyles.f14w700.copyWith(
+                            color: AppColors.primaryColor,
                           ),
-                        )
-                      : VericalToogleCustom(
-                          measure: widget.measure!,
-                          onChange: (int index) {
-                            addWeightViewStore?.switchWeightUnit(
-                                index == 0 ? WeightUnit.kg : WeightUnit.g);
-
-                            addGrowthViewStore?.switchGrowthUnit(
-                                index == 0 ? GrowthUnit.cm : GrowthUnit.m);
-
-                            setState(() {
-                              for (int i = 0; i < isSelected.length; i++) {
-                                isSelected[i] = i == index;
-                              }
-                            });
-                          },
-                          isSelected: isSelected,
                         ),
+                      )
+                  },
                   8.w,
                   Expanded(
                     child: NumberField(

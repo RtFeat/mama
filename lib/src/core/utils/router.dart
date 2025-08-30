@@ -305,7 +305,68 @@ final GoRouter router = GoRouter(
                   }),
                   Provider(
                     create: (context) => AddWeightViewStore(
-                        // store: context.read<WeightStore>(),
+                        restClient: context.read<Dependencies>().restClient),
+                  ),
+                  Provider(
+                    create: (context) => GrowthDataSourceLocal(
+                      sharedPreferences:
+                          context.read<Dependencies>().sharedPreferences,
+                    ),
+                  ),
+                  Provider(
+                    create: (context) => GrowthStore(
+                      apiClient: context.read<Dependencies>().apiClient,
+                      restClient: context.read<Dependencies>().restClient,
+                      faker: context.read<Dependencies>().faker,
+                      childId:
+                          context.read<UserStore>().selectedChild?.id ?? '',
+                      onLoad: () =>
+                          context.read<GrowthDataSourceLocal>().getIsShow(),
+                      onSet: (value) =>
+                          context.read<GrowthDataSourceLocal>().setShow(value),
+                    ),
+                  ),
+                  Provider(create: (context) {
+                    return GrowthTableStore(
+                      store: context.read<GrowthStore>(),
+                      restClient: context.read<Dependencies>().restClient,
+                      apiClient: context.read<Dependencies>().apiClient,
+                      faker: context.read<Dependencies>().faker,
+                    );
+                  }),
+                  Provider(
+                    create: (context) => AddGrowthViewStore(
+                        restClient: context.read<Dependencies>().restClient),
+                  ),
+                  Provider(
+                    create: (context) => CircleDataSourceLocal(
+                      sharedPreferences:
+                          context.read<Dependencies>().sharedPreferences,
+                    ),
+                  ),
+                  Provider(
+                    create: (context) => CircleStore(
+                      apiClient: context.read<Dependencies>().apiClient,
+                      restClient: context.read<Dependencies>().restClient,
+                      faker: context.read<Dependencies>().faker,
+                      childId:
+                          context.read<UserStore>().selectedChild?.id ?? '',
+                      onLoad: () =>
+                          context.read<CircleDataSourceLocal>().getIsShow(),
+                      onSet: (value) =>
+                          context.read<CircleDataSourceLocal>().setShow(value),
+                    ),
+                  ),
+                  Provider(create: (context) {
+                    return CircleTableStore(
+                      store: context.read<CircleStore>(),
+                      restClient: context.read<Dependencies>().restClient,
+                      apiClient: context.read<Dependencies>().apiClient,
+                      faker: context.read<Dependencies>().faker,
+                    );
+                  }),
+                  Provider(
+                    create: (context) => AddCircleViewStore(
                         restClient: context.read<Dependencies>().restClient),
                   )
                 ],
@@ -331,7 +392,7 @@ final GoRouter router = GoRouter(
                     GoRoute(
                       name: AppViews.addHeadView,
                       path: _Paths.addHeadView,
-                      builder: (context, state) => const AddHead(),
+                      builder: (context, state) => const AddCircleView(),
                     )
                   ]),
             ]),

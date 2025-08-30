@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mama/src/core/core.dart';
+import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
 class VaccineContainer extends StatelessWidget {
