@@ -368,7 +368,13 @@ final GoRouter router = GoRouter(
                   Provider(
                     create: (context) => AddCircleViewStore(
                         restClient: context.read<Dependencies>().restClient),
-                  )
+                  ),
+                  Provider(
+                      create: (context) => EvolutionTableStore(
+                            apiClient: context.read<Dependencies>().apiClient,
+                            restClient: context.read<Dependencies>().restClient,
+                            faker: context.read<Dependencies>().faker,
+                          ))
                 ],
                 child: child,
               );

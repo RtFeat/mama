@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
-import 'package:skit/skit.dart';
 
 class EvolutionView extends StatefulWidget {
   const EvolutionView({super.key});
@@ -46,144 +44,8 @@ class _EvolutionViewState extends State<EvolutionView>
         WeightView(),
         GrowthView(),
         CircleView(),
-        WeightView(),
-      ]
-          // EvolutionCategory.values.map((trackerType) {
-          //   if (trackerType == EvolutionCategory.table) {
-          //     return const TablePage();
-          //   }
-          //   return WeightT(trackerType: trackerType);
-          // }).toList(),
-          ),
-    );
-  }
-}
-
-class WeightT extends StatelessWidget {
-  const WeightT({super.key, required this.trackerType});
-  final EvolutionCategory trackerType;
-
-  @override
-  Widget build(BuildContext context) {
-    return TrackerBody(
-      isShowInfo: true,
-      learnMoreWidgetText: trackerType.knowMoreTitle,
-      onPressLearnMore: () {},
-      children: [
-        SliverToBoxAdapter(child: 10.h),
-
-        /// Current and Dynamic Container
-        // SliverToBoxAdapter(
-        //   child: CurrentAndDymanicContainer(
-        //     trackerType: trackerType,
-        //   ),
-        // ),
-
-        /// KG Or gramm Container
-        SliverToBoxAdapter(
-          child: trackerType == EvolutionCategory.weight ||
-                  trackerType == EvolutionCategory.growth
-              ? Padding(
-                  padding: const EdgeInsets.only(
-                    bottom: 5,
-                    top: 16,
-                  ),
-                  child: Row(
-                    children: [
-                      // SwitchContainer(
-                      //   title1: trackerType.switchContainerTitle1,
-                      //   title2: trackerType.switchContainerTitle2,
-                      // ),
-                    ],
-                  ),
-                )
-              : const SizedBox(),
-        ),
-
-        /// Grafic
-        const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 16, top: 0),
-            child: SizedBox(
-              height: 278,
-              // child: FlProgressChart(),
-            ),
-          ),
-        ),
-
-        SliverToBoxAdapter(
-          child: EditingButtons(
-              addBtnText: trackerType.addButtonTitle,
-              learnMoreTap: () {},
-              addButtonTap: () {
-                context.pushNamed(trackerType.route);
-              }),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-        /// Stories
-        SliverToBoxAdapter(
-          child: Center(
-            child: Text(
-              t.trackers.stories.title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-        // SliverToBoxAdapter(
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       SwitchContainer(
-        //         title1: t.trackers.news.title,
-        //         title2: t.trackers.old.title,
-        //         // isTrue: false,
-        //       ),
-        //       trackerType.title == EvolutionCategory.head.title
-        //           ? const SizedBox()
-        //           : SwitchContainer(
-        //               title1: trackerType.switchContainerTitle1,
-        //               title2: trackerType.switchContainerTitle2,
-        //             ),
-        //     ],
-        //   ),
-        // ),
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
-        SliverToBoxAdapter(
-          child: RowStroriesData(
-            data: t.trackers.date.title,
-            week: t.trackers.weeks.title,
-            growth: trackerType.storiesValueTitle,
-            style: AppTextStyles.f10w700.copyWith(
-              color: AppColors.greyBrighterColor,
-            ),
-          ),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-        SliverToBoxAdapter(
-          child: Column(
-            children: List.generate(
-              5,
-              (index) {
-                return RowStroriesData(
-                  data: '01 сентября',
-                  week: '17',
-                  weight: trackerType.storiesValue,
-                  style: AppTextStyles.f17w400,
-                );
-              },
-            ),
-          ),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-      ],
+        TablePage(),
+      ]),
     );
   }
 }

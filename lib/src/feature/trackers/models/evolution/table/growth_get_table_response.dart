@@ -13,9 +13,10 @@ class GrowthGetTableResponse {
   const GrowthGetTableResponse({
     this.list,
   });
-  
-  factory GrowthGetTableResponse.fromJson(Map<String, Object?> json) => _$GrowthGetTableResponseFromJson(json);
-  
+
+  factory GrowthGetTableResponse.fromJson(Map<String, Object?> json) =>
+      _$GrowthGetTableResponseFromJson(json);
+
   final List<EntityTable>? list;
 
   Map<String, Object?> toJson() => _$GrowthGetTableResponseToJson(this);
