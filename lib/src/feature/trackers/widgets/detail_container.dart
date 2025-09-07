@@ -12,6 +12,8 @@ class DetailContainer extends StatelessWidget {
   final bool isEdited;
   final Function(String?)? onChanged;
 
+  final Function() onTap;
+
   const DetailContainer(
       {super.key,
       required this.title,
@@ -20,68 +22,73 @@ class DetailContainer extends StatelessWidget {
       required this.filled,
       required this.isEdited,
       this.formControlName,
+      required this.onTap,
       this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-          border: Border.all(
-              color: filled
-                  ? Colors.transparent
-                  : AppColors.purpleLighterBackgroundColor),
-          color: filled ? AppColors.purpleLighterBackgroundColor : null,
-          borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: textTheme.labelLarge
-                  ?.copyWith(color: AppColors.greyBrighterColor),
-            ),
-            isEdited
-                ? ReactiveTextField(
-                    scrollPadding: EdgeInsets.zero,
-                    formControlName: formControlName,
-                    inputFormatters: <TextInputFormatter>[
-                      HourMinsFormatter(),
-                      LengthLimitingTextInputFormatter(5),
-                    ],
-                    showErrors: (control) => false,
-                    keyboardType: TextInputType.text,
-                    style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w400, color: Colors.black),
-                    onTapOutside: (event) {},
-                    onChanged: (value) {
-                      onChanged!(value.value as String?);
-                    },
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 0),
-                      hintStyle: textTheme.headlineSmall
-                          ?.copyWith(color: AppColors.greyBrighterColor),
+
+    return GestureDetector(
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+            border: Border.all(
+                color: filled
+                    ? Colors.transparent
+                    : AppColors.purpleLighterBackgroundColor),
+            color: filled ? AppColors.purpleLighterBackgroundColor : null,
+            borderRadius: BorderRadius.circular(8)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: textTheme.labelLarge
+                    ?.copyWith(color: AppColors.greyBrighterColor),
+              ),
+              isEdited
+                  ? ReactiveTextField(
+                      scrollPadding: EdgeInsets.zero,
+                      formControlName: formControlName,
+                      inputFormatters: <TextInputFormatter>[
+                        HourMinsFormatter(),
+                        LengthLimitingTextInputFormatter(5),
+                      ],
+                      showErrors: (control) => false,
+                      keyboardType: TextInputType.text,
+                      style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w400, color: Colors.black),
+                      onTapOutside: (event) {},
+                      onChanged: (value) {
+                        onChanged!(value.value as String?);
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 0),
+                        hintStyle: textTheme.headlineSmall
+                            ?.copyWith(color: AppColors.greyBrighterColor),
+                      ),
+                    )
+                  : Text(
+                      text,
+                      style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w400, color: Colors.black),
                     ),
-                  )
-                : Text(
-                    text,
-                    style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w400, color: Colors.black),
-                  ),
-            Text(
-              detail,
-              style: textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.greyBrighterColor),
-            ),
-          ],
+              Text(
+                detail,
+                style: textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.greyBrighterColor),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
 
-class BodyAddManuallySleepCryFeeding extends StatelessWidget {
+class BodyAddManuallySleepCryFeeding extends StatefulWidget {
   final String? formControlNameStart;
   final String? formControlNameEnd;
   final bool needIfEditNotCompleteMessage;
@@ -14,10 +14,12 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
   final DateTime timerManualStart;
   final bool isTimerStart;
   final DateTime? timerManualEnd;
-  final VoidCallback? onStartTimeChanged;
-  final VoidCallback? onEndTimeChanged;
+  final Function(String? value)? onStartTimeChanged;
+  final Function(String? value)? onEndTimeChanged;
   final VoidCallback? onTapNotes;
-  final VoidCallback onTapConfirm;
+  final VoidCallback? onTapConfirm;
+  final Function() stopIfStarted;
+
   const BodyAddManuallySleepCryFeeding({
     super.key,
     this.formControlNameStart,
@@ -32,15 +34,23 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
     this.titleIfEditNotComplete,
     this.textIfEditNotComplete,
     required this.bodyWidget,
+    required this.stopIfStarted,
     required this.needIfEditNotCompleteMessage,
   });
 
   @override
+  State<BodyAddManuallySleepCryFeeding> createState() =>
+      _BodyAddManuallySleepCryFeedingState();
+}
+
+class _BodyAddManuallySleepCryFeedingState
+    extends State<BodyAddManuallySleepCryFeeding> {
+  @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    DateTime timerStart = timerManualStart;
-    DateTime timerEnd = timerManualEnd!;
+    DateTime timerStart = widget.timerManualStart;
+    DateTime? timerEnd = widget.timerManualEnd;
 
     return Scaffold(
       backgroundColor: const Color(0xFFE7F2FE),
@@ -56,30 +66,30 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
       ),
       body: Container(
         color: Colors.white,
-        padding: const EdgeInsets.all(15),
-        child: ListView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height / 3.5,
-              child: needIfEditNotCompleteMessage && isTimerStart
+              child: widget.needIfEditNotCompleteMessage && widget.isTimerStart
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
                           textAlign: TextAlign.center,
-                          titleIfEditNotComplete!,
+                          widget.titleIfEditNotComplete!,
                           style: textTheme.labelMedium?.copyWith(
                               fontSize: 14, color: AppColors.greyBrighterColor),
                         ),
-                        5.h,
+                        8.h,
                         Text(
                           textAlign: TextAlign.center,
-                          textIfEditNotComplete!,
+                          widget.textIfEditNotComplete!,
                           style: textTheme.labelMedium?.copyWith(
                               fontSize: 14, color: AppColors.greyBrighterColor),
                         ),
-                        10.h,
+                        16.h,
                         CustomButton(
                           isSmall: false,
                           type: CustomButtonType.outline,
@@ -94,26 +104,34 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
                           title: t.trackers
                               .infoManuallyContainerButtonBackAndContinue,
                         ),
-                        15.h,
+                        16.h,
                       ],
                     )
                   : null,
             ),
-            bodyWidget,
+            widget.bodyWidget,
             30.h,
             EditTimeRow(
+              onTap: () {
+                if (widget.isTimerStart) {
+                  widget.stopIfStarted();
+                }
+              },
               timerStart: timerStart,
+              timerEnd: timerEnd,
+              isTimerStarted: widget.isTimerStart,
               onStartTimeChanged: (v) {
-                onStartTimeChanged!();
+                widget.onStartTimeChanged!(v);
+                setState(() {});
               },
               onEndTimeChanged: (v) {
-                onEndTimeChanged!();
+                widget.onEndTimeChanged!(v);
+                setState(() {});
               },
-              timerEnd: timerEnd,
-              formControlNameStart: formControlNameStart!,
-              formControlNameEnd: formControlNameEnd!,
+              formControlNameStart: widget.formControlNameStart!,
+              formControlNameEnd: widget.formControlNameEnd!,
             ),
-            30.h,
+            32.h,
             CustomButton(
               height: 48,
               width: double.infinity,
@@ -121,17 +139,16 @@ class BodyAddManuallySleepCryFeeding extends StatelessWidget {
               icon: AppIcons.pencil,
               iconColor: AppColors.primaryColor,
               title: t.feeding.note,
-              onTap: () => onTapNotes!(),
+              onTap: () => widget.onTapNotes!(),
+              iconSize: 28,
             ),
-            10.h,
+            8.h,
             CustomButton(
               backgroundColor: AppColors.greenLighterBackgroundColor,
               height: 48,
               width: double.infinity,
               title: t.feeding.confirm,
-              textStyle: textTheme.bodyMedium
-                  ?.copyWith(color: AppColors.greenTextColor),
-              onTap: () => onTapConfirm(),
+              onTap: widget.onTapConfirm,
             ),
             35.h,
           ],

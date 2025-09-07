@@ -48,6 +48,7 @@ class CurrentEditingTrackWidget extends StatelessWidget {
         ),
         20.h,
         EditTimeRow(
+          onTap: () {},
           timerStart: timerStart,
           timerEnd: timerEnd,
           isTimerStarted: isTimerStarted,

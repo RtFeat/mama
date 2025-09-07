@@ -402,33 +402,45 @@ final GoRouter router = GoRouter(
                     )
                   ]),
             ]),
-        GoRoute(
-          path: _Paths.sleeping,
-          name: AppViews.sleeping,
-          builder: (context, state) => const SleepingScreen(),
-          routes: [
-            GoRoute(
-              name: AppViews.addSleeping,
-              path: _Paths.addSleeping,
-              builder: (context, state) => const AddSleepingScreenManually(),
-            ),
-            //   GoRoute(
-            //     name: AppViews.addPumping,
-            //     path: _Paths.addPumping,
-            //     builder: (context, state) => const AddPumpingScreen(),
-            //   ),
-            //   GoRoute(
-            //     name: AppViews.addBottle,
-            //     path: _Paths.addBottle,
-            //     builder: (context, state) => const AddBottleScreen(),
-            //   ),
-            //   GoRoute(
-            //     name: AppViews.addLure,
-            //     path: _Paths.addLure,
-            //     builder: (context, state) => const AddLureScreen(),
-            //   ),
-          ],
-        ),
+        ShellRoute(
+            builder: (context, state, child) {
+              return Provider(
+                  child: child,
+                  create: (context) {
+                    return SleepStore(
+                      restClient: context.read<Dependencies>().restClient,
+                    );
+                  });
+            },
+            routes: [
+              GoRoute(
+                path: _Paths.sleeping,
+                name: AppViews.sleeping,
+                builder: (context, state) => const SleepingScreen(),
+                routes: [
+                  GoRoute(
+                    name: AppViews.addSleeping,
+                    path: _Paths.addSleeping,
+                    builder: (context, state) => const AddSleepingView(),
+                  ),
+                  //   GoRoute(
+                  //     name: AppViews.addPumping,
+                  //     path: _Paths.addPumping,
+                  //     builder: (context, state) => const AddPumpingScreen(),
+                  //   ),
+                  //   GoRoute(
+                  //     name: AppViews.addBottle,
+                  //     path: _Paths.addBottle,
+                  //     builder: (context, state) => const AddBottleScreen(),
+                  //   ),
+                  //   GoRoute(
+                  //     name: AppViews.addLure,
+                  //     path: _Paths.addLure,
+                  //     builder: (context, state) => const AddLureScreen(),
+                  //   ),
+                ],
+              )
+            ]),
         GoRoute(
           path: _Paths.feeding,
           name: AppViews.feeding,

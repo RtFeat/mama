@@ -40,14 +40,15 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
     return ReactiveForm(
         formGroup: formGroup,
         child: BodyAddManuallySleepCryFeeding(
+          stopIfStarted: () {},
           timerManualStart: addFeeding.timerStartTime,
           timerManualEnd: addFeeding.timerEndTime,
           formControlNameEnd: 'feedingBreastEnd',
           formControlNameStart: 'feedingBreastStart',
-          onStartTimeChanged: () => addFeeding.setTimeStartManually(
-              formGroup.control('feedingBreastStart').value),
-          onEndTimeChanged: () => addFeeding
-              .setTimeEndManually(formGroup.control('feedingBreastEnd').value),
+          // onStartTimeChanged: () => addFeeding.setTimeStartManually(
+          //     formGroup.control('feedingBreastStart').value),
+          // onEndTimeChanged: () => addFeeding
+          //     .setTimeEndManually(formGroup.control('feedingBreastEnd').value),
           isTimerStart: addFeeding.isRightSideStart == true
               ? true
               : addFeeding.isLeftSideStart == true

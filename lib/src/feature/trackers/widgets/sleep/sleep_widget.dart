@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -11,12 +10,9 @@ class SleepWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<SleepStore>(
-      create: (context) => SleepStore(),
-      builder: (context, child) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: _Body(store: context.watch()),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: _Body(store: context.watch()),
     );
   }
 }
@@ -89,7 +85,7 @@ class __BodyState extends State<_Body> {
                           MaterialPageRoute(builder: (context) {
                             return Provider<SleepStore>.value(
                                 value: widget.store,
-                                child: const AddSleepingScreenManually());
+                                child: const AddSleepingView());
                           }),
                         );
                       },
@@ -112,7 +108,7 @@ class __BodyState extends State<_Body> {
                                 MaterialPageRoute(builder: (context) {
                                   return Provider<SleepStore>.value(
                                       value: widget.store,
-                                      child: const AddSleepingScreenManually());
+                                      child: const AddSleepingView());
                                 }),
                               );
                             }),

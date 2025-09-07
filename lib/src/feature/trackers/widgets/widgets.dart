@@ -18,8 +18,6 @@ export 'bar_item.dart';
 export 'note_in_cell.dart';
 export 'add_feeding_breast_manually.dart';
 export 'helper_play_button.dart';
-export 'add_sleep_manually.dart';
-export 'body_manually_sleep_cry.dart';
 export 'sleep/edit_time_row.dart';
 export 'tracker_category.dart';
 export 'add_text_field.dart';

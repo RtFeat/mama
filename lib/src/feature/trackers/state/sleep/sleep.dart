@@ -1,14 +1,21 @@
 import 'package:intl/intl.dart';
+import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 part 'sleep.g.dart';
 
 class SleepStore extends _SleepStore with _$SleepStore {
-  SleepStore();
+  SleepStore({
+    required super.restClient,
+  });
 }
 
 abstract class _SleepStore with Store {
+  _SleepStore({required this.restClient});
+
+  final RestClient restClient;
+
   static final _dateTimeFormat = DateFormat('HH:mm');
 
   FormGroup formGroup = FormGroup({
@@ -29,30 +36,10 @@ abstract class _SleepStore with Store {
   bool isSleepCanceled = false;
 
   @observable
-  DateTime manualStartTime = DateTime.now();
-
-  @observable
-  DateTime manualEndTime = DateTime.now();
-
-  @observable
   DateTime timerStartTime = DateTime.now();
 
   @observable
   DateTime? timerEndTime;
-
-  @action
-  setTimeStartManually(String value) {
-    if (value.length == 5) {
-      manualStartTime = _dateTimeFormat.parse(value);
-    }
-  }
-
-  @action
-  setTimeEndManually(String value) {
-    if (value.length == 5) {
-      manualStartTime = _dateTimeFormat.parse(value);
-    }
-  }
 
   @action
   confirmButtonManuallyPressed() {}
@@ -110,5 +97,24 @@ abstract class _SleepStore with Store {
 
   void dispose() {
     formGroup.dispose();
+  }
+
+  @computed
+  bool get isFormValid => timerEndTime?.isAfter(timerStartTime) ?? false;
+
+  Future<void> add(String childId, String? notes) async {
+    final duration = timerEndTime!.difference(timerStartTime);
+    final minutes = duration.inMinutes.abs();
+
+    final dto = SleepcryInsertSleepDto(
+      childId: childId,
+      timeEnd: timerEndTime?.toUtc().toIso8601String(),
+      timeToEnd: timerEndTime?.toUtc().formattedTime,
+      timeToStart: timerStartTime.toUtc().formattedTime,
+      allSleep: '$minutes м',
+      notes: notes,
+    );
+
+    await restClient.sleepCry.postSleepCrySleep(dto: dto);
   }
 }
