@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart' as skit;
+import 'package:mama/src/feature/trackers/state/sleep/sleep.dart';
+import 'package:mama/src/feature/trackers/state/sleep/cry.dart';
 
 /// [App] is an entry point to the application.
 ///
@@ -117,6 +119,28 @@ class App extends StatelessWidget {
           ),
           Provider(
             create: (context) => skit.AudioPlayerStore(),
+            dispose: (context, value) => value.dispose(),
+          ),
+          Provider(
+            create: (context) => SleepStore(
+              apiClient: context.read<Dependencies>().apiClient,
+              restClient: context.read<Dependencies>().restClient,
+              faker: context.read<Dependencies>().faker,
+              childId: context.read<UserStore>().selectedChild?.id ?? '',
+              onLoad: () async => true,
+              onSet: (bool value) async {},
+            ),
+            dispose: (context, value) => value.dispose(),
+          ),
+          Provider(
+            create: (context) => CryStore(
+              apiClient: context.read<Dependencies>().apiClient,
+              restClient: context.read<Dependencies>().restClient,
+              faker: context.read<Dependencies>().faker,
+              childId: context.read<UserStore>().selectedChild?.id ?? '',
+              onLoad: () async => true,
+              onSet: (bool value) async {},
+            ),
             dispose: (context, value) => value.dispose(),
           ),
           Provider(

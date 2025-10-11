@@ -19,6 +19,14 @@ abstract class _AddPumping with Store {
 
   AbstractControl get right => formGroup.control('right');
 
+  @observable
+  DateTime? selectedDateTime;
+
+  @action
+  void setSelectedDateTime(DateTime? value) {
+    selectedDateTime = value;
+  }
+
   void dispose() {
     formGroup.dispose();
   }

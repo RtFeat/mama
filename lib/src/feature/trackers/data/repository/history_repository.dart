@@ -297,7 +297,7 @@ final historyOfLure = [
         DetailTimeOfLeading(
             detailFirstColumnText: '12:30',
             detailSecondColumnText: 'Мясные консервы с говядиной',
-            detailThirdColumnText: '30г 😃'),
+            detailThirdColumnText: '30г 🙂'),
         DetailTimeOfLeading(
             detailFirstColumnText: '',
             detailSecondColumnText: 'Морковка',
@@ -323,7 +323,7 @@ final historyOfLure = [
         DetailTimeOfLeading(
             detailFirstColumnText: '',
             detailSecondColumnText: 'Яблоко',
-            detailThirdColumnText: '10г 🙂'),
+            detailThirdColumnText: '10г 🤢'),
         DetailTimeOfLeading(
             detailFirstColumnText: '17:00',
             detailSecondColumnText: 'Морковка',
@@ -345,7 +345,7 @@ final historyOfLure = [
         DetailTimeOfLeading(
             detailFirstColumnText: '',
             detailSecondColumnText: 'Яблоко',
-            detailThirdColumnText: '10г 🙂'),
+            detailThirdColumnText: '10г 🤢'),
         DetailTimeOfLeading(
             detailFirstColumnText: '17:00',
             detailSecondColumnText: 'Морковка',

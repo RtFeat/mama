@@ -17,6 +17,9 @@ import '../models/feed_response_history_lure.dart';
 import '../models/feed_response_history_pumping.dart';
 import '../models/feed_response_history_table.dart';
 import '../models/feed_response_insert_dto.dart';
+import '../models/feed_delete_pumping_dto.dart';
+import '../models/feed_delete_food_dto.dart';
+import '../models/feed_delete_lure_dto.dart';
 
 part 'feed_client.g.dart';
 
@@ -30,7 +33,7 @@ abstract class FeedClient {
   ///
   /// [dto] - Add chest.
   @POST('/feed/chest')
-  Future<FeedResponseInsertDto> postFeedChest({
+  Future<void> postFeedChest({
     @Body() required FeedInsertChestDto dto,
   });
 
@@ -164,6 +167,54 @@ abstract class FeedClient {
     @Query('offset') int? offset,
     @Query('page') int? page,
     @Query('page_size') int? pageSize,
+  });
+
+  /// Удалить статистику сцеживания.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/pumping/delete/stats')
+  Future<void> deleteFeedPumpingDeleteStats({
+    @Body() required FeedDeletePumpingDto dto,
+  });
+
+  /// Удалить заметку сцеживания.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/pumping/delete/notes')
+  Future<void> deleteFeedPumpingDeleteNotes({
+    @Body() required FeedDeletePumpingDto dto,
+  });
+
+  /// Удалить статистику кормления.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/food/delete/stats')
+  Future<void> deleteFeedFoodDeleteStats({
+    @Body() required FeedDeleteFoodDto dto,
+  });
+
+  /// Удалить заметку кормления.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/food/delete/notes')
+  Future<void> deleteFeedFoodDeleteNotes({
+    @Body() required FeedDeleteFoodDto dto,
+  });
+
+  /// Удалить статистику прикорма.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/lure/delete/stats')
+  Future<void> deleteFeedLureDeleteStats({
+    @Body() required FeedDeleteLureDto dto,
+  });
+
+  /// Удалить заметку прикорма.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/lure/delete/notes')
+  Future<void> deleteFeedLureDeleteNotes({
+    @Body() required FeedDeleteLureDto dto,
   });
 
   /// Вывести таблицу.

@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
+import 'package:mama/src/feature/trackers/services/pdf_service.dart';
 
 class TablePage extends StatelessWidget {
   const TablePage({
@@ -14,7 +15,7 @@ class TablePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: TableEvolutionHistory(
           store: context.watch(),
         ),
@@ -39,6 +40,7 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final UserStore store = context.read<UserStore>();
 
       widget.store.loadPage(newFilters: [
@@ -57,6 +59,7 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
+      if (!mounted) return const SizedBox.shrink();
       return CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -69,7 +72,9 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                         items: [t.feeding.newS, t.feeding.old],
                         onTap: (index) {
                           widget.store.setSortOrder(index);
-                          setState(() {});
+                          if (mounted) {
+                            setState(() {});
+                          }
                         },
                         btnWidth: 64,
                         btnHeight: 26),
@@ -84,7 +89,16 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                             title: t.trackers.pdf.title,
                             height: 26,
                             width: 70,
-                            onTap: () {}, // TODO скачать pdf
+                            onTap: () {
+                              PdfService.generateAndViewGrowthPdf(
+                                context: context,
+                                typeOfPdf: 'growth',
+                                title: t.trackers.report,
+                                onStart: () => _showSnack(context, 'Generating PDF...', bg: AppColors.primaryColor),
+                                onSuccess: () => _showSnack(context, 'PDF generated successfully!', bg: Colors.green, seconds: 3),
+                                onError: (m) => _showSnack(context, m),
+                              );
+                            },
                           )
                         ],
                       ),
@@ -140,7 +154,9 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                   onChange: (int index) {
                     widget.store.setWeightUnit(
                         index == 0 ? WeightUnit.kg : WeightUnit.g);
-                    setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
                   },
                 ),
                 10.w,
@@ -152,7 +168,9 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                     widget.store.setCircleUnit(
                       index == 0 ? CircleUnit.cm : CircleUnit.m,
                     );
-                    setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
                   },
                 ),
                 40.w,
@@ -191,5 +209,21 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
         ),
       ),
     );
+  }
+
+  void _showSnack(BuildContext ctx, String message, {Color? bg, int seconds = 2}) {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      try {
+        ScaffoldMessenger.of(ctx)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text(message),
+            backgroundColor: bg,
+            duration: Duration(seconds: seconds),
+          ));
+      } catch (_) {}
+    });
   }
 }

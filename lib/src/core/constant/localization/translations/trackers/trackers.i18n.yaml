@@ -131,6 +131,14 @@ infoManuallyContainerCancellSleeping:
   title: Sleep cancelled
   text1: Canceled sleep will not be saved.
   text2: "To continue canceled sleep, click on the button:"
+infoManuallyContainerSaveCrying:
+  title: Saved
+  text1: Crying saved.
+  text2: "If you want to continue this crying, press the button:"
+infoManuallyContainerCancellCrying:
+  title: Crying cancelled
+  text1: Canceled crying will not be saved.
+  text2: "To continue canceled crying, click on the button:"
 
 helperPlayButtonFeed: Add feeding\n
 helperPlayButtonCry: Add crying\n
@@ -141,6 +149,7 @@ helperPlayButtonText:
 
 currentEditTrackFeedingTitle: Current feeding
 currentEditTrackSleepingTitle: Baby sleeps
+currentEditTrackCryingTitle: Baby crying
 currentEditTrackStart: Start
 currentEditTrackFinish: Finish
 currentEditTrackAll: Total
@@ -154,6 +163,8 @@ currentEditTrackCountTextTitleSleep: Counter will add time
 currentEditTrackCountTextSleep: Confirm or cancel sleep end
 currentEditTrackCountTextFeed: Confirm or cancel the end of feeding
 currentEditTrackCountTextTitleFeed: Counter Started
+currentEditTrackCountTextTitleCry: Crying counter started
+currentEditTrackCountTextCry: Confirm or cancel crying end
 
 findOutMoreTextTemp: Here you can record your baby's temperature and track its changes.\n\nFind out what can cause a child's temperature to rise in the Knowledge Center
 
@@ -172,6 +183,8 @@ findOutMoreTextHeight: Here you can monitor your child's growth and monitor thei
 findOutMoreTextHead: Here you can monitor changes in the circumference of your child's head and monitor its development by comparing it with the standards of the World Health Organization .\n\nLearn more about these standards and learn how to correctly measure head circumference in our Knowledge Center
 
 findOutMoreTextBrist: You can track breastfeeding progress here .\n\nLearn more about breastfeeding at our Knowledge Center
+
+findOutMoreTextBreast: You can track breastfeeding progress here .\n\nLearn more about breastfeeding at our Knowledge Center
 
 findOutMoreTextPumping: Here you can mark the pumping process and monitor changes in the amount of milk .\n\nLearn more about expressing breast milk in our Knowledge Center
 
@@ -331,7 +344,7 @@ report: Report
 
 feedTableTitles:
   title1: Date
-  title2: Breastfeeding time
+  title2: BF time
   title3: Total fluid, mL
   title4: Total lure, g
 
@@ -352,3 +365,9 @@ daysAgo(param=n):
   two: $n days ago
   few: $n days ago
   other: $n days ago
+
+daysFor(param=n):
+  one: for 1 day
+  two: for $n days
+  few: for $n days
+  other: for $n days

@@ -91,7 +91,9 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                       child: Text(
                         current.isNormal,
                         style: AppTextStyles.f10w700.copyWith(
-                          color: AppColors.greenTextColor,
+                          color: current.isNormal == 'Вне нормы' 
+                            ? AppColors.orangeTextColor 
+                            : AppColors.greenTextColor,
                         ),
                       ),
                     ),
@@ -167,7 +169,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 1),
                       child: Text(
-                        dynamic.days,
+                        t.trackers.daysFor(n: int.tryParse(dynamic.days) ?? 0),
                         style: AppTextStyles.f14w400.copyWith(
                           color: AppColors.greyBrighterColor,
                         ),
@@ -185,11 +187,14 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                         EvolutionCategory.weight =>
                           '${(dynamic.value * 100).toInt()} г в сутки',
                         EvolutionCategory.growth =>
-                          '${(dynamic.value).toInt()} см в сутки',
+                          '${dynamic.value.toStringAsFixed(1)} см в сутки',
                         _ => ''
                       },
                       style: AppTextStyles.f10w700.copyWith(
-                        color: AppColors.greenTextColor,
+                        color: (trackerType == EvolutionCategory.weight && dynamic.value < 0) ||
+                               (trackerType == EvolutionCategory.growth && dynamic.value < 0)
+                          ? AppColors.orangeTextColor 
+                          : AppColors.greenTextColor,
                       ),
                     ),
                     Text(

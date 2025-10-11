@@ -55,7 +55,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
       sleepDetails =
           await restClient.sleepCry.getSleepCrySleepGet(childId: childId);
     } catch (e) {
-      print(e);
+      // Игнорируем ошибки
     } finally {
       isDetailsLoading = false;
     }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/core/core.dart';
 import 'package:mama/src/data.dart';
+import 'package:provider/provider.dart';
+import 'package:mama/src/feature/trackers/state/sleep/sleep.dart';
+import 'package:mama/src/feature/trackers/state/sleep/cry.dart';
 
 class SleepingScreen extends StatefulWidget {
   const SleepingScreen({super.key});
@@ -17,10 +20,22 @@ class _SleepingScreenState extends State<SleepingScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    // Уведомляем о смене таба для управления таймерами
+    if (!mounted) return;
+    
+    // НЕ сохраняем записи при смене таба - только при закрытии записи
+    // Сохранение происходит в cancelSleepingClose() при нажатии крестика
+    
+    setState(() {});
   }
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -48,9 +63,9 @@ class _SleepingScreenState extends State<SleepingScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          SleepScreen(),
-          CryScreen(),
+        children: [
+          SleepScreen(isActiveTab: _tabController.index == 0),
+          CryScreen(isActiveTab: _tabController.index == 1),
           TableScreen(),
         ],
       ),

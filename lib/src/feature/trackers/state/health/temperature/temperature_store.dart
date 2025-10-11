@@ -83,18 +83,22 @@ abstract class _TemperatureStore
     final List<List<TableItem>> result = [];
     for (final entity in listData) {
       final tempHistory = entity.temperatureHistory ?? [];
+      if (tempHistory.isEmpty) continue; // Skip if no temperature history
+      
       for (int colIdx = 0; colIdx < tempHistory.length; colIdx++) {
         final temp = tempHistory[colIdx];
+        if (temp == null) continue; // Skip null temperature entries
+        
         final bool hasNote = temp.notes != null && temp.notes!.isNotEmpty;
 
         result.add([
           TableItem(
-            title: colIdx == 0 ? entity.title : '',
+            title: colIdx == 0 ? (entity.title ?? '') : '',
             row: result.length + 1,
             column: 1,
           ),
           TableItem(
-            title: temp.time.toString(),
+            title: temp.time?.toString() ?? '',
             row: result.length + 1,
             column: 2,
             trailing: hasNote
@@ -111,7 +115,7 @@ abstract class _TemperatureStore
                 : null,
           ),
           TableItem(
-            title: temp.temperatures,
+            title: temp.temperatures ?? '',
             row: result.length + 1,
             column: 3,
             trailing: hasNote

@@ -29,10 +29,13 @@ class _BodyState extends State<_Body> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final store = context.read<GrowthStore>();
       final tableStore = context.read<GrowthTableStore>();
       store.getIsShowInfo().then((v) {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       });
       store.fetchGrowthDetails();
 
@@ -52,15 +55,20 @@ class _BodyState extends State<_Body> {
     final tableStore = context.watch<GrowthTableStore>();
 
     return Observer(builder: (context) {
+      if (!mounted) return const SizedBox.shrink();
       return TrackerBody(
         isShowInfo: store.isShowInfo,
         setIsShowInfo: (v) {
           store.setIsShowInfo(v).then((v) {
-            setState(() {});
+            if (mounted) {
+              setState(() {});
+            }
           });
         },
         learnMoreWidgetText: t.trackers.findOutMoreTextHeight,
-        onPressLearnMore: () {},
+        onPressLearnMore: () {
+          context.pushNamed(AppViews.serviceKnowlegde);
+        },
         children: [
           SliverToBoxAdapter(child: 10.h),
 
@@ -89,7 +97,9 @@ class _BodyState extends State<_Body> {
                           onSelected: (index) {
                             store.switchGrowthUnit(
                                 index == 0 ? GrowthUnit.cm : GrowthUnit.m);
-                            setState(() {});
+                            if (mounted) {
+                              setState(() {});
+                            }
                           },
                         ),
                       ],
@@ -105,6 +115,7 @@ class _BodyState extends State<_Body> {
               child: SizedBox(
                 height: 278,
                 child: Observer(builder: (context) {
+                  if (!mounted) return const SizedBox.shrink();
                   return FlProgressChart(
                     min: store.minValue,
                     max: store.maxValue,
@@ -118,7 +129,9 @@ class _BodyState extends State<_Body> {
           SliverToBoxAdapter(
             child: EditingButtons(
                 addBtnText: trackerType.addButtonTitle,
-                learnMoreTap: () {},
+                learnMoreTap: () {
+                  context.pushNamed(AppViews.serviceKnowlegde);
+                },
                 addButtonTap: () {
                   context.pushNamed(AppViews.addGrowthView, extra: {
                     'store': store,
@@ -151,7 +164,9 @@ class _BodyState extends State<_Body> {
                   title2: t.trackers.old.title,
                   onSelected: (index) {
                     tableStore.setSortOrder(index);
-                    setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
                   },
                   // isTrue: false,
                 ),
@@ -163,7 +178,9 @@ class _BodyState extends State<_Body> {
                         onSelected: (index) {
                           tableStore.setGrowthUnit(
                               index == 0 ? GrowthUnit.cm : GrowthUnit.m);
-                          setState(() {});
+                          if (mounted) {
+                            setState(() {});
+                          }
                         },
                       ),
               ],
@@ -173,7 +190,7 @@ class _BodyState extends State<_Body> {
 
           if (tableStore.listData.isNotEmpty)
             SliverToBoxAdapter(
-              child: SkitTableWidget(store: tableStore),
+              child: _GrowthTableWithShowAll(store: tableStore),
             ),
 
           // SliverToBoxAdapter(
@@ -195,5 +212,61 @@ class _BodyState extends State<_Body> {
         ],
       );
     });
+  }
+}
+
+class _GrowthTableWithShowAll extends StatelessWidget {
+  final GrowthTableStore store;
+  
+  const _GrowthTableWithShowAll({required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Column(
+      children: [
+        Observer(builder: (context) {
+          return SkitTableWidget(store: store);
+        }),
+        Observer(builder: (context) {
+          if (store.canShowAll || store.canCollapse) {
+            return Column(
+              children: [
+                const SizedBox(height: 16),
+                Center(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    onTap: () {
+                      store.toggleShowAll();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                      child: Column(
+                        children: [
+                          Text(
+                            store.showAll ? 'Свернуть историю' : 'Вся история',
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Icon(
+                            store.showAll ? Icons.expand_less : Icons.expand_more, 
+                            color: theme.colorScheme.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        }),
+      ],
+    );
   }
 }

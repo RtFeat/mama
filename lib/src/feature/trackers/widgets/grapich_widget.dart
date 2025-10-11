@@ -11,6 +11,10 @@ class GraphicWidget extends StatelessWidget {
   final double minimum;
   final double maximum;
   final double interval;
+  final VoidCallback? onPrev;
+  final VoidCallback? onNext;
+  final String? rangeLabel;
+  final String? averageLabel;
   const GraphicWidget(
       {super.key,
       required this.listOfData,
@@ -18,7 +22,11 @@ class GraphicWidget extends StatelessWidget {
       required this.bottomColumnText,
       required this.minimum,
       required this.maximum,
-      required this.interval});
+      required this.interval,
+      this.onPrev,
+      this.onNext,
+      this.rangeLabel,
+      this.averageLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -40,25 +48,24 @@ class GraphicWidget extends StatelessWidget {
                 AppIcons.chevronBackward,
                 color: AppColors.primaryColor,
               ),
-              onPressed: () {},
+              onPressed: onPrev,
             ),
             10.w,
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                //TODO сделать динамическую дату
-                Text('11 сентября - 17 сентября',
+                Text(rangeLabel ?? '',
                     style: textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w400, color: Colors.black)),
-                Text('106 мл в среднем в день',
+                Text(averageLabel ?? '',
                     style: textTheme.labelSmall
                         ?.copyWith(fontWeight: FontWeight.w400))
               ],
             ),
             10.w,
             IconButton(
-              onPressed: () {},
+              onPressed: onNext,
               // icon: SvgPicture.asset(
               //   height: 15,
               //   Assets.icons.icArrowRightFilled,
@@ -86,21 +93,22 @@ class GraphicWidget extends StatelessWidget {
                 dataLabelSettings: DataLabelSettings(
                     builder: (data, point, series, pointIndex, seriesIndex) {
                       final model = data as GraphicData;
-                      if (model.bottom == 0 && model.top == 0) {
+                      if (model.bottom == 0) {
                         return const SizedBox.shrink();
                       }
                       return Text(
                         '$bottomColumnText\n${model.bottom}',
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.center,
                         style: textTheme.labelSmall
                             ?.copyWith(color: AppColors.trackerColor),
                       );
                     },
+                    margin: const EdgeInsets.only(top: 0),
                     isVisible: true,
                     showCumulativeValues: true),
                 dataSource: listOfData,
                 xValueMapper: (GraphicData data, _) => data.weekDay,
-                yValueMapper: (GraphicData data, _) => data.top),
+                yValueMapper: (GraphicData data, _) => data.bottom),
             StackedBarSeries<GraphicData, String>(
                 width: 0.8,
                 color: AppColors.greenBrighterBackgroundColor,
@@ -109,18 +117,22 @@ class GraphicWidget extends StatelessWidget {
                 dataLabelSettings: DataLabelSettings(
                     builder: (data, point, series, pointIndex, seriesIndex) {
                       final model = data as GraphicData;
+                      if (model.top == 0) {
+                        return const SizedBox.shrink();
+                      }
                       return Text(
                         '$topColumnText\n${model.top}',
+                        textAlign: TextAlign.center,
                         style: textTheme.labelSmall
                             ?.copyWith(color: AppColors.trackerColor),
                       );
                     },
-                    alignment: ChartAlignment.center,
+                    margin: const EdgeInsets.only(top: 0),
                     isVisible: true,
                     showCumulativeValues: false),
                 dataSource: listOfData,
                 xValueMapper: (GraphicData data, _) => data.weekDay,
-                yValueMapper: (GraphicData data, _) => data.bottom),
+                yValueMapper: (GraphicData data, _) => data.top),
           ],
           primaryXAxis: CategoryAxis(
             tickPosition: TickPosition.outside,

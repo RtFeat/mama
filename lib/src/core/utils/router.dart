@@ -245,8 +245,8 @@ final GoRouter router = GoRouter(
                     name: AppViews.author,
                     builder: (context, state) => const AuthorsView()),
                 GoRoute(
-                  path: _Paths.favoriteArticles,
                   name: AppViews.favoriteArticles,
+                  path: _Paths.favoriteArticles,
                   builder: (context, state) => const FavoriteArticlesView(),
                 )
               ],
@@ -287,8 +287,7 @@ final GoRouter router = GoRouter(
                       apiClient: context.read<Dependencies>().apiClient,
                       restClient: context.read<Dependencies>().restClient,
                       faker: context.read<Dependencies>().faker,
-                      childId:
-                          context.read<UserStore>().selectedChild?.id ?? '',
+                      userStore: context.read<UserStore>(),
                       onLoad: () =>
                           context.read<WeightDataSourceLocal>().getIsShow(),
                       onSet: (value) =>
@@ -296,12 +295,16 @@ final GoRouter router = GoRouter(
                     ),
                   ),
                   Provider(create: (context) {
-                    return WeightTableStore(
-                      store: context.read<WeightStore>(),
+                    final weightStore = context.read<WeightStore>();
+                    final tableStore = WeightTableStore(
+                      store: weightStore,
                       restClient: context.read<Dependencies>().restClient,
                       apiClient: context.read<Dependencies>().apiClient,
                       faker: context.read<Dependencies>().faker,
                     );
+                    // Устанавливаем ссылку на tableStore в weightStore
+                    weightStore.tableStore = tableStore;
+                    return tableStore;
                   }),
                   Provider(
                     create: (context) => AddWeightViewStore(
@@ -327,12 +330,16 @@ final GoRouter router = GoRouter(
                     ),
                   ),
                   Provider(create: (context) {
-                    return GrowthTableStore(
-                      store: context.read<GrowthStore>(),
+                    final growthStore = context.read<GrowthStore>();
+                    final tableStore = GrowthTableStore(
+                      store: growthStore,
                       restClient: context.read<Dependencies>().restClient,
                       apiClient: context.read<Dependencies>().apiClient,
                       faker: context.read<Dependencies>().faker,
                     );
+                    // Устанавливаем ссылку на tableStore в growthStore
+                    growthStore.tableStore = tableStore;
+                    return tableStore;
                   }),
                   Provider(
                     create: (context) => AddGrowthViewStore(
@@ -358,12 +365,16 @@ final GoRouter router = GoRouter(
                     ),
                   ),
                   Provider(create: (context) {
-                    return CircleTableStore(
-                      store: context.read<CircleStore>(),
+                    final circleStore = context.read<CircleStore>();
+                    final tableStore = CircleTableStore(
+                      store: circleStore,
                       restClient: context.read<Dependencies>().restClient,
                       apiClient: context.read<Dependencies>().apiClient,
                       faker: context.read<Dependencies>().faker,
                     );
+                    // Устанавливаем ссылку на tableStore в circleStore
+                    circleStore.tableStore = tableStore;
+                    return tableStore;
                   }),
                   Provider(
                     create: (context) => AddCircleViewStore(
@@ -374,7 +385,19 @@ final GoRouter router = GoRouter(
                             apiClient: context.read<Dependencies>().apiClient,
                             restClient: context.read<Dependencies>().restClient,
                             faker: context.read<Dependencies>().faker,
-                          ))
+                          )),
+                  Provider(
+                      create: (context) => SleepTableStore(
+                            apiClient: context.read<Dependencies>().apiClient,
+                            restClient: context.read<Dependencies>().restClient,
+                            faker: context.read<Dependencies>().faker,
+                          )),
+                  Provider(
+                      create: (context) => CryTableStore(
+                            apiClient: context.read<Dependencies>().apiClient,
+                            restClient: context.read<Dependencies>().restClient,
+                            faker: context.read<Dependencies>().faker,
+                          )),
                 ],
                 child: child,
               );
@@ -404,13 +427,18 @@ final GoRouter router = GoRouter(
             ]),
         ShellRoute(
             builder: (context, state, child) {
-              return Provider(
-                  child: child,
-                  create: (context) {
-                    return SleepStore(
+              return MultiProvider(
+                providers: [
+                  Provider(
+                    create: (context) => SleepTableStore(
+                      apiClient: context.read<Dependencies>().apiClient,
                       restClient: context.read<Dependencies>().restClient,
-                    );
-                  });
+                      faker: context.read<Dependencies>().faker,
+                    ),
+                  ),
+                ],
+                child: child,
+              );
             },
             routes: [
               GoRoute(
@@ -454,17 +482,26 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: AppViews.addPumping,
               path: _Paths.addPumping,
-              builder: (context, state) => const AddPumpingScreen(),
+              builder: (context, state) {
+                final extra = state.extra;
+                return AddPumpingScreen(existing: extra);
+              },
             ),
             GoRoute(
               name: AppViews.addBottle,
               path: _Paths.addBottle,
-              builder: (context, state) => const AddBottleScreen(),
+              builder: (context, state) {
+                final extra = state.extra;
+                return AddBottleScreen(existing: extra);
+              },
             ),
             GoRoute(
               name: AppViews.addLure,
               path: _Paths.addLure,
-              builder: (context, state) => const AddLureScreen(),
+              builder: (context, state) {
+                final extra = state.extra;
+                return AddLureScreen(existing: extra);
+              },
             ),
           ],
         ),
@@ -656,9 +693,11 @@ final GoRouter router = GoRouter(
         builder: (context, state) {
           final Map? extra = state.extra as Map?;
           final String? path = extra?['path'] as String?;
+          final String? title = extra?['title'] as String?;
 
           return PdfView(
             path: path ?? '',
+            title: title,
           );
         }),
     GoRoute(

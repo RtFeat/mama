@@ -33,11 +33,13 @@ class ManuallyInputContainer extends StatelessWidget {
                         title: t.feeding.left,
                         controlName: 'left',
                         inputHint: '0м 0с',
+                        subtitle: 'Change time',
                       ),
                       InputContainer(
                         title: t.feeding.right,
                         controlName: 'right',
                         inputHint: '0м 0с',
+                        subtitle: 'Change time',
                       )
                     ],
                   ),

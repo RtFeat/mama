@@ -1,5 +1,6 @@
 import 'package:mama/src/data.dart';
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart';
 
 part 'circle_store.g.dart';
 
@@ -11,7 +12,10 @@ class CircleStore extends _CircleStore with _$CircleStore {
     required super.childId,
     required super.onLoad,
     required super.onSet,
+    this.tableStore,
   });
+  
+  CircleTableStore? tableStore;
 }
 
 abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
@@ -23,11 +27,11 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     required this.childId,
     required super.onLoad,
     required super.onSet,
-  }) : super(
+  }        ) : super(
           testDataGenerator: () {
             return EntityHistoryCircle();
           },
-          basePath: '',
+          basePath: 'growth/circle/history',
           fetchFunction: (params, path) =>
               apiClient.get(path, queryParams: params),
           pageSize: 15,
@@ -42,6 +46,8 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
   final String childId;
   final RestClient restClient;
 
+  CircleTableStore? get tableStore => (this as CircleStore).tableStore;
+
   @observable
   GrowthGetCircleResponse? circleDetails;
 
@@ -49,30 +55,285 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
   Current get current {
     if (circleDetails?.list?.currentCircle != null) {
       final current = circleDetails?.list?.currentCircle;
-      return Current(
-        value: double.tryParse(current?.circle ?? '') ?? 0,
-        label: current?.data ?? '',
-        isNormal: current?.normal ?? '',
-        days: current?.days ?? '',
-      );
-    } else {
-      return Current(value: 0, label: '', isNormal: '', days: '');
+      final apiCircle = double.tryParse(current?.circle ?? '') ?? 0;
+      
+      // Если API вернул валидную окружность головы (> 0), используем её
+      if (apiCircle > 0) {
+        final String rawDays = current?.days ?? '';
+        
+        // Извлекаем число дней из строки типа "20 дней назад" или "-11 дней назад"
+        String normalizedDays = '0';
+        if (rawDays.isNotEmpty) {
+          // Ищем число в строке (включая отрицательные)
+          final RegExp numberRegex = RegExp(r'-?\d+');
+          final Match? match = numberRegex.firstMatch(rawDays);
+          if (match != null) {
+            final int? parsedDays = int.tryParse(match.group(0)!);
+            if (parsedDays != null) {
+              // Убираем минус, если он есть
+              normalizedDays = parsedDays.abs().toString();
+            }
+          }
+        }
+        
+        // Проверяем, содержит ли data текст "дней назад" и извлекаем только дату
+        String labelText = current?.data ?? '';
+        if (labelText.contains('дней назад')) {
+          // Если data содержит "дней назад", используем только дату без этого текста
+          labelText = labelText.replaceAll(RegExp(r'\s*-?\d+\s*дней\s*назад\s*'), '').trim();
+        }
+        
+        // Преобразуем статус нормы для API данных
+        String apiNormStatus = current?.normal ?? '';
+        if (apiNormStatus == 'Граница нормы') {
+          apiNormStatus = 'Показатель в норме';
+        } else if (apiNormStatus.isEmpty) {
+          apiNormStatus = 'Показатель в норме'; // По умолчанию считаем в норме
+        }
+        
+        return Current(
+          value: apiCircle,
+          label: labelText,
+          isNormal: apiNormStatus,
+          days: normalizedDays,
+        );
+      }
     }
+    
+    // Fallback: используем данные из истории если основных данных нет
+    final historyData = tableStore?.listData ?? listData;
+    if (historyData.isNotEmpty) {
+      // Сортируем по дате, чтобы получить самую позднюю запись
+      final sortedData = List<EntityHistoryCircle>.from(historyData);
+      sortedData.sort((a, b) {
+        DateTime? dateA, dateB;
+        
+        // Парсим дату из allData (ISO формат)
+        if (a.allData != null && a.allData!.isNotEmpty) {
+          try {
+            dateA = DateTime.parse(a.allData!);
+          } catch (e) {
+            // Игнорируем ошибки парсинга
+          }
+        }
+        
+        if (b.allData != null && b.allData!.isNotEmpty) {
+          try {
+            dateB = DateTime.parse(b.allData!);
+          } catch (e) {
+            // Игнорируем ошибки парсинга
+          }
+        }
+        
+        // Если allData не сработал, пытаемся парсить data (формат DD.MM)
+        if (dateA == null && a.data != null && a.data!.isNotEmpty) {
+          final parts = a.data!.split('.');
+          if (parts.length == 2) {
+            final month = int.tryParse(parts[0]);
+            final day = int.tryParse(parts[1]);
+            if (month != null && day != null && month <= 12 && day <= 31) {
+              dateA = DateTime(DateTime.now().year, month, day);
+            }
+          }
+        }
+        
+        if (dateB == null && b.data != null && b.data!.isNotEmpty) {
+          final parts = b.data!.split('.');
+          if (parts.length == 2) {
+            final month = int.tryParse(parts[0]);
+            final day = int.tryParse(parts[1]);
+            if (month != null && day != null && month <= 12 && day <= 31) {
+              dateB = DateTime(DateTime.now().year, month, day);
+            }
+          }
+        }
+        
+        if (dateA == null || dateB == null) return 0;
+        return dateA.compareTo(dateB);
+      });
+      
+      final latestRecord = sortedData.last; // Берем самую позднюю запись
+      
+      // Парсим окружность головы
+      final rawCircle = (latestRecord.circle ?? '').replaceAll(',', '.');
+      final value = double.tryParse(rawCircle) ?? 0;
+      
+      // Парсим дату
+      String labelText = '';
+      if (latestRecord.allData != null && latestRecord.allData!.isNotEmpty) {
+        try {
+          final dateTime = DateTime.parse(latestRecord.allData!);
+          labelText = '${dateTime.day} ${_getMonthName(dateTime.month)}';
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      if (labelText.isEmpty && latestRecord.data != null && latestRecord.data!.isNotEmpty) {
+        // Если data в формате DD.MM, конвертируем в DD месяц
+        final parts = latestRecord.data!.split('.');
+        if (parts.length == 2) {
+          final day = int.tryParse(parts[0]);
+          final month = int.tryParse(parts[1]);
+          if (day != null && month != null && month >= 1 && month <= 12) {
+            labelText = '$day ${_getMonthName(month)}';
+          } else {
+            labelText = latestRecord.data!;
+          }
+        } else {
+          labelText = latestRecord.data!;
+        }
+      }
+      
+      // Преобразуем статус нормы
+      String normStatus = latestRecord.normal ?? '';
+      if (normStatus == 'Граница нормы') {
+        normStatus = 'Показатель в норме';
+      } else if (normStatus.isEmpty) {
+        normStatus = 'Показатель в норме'; // По умолчанию считаем в норме
+      }
+      
+      return Current(
+        value: value,
+        label: labelText,
+        isNormal: normStatus,
+        days: '0', // Для истории не показываем "дней назад"
+      );
+    }
+    
+    return Current(value: 0, label: '', isNormal: '', days: '0');
   }
 
   @computed
   Dynamic get dynamicValue {
-    if (circleDetails?.list?.dynamicsCircle != null) {
-      final dynamic = circleDetails?.list?.dynamicsCircle;
+    // Всегда вычисляем динамику из истории для точности
+    final historyData = tableStore?.listData ?? listData;
+    if (historyData.length >= 2) {
+      // Сортируем по дате для правильного расчета
+      final sortedData = List<EntityHistoryCircle>.from(historyData);
+      sortedData.sort((a, b) {
+        DateTime? dateA, dateB;
+        
+        // Парсим дату из allData (ISO формат)
+        if (a.allData != null && a.allData!.isNotEmpty) {
+          try {
+            dateA = DateTime.parse(a.allData!);
+          } catch (e) {
+            // Игнорируем ошибки парсинга
+          }
+        }
+        
+        if (b.allData != null && b.allData!.isNotEmpty) {
+          try {
+            dateB = DateTime.parse(b.allData!);
+          } catch (e) {
+            // Игнорируем ошибки парсинга
+          }
+        }
+        
+        // Если allData не сработал, пытаемся парсить data (формат MM.DD)
+        if (dateA == null && a.data != null && a.data!.isNotEmpty) {
+          final parts = a.data!.split('.');
+          if (parts.length == 2) {
+            final month = int.tryParse(parts[0]);
+            final day = int.tryParse(parts[1]);
+            if (month != null && day != null && month <= 12 && day <= 31) {
+              dateA = DateTime(DateTime.now().year, month, day);
+            }
+          }
+        }
+        
+        if (dateB == null && b.data != null && b.data!.isNotEmpty) {
+          final parts = b.data!.split('.');
+          if (parts.length == 2) {
+            final month = int.tryParse(parts[0]);
+            final day = int.tryParse(parts[1]);
+            if (month != null && day != null && month <= 12 && day <= 31) {
+              dateB = DateTime(DateTime.now().year, month, day);
+            }
+          }
+        }
+        
+        if (dateA == null || dateB == null) return 0;
+        return dateA.compareTo(dateB);
+      });
+      
+      // Берем первую и последнюю записи
+      final first = sortedData.first;
+      final last = sortedData.last;
+      
+      // Парсим окружность головы
+      final firstCircle = double.tryParse((first.circle ?? '').replaceAll(',', '.')) ?? 0;
+      final lastCircle = double.tryParse((last.circle ?? '').replaceAll(',', '.')) ?? 0;
+      
+      // Вычисляем разность в сантиметрах
+      final circleDiff = lastCircle - firstCircle;
+      
+      // Вычисляем количество дней
+      DateTime? firstDate, lastDate;
+      
+      if (first.allData != null && first.allData!.isNotEmpty) {
+        try {
+          firstDate = DateTime.parse(first.allData!);
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      if (last.allData != null && last.allData!.isNotEmpty) {
+        try {
+          lastDate = DateTime.parse(last.allData!);
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      // Если allData не сработал, пытаемся парсить data
+      if (firstDate == null && first.data != null && first.data!.isNotEmpty) {
+        final parts = first.data!.split('.');
+        if (parts.length == 2) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          if (month != null && day != null && month <= 12 && day <= 31) {
+            firstDate = DateTime(DateTime.now().year, month, day);
+          }
+        }
+      }
+      
+      if (lastDate == null && last.data != null && last.data!.isNotEmpty) {
+        final parts = last.data!.split('.');
+        if (parts.length == 2) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          if (month != null && day != null && month <= 12 && day <= 31) {
+            lastDate = DateTime(DateTime.now().year, month, day);
+          }
+        }
+      }
+      
+      int daysDiff = 0;
+      if (firstDate != null && lastDate != null) {
+        daysDiff = lastDate.difference(firstDate).inDays;
+      }
+      
+      // Вычисляем динамику в сантиметрах в сутки
+      double dailyChange = 0;
+      if (daysDiff > 0) {
+        dailyChange = circleDiff / daysDiff;
+      }
+      
+      // Формируем диапазон дат
+      final dateRange = _calculateDateRange();
+      
       return Dynamic(
-        value: double.tryParse(dynamic?.circleGain ?? '') ?? 0,
-        label: dynamic?.circleToDay ?? '',
-        days: dynamic?.days ?? '',
-        duration: dynamic?.timeDuration ?? '',
+        value: dailyChange,
+        label: circleDiff.toInt().toString(), // Общая разность в сантиметрах
+        days: daysDiff.toString(),
+        duration: dateRange,
       );
-    } else {
-      return Dynamic(value: 0, label: '', days: '', duration: '');
     }
+    
+    return Dynamic(value: 0, label: '', days: '', duration: '');
   }
 
   @computed
@@ -91,63 +352,514 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
 
   @computed
   List<ChartData> get chartData {
-    if (circleDetails?.list?.table != null) {
-      final table = circleDetails?.list?.table;
-      table?.sort((a, b) {
-        final partsA = a.time?.split('.');
-        final partsB = b.time?.split('.');
-        if (partsA == null ||
-            partsB == null ||
-            partsA.length != 2 ||
-            partsB.length != 2) {
-          return 0;
-        }
-        final monthA = int.tryParse(partsA[0]) ?? 0;
-        final dayA = int.tryParse(partsA[1]) ?? 0;
-        final monthB = int.tryParse(partsB[0]) ?? 0;
-        final dayB = int.tryParse(partsB[1]) ?? 0;
+    // Если нет childId, возвращаем пустой список
+    if (childId.isEmpty) {
+      print('CircleStore chartData: childId is empty');
+      return [];
+    }
+    
+    print('CircleStore chartData: childId = $childId');
+    print('CircleStore chartData: circleDetails?.list?.table = ${circleDetails?.list?.table}');
+    print('CircleStore chartData: listData.length = ${listData.length}');
+    
+    // Сначала пытаемся получить данные из circleDetails (API графика)
+    if (circleDetails?.list?.table != null && circleDetails!.list!.table!.isNotEmpty) {
+      print('CircleStore chartData: Using data from circleDetails');
+      return _processChartDataFromTable(circleDetails!.list!.table!);
+    }
+    
+    // Если данных нет, используем данные из истории как fallback
+    // Сначала пробуем данные из tableStore, потом из собственного listData
+    final historyData = tableStore?.listData ?? listData;
+    if (historyData.isNotEmpty) {
+      print('CircleStore chartData: Using data from history (${historyData.length} items)');
+      return _processChartDataFromHistory(historyData);
+    }
+    
+    // Если и истории нет, пытаемся загрузить данные
+    print('CircleStore chartData: No data found, attempting to load history');
+    if (_isActive && childId.isNotEmpty) {
+      // Асинхронно загружаем историю
+      Future.microtask(() => _loadHistoryData());
+    }
+    
+    return [];
+  }
 
-        final dateA = DateTime(DateTime.now().year, monthA, dayA);
-        final dateB = DateTime(DateTime.now().year, monthB, dayB);
-        return dateA.compareTo(dateB);
-      });
-
-      return table!.map((e) {
+  List<ChartData> _processChartDataFromTable(List<dynamic> table) {
+    final now = DateTime.now();
+    final List<_DateValue> dateValues = [];
+    for (final e in table) {
+      final parts = e.time?.split('.');
+      if (parts == null || parts.length != 2) continue;
+      final month = int.tryParse(parts[0]);
+      final day = int.tryParse(parts[1]);
+      if (month == null || day == null) continue;
         var value = double.tryParse(e.circle ?? '') ?? 0;
         value = circleUnit == CircleUnit.cm ? value : value * 10;
-        final parts = e.time?.split('.');
-        if (parts == null || parts.length != 2) {
-          return ChartData(0, value, '', '');
-        }
-        final month = int.tryParse(parts[0]) ?? 0;
-        final day = int.tryParse(parts[1]) ?? 0;
-
-        final date = DateTime(DateTime.now().year, month, day);
-        final xValue =
-            date.difference(DateTime(date.year, 1, 1)).inDays.toDouble();
-
-        return ChartData(
-            xValue,
-            value,
-            '${day.toString().padLeft(2, '0')}.${month.toString().padLeft(2, '0')}',
-            t.home.monthsData.title[month - 1]);
-      }).toList();
+      dateValues.add(_DateValue(month: month, day: day, value: value));
     }
+    if (dateValues.isEmpty) return [];
+    return _convertDateValuesToChartData(dateValues, now);
+  }
+
+  List<ChartData> _processChartDataFromHistory(List<EntityHistoryCircle> historyData) {
+    print('CircleStore _processChartDataFromHistory: Processing ${historyData.length} items');
+    final now = DateTime.now();
+    final List<_DateValue> dateValues = [];
+    
+    for (final item in historyData) {
+      print('CircleStore _processChartDataFromHistory: Processing item - data: ${item.data}, allData: ${item.allData}, circle: ${item.circle}');
+      
+      int? month, day;
+      
+      // Сначала пытаемся парсить allData (ISO формат)
+      if (item.allData != null && item.allData!.isNotEmpty) {
+        try {
+          final dateTime = DateTime.parse(item.allData!);
+          month = dateTime.month;
+          day = dateTime.day;
+          print('CircleStore _processChartDataFromHistory: Parsed from allData - month: $month, day: $day');
+        } catch (e) {
+          print('CircleStore _processChartDataFromHistory: Failed to parse allData: $e');
+        }
+      }
+      
+      // Если allData не сработал, пытаемся парсить data (формат DD.MM)
+      if (month == null || day == null) {
+        final dateStr = item.data ?? '';
+        if (dateStr.isNotEmpty) {
+          final parts = dateStr.split('.');
+          if (parts.length == 2) {
+            month = int.tryParse(parts[0]);
+            day = int.tryParse(parts[1]);
+            
+            // Если не получилось, пробуем наоборот
+            if (month == null || day == null || month > 12) {
+              month = int.tryParse(parts[1]);
+              day = int.tryParse(parts[0]);
+            }
+            print('CircleStore _processChartDataFromHistory: Parsed from data - month: $month, day: $day');
+          }
+        }
+      }
+      
+      if (month == null || day == null || month > 12 || day > 31) {
+        print('CircleStore _processChartDataFromHistory: Skipping item - invalid date (month: $month, day: $day)');
+        continue;
+      }
+      
+      // Парсим окружность головы
+      final rawCircle = (item.circle ?? '').replaceAll(',', '.');
+      var value = double.tryParse(rawCircle) ?? 0;
+      value = circleUnit == CircleUnit.cm ? value : value * 10;
+      
+      dateValues.add(_DateValue(month: month, day: day, value: value));
+    }
+    
+    if (dateValues.isEmpty) {
+      print('CircleStore _processChartDataFromHistory: No valid date values found');
     return [];
+    }
+    print('CircleStore _processChartDataFromHistory: Found ${dateValues.length} valid date values');
+    return _convertDateValuesToChartData(dateValues, now);
   }
 
   @observable
   bool isDetailsLoading = false;
 
+  // Добавляем флаг для отслеживания активного состояния
+  @observable
+  bool _isActive = true;
+
   @action
   Future<void> fetchCircleDetails() async {
-    isDetailsLoading = true;
+    // Проверяем, активен ли еще store
+    if (!_isActive) return;
+    
+    runInAction(() => isDetailsLoading = true);
+    
     try {
-      circleDetails = await restClient.growth.getGrowthCircle(childId: childId);
+      final response = await restClient.growth.getGrowthCircle(childId: childId);
+      
+      // Проверяем еще раз перед обновлением состояния
+      if (_isActive) {
+        runInAction(() {
+          circleDetails = response;
+        });
+      }
+      
+      // Если данных для графика нет, загружаем историю как fallback
+      if (_isActive && childId.isNotEmpty && (circleDetails?.list?.table == null || circleDetails!.list!.table!.isEmpty)) {
+        await _loadHistoryData();
+      }
     } catch (e) {
-      print(e);
+      print('CircleStore fetchCircleDetails error: $e');
+      // В случае ошибки тоже пытаемся загрузить историю
+      if (_isActive && childId.isNotEmpty) {
+        await _loadHistoryData();
+      }
     } finally {
-      isDetailsLoading = false;
+      // Всегда обновляем состояние, но только если store еще активен
+      if (_isActive) {
+        runInAction(() => isDetailsLoading = false);
+      }
     }
   }
+
+  @action
+  Future<void> _loadHistoryData() async {
+    if (!_isActive || childId.isEmpty) {
+      print('CircleStore _loadHistoryData: Skipping - not active or childId empty');
+      return;
+    }
+    print('CircleStore _loadHistoryData: Loading history for childId: $childId');
+    try {
+      // Используем loadPage с правильными фильтрами вместо refresh
+      await loadPage(newFilters: [
+        SkitFilter(
+          field: 'child_id',
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ]);
+      print('CircleStore _loadHistoryData: Successfully loaded ${listData.length} items');
+    } catch (e) {
+      print('CircleStore _loadHistoryData error: $e');
+    }
+  }
+
+  // Метод для деактивации store при размонтировании виджета
+  @action
+  void deactivate() {
+    _isActive = false;
+  }
+
+  // Метод для реактивации store
+  @action
+  void activate() {
+    _isActive = true;
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      fetchCircleDetails();
+    }
+  }
+
+  String _calculateDateRange() {
+    // Получаем данные из истории
+    final historyData = tableStore?.listData ?? listData;
+    if (historyData.length < 2) return '';
+    
+    // Сортируем по дате
+    final sortedData = List<EntityHistoryCircle>.from(historyData);
+    sortedData.sort((a, b) {
+      DateTime? dateA, dateB;
+      
+      // Парсим дату из allData (ISO формат)
+      if (a.allData != null && a.allData!.isNotEmpty) {
+        try {
+          dateA = DateTime.parse(a.allData!);
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      if (b.allData != null && b.allData!.isNotEmpty) {
+        try {
+          dateB = DateTime.parse(b.allData!);
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      // Если allData не сработал, пытаемся парсить data (формат MM.DD)
+      if (dateA == null && a.data != null && a.data!.isNotEmpty) {
+        final parts = a.data!.split('.');
+        if (parts.length == 2) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          if (month != null && day != null && month <= 12 && day <= 31) {
+            dateA = DateTime(DateTime.now().year, month, day);
+          }
+        }
+      }
+      
+      if (dateB == null && b.data != null && b.data!.isNotEmpty) {
+        final parts = b.data!.split('.');
+        if (parts.length == 2) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          if (month != null && day != null && month <= 12 && day <= 31) {
+            dateB = DateTime(DateTime.now().year, month, day);
+          }
+        }
+      }
+      
+      if (dateA == null || dateB == null) return 0;
+      return dateA.compareTo(dateB);
+    });
+    
+    if (sortedData.isEmpty) return '';
+    
+    // Берем первую и последнюю даты
+    final first = sortedData.first;
+    final last = sortedData.last;
+    
+    DateTime? firstDate, lastDate;
+    
+    // Парсим первую дату
+    if (first.allData != null && first.allData!.isNotEmpty) {
+      try {
+        firstDate = DateTime.parse(first.allData!);
+      } catch (e) {
+        // Игнорируем ошибки парсинга
+      }
+    }
+    
+    if (firstDate == null && first.data != null && first.data!.isNotEmpty) {
+      final parts = first.data!.split('.');
+      if (parts.length == 2) {
+        final month = int.tryParse(parts[0]);
+        final day = int.tryParse(parts[1]);
+        if (month != null && day != null && month <= 12 && day <= 31) {
+          firstDate = DateTime(DateTime.now().year, month, day);
+        }
+      }
+    }
+    
+    // Парсим последнюю дату
+    if (last.allData != null && last.allData!.isNotEmpty) {
+      try {
+        lastDate = DateTime.parse(last.allData!);
+      } catch (e) {
+        // Игнорируем ошибки парсинга
+      }
+    }
+    
+    if (lastDate == null && last.data != null && last.data!.isNotEmpty) {
+      final parts = last.data!.split('.');
+      if (parts.length == 2) {
+        final month = int.tryParse(parts[0]);
+        final day = int.tryParse(parts[1]);
+        if (month != null && day != null && month <= 12 && day <= 31) {
+          lastDate = DateTime(DateTime.now().year, month, day);
+        }
+      }
+    }
+    
+    if (firstDate == null || lastDate == null) return '';
+    
+    // Форматируем даты в формат "день месяц"
+    final firstFormatted = '${firstDate.day} ${_getMonthName(firstDate.month)}';
+    final lastFormatted = '${lastDate.day} ${_getMonthName(lastDate.month)}';
+    
+    return '$firstFormatted - $lastFormatted';
+  }
+
+  int _calculateDaysDifference() {
+    // Получаем данные из истории
+    final historyData = tableStore?.listData ?? listData;
+    if (historyData.length < 2) return 0;
+    
+    // Сортируем по дате
+    final sortedData = List<EntityHistoryCircle>.from(historyData);
+    sortedData.sort((a, b) {
+      DateTime? dateA, dateB;
+      
+      // Парсим дату из allData (ISO формат)
+      if (a.allData != null && a.allData!.isNotEmpty) {
+        try {
+          dateA = DateTime.parse(a.allData!);
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      if (b.allData != null && b.allData!.isNotEmpty) {
+        try {
+          dateB = DateTime.parse(b.allData!);
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+      }
+      
+      // Если allData не сработал, пытаемся парсить data (формат MM.DD)
+      if (dateA == null && a.data != null && a.data!.isNotEmpty) {
+        final parts = a.data!.split('.');
+        if (parts.length == 2) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          if (month != null && day != null && month <= 12 && day <= 31) {
+            dateA = DateTime(DateTime.now().year, month, day);
+          }
+        }
+      }
+      
+      if (dateB == null && b.data != null && b.data!.isNotEmpty) {
+        final parts = b.data!.split('.');
+        if (parts.length == 2) {
+          final month = int.tryParse(parts[0]);
+          final day = int.tryParse(parts[1]);
+          if (month != null && day != null && month <= 12 && day <= 31) {
+            dateB = DateTime(DateTime.now().year, month, day);
+          }
+        }
+      }
+      
+      if (dateA == null || dateB == null) return 0;
+      return dateA.compareTo(dateB);
+    });
+    
+    if (sortedData.isEmpty) return 0;
+    
+    // Берем первую и последнюю даты
+    final first = sortedData.first;
+    final last = sortedData.last;
+    
+    DateTime? firstDate, lastDate;
+    
+    // Парсим первую дату
+    if (first.allData != null && first.allData!.isNotEmpty) {
+      try {
+        firstDate = DateTime.parse(first.allData!);
+      } catch (e) {
+        // Игнорируем ошибки парсинга
+      }
+    }
+    
+    if (firstDate == null && first.data != null && first.data!.isNotEmpty) {
+      final parts = first.data!.split('.');
+      if (parts.length == 2) {
+        final month = int.tryParse(parts[0]);
+        final day = int.tryParse(parts[1]);
+        if (month != null && day != null && month <= 12 && day <= 31) {
+          firstDate = DateTime(DateTime.now().year, month, day);
+        }
+      }
+    }
+    
+    // Парсим последнюю дату
+    if (last.allData != null && last.allData!.isNotEmpty) {
+      try {
+        lastDate = DateTime.parse(last.allData!);
+      } catch (e) {
+        // Игнорируем ошибки парсинга
+      }
+    }
+    
+    if (lastDate == null && last.data != null && last.data!.isNotEmpty) {
+      final parts = last.data!.split('.');
+      if (parts.length == 2) {
+        final month = int.tryParse(parts[0]);
+        final day = int.tryParse(parts[1]);
+        if (month != null && day != null && month <= 12 && day <= 31) {
+          lastDate = DateTime(DateTime.now().year, month, day);
+        }
+      }
+    }
+    
+    if (firstDate == null || lastDate == null) return 0;
+    
+    // Вычисляем разность в днях
+    final difference = lastDate.difference(firstDate).inDays;
+    return difference;
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+      'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+    return months[month - 1];
+  }
+
+  List<ChartData> _convertDateValuesToChartData(List<_DateValue> dateValues, DateTime now) {
+    final List<_DateWithYear> datesWithYears = [];
+    final reversedValues = dateValues.reversed.toList();
+    DateTime? prevDate;
+    for (final dv in reversedValues) {
+      final candidates = [
+        DateTime(now.year - 1, dv.month, dv.day),
+        DateTime(now.year, dv.month, dv.day),
+        DateTime(now.year + 1, dv.month, dv.day),
+      ];
+      DateTime chosen = candidates[1];
+      if (prevDate == null) {
+        int bestScore = 1 << 30;
+        for (final candidate in candidates) {
+          final diff = candidate.difference(now).inDays;
+          final penalty = (diff > 60) ? 10000 : 0;
+          final score = diff.abs() + penalty;
+          if (score < bestScore) {
+            bestScore = score;
+            chosen = candidate;
+          }
+        }
+      } else {
+        DateTime? bestOnOrAfter;
+        int? bestOnOrAfterDiff;
+        for (final candidate in candidates) {
+          final diffFromPrev = candidate.difference(prevDate).inDays;
+          if (diffFromPrev >= 0) {
+            if (bestOnOrAfter == null || diffFromPrev < bestOnOrAfterDiff!) {
+              bestOnOrAfter = candidate;
+              bestOnOrAfterDiff = diffFromPrev;
+            }
+          }
+        }
+        if (bestOnOrAfter != null) {
+          chosen = bestOnOrAfter;
+        }
+      }
+      datesWithYears.add(_DateWithYear(
+        date: chosen,
+        value: dv.value,
+        month: dv.month,
+        day: dv.day,
+      ));
+      prevDate = chosen;
+    }
+    datesWithYears.sort((a, b) => a.date.compareTo(b.date));
+    final List<ChartData> result = [];
+    int? baseEpochDays;
+    for (final dwh in datesWithYears) {
+      final epochDays = dwh.date.millisecondsSinceEpoch ~/ Duration.millisecondsPerDay;
+      baseEpochDays ??= epochDays;
+      final xValue = (epochDays - baseEpochDays).toDouble();
+      result.add(ChartData(
+        xValue,
+        dwh.value,
+        '${dwh.day.toString().padLeft(2, '0')}.${dwh.month.toString().padLeft(2, '0')}',
+        t.home.monthsData.title[dwh.month - 1],
+        epochDays,
+      ));
+    }
+    if (result.length == 1) {
+      final only = result.first;
+      return [ChartData(0, only.value, only.label, only.xLabel, only.epochDays)];
+    }
+    return result;
+  }
+}
+
+class _DateValue {
+  final int month;
+  final int day;
+  final double value;
+
+  _DateValue({required this.month, required this.day, required this.value});
+}
+
+class _DateWithYear {
+  final DateTime date;
+  final double value;
+  final int month;
+  final int day;
+
+  _DateWithYear({
+    required this.date,
+    required this.value,
+    required this.month,
+    required this.day,
+  });
 }

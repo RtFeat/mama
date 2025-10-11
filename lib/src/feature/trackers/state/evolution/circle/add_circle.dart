@@ -78,8 +78,7 @@ abstract class _AddCircleViewStore with Store {
     logger.info('Сохраняем данные для childId: $childId',
         runtimeType: runtimeType);
 
-    _add(dto).then((v) {
-      // _addToList(dto);
-    });
+    // Ждем завершения операции добавления
+    await _add(dto);
   }
 }

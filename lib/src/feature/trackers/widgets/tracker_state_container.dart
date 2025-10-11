@@ -7,6 +7,8 @@ enum ContainerType {
   feedingCanceled,
   sleepingSaved,
   sleepingCanceled,
+  cryingSaved,
+  cryingCanceled,
 }
 
 class TrackerStateContainer extends StatelessWidget {
@@ -47,6 +49,18 @@ class TrackerStateContainer extends StatelessWidget {
         detail = t.trackers.infoManuallyContainerCancellSleeping.text2;
         break;
 
+      case ContainerType.cryingSaved:
+        title = t.trackers.infoManuallyContainerSaveCrying.title;
+        subtitle = t.trackers.infoManuallyContainerSaveCrying.text1;
+        detail = t.trackers.infoManuallyContainerSaveCrying.text2;
+        break;
+
+      case ContainerType.cryingCanceled:
+        title = t.trackers.infoManuallyContainerCancellCrying.title;
+        subtitle = t.trackers.infoManuallyContainerCancellCrying.text1;
+        detail = t.trackers.infoManuallyContainerCancellCrying.text2;
+        break;
+
       default:
         title = t.trackers.infoManuallyContainerSaveSleeping.title;
         subtitle = t.trackers.infoManuallyContainerSaveSleeping.text1;
@@ -60,7 +74,8 @@ class TrackerStateContainer extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(
               color: type == ContainerType.feedingSaved ||
-                      type == ContainerType.sleepingSaved
+                      type == ContainerType.sleepingSaved ||
+                      type == ContainerType.cryingSaved
                   ? AppColors.greenTextColor
                   : AppColors.redColor,
               width: 1),
@@ -88,7 +103,8 @@ class TrackerStateContainer extends StatelessWidget {
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             color: type == ContainerType.feedingCanceled ||
-                                    type == ContainerType.sleepingCanceled
+                                    type == ContainerType.sleepingCanceled ||
+                                    type == ContainerType.cryingCanceled
                                 ? AppColors.redColor
                                 : AppColors.greenTextColor),
                       ),
@@ -136,7 +152,8 @@ class TrackerStateContainer extends StatelessWidget {
               ),
               10.h,
               type == ContainerType.feedingCanceled ||
-                      type == ContainerType.sleepingCanceled
+                      type == ContainerType.sleepingCanceled ||
+                      type == ContainerType.cryingCanceled
                   ? const SizedBox()
                   : CustomButton(
                       height: 48,

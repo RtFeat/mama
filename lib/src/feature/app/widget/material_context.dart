@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ispect/ispect.dart';
 import 'package:provider/provider.dart';
+import 'package:mama/src/feature/trackers/services/pdf_service.dart';
 import 'package:mama/src/data.dart';
 
 /// [MaterialContext] is an entry point to the material context.
@@ -25,9 +27,11 @@ class _MaterialContextState extends State<MaterialContext> {
     isLogModals: false,
     isLogPages: false,
   );
+  final GlobalKey<ScaffoldMessengerState> _messengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
+    PdfService.rootMessengerKey = _messengerKey;
     // router.routerDelegate.addListener(() {
     //   final String location =
     //       router.routerDelegate.currentConfiguration.last.matchedLocation;
@@ -41,7 +45,13 @@ class _MaterialContextState extends State<MaterialContext> {
     final settings = Provider.of<Dependencies>(context).settingsStore;
 
     return Observer(builder: (_) {
-      return MaterialApp.router(
+      return ScreenUtilInit(
+        designSize: const Size(375, 812),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp.router(
+        scaffoldMessengerKey: _messengerKey,
         debugShowCheckedModeBanner: false,
         routerConfig: router,
         theme: settings.lightTheme,
@@ -72,6 +82,8 @@ class _MaterialContextState extends State<MaterialContext> {
             child: child ?? const SizedBox(),
           );
           return child;
+        },
+      );
         },
       );
     });

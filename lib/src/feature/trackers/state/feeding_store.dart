@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/models/feeding_cell.dart';
@@ -79,48 +78,33 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
 
   @override
   ObservableList<List<TableItem>> get rows {
-    final uniqueTitles = <String>{};
+    final List<List<TableItem>> result = [];
 
-    return ObservableList.of(listData.mapIndexed((i, e) {
-      if (uniqueTitles.add(e.title!) && e.table!.isNotEmpty) {
-        // Это уникальный заголовок
-        return [
-          TableItem(title: e.title, row: i + 1, column: 1, trailing: null),
-          TableItem(title: '', row: i + 1, column: 2, trailing: null),
-          TableItem(title: '', row: i + 1, column: 3, trailing: null),
-          TableItem(title: '', row: i + 1, column: 4, trailing: null),
-        ];
-      } else {
-        // Это данные таблицы
-        return e.table!
-            .mapIndexed((j, tableItem) {
-              return [
-                TableItem(
-                    title: tableItem.title,
-                    row: i + 1,
-                    column: 1,
-                    trailing: null),
-                TableItem(
-                    title: tableItem.chest,
-                    row: i + 1,
-                    column: 2,
-                    trailing: null),
-                TableItem(
-                    title: tableItem.food,
-                    row: i + 1,
-                    column: 3,
-                    trailing: null),
-                TableItem(
-                    title: tableItem.lure,
-                    row: i + 1,
-                    column: 4,
-                    trailing: null),
-              ];
-            })
-            .expand((element) => element)
-            .toList();
+    for (var i = 0; i < listData.length; i++) {
+      final e = listData[i];
+      final items = e.table ?? const <FeedingCellTable>[];
+      if (items.isEmpty) continue;
+
+      // Добавляем заголовок месяца/периода
+      result.add([
+        TableItem(title: e.title, row: i + 1, column: 1, trailing: null),
+        TableItem(title: '', row: i + 1, column: 2, trailing: null),
+        TableItem(title: '', row: i + 1, column: 3, trailing: null),
+        TableItem(title: '', row: i + 1, column: 4, trailing: null),
+      ]);
+
+      // Добавляем строки дней
+      for (final tableItem in items) {
+        result.add([
+          TableItem(title: tableItem.title, row: i + 1, column: 1, trailing: null),
+          TableItem(title: tableItem.chest, row: i + 1, column: 2, trailing: null),
+          TableItem(title: tableItem.food, row: i + 1, column: 3, trailing: null),
+          TableItem(title: tableItem.lure, row: i + 1, column: 4, trailing: null),
+        ]);
       }
-    }).toList());
+    }
+
+    return ObservableList.of(result);
   }
 
   // var data = List.from(e.table!.map((element) {

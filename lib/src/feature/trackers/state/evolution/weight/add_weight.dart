@@ -92,4 +92,22 @@ abstract class _AddWeightViewStore with Store {
 
     await restClient.growth.postGrowthWeight(dto: dto);
   }
+
+  Future<void> edit({
+    required String childId,
+    required String id,
+    String? notes,
+  }) async {
+    final dto = GrowthChangeStatsWeightDto(
+      stats: EntityWeight(
+        id: id,
+        childId: childId,
+        weight: '$totalWeightKg',
+        notes: notes,
+        createdAt: selectedDate?.toString(),
+      ),
+    );
+
+    await restClient.growth.patchGrowthWeightStats(dto: dto);
+  }
 }

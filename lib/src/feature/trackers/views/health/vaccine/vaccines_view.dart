@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/services/pdf_service.dart';
 import 'package:provider/provider.dart';
-import 'package:skit/skit.dart';
+import 'package:skit/skit.dart' hide Space;
 
 class VaccinesScreen extends StatelessWidget {
   const VaccinesScreen({super.key});
@@ -79,10 +81,23 @@ class _BodyState extends State<_Body> {
           setState(() {});
         });
       },
-      onPressLearnMore: () {},
+      onPressLearnMore: () {
+        context.pushNamed(AppViews.serviceKnowlegde);
+      },
       bottomNavigatorBar: ButtonsLearnPdfAdd(
-        onTapLearnMore: () {},
-        onTapPDF: () {},
+        onTapLearnMore: () {
+          context.pushNamed(AppViews.serviceKnowlegde);
+        },
+        onTapPDF: () {
+          PdfService.generateAndViewVaccinePdf(
+            context: context,
+            typeOfPdf: 'vaccines',
+            title: t.trackers.vaccinations.title,
+            onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
+            onSuccess: () => _showSnack(context, 'PDF успешно создан!', bg: const Color(0xFFDEF8E0), seconds: 3),
+            onError: (message) => _showSnack(context, message),
+          );
+        },
         onTapAdd: () {
           context.pushNamed(AppViews.vaccinesCalendar);
         },
@@ -117,9 +132,9 @@ class _BodyState extends State<_Body> {
         /// #main content
         SliverToBoxAdapter(
             child: Column(children: [
-          16.h,
+          SizedBox(height: 16.h),
           _Header(),
-          5.h,
+          SizedBox(height: 5.h),
         ])),
 
         PaginatedLoadingWidget(
@@ -179,6 +194,41 @@ class _BodyState extends State<_Body> {
         )
       ],
     );
+  }
+
+  void _showSnack(BuildContext ctx, String message, {Color? bg, int seconds = 2}) {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      try {
+        // Определяем цвет текста в зависимости от сообщения
+        Color textColor = Colors.white; // по умолчанию
+        if (message == 'Генерация PDF...') {
+          textColor = const Color(0xFF4D4DE8); // primaryColor
+        } else if (message == 'PDF успешно создан!') {
+          textColor = const Color(0xFF059613); // greenLightTextColor
+        }
+        
+        ScaffoldMessenger.of(ctx)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 17,
+                fontFamily: 'SF Pro Text',
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+            backgroundColor: bg,
+            duration: Duration(seconds: seconds),
+          ));
+      } catch (e) {
+        // Ignore snackbar errors
+      }
+    });
   }
 }
 

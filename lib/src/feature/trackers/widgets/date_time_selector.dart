@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:intl/intl.dart';
 import 'package:mama/src/core/constant/constant.dart';
 import 'package:mama/src/feature/trackers/trackers.dart';
 import 'package:provider/provider.dart';
@@ -13,11 +14,13 @@ class DateSwitchContainer extends StatefulWidget {
     required this.title1,
     required this.title2,
     required this.title3,
+    this.onChanged,
   });
 
   final String title1;
   final String title2;
   final String title3;
+  final ValueChanged<DateTime?>? onChanged;
 
   @override
   State<DateSwitchContainer> createState() => _DateSwitchContainerState();
@@ -50,14 +53,17 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
           selectedDate = pickedDate;
           selectedTime = pickedTime;
         });
+        final dt = DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
+        widget.onChanged?.call(dt);
         // SnackBar аркылуу тандалган күн жана убакытты көрсөтүү
-        final snackBar = SnackBar(
+        if (!mounted) return;
+        final messenger = ScaffoldMessenger.maybeOf(context);
+        messenger?.showSnackBar(SnackBar(
           content: Text(
             "Выбранное время: ${selectedDate!.day}.${selectedDate!.month}.${selectedDate!.year} ${selectedTime!.format(context)}",
           ),
           duration: const Duration(seconds: 3),
-        );
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        ));
       }
     }
   }
@@ -119,9 +125,19 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      await DateTimeService.selectedTime(context, (value) {
-                        // dateTime.text = DateFormat("d MMM, y").format(value);
-                      });
+                      final TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: selectedTime ?? TimeOfDay.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          selectedTime = picked;
+                        });
+                        if (selectedDate != null) {
+                          final dt = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day, picked.hour, picked.minute);
+                          widget.onChanged?.call(dt);
+                        }
+                      }
                     },
                     child: Row(
                       children: [
@@ -133,7 +149,9 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
                               : AppColors.greyBrighterColor,
                         ),
                         Text(
-                          widget.title2,
+                          selectedTime != null
+                              ? selectedTime!.format(context)
+                              : widget.title2,
                           style: AppTextStyles.f14w700.copyWith(
                             color: isSelected[1]
                                 ? AppColors.blueLighter
@@ -161,7 +179,9 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
                               : AppColors.greyBrighterColor,
                         ),
                         Text(
-                          widget.title3,
+                          selectedDate != null
+                              ? DateFormat('d MMMM').format(selectedDate!)
+                              : widget.title3,
                           style: AppTextStyles.f14w700.copyWith(
                             color: isSelected[1]
                                 ? AppColors.blueLighter
@@ -182,6 +202,14 @@ class _DateSwitchContainerState extends State<DateSwitchContainer> {
               isSelected[i] = i == index; // Тандалган элементти өзгөртүү
             }
           });
+          if (index == 0) {
+            widget.onChanged?.call(DateTime.now());
+          } else {
+            if (selectedDate != null && selectedTime != null) {
+              final dt = DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day, selectedTime!.hour, selectedTime!.minute);
+              widget.onChanged?.call(dt);
+            }
+          }
         },
       ),
     );
@@ -230,24 +258,26 @@ class DateTimeSelectorWidget extends StatelessWidget {
                     child: _SelectorWidget(
                       isSelected: store.isSelectedOtherDateTime,
                       onTap: () async {
+                        // Сначала показываем выбор даты
                         final DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now(),
+                          initialDate: store.dateTime ?? DateTime.now(),
                           firstDate: DateTime(2010),
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
 
                         if (pickedDate != null) {
-                          store.setDateTime(pickedDate);
-                          onChanged?.call(pickedDate);
-
+                          // Затем показываем выбор времени
                           final TimeOfDay? pickedTime = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay.now(),
+                            initialTime: store.dateTime != null 
+                                ? TimeOfDay.fromDateTime(store.dateTime!)
+                                : TimeOfDay.now(),
                           );
 
                           if (pickedTime != null) {
+                            // Объединяем выбранную дату и время
                             final DateTime dateTime = DateTime(
                                 pickedDate.year,
                                 pickedDate.month,
@@ -255,6 +285,18 @@ class DateTimeSelectorWidget extends StatelessWidget {
                                 pickedTime.hour,
                                 pickedTime.minute);
                             store.setDateTime(dateTime);
+                            print('DateTimeSelectorWidget: calling onChanged with $dateTime');
+                            onChanged?.call(dateTime);
+                          } else {
+                            // Если время не выбрано, используем только дату с текущим временем
+                            final DateTime dateTime = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                DateTime.now().hour,
+                                DateTime.now().minute);
+                            store.setDateTime(dateTime);
+                            print('DateTimeSelectorWidget: calling onChanged with $dateTime (date only)');
                             onChanged?.call(dateTime);
                           }
                         }
@@ -262,14 +304,64 @@ class DateTimeSelectorWidget extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _SelectorItemWidget(
-                              title: store.time,
-                              icon: AppIcons.clock,
-                              isSelected: store.isSelectedOtherDateTime),
-                          _SelectorItemWidget(
-                              title: store.date,
-                              icon: AppIcons.calendar,
-                              isSelected: store.isSelectedOtherDateTime),
+                          GestureDetector(
+                            onTap: () async {
+                              // Позволяем выбрать только время
+                              final TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: store.dateTime != null 
+                                    ? TimeOfDay.fromDateTime(store.dateTime!)
+                                    : TimeOfDay.now(),
+                              );
+
+                              if (pickedTime != null) {
+                                // Используем текущую дату или уже выбранную дату
+                                final currentDate = store.dateTime ?? DateTime.now();
+                                final DateTime dateTime = DateTime(
+                                    currentDate.year,
+                                    currentDate.month,
+                                    currentDate.day,
+                                    pickedTime.hour,
+                                    pickedTime.minute);
+                                store.setDateTime(dateTime);
+                                print('DateTimeSelectorWidget: calling onChanged with $dateTime (time only)');
+                                onChanged?.call(dateTime);
+                              }
+                            },
+                            child: _SelectorItemWidget(
+                                title: store.time,
+                                icon: AppIcons.clock,
+                                isSelected: store.isSelectedOtherDateTime),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              // Позволяем выбрать только дату
+                              final DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: store.dateTime ?? DateTime.now(),
+                                firstDate: DateTime(2010),
+                                lastDate: DateTime.now().add(const Duration(days: 365)),
+                              );
+
+                              if (pickedDate != null) {
+                                // Используем текущее время или уже выбранное время
+                                final currentTime = store.dateTime ?? DateTime.now();
+                                final DateTime dateTime = DateTime(
+                                    pickedDate.year,
+                                    pickedDate.month,
+                                    pickedDate.day,
+                                    currentTime.hour,
+                                    currentTime.minute);
+                                store.setDateTime(dateTime);
+                                print('DateTimeSelectorWidget: calling onChanged with $dateTime (date only)');
+                                onChanged?.call(dateTime);
+                              }
+                            },
+                            child: _SelectorItemWidget(
+                                title: store.date,
+                                icon: AppIcons.calendar,
+                                isSelected: store.isSelectedOtherDateTime),
+                          ),
                         ],
                       ),
                     ),

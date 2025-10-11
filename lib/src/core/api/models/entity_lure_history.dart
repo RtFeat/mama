@@ -9,6 +9,7 @@ part 'entity_lure_history.g.dart';
 @JsonSerializable()
 class EntityLureHistory {
   const EntityLureHistory({
+    this.id,
     this.gram,
     this.nameProduct,
     this.notes,
@@ -18,6 +19,7 @@ class EntityLureHistory {
   
   factory EntityLureHistory.fromJson(Map<String, Object?> json) => _$EntityLureHistoryFromJson(json);
   
+  final String? id;
   final int? gram;
   @JsonKey(name: 'name_product')
   final String? nameProduct;

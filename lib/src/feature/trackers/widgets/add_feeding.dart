@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:skit/skit.dart';
+import 'package:mama/src/feature/trackers/widgets/feeding_editing_track_widget.dart';
 
 class AddFeedingWidget extends StatefulWidget {
   const AddFeedingWidget({super.key});
@@ -14,6 +17,8 @@ class AddFeedingWidget extends StatefulWidget {
 
 class _AddFeedingWidgetState extends State<AddFeedingWidget> {
   late FormGroup formGroupAddBreastFeeding;
+  Timer? _timer;
+  AddFeeding? _addFeeding;
 
   @override
   void initState() {
@@ -21,13 +26,54 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
       'feedingBreastStart': FormControl(),
       'feedingBreastEnd': FormControl(),
     });
+    _startTimer();
     super.initState();
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     formGroupAddBreastFeeding.dispose();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // Проверяем, что виджет все еще смонтирован
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      // Проверяем, что AddFeeding доступен
+      if (_addFeeding == null) {
+        return;
+      }
+      
+      // Во время экрана Confirm ничего не обновляем и не триггерим setState,
+      // чтобы бейджи под кнопками не «тикали» визуально
+      if (_addFeeding!.confirmFeedingTimer) {
+        return;
+      }
+      
+      // Обновляем левый таймер если он запущен и не зафиксирован Confirm
+      if (_addFeeding!.isLeftSideStart && !_addFeeding!.confirmFeedingTimer) {
+        _addFeeding!.updateLeftTimerDisplay();
+      }
+      
+      // Обновляем правый таймер если он запущен и не зафиксирован Confirm
+      if (_addFeeding!.isRightSideStart && !_addFeeding!.confirmFeedingTimer) {
+        _addFeeding!.updateRightTimerDisplay();
+      }
+      
+      // Если оба таймера на паузе, обновляем время окончания под текущее время телефона
+      if (!_addFeeding!.isLeftSideStart && !_addFeeding!.isRightSideStart) {
+        _addFeeding!.setPausedEndToNow();
+      }
+      
+      // Обновляем UI для обновления времени в реальном времени
+      setState(() {});
+    });
   }
 
   @override
@@ -35,13 +81,17 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
     return ReactiveForm(
       formGroup: formGroupAddBreastFeeding,
       child: Provider(
-        create: (context) => AddFeeding(),
+        create: (context) => AddFeeding(
+          childId: context.read<UserStore>().selectedChild!.id!,
+          restClient: context.read<Dependencies>().restClient,
+          noteStore: context.read<AddNoteStore>(),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Observer(builder: (context) {
             final AddFeeding addFeeding = context.watch();
-            var isStart =
-                addFeeding.isRightSideStart || addFeeding.isLeftSideStart;
+            _addFeeding = addFeeding; // Сохраняем ссылку для Timer
+            // var isStart = addFeeding.isRightSideStart || addFeeding.isLeftSideStart; // unused
             final confirmButtonPressed = addFeeding.confirmFeedingTimer;
             final isFeedingCanceled = addFeeding.isFeedingCanceled;
             return Column(
@@ -57,46 +107,63 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                     children: [
                       Positioned(
                         left: -50,
-                        child: PlayerButton(
-                          side: t.feeding.left,
-                          onTap: () {
-                            addFeeding.changeStatusOfLeftSide();
-                          },
-                          isStart: addFeeding.isLeftSideStart,
-                          needTimer: true,
-                          timer: '', //TODO время таймера
+                        child: Observer(
+                          builder: (context) => PlayerButton(
+                            side: t.feeding.left,
+                            onTap: () {
+                              addFeeding.changeStatusOfLeftSide();
+                            },
+                            isStart: addFeeding.isLeftSideStart,
+                            needTimer: true,
+                            timer: addFeeding.leftCurrentTimerDisplay,
+                            showTimerBadge: true,
+                          ),
                         ),
                       ),
                       Positioned(
                         right: -50,
-                        child: PlayerButton(
-                          side: t.feeding.right,
-                          onTap: () {
-                            addFeeding.changeStatusOfRightSide();
-                          },
-                          isStart: addFeeding.isRightSideStart,
-                          needTimer: true,
-                          timer: '', //TODO время таймера
+                        child: Observer(
+                          builder: (context) => PlayerButton(
+                            side: t.feeding.right,
+                            onTap: () {
+                              addFeeding.changeStatusOfRightSide();
+                            },
+                            isStart: addFeeding.isRightSideStart,
+                            needTimer: true,
+                            timer: addFeeding.rightCurrentTimerDisplay,
+                            showTimerBadge: true,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                30.h,
-                isStart
-                    ? CurrentEditingTrackWidget(
-                        title: t.trackers.currentEditTrackFeedingTitle,
+                0.h,
+                addFeeding.showEditMenu
+                    ? FeedingEditingTrackWidget(
+                        title: 'Current feeding',
                         noteTitle:
                             t.trackers.currentEditTrackCountTextTitleFeed,
                         noteText: t.trackers.currentEditTrackCountTextFeed,
-                        onPressNote: () {},
+                        onPressNote: () {
+                          context.pushNamed(AppViews.addNote);
+                        },
                         onPressSubmit: () {
                           addFeeding.confirmButtonPressed();
                         },
                         onPressCancel: () {
                           addFeeding.cancelFeeding();
                         },
-                        onPressManually: () {},
+                        onPressManually: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) {
+                              return Provider<AddFeeding>.value(
+                                value: addFeeding,
+                                child: const AddFeedingBreastManually(),
+                              );
+                            }),
+                          );
+                        },
                         timerStart: addFeeding.timerStartTime,
                         timerEnd: addFeeding.timerEndTime,
                         formControlNameEnd: 'feedingBreastEnd',
@@ -106,6 +173,7 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                             : addFeeding.isLeftSideStart == true
                                 ? true
                                 : false,
+                        addFeeding: addFeeding,
                       )
                     : Column(
                         children: [
@@ -116,7 +184,9 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                           EditingButtons(
                               iconAsset: AppIcons.calendar,
                               addBtnText: t.feeding.addManually,
-                              learnMoreTap: () {},
+                              learnMoreTap: () {
+                                context.pushNamed(AppViews.serviceKnowlegde);
+                              },
                               addButtonTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(builder: (context) {
@@ -131,25 +201,29 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                       ),
                 confirmButtonPressed
                     ? TrackerStateContainer(
-                        onTapClose: () {
-                          addFeeding.goBackAndContinue();
+                        type: ContainerType.feedingSaved,
+                        onTapClose: () async {
+                          // Крестик - сохранить запись и сбросить таймер
+                          await addFeeding.cancelFeedingClose();
                         },
                         onTapGoBack: () {
+                          // Go back and continue - восстановить состояние паузы
                           addFeeding.goBackAndContinue();
                         },
                         onTapNote: () {}, //Todo Заметки
-                        type: ContainerType.feedingSaved,
                       )
                     : const SizedBox(),
                 isFeedingCanceled
                     ? TrackerStateContainer(
-                        onTapClose: () {
-                          addFeeding.goBackAndContinue();
+                        type: ContainerType.feedingCanceled,
+                        onTapClose: () async {
+                          // Крестик при отмене — сброс без сохранения (как в Sleep)
+                          addFeeding.resetWithoutSaving();
                         },
                         onTapGoBack: () {
+                          // Go back and continue - восстановить состояние паузы
                           addFeeding.goBackAndContinue();
                         },
-                        type: ContainerType.feedingCanceled,
                       )
                     : const SizedBox(),
               ],

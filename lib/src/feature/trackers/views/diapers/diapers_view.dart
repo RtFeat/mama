@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/feature/trackers/services/pdf_service.dart';
 import 'package:mama/src/feature/trackers/state/diapers/diapers_dao_impl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +98,9 @@ class _BodyState extends State<_Body> {
           });
         },
         learnMoreWidgetText: t.trackers.findOutMoreTextDiapers,
-        onPressLearnMore: () {},
+        onPressLearnMore: () {
+          context.pushNamed(AppViews.serviceKnowlegde);
+        },
         appBar: CustomAppBar(
           appBarColor: AppColors.deeperAppBarColor,
           title: t.trackers.trackersName.diapers,
@@ -115,7 +118,16 @@ class _BodyState extends State<_Body> {
               'url': 'https://google.com',
             });
           },
-          onTapPDF: () {},
+          onTapPDF: () {
+            PdfService.generateAndViewDiapersPdf(
+              context: context,
+              typeOfPdf: 'diapers',
+              title: t.trackers.trackersName.diapers,
+              onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
+              onSuccess: () => _showSnack(context, 'PDF успешно создан!', bg: const Color(0xFFDEF8E0), seconds: 3),
+              onError: (message) => _showSnack(context, message),
+            );
+          },
           onTapAdd: () {
             context.pushNamed(AppViews.addDiaper, extra: {
               'onSave': (DiapersCreateDiaperDto data) {
@@ -255,6 +267,41 @@ class _BodyState extends State<_Body> {
           ),
         ],
       );
+    });
+  }
+
+  void _showSnack(BuildContext ctx, String message, {Color? bg, int seconds = 2}) {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      try {
+        // Определяем цвет текста в зависимости от сообщения
+        Color textColor = Colors.white; // по умолчанию
+        if (message == 'Генерация PDF...') {
+          textColor = const Color(0xFF4D4DE8); // primaryColor
+        } else if (message == 'PDF успешно создан!') {
+          textColor = const Color(0xFF059613); // greenLightTextColor
+        }
+        
+        ScaffoldMessenger.of(ctx)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 17,
+                fontFamily: 'SF Pro Text',
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+            backgroundColor: bg,
+            duration: Duration(seconds: seconds),
+          ));
+      } catch (e) {
+        // Ignore snackbar errors
+      }
     });
   }
 }

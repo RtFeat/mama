@@ -2,6 +2,8 @@ export 'sleep_cry_store.dart';
 export 'feeding_store.dart';
 export 'evolution_store.dart';
 export 'sleep/sleep.dart';
+export 'sleep/sleep_table_store.dart';
+export 'sleep/cry_table_store.dart';
 export 'add_feeding.dart';
 export 'add_pumping.dart';
 export 'medicine.dart';

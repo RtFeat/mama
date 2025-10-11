@@ -18,6 +18,7 @@ class MeasurementDetails {
   final String? note;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final String? viewNormsLabel;
 
   final VoidCallback? onNoteEdit;
   final VoidCallback? onNoteDelete;
@@ -45,6 +46,7 @@ class MeasurementDetails {
     this.onNoteDelete,
     this.onNextWeekTap,
     this.onPreviousWeekTap,
+    this.viewNormsLabel,
   });
 }
 
@@ -142,7 +144,7 @@ class MeasurementOverlay extends StatelessWidget {
               const SizedBox(height: 8),
               _MeasurementCard(details: details),
               const SizedBox(height: 8),
-              _ViewNormsButton(),
+              _ViewNormsButton(label: details.viewNormsLabel ?? 'Смотреть нормы веса'),
               if (details.note != null && details.note!.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 _NoteCard(details: details),
@@ -259,11 +261,13 @@ class _MeasurementCard extends StatelessWidget {
               _InfoColumn(title: 'Медиана', value: details.medianWeight),
               12.w,
               _InfoColumn(title: 'Норма', value: details.normWeightRange),
-              12.w,
-              _InfoColumn(
-                  title: 'Надо добрать',
-                  value: details.weightToGain,
-                  icon: AppIcons.arrowUpRight),
+              if (details.weightToGain.isNotEmpty) ...[
+                12.w,
+                _InfoColumn(
+                    title: 'Надо добрать',
+                    value: details.weightToGain,
+                    icon: AppIcons.arrowUpRight),
+              ],
             ],
           ),
           const SizedBox(height: 8),
@@ -334,6 +338,8 @@ class _InfoColumn extends StatelessWidget {
 }
 
 class _ViewNormsButton extends StatelessWidget {
+  final String label;
+  const _ViewNormsButton({super.key, required this.label});
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -359,10 +365,10 @@ class _ViewNormsButton extends StatelessWidget {
                   color: AppColors.primaryColor),
               const SizedBox(width: 8),
               SizedBox(
-                width: 80,
-                child: const Text(
-                  'Смотреть нормы веса',
-                  style: TextStyle(
+                width: 120,
+                child: Text(
+                  label,
+                  style: const TextStyle(
                     height: 1.2,
                     letterSpacing: -.1,
                     color: Color(0xFF4D4DE7),

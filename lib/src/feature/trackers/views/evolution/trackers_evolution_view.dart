@@ -16,11 +16,24 @@ class _EvolutionViewState extends State<EvolutionView>
 
   @override
   void initState() {
+    super.initState();
     _tabController = TabController(
       length: EvolutionCategory.values.length,
       vsync: this,
     );
-    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // УБИРАЕМ проблемную логику - TabController должен создаваться только один раз в initState
+    // Эта проверка была источником проблемы
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,12 +53,15 @@ class _EvolutionViewState extends State<EvolutionView>
             .headlineSmall!
             .copyWith(color: AppColors.trackerColor, fontSize: 20),
       ),
-      body: TabBarView(controller: _tabController, children: [
-        WeightView(),
-        GrowthView(),
-        CircleView(),
-        TablePage(),
-      ]),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          const WeightView(),
+          const GrowthView(),
+          const CircleView(),
+          const TablePage(),
+        ],
+      ),
     );
   }
 }

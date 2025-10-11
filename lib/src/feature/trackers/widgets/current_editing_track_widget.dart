@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
+import 'package:mama/src/feature/trackers/widgets/timer_interface.dart';
+import 'package:mama/src/feature/trackers/state/sleep/cry.dart';
+import 'package:mama/src/feature/trackers/state/sleep/sleep.dart';
 
 class CurrentEditingTrackWidget extends StatelessWidget {
   final String title;
@@ -36,7 +40,28 @@ class CurrentEditingTrackWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    final SleepStore store = context.watch();
+    
+    // Безопасное получение TimerInterface с проверкой на существование
+    TimerInterface? store;
+    try {
+      // Проверяем, что Provider доступен
+      if (context.mounted) {
+        store = context.watch<TimerInterface>();
+      } else {
+        print('Context not mounted, cannot get TimerInterface');
+        return const SizedBox.shrink();
+      }
+    } catch (e) {
+      print('Error getting TimerInterface: $e');
+      // Возвращаем заглушку если не удалось получить store
+      return Container(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          'Timer not available',
+          style: textTheme.titleLarge?.copyWith(color: Colors.black, fontSize: 20),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,20 +72,46 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               textTheme.titleLarge?.copyWith(color: Colors.black, fontSize: 20),
         ),
         20.h,
-        EditTimeRow(
-          onTap: () {},
-          timerStart: timerStart,
-          timerEnd: timerEnd,
-          isTimerStarted: isTimerStarted,
-          formControlNameStart: formControlNameStart,
-          formControlNameEnd: formControlNameEnd,
-          onStartTimeChanged: (v) {
-            if (v != null) store.updateStartTime(v.timeToDateTime);
-          },
-          onEndTimeChanged: (v) {
-            if (v != null) store.updateEndTime(v.timeToDateTime);
-          },
-        ),
+        Observer(builder: (context) {
+          try {
+            // Проверяем, что store не null
+            if (store == null) {
+              return Container(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  'Timer store not available',
+                  style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                ),
+              );
+            }
+            
+            return EditTimeRow(
+              onTap: () {},
+              timerStart: store!.timerStartTime, // Используем данные из store
+              timerEnd: store!.timerEndTime, // End обновляется из store
+              isTimerStarted: store!.timerSleepStart, // Используем данные из store
+              formControlNameStart: formControlNameStart,
+              formControlNameEnd: formControlNameEnd,
+              onStartTimeChanged: (v) {
+                if (v != null) store!.updateStartTime(v.timeToDateTime);
+              },
+              onEndTimeChanged: (v) {
+                if (v != null) store!.updateEndTime(v.timeToDateTime);
+              },
+              cryStore: store is CryStore ? store as CryStore : null,
+              sleepStore: store is SleepStore ? store as SleepStore : null,
+            );
+          } catch (e) {
+            print('Error in Observer: $e');
+            return Container(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'Timer data not available',
+                style: textTheme.bodyMedium?.copyWith(color: Colors.grey),
+              ),
+            );
+          }
+        }),
         20.h,
         Row(
           children: [

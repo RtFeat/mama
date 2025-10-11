@@ -33,6 +33,7 @@ class DocsView extends StatelessWidget {
                 onTap: () {
                   context.pushNamed(AppViews.pdfView, extra: {
                     'path': Assets.docs.mobileApplicationPrivacyPolicy,
+                    'title': t.docs.privacyPolicy,
                   });
                 }),
             _Doc(
@@ -40,6 +41,7 @@ class DocsView extends StatelessWidget {
                 onTap: () {
                   context.pushNamed(AppViews.pdfView, extra: {
                     'path': Assets.docs.userAgreement,
+                    'title': t.docs.userAgreement,
                   });
                 }),
             _Doc(
@@ -47,6 +49,7 @@ class DocsView extends StatelessWidget {
                 onTap: () {
                   context.pushNamed(AppViews.pdfView, extra: {
                     'path': Assets.docs.consentToProcessPersonalDataMP,
+                    'title': t.docs.aboutTheCompany,
                   });
                 }),
           ].map((e) {

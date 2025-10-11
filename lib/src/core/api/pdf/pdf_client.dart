@@ -16,64 +16,72 @@ abstract class PdfClient {
   /// генерация pdf diapers.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/diapers/generate')
-  Future<void> postPdfDiapersGenerate({
+  Future<List<int>> postPdfDiapersGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf consultation doctor.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/doc_cons/generate')
-  Future<void> postPdfDocConsGenerate({
+  Future<List<int>> postPdfDocConsGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf drug.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/drug/generate')
-  Future<void> postPdfDrugGenerate({
+  Future<List<int>> postPdfDrugGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/feed/generate')
-  Future<void> postPdfFeedGenerate({
+  Future<List<int>> postPdfFeedGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/growth/generate')
-  Future<void> postPdfGrowthGenerate({
+  Future<List<int>> postPdfGrowthGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf sleep cry.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/sleep_cry/generate')
-  Future<void> postPdfSleepCryGenerate({
+  Future<List<int>> postPdfSleepCryGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf temperature.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/temperature/generate')
-  Future<void> postPdfTemperatureGenerate({
+  Future<List<int>> postPdfTemperatureGenerate({
     @Body() required PdfPdfDto dto,
   });
 
   /// генерация pdf vaccines.
   ///
   /// [dto] - pdfDTO.
+  @DioResponseType(ResponseType.bytes)
   @POST('/pdf/vaccines/generate')
-  Future<void> postPdfVaccinesGenerate({
+  Future<List<int>> postPdfVaccinesGenerate({
     @Body() required PdfPdfDto dto,
   });
 }

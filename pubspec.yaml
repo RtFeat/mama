@@ -30,6 +30,7 @@ dependencies:
   # -- data -- #
   json_annotation: ^4.9.0
   faker_dart: ^0.2.2
+  uuid: ^4.4.0
 
   # -- networking -- #
   dio: ^5.3.3
@@ -111,6 +112,7 @@ dependencies:
   very_good_infinite_list: ^0.9.0
   blur: ^4.0.0
   flutter_picker_plus: ^1.5.2
+  flutter_screenutil: ^5.9.0
 
   # -/- text -/-
   auto_size_text: ^3.0.0
@@ -181,4 +183,4 @@ icons_launcher:
       enable: true
 dependency_overrides:
   skit:
-    path: /Users/nikondrat/Documents/work/projects/apps/skit
+    path: D:/skit

@@ -56,7 +56,7 @@ class TrackersView extends StatelessWidget {
                   Expanded(
                     child: CategoryCard(
                       onTap: () {
-                        // context.pushNamed(AppViews.feeding);
+                        context.pushNamed(AppViews.feeding);
                       },
                       title: t.trackers.trackersName.feeding,
                       icon: IconModel(

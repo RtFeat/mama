@@ -14,6 +14,7 @@ import '../models/sleepcry_response_history_sleep.dart';
 import '../models/sleepcry_response_history_table.dart';
 import '../models/sleepcry_response_history_table_period.dart';
 import '../models/sleepcry_response_insert_dto.dart';
+import '../models/sleepcry_delete_sleep_dto.dart';
 
 part 'sleep_cry_client.g.dart';
 
@@ -125,6 +126,30 @@ abstract class SleepCryClient {
     @Query('page_size') int? pageSize,
   });
 
+  /// Удалить заметку сна.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/sleep_cry/sleep/delete/notes')
+  Future<void> deleteSleepCrySleepDeleteNotes({
+    @Body() required SleepcryDeleteSleepDto dto,
+  });
+
+  /// Удалить статистику крика.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/sleep_cry/cry/delete/stats')
+  Future<void> deleteSleepCryCryDeleteStats({
+    @Body() required SleepcryDeleteSleepDto dto,
+  });
+
+  /// Удалить заметку крика.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/sleep_cry/cry/delete/notes')
+  Future<void> deleteSleepCryCryDeleteNotes({
+    @Body() required SleepcryDeleteSleepDto dto,
+  });
+
   /// Вывести таблицу сна и плача.
   ///
   /// [limit] - Limit.
@@ -147,4 +172,13 @@ abstract class SleepCryClient {
     @Query('page_size') int? pageSize,
     @Path('sort_type') String? sortType,
   });
+
+  /// Удалить статистику сна.
+  ///
+  /// [dto] - Delete sleep stats.
+  @DELETE('/sleep_cry/sleep/delete/stats')
+  Future<void> deleteSleepCrySleepDeleteStats({
+    @Body() required SleepcryDeleteSleepDto dto,
+  });
+
 }

@@ -9,6 +9,7 @@ part 'entity_pumping_history.g.dart';
 @JsonSerializable()
 class EntityPumpingHistory {
   const EntityPumpingHistory({
+    this.id,
     this.left,
     this.notes,
     this.right,
@@ -18,6 +19,7 @@ class EntityPumpingHistory {
   
   factory EntityPumpingHistory.fromJson(Map<String, Object?> json) => _$EntityPumpingHistoryFromJson(json);
   
+  final String? id;
   final int? left;
   final String? notes;
   final int? right;

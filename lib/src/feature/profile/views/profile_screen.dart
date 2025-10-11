@@ -86,6 +86,7 @@ class ProfileScreen extends StatelessWidget {
                                 context.pushNamed(AppViews.pdfView, extra: {
                                   'path': Assets
                                       .docs.consentToProcessPersonalDataMP,
+                                  'title': t.profile.aboutCompanyTitle,
                                 });
                               },
                               child: Text(

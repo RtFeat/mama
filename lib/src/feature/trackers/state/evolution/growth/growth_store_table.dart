@@ -45,6 +45,15 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
   @observable
   GrowthUnit growthUnit = GrowthUnit.cm; // 'cm' or 'm'
 
+  @observable
+  bool showAll = false; // Показывать все записи или только первые
+
+  // Добавляем флаг для отслеживания активного состояния
+  @observable
+  bool _isActive = true;
+
+  static const int _initialRowLimit = 6; // Количество записей по умолчанию
+
   @action
   void setSortOrder(int index) {
     sortOrder = index == 0 ? 'new' : 'old';
@@ -53,6 +62,40 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
   @action
   void setGrowthUnit(GrowthUnit unit) {
     growthUnit = unit;
+  }
+
+  @action
+  void toggleShowAll() {
+    showAll = !showAll;
+  }
+
+  @computed
+  int get totalRecordsCount => listData.length;
+
+  @computed
+  int get shownRecordsCount {
+    if (showAll) return totalRecordsCount;
+    return totalRecordsCount > _initialRowLimit ? _initialRowLimit : totalRecordsCount;
+  }
+
+  @computed
+  bool get canShowAll => !showAll && totalRecordsCount > _initialRowLimit;
+
+  @computed
+  bool get canCollapse => showAll;
+
+  /// Форматирует значение недели, убирая минус если он есть
+  String _formatWeeks(String? weeks) {
+    if (weeks == null || weeks.isEmpty) return '0';
+    
+    // Убираем минус если он есть
+    final cleanWeeks = weeks.startsWith('-') ? weeks.substring(1) : weeks;
+    
+    // Проверяем, что это число
+    final weeksInt = int.tryParse(cleanWeeks);
+    if (weeksInt == null) return '0';
+    
+    return weeksInt.toString();
   }
 
   @override
@@ -83,13 +126,21 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
         ),
       ));
 
-  void showAddRecordDialog(int index, List<EntityHistoryHeight> sortedList) {
+  // ИСПРАВЛЯЕМ: передаем контекст как параметр вместо использования глобального navKey
+  void showAddRecordDialog(BuildContext context, int index, List<EntityHistoryHeight> sortedList) {
+    // Проверяем, что store активен и контекст валидный
+    if (!_isActive || !context.mounted) return;
+    
     showDialog(
-      context: navKey.currentContext!,
+      context: context,
       barrierColor: Colors.black.withOpacity(0.5),
-      builder: (context) {
-        return StatefulBuilder(builder: (context, setState) {
-          // final GrowthStore store = context.read<GrowthStore>();
+      builder: (dialogContext) {
+        return StatefulBuilder(builder: (builderContext, setState) {
+          // Дополнительные проверки безопасности
+          if (!_isActive || !context.mounted || !builderContext.mounted) {
+            return const SizedBox.shrink();
+          }
+
           final currentEntity = sortedList[index];
           final nextEntity =
               sortedList.length > index + 1 ? sortedList[index + 1] : null;
@@ -97,7 +148,7 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
 
           final data = MeasurementDetails(
             title: 'Рост',
-            currentWeek: '${currentEntity.weeks} неделя',
+            currentWeek: '${_formatWeeks(currentEntity.weeks)} неделя',
             previousWeek: prevEntity?.data ?? '',
             selectedWeek: currentEntity.data ?? '',
             nextWeek: nextEntity?.data ?? '',
@@ -111,63 +162,97 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
             weightToGain: '234',
             note: currentEntity.notes,
             onEdit: () {
-              Navigator.of(context).pop();
-              router.pushNamed(AppViews.addGrowthView, extra: {
-                'entity': currentEntity,
-              });
+              if (!_isActive || !builderContext.mounted) return;
+              Navigator.of(builderContext).pop();
+              if (context.mounted) {
+                router.pushNamed(AppViews.addGrowthView, extra: {
+                  'entity': currentEntity,
+                });
+              }
             },
             onNextWeekTap: () {
-              setState(() {
-                index++;
-              });
+              if (!_isActive || !builderContext.mounted) return;
+              if (builderContext.mounted && index < sortedList.length - 1) {
+                setState(() {
+                  index++;
+                });
+              }
             },
             onPreviousWeekTap: () {
-              setState(() {
-                index--;
-              });
+              if (!_isActive || !builderContext.mounted) return;
+              if (builderContext.mounted && index > 0) {
+                setState(() {
+                  index--;
+                });
+              }
             },
-            onDelete: () {
-              restClient.growth
-                  .deleteGrowthHeightDeleteStats(
-                      dto: GrowthDeleteHeightDto(
-                id: currentEntity.id,
-              ))
-                  .then((v) {
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                  store.fetchGrowthDetails();
-                  refresh();
-                }
-              });
-            },
-            onClose: () {
-              Navigator.of(context).pop();
-            },
-            onNoteDelete: () {
-              restClient.growth
-                  .deleteGrowthHeightDeleteNotes(
-                      dto: GrowthDeleteHeightDto(id: currentEntity.id))
-                  .then((v) {
-                currentEntity.notes = null;
-                setState(() {});
-                refresh();
-              });
-            },
-            onNoteEdit: () {
-              Navigator.of(context).pop();
-              router.pushNamed(AppViews.addNote, extra: {
-                'initialValue': currentEntity.notes,
-                'onSaved': (value) {
-                  if (value != currentEntity.notes) {
-                    restClient.growth.patchGrowthHeightNotes(
-                        dto: GrowthChangeNotesHeightDto(
-                      id: currentEntity.id,
-                      notes: value,
-                    ));
+            onDelete: () async {
+              if (!_isActive || !builderContext.mounted) return;
+              
+              try {
+                await restClient.growth.deleteGrowthHeightDeleteStats(
+                    dto: GrowthDeleteHeightDto(id: currentEntity.id));
+                
+                // Проверяем состояние перед обновлением UI
+                if (_isActive && builderContext.mounted) {
+                  Navigator.of(builderContext).pop();
+                  
+                  // Обновляем данные только если контексты активны
+                  if (context.mounted) {
+                    store.fetchGrowthDetails();
                     refresh();
                   }
-                },
-              });
+                }
+              } catch (e) {
+                // Обрабатываем ошибку безопасно
+                if (_isActive && builderContext.mounted) {
+                  // Можно показать ошибку пользователю
+                }
+              }
+            },
+            onClose: () {
+              if (builderContext.mounted) {
+                Navigator.of(builderContext).pop();
+              }
+            },
+            onNoteDelete: () async {
+              if (!_isActive || !builderContext.mounted) return;
+              
+              try {
+                await restClient.growth.deleteGrowthHeightDeleteNotes(
+                    dto: GrowthDeleteHeightDto(id: currentEntity.id));
+                
+                if (_isActive && builderContext.mounted) {
+                  currentEntity.notes = null;
+                  setState(() {});
+                  if (context.mounted) {
+                    refresh();
+                  }
+                }
+              } catch (error) {
+                // Игнорируем ошибки если контексты неактивны
+              }
+            },
+            onNoteEdit: () {
+              if (!_isActive || !builderContext.mounted) return;
+              
+              Navigator.of(builderContext).pop();
+              if (context.mounted) {
+                router.pushNamed(AppViews.addNote, extra: {
+                  'initialValue': currentEntity.notes,
+                  'onSaved': (value) {
+                    if (!_isActive) return;
+                    if (value != currentEntity.notes) {
+                      restClient.growth.patchGrowthHeightNotes(
+                          dto: GrowthChangeNotesHeightDto(
+                        id: currentEntity.id,
+                        notes: value,
+                      ));
+                      refresh();
+                    }
+                  },
+                });
+              }
             },
           );
 
@@ -180,6 +265,8 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
   @override
   @computed
   ObservableList<List<TableItem>> get rows {
+    if (!_isActive) return ObservableList.of([]);
+    
     final List<List<TableItem>> result = [];
 
     final sortedList = List<EntityHistoryHeight>.from(listData);
@@ -194,9 +281,11 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
       }
     });
 
-    for (var i = 0; i < sortedList.length; i++) {
-      final entity = sortedList[i];
-      // final temp = tempHistory[colIdx];
+    // Ограничиваем количество записей в зависимости от showAll
+    final recordsToShow = showAll ? sortedList : sortedList.take(_initialRowLimit).toList();
+
+    for (var i = 0; i < recordsToShow.length; i++) {
+      final entity = recordsToShow[i];
       final bool hasNote = entity.notes != null && entity.notes!.isNotEmpty;
 
       final bool isBad = entity.normal == 'Вне нормы';
@@ -218,7 +307,13 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
 
       result.add([
         TableItem(
-          onTap: () => showAddRecordDialog(i, sortedList),
+          onTap: () {
+            // Получаем контекст безопасно - НЕ используем navKey.currentContext!
+            final context = router.routerDelegate.navigatorKey.currentContext;
+            if (context != null && context.mounted && _isActive) {
+              showAddRecordDialog(context, i, sortedList);
+            }
+          },
           title: entity.data.toString(),
           row: result.length + 1,
           column: 1,
@@ -235,7 +330,12 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
               : null,
         ),
         TableItem(
-          onTap: () => showAddRecordDialog(i, sortedList),
+          onTap: () {
+            final context = router.routerDelegate.navigatorKey.currentContext;
+            if (context != null && context.mounted && _isActive) {
+              showAddRecordDialog(context, i, sortedList);
+            }
+          },
           title: entity.normal,
           row: result.length + 1,
           column: 2,
@@ -250,30 +350,50 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
           )),
         ),
         TableItem(
-          onTap: () => showAddRecordDialog(i, sortedList),
-          title: entity.weeks.toString(),
+          onTap: () {
+            final context = router.routerDelegate.navigatorKey.currentContext;
+            if (context != null && context.mounted && _isActive) {
+              showAddRecordDialog(context, i, sortedList);
+            }
+          },
+          title: _formatWeeks(entity.weeks),
           row: result.length + 1,
           column: 2,
           decoration: decoration,
           mainAxisAlignment: MainAxisAlignment.center,
         ),
         TableItem(
-          onTap: () => showAddRecordDialog(i, sortedList),
+          onTap: () {
+            final context = router.routerDelegate.navigatorKey.currentContext;
+            if (context != null && context.mounted && _isActive) {
+              showAddRecordDialog(context, i, sortedList);
+            }
+          },
           title: displayHeight,
           row: result.length + 1,
           column: 3,
           decoration: decoration,
           mainAxisAlignment: MainAxisAlignment.center,
-          // decoration: (temp.isBad ?? false)
-          //     ? CellDecoration(
-          //         color: AppColors.yellowBackgroundColor,
-          //         radius: 8,
-          //         textStyle: _cellTextStyle,
-          //       )
-          //     : null,
         ),
       ]);
     }
     return ObservableList.of(result);
+  }
+
+  // Метод для деактивации store при размонтировании виджета
+  @action
+  void deactivate() {
+    _isActive = false;
+  }
+
+  // Метод для реактивации store
+  @action
+  void activate() {
+    _isActive = true;
+  }
+
+  // Метод для установки связи с GrowthStore
+  void setGrowthStore(GrowthStore growthStore) {
+    growthStore.tableStore = this as GrowthTableStore;
   }
 }

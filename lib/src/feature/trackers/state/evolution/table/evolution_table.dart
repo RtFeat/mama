@@ -66,6 +66,20 @@ abstract class _EvolutionTableStore extends TableStore<EntityTable> with Store {
     circleUnit = unit;
   }
 
+  /// Форматирует значение недели, убирая минус если он есть
+  String _formatWeeks(String? weeks) {
+    if (weeks == null || weeks.isEmpty) return '0';
+    
+    // Убираем минус если он есть
+    final cleanWeeks = weeks.startsWith('-') ? weeks.substring(1) : weeks;
+    
+    // Проверяем, что это число
+    final weeksInt = int.tryParse(cleanWeeks);
+    if (weeksInt == null) return '0';
+    
+    return weeksInt.toString();
+  }
+
   @override
   TableData get tableData => TableData(
       headerTitle: '',
@@ -196,7 +210,7 @@ abstract class _EvolutionTableStore extends TableStore<EntityTable> with Store {
               : null,
         ),
         TableItem(
-          title: entity.week,
+          title: _formatWeeks(entity.week),
           row: result.length + 1,
           column: 2,
           mainAxisAlignment: MainAxisAlignment.center,

@@ -27,6 +27,7 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  bool _prefilled = false;
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
@@ -38,10 +39,25 @@ class _BodyState extends State<_Body> {
     final WeightStore store = context.watch<WeightStore>();
     final WeightTableStore tableStore = context.watch<WeightTableStore>();
 
+    // Detect edit mode from router extra
+    final Map? extra = GoRouterState.of(context).extra as Map?;
+    final EntityHistoryWeight? existing = extra != null ? extra['entity'] as EntityHistoryWeight? : null;
+
+    // Prefill store once when opening in edit mode
+    if (existing != null && !_prefilled) {
+      final raw = (existing.weight ?? '').replaceAll(',', '.');
+      final parsed = double.tryParse(raw) ?? 0;
+      final kg = parsed.truncate();
+      final grams = ((parsed - kg) * 1000).round().clamp(0, 999);
+      addWeightViewStore.updateKilograms(kg);
+      addWeightViewStore.updateGrams(grams);
+      _prefilled = true;
+    }
+
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
-        title: t.trackers.weight.add,
+        title: existing == null ? t.trackers.weight.add : t.trackers.edit,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
               color: AppColors.trackerColor,
@@ -104,9 +120,25 @@ class _BodyState extends State<_Body> {
               onChangedTime: addWeightViewStore.updateDateTime,
               onPressedElevated: addWeightViewStore.isFormValid
                   ? () async {
-                      addWeightViewStore
-                          .add(userStore.selectedChild!.id!, noteStore.content)
-                          .then((v) async {
+                      if (existing == null) {
+                        addWeightViewStore
+                            .add(userStore.selectedChild!.id!, noteStore.content)
+                            .then((v) async {
+                          if (context.mounted) {
+                            context.pop();
+                            if (context.mounted) {
+                              await store.fetchWeightDetails();
+                              await tableStore.refresh();
+                            }
+                          }
+                        });
+                      } else {
+                        // Edit flow: PATCH /growth/weight/stats
+                        await addWeightViewStore.edit(
+                          childId: userStore.selectedChild!.id!,
+                          id: existing.id ?? '',
+                          notes: noteStore.content,
+                        );
                         if (context.mounted) {
                           context.pop();
                           if (context.mounted) {
@@ -114,7 +146,7 @@ class _BodyState extends State<_Body> {
                             await tableStore.refresh();
                           }
                         }
-                      });
+                      }
                     }
                   : null,
             );

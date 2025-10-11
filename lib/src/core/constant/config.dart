@@ -27,5 +27,8 @@ class AppConfig extends Config {
 
   /// The API URL.
   @override
-  String get apiUrl => const String.fromEnvironment('API_URL');
+  String get apiUrl => const String.fromEnvironment(
+        'API_URL',
+        defaultValue: 'https://api.mama-api.ru/api/v1/',
+      );
 }

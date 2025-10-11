@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:skit/skit.dart';
+import 'package:mama/src/feature/trackers/state/sleep/cry.dart';
+import 'package:provider/provider.dart';
 
 class BodyAddManuallySleepCryFeeding extends StatefulWidget {
   final String? formControlNameStart;
@@ -49,8 +51,14 @@ class _BodyAddManuallySleepCryFeedingState
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
     final TextTheme textTheme = themeData.textTheme;
-    DateTime timerStart = widget.timerManualStart;
-    DateTime? timerEnd = widget.timerManualEnd;
+    
+    // Получаем актуальные значения из store для реактивности
+    final sleepStore = context.watch<SleepStore>();
+    final cryStore = context.watch<CryStore>();
+    
+    // Используем store значения для реактивности, но fallback на переданные параметры
+    DateTime timerStart = sleepStore.timerStartTime;
+    DateTime? timerEnd = sleepStore.timerEndTime;
 
     return Scaffold(
       backgroundColor: const Color(0xFFE7F2FE),
@@ -67,93 +75,154 @@ class _BodyAddManuallySleepCryFeedingState
       body: Container(
         color: Colors.white,
         padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(
-              child: widget.needIfEditNotCompleteMessage && widget.isTimerStart
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (widget.needIfEditNotCompleteMessage && widget.isTimerStart)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _HighlightedText(
+                            text: widget.titleIfEditNotComplete ?? '',
+                            highlight: 'кормление',
+                          ),
+                          8.h,
+                          _HighlightedText(
+                            text: widget.textIfEditNotComplete ?? '',
+                            highlight: 'кормление',
+                          ),
+                          16.h,
+                          CustomButton(
+                            isSmall: false,
+                            type: CustomButtonType.outline,
+                            onTap: () {
+                              context.pop();
+                            },
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 12),
+                            textStyle: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            title: t.trackers
+                                .infoManuallyContainerButtonBackAndContinue,
+                          ),
+                          16.h,
+                        ],
+                      )
+                    else
+                      const SizedBox.shrink(),
+
+                    // Bottom group pinned to screen bottom when content is short
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          textAlign: TextAlign.center,
-                          widget.titleIfEditNotComplete!,
-                          style: textTheme.labelMedium?.copyWith(
-                              fontSize: 14, color: AppColors.greyBrighterColor),
+                        widget.bodyWidget,
+                        30.h,
+                        EditTimeRow(
+                          onTap: () {
+                            if (widget.isTimerStart) {
+                              widget.stopIfStarted();
+                            }
+                          },
+                          timerStart: timerStart,
+                          timerEnd: timerEnd,
+                          isTimerStarted: widget.isTimerStart,
+                          allowEditEndWhenTimerStarted: true,
+                          onStartTimeChanged: (v) {
+                            widget.onStartTimeChanged!(v);
+                          },
+                          onEndTimeChanged: (v) {
+                            widget.onEndTimeChanged!(v);
+                          },
+                          formControlNameStart: widget.formControlNameStart!,
+                          formControlNameEnd: widget.formControlNameEnd!,
+                          cryStore: cryStore,
+                          sleepStore: sleepStore,
+                        ),
+                        32.h,
+                        CustomButton(
+                          height: 48,
+                          width: double.infinity,
+                          type: CustomButtonType.outline,
+                          icon: AppIcons.pencil,
+                          iconColor: AppColors.primaryColor,
+                          title: t.feeding.note,
+                          onTap: () => widget.onTapNotes!(),
+                          iconSize: 28,
                         ),
                         8.h,
-                        Text(
-                          textAlign: TextAlign.center,
-                          widget.textIfEditNotComplete!,
-                          style: textTheme.labelMedium?.copyWith(
-                              fontSize: 14, color: AppColors.greyBrighterColor),
-                        ),
-                        16.h,
                         CustomButton(
-                          isSmall: false,
-                          type: CustomButtonType.outline,
-                          onTap: () {
-                            context.pop();
-                          },
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 5, vertical: 12),
-                          textStyle: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                          title: t.trackers
-                              .infoManuallyContainerButtonBackAndContinue,
+                          backgroundColor: AppColors.greenLighterBackgroundColor,
+                          height: 48,
+                          width: double.infinity,
+                          title: t.feeding.confirm,
+                          onTap: widget.onTapConfirm,
                         ),
-                        16.h,
+                        35.h,
                       ],
-                    )
-                  : null,
-            ),
-            widget.bodyWidget,
-            30.h,
-            EditTimeRow(
-              onTap: () {
-                if (widget.isTimerStart) {
-                  widget.stopIfStarted();
-                }
-              },
-              timerStart: timerStart,
-              timerEnd: timerEnd,
-              isTimerStarted: widget.isTimerStart,
-              onStartTimeChanged: (v) {
-                widget.onStartTimeChanged!(v);
-                setState(() {});
-              },
-              onEndTimeChanged: (v) {
-                widget.onEndTimeChanged!(v);
-                setState(() {});
-              },
-              formControlNameStart: widget.formControlNameStart!,
-              formControlNameEnd: widget.formControlNameEnd!,
-            ),
-            32.h,
-            CustomButton(
-              height: 48,
-              width: double.infinity,
-              type: CustomButtonType.outline,
-              icon: AppIcons.pencil,
-              iconColor: AppColors.primaryColor,
-              title: t.feeding.note,
-              onTap: () => widget.onTapNotes!(),
-              iconSize: 28,
-            ),
-            8.h,
-            CustomButton(
-              backgroundColor: AppColors.greenLighterBackgroundColor,
-              height: 48,
-              width: double.infinity,
-              title: t.feeding.confirm,
-              onTap: widget.onTapConfirm,
-            ),
-            35.h,
-          ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
+    );
+  }
+}
+
+class _HighlightedText extends StatelessWidget {
+  final String text;
+  final String highlight;
+
+  const _HighlightedText({required this.text, required this.highlight});
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle baseStyle = Theme.of(context)
+            .textTheme
+            .labelMedium
+            ?.copyWith(fontSize: 14, color: AppColors.greyBrighterColor) ??
+        const TextStyle(fontSize: 14, color: Colors.grey);
+    final TextStyle highlightStyle = baseStyle.copyWith(
+      color: const Color(0xFF4D4DE8),
+      fontWeight: FontWeight.w600,
+      fontSize: 17,
+    );
+
+    final parts = text.split(highlight);
+    if (parts.length == 1) {
+      return Text(textAlign: TextAlign.center, text, style: baseStyle);
+    }
+
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 4,
+      runSpacing: 2,
+      children: List<Widget>.generate(parts.length * 2 - 1, (index) {
+        if (index.isEven) {
+          final part = parts[index ~/ 2];
+          return Text(part, style: baseStyle, textAlign: TextAlign.center);
+        } else {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: const Color(0xFFE1E6FF)),
+            ),
+            child: Text(highlight, style: highlightStyle),
+          );
+        }
+      }),
     );
   }
 }
