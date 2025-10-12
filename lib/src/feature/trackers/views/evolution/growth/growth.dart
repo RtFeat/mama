@@ -25,6 +25,8 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  String? _lastChildId;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +48,25 @@ class _BodyState extends State<_Body> {
             value: store.childId),
       ]);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final userStore = context.read<UserStore>();
+    final childId = userStore.selectedChild?.id;
+    if (childId != null && childId.isNotEmpty && childId != _lastChildId) {
+      _lastChildId = childId;
+      final store = context.read<GrowthStore>();
+      final tableStore = context.read<GrowthTableStore>();
+      store.fetchGrowthDetails();
+      tableStore.loadPage(newFilters: [
+        SkitFilter(
+            field: 'child_id',
+            operator: FilterOperator.equals,
+            value: childId),
+      ]);
+    }
   }
 
   @override

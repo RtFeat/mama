@@ -32,9 +32,7 @@ class _BodyState extends State<_Body> {
   // Список для управления MobX reactions
   final List<ReactionDisposer> _disposers = [];
   
-  // Локальные копии store для избежания повторных context.read
-  WeightStore? _weightStore;
-  WeightTableStore? _tableStore;
+  // Убираем локальные переменные - используем Consumer для реактивности
 
   @override
   void initState() {
@@ -46,37 +44,105 @@ class _BodyState extends State<_Body> {
       if (!_isActive || !mounted) return;
       
       _initializeStores();
+      _setupChildIdObserver();
     });
+  }
+
+  void _setupChildIdObserver() {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final userStore = context.read<UserStore>();
+      
+      // Добавляем reaction для отслеживания изменений childId
+      final childIdReaction = reaction(
+        (_) => userStore.selectedChild?.id,
+        (String? newChildId) {
+          if (_isActive && mounted && newChildId != null && newChildId.isNotEmpty) {
+            // Принудительно обновляем UI при смене ребенка
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_isActive && mounted) {
+                // Принудительно загружаем данные для нового ребенка
+                try {
+                  final weightStore = context.read<WeightStore>();
+                  final tableStore = context.read<WeightTableStore>();
+                  
+                  // Очищаем и загружаем данные для нового ребенка
+                  weightStore.fetchWeightDetails();
+                  
+                  // Принудительно загружаем историю для таблицы
+                  tableStore.refreshForChild(newChildId);
+                  
+                  // Дополнительно загружаем историю для WeightStore
+                  weightStore.loadPage(newFilters: [
+                    SkitFilter(
+                      field: 'child_id',
+                      operator: FilterOperator.equals,
+                      value: newChildId,
+                    ),
+                  ]);
+                } catch (e) {
+                  // Игнорируем ошибки
+                }
+                
+                setState(() {});
+              }
+            });
+          }
+        },
+      );
+      
+      _disposers.add(childIdReaction);
+    } catch (e) {
+      // Игнорируем ошибки
+    }
   }
 
   void _initializeStores() {
     if (!_isActive || !mounted) return;
     
     try {
-      _weightStore = context.read<WeightStore>();
-      _tableStore = context.read<WeightTableStore>();
+      final weightStore = context.read<WeightStore>();
+      final tableStore = context.read<WeightTableStore>();
       
-      // Загружаем данные
-      _weightStore!.fetchWeightDetails();
-      _tableStore!.loadPage(newFilters: [
-        SkitFilter(
-            field: 'child_id',
-            operator: FilterOperator.equals,
-            value: _weightStore!.childId),
-      ]);
+      // Активируем stores
+      weightStore.activate();
+      tableStore.activate();
+      
+      final currentChildId = weightStore.childId;
+      print('WeightView _initializeStores: Current childId = $currentChildId');
+      
+      if (currentChildId.isNotEmpty) {
+        // Загружаем данные веса
+        weightStore.fetchWeightDetails();
+        
+         // Явно загружаем данные таблицы
+         tableStore.loadPage(
+           newFilters: [
+             SkitFilter(
+               field: 'child_id',
+               operator: FilterOperator.equals,
+               value: currentChildId,
+             ),
+           ],
+         ).then((_) {
+           print('WeightView: Table loaded with ${tableStore.listData.length} items');
+         });
+      }
       
       // Создаем безопасную асинхронную операцию
       _loadInfoSafely();
     } catch (e) {
-      // Игнорируем ошибки если контекст недоступен
+      print('WeightView _initializeStores error: $e');
     }
   }
 
   Future<void> _loadInfoSafely() async {
-    if (!_isActive || !mounted || _weightStore == null) return;
+    if (!_isActive || !mounted) return;
     
     try {
-      await _weightStore!.getIsShowInfo();
+      final weightStore = context.read<WeightStore>();
+      await weightStore.getIsShowInfo();
       if (_isActive && mounted) {
         setState(() {});
       }
@@ -88,10 +154,11 @@ class _BodyState extends State<_Body> {
   }
 
   Future<void> _setInfoSafely(bool value) async {
-    if (!_isActive || !mounted || _weightStore == null) return;
+    if (!_isActive || !mounted) return;
     
     try {
-      await _weightStore!.setIsShowInfo(value);
+      final weightStore = context.read<WeightStore>();
+      await weightStore.setIsShowInfo(value);
       if (_isActive && mounted) {
         setState(() {});
       }
@@ -108,8 +175,10 @@ class _BodyState extends State<_Body> {
     
     // Деактивируем stores если они были инициализированы
     try {
-      _weightStore?.deactivate();
-      _tableStore?.deactivate();
+      final weightStore = context.read<WeightStore>();
+      final tableStore = context.read<WeightTableStore>();
+      weightStore.deactivate();
+      tableStore.deactivate();
     } catch (e) {
       // Игнорируем ошибки при деактивации
     }

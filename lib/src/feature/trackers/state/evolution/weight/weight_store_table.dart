@@ -35,9 +35,16 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
               'main': data.list ?? <EntityHistoryWeight>[],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
+  
   final RestClient restClient;
   final WeightStore store;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => store.userStore.selectedChild?.id ?? '';
 
   @observable
   String sortOrder = 'new'; // 'new' or 'old'
@@ -54,14 +61,43 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
 
   static const int _initialRowLimit = 6; // Количество записей по умолчанию
 
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('WeightTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
   @action
   void deactivate() {
     _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
   }
 
   @action
   void activate() {
     _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
   }
 
   @action
@@ -80,6 +116,34 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
   void toggleShowAll() {
     if (!_isActive) return;
     showAll = !showAll;
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('WeightTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+      showAll = false;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('WeightTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @computed

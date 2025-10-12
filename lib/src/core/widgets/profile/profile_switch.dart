@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mama/src/data.dart';
 
 import 'animated_text.dart';
@@ -37,6 +38,35 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
     _nextIndex = (_currentIndex + 1) % widget.children.length;
     _selectedChild = widget.children[_currentIndex];
     _nextChild = widget.children[_nextIndex];
+    
+    // Синхронизируем с текущим выбранным ребенком
+    _syncWithSelectedChild();
+  }
+
+  @override
+  void didUpdateWidget(ProfileSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Обновляем индексы при изменении списка детей
+    if (widget.children != oldWidget.children) {
+      _syncWithSelectedChild();
+    }
+  }
+
+  void _syncWithSelectedChild() {
+    if (!mounted) return;
+    
+    final selectedChild = widget.userStore.selectedChild;
+    if (selectedChild != null) {
+      final index = widget.children.indexOf(selectedChild);
+      if (index != -1 && index != _currentIndex) {
+        setState(() {
+          _currentIndex = index;
+          _nextIndex = (_currentIndex + 1) % widget.children.length;
+          _selectedChild = widget.children[_currentIndex];
+          _nextChild = widget.children[_nextIndex];
+        });
+      }
+    }
   }
 
   void _toggleCircles() {
@@ -59,8 +89,21 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
+    return Observer(
+      builder: (context) {
+        // Отслеживаем изменения selectedChild через Observer
+        final selectedChild = widget.userStore.selectedChild;
+        if (selectedChild != null && selectedChild != _selectedChild) {
+          // Обновляем только если выбранный ребенок действительно изменился
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              _syncWithSelectedChild();
+            }
+          });
+        }
+        
+        final ThemeData themeData = Theme.of(context);
+        final TextTheme textTheme = themeData.textTheme;
 
     const double startPos = 25;
     const double endPos = 0;
@@ -134,6 +177,8 @@ class _ProfileSwitchState extends State<ProfileSwitch> {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }

@@ -59,7 +59,21 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
+          print('WeightStore reaction: childId changed to $newChildId');
+          
+          // Очищаем старые данные
+          runInAction(() {
+            weightDetails = null;
+            listData.clear();
+          });
+          
+          // Загружаем новые данные
           fetchWeightDetails();
+          
+          // ВАЖНО: Используем новый метод refreshForChild для полной перезагрузки
+          if (tableStore != null) {
+            tableStore!.refreshForChild(newChildId);
+          }
         }
       },
     );
@@ -561,20 +575,24 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
   @action
   Future<void> fetchWeightDetails() async {
     if (!_isActive || childId.isEmpty) return;
-    runInAction(() => isDetailsLoading = true);
+    
+    runInAction(() {
+      isDetailsLoading = true;
+      weightDetails = null;
+    });
+    
     try {
       final response = await restClient.growth.getGrowthWeight(childId: childId);
       if (_isActive) {
         runInAction(() => weightDetails = response);
       }
       
-      // Если данных для графика нет, загружаем историю как fallback
-      if (_isActive && childId.isNotEmpty && (weightDetails?.list?.table == null || weightDetails!.list!.table!.isEmpty)) {
+      if (_isActive && childId.isNotEmpty && 
+          (weightDetails?.list?.table == null || weightDetails!.list!.table!.isEmpty)) {
         await _loadHistoryData();
       }
     } catch (e) {
       print('WeightStore fetchWeightDetails error: $e');
-      // В случае ошибки тоже пытаемся загрузить историю
       if (_isActive && childId.isNotEmpty) {
         await _loadHistoryData();
       }
@@ -591,9 +609,14 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
       print('WeightStore _loadHistoryData: Skipping - not active or childId empty');
       return;
     }
+    
     print('WeightStore _loadHistoryData: Loading history for childId: $childId');
+    
+    runInAction(() {
+      listData.clear();
+    });
+    
     try {
-      // Используем loadPage с правильными фильтрами вместо refresh
       await loadPage(newFilters: [
         SkitFilter(
           field: 'child_id',
@@ -850,6 +873,7 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
     }
     // Загружаем данные при активации только если есть childId
     if (childId.isNotEmpty) {
+      print('WeightStore activate: Loading data for childId: $childId');
       fetchWeightDetails();
     }
   }

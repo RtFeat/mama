@@ -9,7 +9,7 @@ class GrowthStore extends _GrowthStore with _$GrowthStore {
     required super.apiClient,
     required super.restClient,
     required super.faker,
-    required super.childId,
+    required super.userStore,
     required super.onLoad,
     required super.onSet,
     this.tableStore,
@@ -24,7 +24,7 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
     required super.apiClient,
     required this.restClient,
     required super.faker,
-    required this.childId,
+    required this.userStore,
     required super.onLoad,
     required super.onSet,
   }        ) : super(
@@ -41,15 +41,43 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
               'main': data.list ?? <EntityHistoryHeight>[],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
-  final String childId;
+  final UserStore userStore;
   final RestClient restClient;
+  ReactionDisposer? _childIdReaction;
 
   GrowthTableStore? get tableStore => (this as GrowthStore).tableStore;
 
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
   @observable
   GrowthGetHeightResponse? growthDetails;
+
+  @observable
+  bool _isActive = true;
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          fetchGrowthDetails();
+          // Обновляем таблицу с новым childId
+          tableStore?.loadPage(newFilters: [
+            SkitFilter(
+              field: 'child_id',
+              operator: FilterOperator.equals,
+              value: newChildId,
+            ),
+          ]);
+        }
+      },
+    );
+  }
 
   @computed
   Current get current {
@@ -419,10 +447,6 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
   @observable
   bool isDetailsLoading = false;
 
-  // Добавляем флаг для отслеживания активного состояния
-  @observable
-  bool _isActive = true;
-
   @action
   Future<void> fetchGrowthDetails() async {
     // Проверяем, активен ли еще store
@@ -484,12 +508,14 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
   @action
   void deactivate() {
     _isActive = false;
+    _childIdReaction?.reaction.dispose();
   }
 
   // Метод для реактивации store
   @action
   void activate() {
     _isActive = true;
+    _setupChildIdReaction();
     // Загружаем данные при активации только если есть childId
     if (childId.isNotEmpty) {
       fetchGrowthDetails();
