@@ -60,6 +60,7 @@ class _BreastScreenState extends State<BreastScreen> {
               apiClient: context.read<Dependencies>().apiClient,
               faker: context.read<Dependencies>().faker,
               restClient: context.read<Dependencies>().restClient,
+              userStore: context.read<UserStore>(),
             ),
             child: const BreastFeedingHistoryTableWidget(),
           ),

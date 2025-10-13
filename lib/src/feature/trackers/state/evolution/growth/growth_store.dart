@@ -65,15 +65,21 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
+          print('GrowthStore reaction: childId changed to $newChildId');
+          
+          // Очищаем старые данные
+          runInAction(() {
+            growthDetails = null;
+            listData.clear();
+          });
+          
+          // Загружаем новые данные
           fetchGrowthDetails();
-          // Обновляем таблицу с новым childId
-          tableStore?.loadPage(newFilters: [
-            SkitFilter(
-              field: 'child_id',
-              operator: FilterOperator.equals,
-              value: newChildId,
-            ),
-          ]);
+          
+          // ВАЖНО: Используем новый метод refreshForChild для полной перезагрузки
+          if (tableStore != null) {
+            tableStore!.refreshForChild(newChildId);
+          }
         }
       },
     );
@@ -449,33 +455,29 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
 
   @action
   Future<void> fetchGrowthDetails() async {
-    // Проверяем, активен ли еще store
-    if (!_isActive) return;
+    if (!_isActive || childId.isEmpty) return;
     
-    runInAction(() => isDetailsLoading = true);
+    runInAction(() {
+      isDetailsLoading = true;
+      growthDetails = null;
+    });
     
     try {
       final response = await restClient.growth.getGrowthHeight(childId: childId);
-      
-      // Проверяем еще раз перед обновлением состояния
       if (_isActive) {
-        runInAction(() {
-          growthDetails = response;
-        });
+        runInAction(() => growthDetails = response);
       }
       
-      // Если данных для графика нет, загружаем историю как fallback
-      if (_isActive && childId.isNotEmpty && (growthDetails?.list?.table == null || growthDetails!.list!.table!.isEmpty)) {
+      if (_isActive && childId.isNotEmpty && 
+          (growthDetails?.list?.table == null || growthDetails!.list!.table!.isEmpty)) {
         await _loadHistoryData();
       }
     } catch (e) {
       print('GrowthStore fetchGrowthDetails error: $e');
-      // В случае ошибки тоже пытаемся загрузить историю
       if (_isActive && childId.isNotEmpty) {
         await _loadHistoryData();
       }
     } finally {
-      // Всегда обновляем состояние, но только если store еще активен
       if (_isActive) {
         runInAction(() => isDetailsLoading = false);
       }
@@ -488,9 +490,14 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
       print('GrowthStore _loadHistoryData: Skipping - not active or childId empty');
       return;
     }
+    
     print('GrowthStore _loadHistoryData: Loading history for childId: $childId');
+    
+    runInAction(() {
+      listData.clear();
+    });
+    
     try {
-      // Используем loadPage с правильными фильтрами вместо refresh
       await loadPage(newFilters: [
         SkitFilter(
           field: 'child_id',
@@ -504,20 +511,22 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
     }
   }
 
-  // Метод для деактивации store при размонтировании виджета
   @action
   void deactivate() {
     _isActive = false;
-    _childIdReaction?.reaction.dispose();
+    _childIdReaction?.call();
+    _childIdReaction = null;
   }
 
-  // Метод для реактивации store
   @action
   void activate() {
     _isActive = true;
-    _setupChildIdReaction();
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
     // Загружаем данные при активации только если есть childId
     if (childId.isNotEmpty) {
+      print('GrowthStore activate: Loading data for childId: $childId');
       fetchGrowthDetails();
     }
   }

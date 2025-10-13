@@ -56,7 +56,9 @@ class _PumpingScreenState extends State<PumpingScreen> {
                 text: 'Кормление сохранено',
                 onClosed: () => setState(() => _showSavedBanner = false),
               ),
-              PumpingGraphicWidget(),
+              PumpingGraphicWidget(
+                key: ValueKey(context.read<UserStore>().selectedChild?.id),
+              ),
             ],
           ),
         ),
@@ -96,13 +98,16 @@ class _PumpingScreenState extends State<PumpingScreen> {
             final childId = context.read<UserStore>().selectedChild!.id;
             return Provider(
               key: ValueKey(_reloadTick),
-              create: (context) => PumpingTableStore(
-                apiClient: deps.apiClient,
-                restClient: deps.restClient,
-                faker: deps.faker,
-              )..loadPage(newFilters: [
-                  SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
-                ]),
+              create: (context) {
+                final store = PumpingTableStore(
+                  apiClient: deps.apiClient,
+                  restClient: deps.restClient,
+                  faker: deps.faker,
+                  userStore: context.read<UserStore>(),
+                );
+                store.activate();
+                return store;
+              },
               child: const PumpingHistoryTableWidget(),
             );
           }),

@@ -49,7 +49,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
         /// Current Container
         Expanded(
           child: Container(
-            height: 90,
+            height: 110,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -78,6 +78,8 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                           '${current.value ~/ 1} ${t.trackers.kg.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
                         EvolutionCategory.growth =>
                           '${current.value ~/ 1} ${t.trackers.cm.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
+                        EvolutionCategory.head =>
+                          '${current.value.toStringAsFixed(1)} ${t.trackers.cm.title.toLowerCase()}',
                         _ => ''
                       },
                       // trackerType.currentLabel,
@@ -131,7 +133,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
         /// Dynamic Container
         Expanded(
           child: Container(
-            height: 90,
+            height: 110,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -158,6 +160,7 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                       switch (trackerType) {
                         EvolutionCategory.weight => '${dynamic.label} г',
                         EvolutionCategory.growth => '${dynamic.label} см',
+                        EvolutionCategory.head => '${dynamic.label} см',
                         _ => ''
                       },
                       // trackerType.dynamicLabel,
@@ -188,11 +191,14 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                           '${(dynamic.value * 100).toInt()} г в сутки',
                         EvolutionCategory.growth =>
                           '${dynamic.value.toStringAsFixed(1)} см в сутки',
+                        EvolutionCategory.head =>
+                          '${dynamic.value.toStringAsFixed(1)} см в сутки',
                         _ => ''
                       },
                       style: AppTextStyles.f10w700.copyWith(
                         color: (trackerType == EvolutionCategory.weight && dynamic.value < 0) ||
-                               (trackerType == EvolutionCategory.growth && dynamic.value < 0)
+                               (trackerType == EvolutionCategory.growth && dynamic.value < 0) ||
+                               (trackerType == EvolutionCategory.head && dynamic.value < 0)
                           ? AppColors.orangeTextColor 
                           : AppColors.greenTextColor,
                       ),

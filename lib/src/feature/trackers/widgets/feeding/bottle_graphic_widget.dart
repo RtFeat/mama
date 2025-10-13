@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/feature/trackers/data/entity/pumping_data.dart';
+import 'package:mobx/mobx.dart';
 
 class BottleGraphicWidget extends StatefulWidget {
   const BottleGraphicWidget({super.key});
@@ -12,7 +13,45 @@ class BottleGraphicWidget extends StatefulWidget {
 }
 
 class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
-  int _weekOffset = 0;
+  int _weekOffset = 0; // 0 - текущая неделя, -1 - прошлая, +1 - следующая
+  String? _currentChildId;
+  ReactionDisposer? _childIdReaction;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final userStore = context.read<UserStore>();
+        _currentChildId = userStore.selectedChild?.id;
+      }
+    });
+    _setupChildIdReaction();
+  }
+
+  void _setupChildIdReaction() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      final userStore = context.read<UserStore>();
+      _childIdReaction = reaction(
+        (_) => userStore.selectedChild?.id,
+        (String? newChildId) {
+          if (mounted && newChildId != _currentChildId) {
+            setState(() {
+              _currentChildId = newChildId;
+            });
+          }
+        },
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _childIdReaction?.call();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +59,8 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
     final restClient = context.read<Dependencies>().restClient;
 
     return FutureBuilder<List<GraphicData>>(
-      future: _loadChartData(restClient, userStore.selectedChild?.id, _weekOffset),
+      key: ValueKey('${_currentChildId}_$_weekOffset'),
+      future: _loadChartData(restClient, _currentChildId, _weekOffset),
       builder: (context, snapshot) {
         final list = snapshot.data ?? const <GraphicData>[];
         final maxVal = list.fold<int>(0, (m, e) => e.general > m ? e.general : m);

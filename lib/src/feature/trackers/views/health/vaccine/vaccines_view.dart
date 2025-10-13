@@ -25,6 +25,7 @@ class VaccinesScreen extends StatelessWidget {
             onSet: (value) =>
                 context.read<VaccineDataSourceLocal>().setShow(value),
             faker: context.read<Dependencies>().faker,
+            userStore: context.read<UserStore>(),
           );
         })
       ],

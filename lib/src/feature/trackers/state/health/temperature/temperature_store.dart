@@ -10,6 +10,7 @@ class TemperatureStore extends _TemperatureStore with _$TemperatureStore {
   TemperatureStore({
     required super.apiClient,
     required super.faker,
+    required super.userStore,
   });
 }
 
@@ -18,6 +19,7 @@ abstract class _TemperatureStore
   _TemperatureStore({
     required super.apiClient,
     required super.faker,
+    required this.userStore,
   }) : super(
           pageSize: 50,
           testDataGenerator: () {
@@ -44,7 +46,84 @@ abstract class _TemperatureStore
               'main': data,
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
+
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool _isActive = true;
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('TemperatureStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('TemperatureStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('TemperatureStore refreshForChild completed: ${listData.length} items loaded');
+  }
 
   static const _cellTextStyle = TextStyle(
     fontWeight: FontWeight.w400,

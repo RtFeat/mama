@@ -9,6 +9,7 @@ class BreastFeedingTableStore extends _BreastFeedingTableStore {
     required super.apiClient,
     required super.faker,
     required super.restClient,
+    required super.userStore,
   });
 }
 
@@ -17,6 +18,7 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
     required super.apiClient,
     required super.faker,
     required this.restClient,
+    required this.userStore,
   }) : super(
           testDataGenerator: () => EntityFeeding(),
           basePath: 'feed/chest/history',
@@ -47,9 +49,111 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
             }
             return {'main': result};
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
   final RestClient restClient;
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool showAll = false; // Показывать все записи или только первые
+
+  @observable
+  bool _isActive = true;
+
+  static const int _initialRowLimit = 5; // Количество записей по умолчанию
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('BreastFeedingTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('BreastFeedingTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+      showAll = false;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('BreastFeedingTableStore refreshForChild completed: ${listData.length} items loaded');
+  }
+
+  @action
+  void toggleShowAll() {
+    showAll = !showAll;
+  }
+
+  @computed
+  int get totalRecordsCount => listData.length;
+
+  @computed
+  int get shownRecordsCount {
+    if (showAll) return totalRecordsCount;
+    return totalRecordsCount > _initialRowLimit ? _initialRowLimit : totalRecordsCount;
+  }
+
+  @computed
+  bool get canShowAll => !showAll && totalRecordsCount > _initialRowLimit;
+
+  @computed
+  bool get canCollapse => showAll;
 
   // Table for Skit (not used directly in this UI but must be implemented)
   @override

@@ -18,8 +18,6 @@ class SleepHistoryTableWidget extends StatefulWidget {
 
 class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
   int sortIndex = 0; // 0 -> new first, 1 -> old first
-  bool _showAll = false; // Показать всю историю или ограничить первыми N записями
-  static const int _initialRowLimit = 5;
 
   String? _currentChildId;
 
@@ -467,7 +465,7 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
 
       // Когда показываем не всю историю, ограничим общее число строк первыми N
       final orderedDateKeys = allDateKeys;
-      int remaining = _showAll ? 1 << 30 : _initialRowLimit;
+      int remaining = store.showAll ? 1 << 30 : 5; // Используем 5 как лимит по умолчанию
       final List<MapEntry<String, List<EntitySleep>>> sections = [];
       for (final dayKey in orderedDateKeys) {
         if (remaining <= 0) break;
@@ -633,31 +631,31 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
               );
             },
           ),
-          Center(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(6),
-              onTap: () {
-                setState(() {
-                  _showAll = !_showAll;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                child: Column(
-                  children: [
-                    Text(
-                      _showAll ? 'Свернуть историю' : 'Вся история',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w700,
+          if (store.canShowAll || store.canCollapse) ...[
+            Center(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(6),
+                onTap: () {
+                  store.toggleShowAll();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  child: Column(
+                    children: [
+                      Text(
+                        store.showAll ? 'Свернуть историю' : 'Вся история',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    Icon(_showAll ? Icons.expand_less : Icons.expand_more, color: theme.colorScheme.primary),
-                  ],
+                      Icon(store.showAll ? Icons.expand_less : Icons.expand_more, color: theme.colorScheme.primary),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
           const SizedBox(height: 16),
         ],
       );

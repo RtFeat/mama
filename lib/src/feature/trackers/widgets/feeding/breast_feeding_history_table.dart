@@ -22,6 +22,23 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
   @override
   void initState() {
     super.initState();
+    // Активируем store при инициализации
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final store = context.read<BreastFeedingTableStore>();
+      store.activate();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Деактивируем store при dispose
+    try {
+      final store = context.read<BreastFeedingTableStore>();
+      store.deactivate();
+    } catch (e) {
+      // Игнорируем ошибки при деактивации
+    }
+    super.dispose();
   }
 
   @override
@@ -97,6 +114,9 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
           return sortIndex == 0 ? db.compareTo(da) : da.compareTo(db);
         });
 
+      // Ограничиваем количество отображаемых дат в зависимости от showAll
+      final datesToShow = store.showAll ? mapDates : mapDates.take(5).toList();
+
       return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -131,15 +151,15 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
           const SizedBox(height: 8),
           ListView.separated(
           shrinkWrap: true,
-          itemCount: mapDates.length,
+          itemCount: datesToShow.length,
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final inputFormat = DateFormat('yyyy-MM-dd');
-            final input = inputFormat.parse(mapDates[index]);
+            final input = inputFormat.parse(datesToShow[index]);
             final dateLabel = DateFormat('dd MMMM').format(input);
-            final dayItems = List<EntityFeeding>.from(grouped[mapDates[index]] ?? [])
+            final dayItems = List<EntityFeeding>.from(grouped[datesToShow[index]] ?? [])
               ..sort((a, b) => _parse(a.timeToEnd).compareTo(_parse(b.timeToEnd)));
 
             int totalLeftMinutes = 0;
@@ -244,27 +264,31 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             );
           },
         ),
-        Center(
-          child: InkWell(
-            borderRadius: BorderRadius.circular(6),
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              child: Column(
-                children: [
-                  Text(
-                    'Вся история',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w700,
+        if (store.canShowAll || store.canCollapse) ...[
+          Center(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: () {
+                store.toggleShowAll();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: Column(
+                  children: [
+                    Text(
+                      store.showAll ? 'Свернуть историю' : 'Вся история',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                  Icon(Icons.expand_more, color: theme.colorScheme.primary),
-                ],
+                    Icon(store.showAll ? Icons.expand_less : Icons.expand_more, color: theme.colorScheme.primary),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ],
     );
     });

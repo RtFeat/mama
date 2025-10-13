@@ -355,8 +355,7 @@ final GoRouter router = GoRouter(
                       apiClient: context.read<Dependencies>().apiClient,
                       restClient: context.read<Dependencies>().restClient,
                       faker: context.read<Dependencies>().faker,
-                      childId:
-                          context.read<UserStore>().selectedChild?.id ?? '',
+                      userStore: context.read<UserStore>(),
                       onLoad: () =>
                           context.read<CircleDataSourceLocal>().getIsShow(),
                       onSet: (value) =>
@@ -384,18 +383,21 @@ final GoRouter router = GoRouter(
                             apiClient: context.read<Dependencies>().apiClient,
                             restClient: context.read<Dependencies>().restClient,
                             faker: context.read<Dependencies>().faker,
+                            userStore: context.read<UserStore>(),
                           )),
                   Provider(
                       create: (context) => SleepTableStore(
                             apiClient: context.read<Dependencies>().apiClient,
                             restClient: context.read<Dependencies>().restClient,
                             faker: context.read<Dependencies>().faker,
+                            userStore: context.read<UserStore>(),
                           )),
                   Provider(
                       create: (context) => CryTableStore(
                             apiClient: context.read<Dependencies>().apiClient,
                             restClient: context.read<Dependencies>().restClient,
                             faker: context.read<Dependencies>().faker,
+                            userStore: context.read<UserStore>(),
                           )),
                 ],
                 child: child,
@@ -433,6 +435,7 @@ final GoRouter router = GoRouter(
                       apiClient: context.read<Dependencies>().apiClient,
                       restClient: context.read<Dependencies>().restClient,
                       faker: context.read<Dependencies>().faker,
+                      userStore: context.read<UserStore>(),
                     ),
                   ),
                 ],

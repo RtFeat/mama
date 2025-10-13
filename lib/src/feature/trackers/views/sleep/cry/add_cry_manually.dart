@@ -205,6 +205,7 @@ class _AddCryManuallyViewState extends State<AddCryManuallyView> {
                     apiClient: deps.apiClient,
                     restClient: deps.restClient,
                     faker: deps.faker,
+                    userStore: context.read<UserStore>(),
                   );
                   
                   // Загружаем данные с сервера (Cry API не поддерживает from_time/to_time)

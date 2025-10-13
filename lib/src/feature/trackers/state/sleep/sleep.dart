@@ -12,7 +12,7 @@ class SleepStore extends _SleepStore with _$SleepStore {
     required super.apiClient,
     required super.restClient,
     required super.faker,
-    required super.childId,
+    required super.userStore,
     required super.onLoad,
     required super.onSet,
   });
@@ -24,7 +24,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     required super.apiClient,
     required this.restClient,
     required super.faker,
-    required this.childId,
+    required this.userStore,
     required super.onLoad,
     required super.onSet,
   }) : super(
@@ -49,8 +49,11 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     });
   }
 
-  final String childId;
+  final UserStore userStore;
   final RestClient restClient;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
 
   final _dateTimeFormat = DateFormat('HH:mm');
 
@@ -340,6 +343,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
         _dateTimeFormat.format(DateTime.now());
   }
 
+  @override
   void dispose() {
     formGroup.dispose();
   }

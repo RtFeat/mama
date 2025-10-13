@@ -31,8 +31,6 @@ class BottleHistoryTableWidget extends StatefulWidget {
 class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
   int sortIndex = 0; // 0 -> new first
   String? _currentChildId;
-  bool _showAll = false;
-  static const int _initialRowLimit = 6;
 
   @override
   void didChangeDependencies() {
@@ -42,11 +40,9 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
       _currentChildId = childId;
       final store = context.read<BottleTableStore>();
       
-      if (store.listData.isEmpty) {
-        store.loadPage(newFilters: [
-          SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
-        ]);
-      }
+      // Store теперь сам управляет загрузкой данных при смене ребенка
+      // Просто активируем store если он неактивен
+      store.activate();
     }
   }
 
@@ -410,7 +406,7 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
         });
 
       // Build sections with optional limit
-      int remaining = _showAll ? 1 << 30 : _initialRowLimit;
+      int remaining = store.showAll ? 1 << 30 : 6; // Используем 6 как лимит по умолчанию
       final List<MapEntry<String, List<EntityFood>>> sections = [];
       for (final k in mapDates) {
         if (remaining <= 0) break;
@@ -420,17 +416,12 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
         remaining -= take;
       }
 
-      final int shownCount = sections.fold<int>(0, (sum, e) => sum + e.value.length);
-      final int totalCount = grouped.values.fold<int>(0, (sum, e) => sum + e.length);
-      final bool canShowAll = !_showAll && shownCount < totalCount;
-      final bool canCollapse = _showAll;
-
       // Show empty state if no data
       if (listData.isEmpty && !store.isLoading) {
         return _buildEmptyState(theme, headerStyle);
       }
 
-      return _buildDataTable(theme, headerStyle, dateStyle, cellStyle, sections, grouped, canShowAll, canCollapse);
+      return _buildDataTable(theme, headerStyle, dateStyle, cellStyle, sections, grouped, store);
     });
   }
 
@@ -489,8 +480,7 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
   }
 
   Widget _buildDataTable(ThemeData theme, TextStyle? headerStyle, TextStyle? dateStyle, TextStyle? cellStyle, 
-      List<MapEntry<String, List<EntityFood>>> sections, Map<String, List<EntityFood>> grouped, 
-      bool canShowAll, bool canCollapse) {
+      List<MapEntry<String, List<EntityFood>>> sections, Map<String, List<EntityFood>> grouped, BottleTableStore store) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -585,27 +575,25 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
           },
         ),
         const SizedBox(height: 16),
-        if (canShowAll || canCollapse) ...[
+        if (store.canShowAll || store.canCollapse) ...[
           Center(
             child: InkWell(
               borderRadius: BorderRadius.circular(6),
               onTap: () {
-                setState(() {
-                  _showAll = !_showAll;
-                });
+                store.toggleShowAll();
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 child: Column(
                   children: [
                     Text(
-                      _showAll ? 'Свернуть историю' : 'Вся история',
+                      store.showAll ? 'Свернуть историю' : 'Вся история',
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    Icon(_showAll ? Icons.expand_less : Icons.expand_more, color: theme.colorScheme.primary),
+                    Icon(store.showAll ? Icons.expand_less : Icons.expand_more, color: theme.colorScheme.primary),
                   ],
                 ),
               ),

@@ -12,6 +12,7 @@ class SleepTableStore extends _SleepTableStore with _$SleepTableStore {
     required super.apiClient,
     required super.faker,
     required super.restClient,
+    required super.userStore,
   });
 }
 
@@ -20,6 +21,7 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
     required super.apiClient,
     required super.faker,
     required this.restClient,
+    required this.userStore,
   }) : super(
           testDataGenerator: () => EntitySleep(),
           basePath: 'sleep_cry/sleep/get',
@@ -29,17 +31,121 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
             final data = SleepcryGetSleepResponse.fromJson(raw);
             return {'main': data.list ?? <EntitySleep>[]};
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
   final RestClient restClient;
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool _isActive = true;
 
   @observable
   String sortOrder = 'new'; // 'new' or 'old'
 
+  @observable
+  bool showAll = false; // Показывать все записи или только первые
+
+  static const int _initialRowLimit = 5; // Количество записей по умолчанию
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('SleepTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('SleepTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+      showAll = false;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('SleepTableStore refreshForChild completed: ${listData.length} items loaded');
+  }
+
   @action
   void setSortOrder(int index) {
+    if (!_isActive) return;
     sortOrder = index == 0 ? 'new' : 'old';
   }
+
+  @action
+  void toggleShowAll() {
+    if (!_isActive) return;
+    showAll = !showAll;
+  }
+
+  @computed
+  int get totalRecordsCount => listData.length;
+
+  @computed
+  int get shownRecordsCount {
+    if (showAll) return totalRecordsCount;
+    return totalRecordsCount > _initialRowLimit ? _initialRowLimit : totalRecordsCount;
+  }
+
+  @computed
+  bool get canShowAll => !showAll && totalRecordsCount > _initialRowLimit;
+
+  @computed
+  bool get canCollapse => showAll;
 
   @override
   TableData get tableData => TableData(
@@ -72,6 +178,8 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
   @override
   @computed
   ObservableList<List<TableItem>> get rows {
+    if (!_isActive) return ObservableList.of([]);
+    
     final List<List<TableItem>> result = [];
 
     final sortedList = List<EntitySleep>.from(listData);

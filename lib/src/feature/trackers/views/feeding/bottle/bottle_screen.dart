@@ -103,6 +103,7 @@ class _BottleScreenState extends State<BottleScreen> {
                 apiClient: deps.apiClient,
                 restClient: deps.restClient,
                 faker: deps.faker,
+                userStore: context.read<UserStore>(),
               )..loadPage(newFilters: [
                   SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
                 ]),

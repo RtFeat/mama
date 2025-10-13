@@ -11,6 +11,7 @@ class CryTableStore extends _CryTableStore {
     required super.apiClient,
     required super.faker,
     required super.restClient,
+    required super.userStore,
   });
 }
 
@@ -19,6 +20,7 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
     required super.apiClient,
     required super.faker,
     required this.restClient,
+    required this.userStore,
   }) : super(
           testDataGenerator: () => EntityCry(),
           basePath: 'sleep_cry/cry/get',
@@ -28,9 +30,120 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
             final data = SleepcryGetCryResponse.fromJson(raw);
             return {'main': data.list ?? <EntityCry>[]};
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
   final RestClient restClient;
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool _isActive = true;
+
+  @observable
+  bool showAll = false; // Показывать все записи или только первые
+
+  static const int _initialRowLimit = 5; // Количество записей по умолчанию
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          print('CryTableStore reaction: childId changed to $newChildId');
+          
+          // Очищаем старые данные
+          runInAction(() {
+            listData.clear();
+          });
+          
+          // Загружаем новые данные
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('CryTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('CryTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+      showAll = false;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('CryTableStore refreshForChild completed: ${listData.length} items loaded');
+  }
+
+  @action
+  void toggleShowAll() {
+    if (!_isActive) return;
+    showAll = !showAll;
+  }
+
+  @computed
+  int get totalRecordsCount => listData.length;
+
+  @computed
+  int get shownRecordsCount {
+    if (showAll) return totalRecordsCount;
+    return totalRecordsCount > _initialRowLimit ? _initialRowLimit : totalRecordsCount;
+  }
+
+  @computed
+  bool get canShowAll => !showAll && totalRecordsCount > _initialRowLimit;
+
+  @computed
+  bool get canCollapse => showAll;
 
   // Table for Skit (not used directly in this UI but must be implemented)
   @override
@@ -59,6 +172,8 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
 
   @override
   ObservableList<List<TableItem>> get rows {
+    if (!_isActive) return ObservableList.of([]);
+    
     final List<List<TableItem>> result = [];
     for (final e in listData) {
       final start = DateTime.tryParse(e.timeToStart ?? '') ?? DateTime.now();

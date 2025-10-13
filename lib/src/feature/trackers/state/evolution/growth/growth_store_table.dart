@@ -35,9 +35,16 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
               'main': data.list ?? <EntityHistoryHeight>[],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
+  
   final RestClient restClient;
   final GrowthStore store;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => store.userStore.selectedChild?.id ?? '';
 
   @observable
   String sortOrder = 'new'; // 'new' or 'old'
@@ -54,19 +61,89 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
 
   static const int _initialRowLimit = 6; // Количество записей по умолчанию
 
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('GrowthTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
   @action
   void setSortOrder(int index) {
+    if (!_isActive) return;
     sortOrder = index == 0 ? 'new' : 'old';
   }
 
   @action
   void setGrowthUnit(GrowthUnit unit) {
+    if (!_isActive) return;
     growthUnit = unit;
   }
 
   @action
   void toggleShowAll() {
+    if (!_isActive) return;
     showAll = !showAll;
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('GrowthTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+      showAll = false;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('GrowthTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @computed
@@ -380,20 +457,4 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
     return ObservableList.of(result);
   }
 
-  // Метод для деактивации store при размонтировании виджета
-  @action
-  void deactivate() {
-    _isActive = false;
-  }
-
-  // Метод для реактивации store
-  @action
-  void activate() {
-    _isActive = true;
-  }
-
-  // Метод для установки связи с GrowthStore
-  void setGrowthStore(GrowthStore growthStore) {
-    growthStore.tableStore = this as GrowthTableStore;
-  }
 }

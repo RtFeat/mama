@@ -66,9 +66,11 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
   void didUpdateWidget(SleepCryWeekTable oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.startOfWeek != widget.startOfWeek) {
+      print('SleepCryWeekTable didUpdateWidget: Date changed from ${oldWidget.startOfWeek} to ${widget.startOfWeek}');
       startOfWeek = widget.startOfWeek;
       endOfWeek = startOfWeek.add(const Duration(days: 6));
-      _loadData();
+      // Принудительно перезагружаем данные при изменении даты
+      _forceReloadData();
       _updateEvents();
     }
   }
@@ -83,6 +85,26 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
   void _loadData() {
     final childId = context.read<UserStore>().selectedChild?.id;
     if (childId != null) {
+      _loadSleepData(childId);
+      _loadCryData(childId);
+    }
+  }
+
+  void _forceReloadData() {
+    final childId = context.read<UserStore>().selectedChild?.id;
+    print('SleepCryWeekTable _forceReloadData: childId = $childId, startOfWeek = $startOfWeek, endOfWeek = $endOfWeek');
+    if (childId != null) {
+      // Принудительно очищаем данные и загружаем заново
+      final sleepStore = context.read<SleepTableStore>();
+      final cryStore = context.read<CryTableStore>();
+      
+      print('SleepCryWeekTable _forceReloadData: Clearing data - sleep: ${sleepStore.listData.length}, cry: ${cryStore.listData.length}');
+      
+      // Очищаем данные
+      sleepStore.listData.clear();
+      cryStore.listData.clear();
+      
+      // Загружаем данные заново
       _loadSleepData(childId);
       _loadCryData(childId);
     }
@@ -294,9 +316,13 @@ Widget build(BuildContext context) {
                     ),
                   ),
                   child: WeekView(
+                    key: ValueKey('sleep_cry_week_${startOfWeek.toIso8601String()}'),
                     controller: _controller,
                     heightPerMinute: 0.3,
-                    weekNumberBuilder: (firstDayOfWeek) => const SizedBox.shrink(),
+                    weekNumberBuilder: (firstDayOfWeek) {
+                      print('SleepCryWeekTable WeekView weekNumberBuilder: firstDayOfWeek = $firstDayOfWeek');
+                      return const SizedBox.shrink();
+                    },
                     weekTitleHeight: 30,
                     timeLineBuilder: (date) {
                       if (date.hour % 3 == 0 && date.minute == 0) {
@@ -310,15 +336,18 @@ Widget build(BuildContext context) {
                       }
                       return const SizedBox.shrink();
                     },
-                    weekDayBuilder: (date) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '${t.trackers.list_of_weeks[date.weekday - 1]} ${date.day}',
-                        textAlign: TextAlign.center,
-                        style: textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400),
-                        maxLines: 1,
-                      ),
-                    ),
+                    weekDayBuilder: (date) {
+                      print('SleepCryWeekTable WeekView weekDayBuilder: date = $date');
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '${t.trackers.list_of_weeks[date.weekday - 1]} ${date.day}',
+                          textAlign: TextAlign.center,
+                          style: textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w400),
+                          maxLines: 1,
+                        ),
+                      );
+                    },
                     eventTileBuilder: (date, events, boundry, start, end) {
                       final Color color = events.isNotEmpty
                           ? (events.first.color ?? AppColors.purpleBrighterBackgroundColor)

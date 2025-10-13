@@ -26,6 +26,7 @@ class DrugsView extends StatelessWidget {
               onSet: (value) =>
                   context.read<DrugsDataSourceLocal>().setShow(value),
               faker: context.read<Dependencies>().faker,
+              userStore: context.read<UserStore>(),
             );
           })
         ],

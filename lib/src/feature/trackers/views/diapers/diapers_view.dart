@@ -30,6 +30,7 @@ class DiapersView extends StatelessWidget {
               onLoad: () => context.read<DiapersDataSourceLocal>().getIsShow(),
               onSet: (value) =>
                   context.read<DiapersDataSourceLocal>().setShow(value),
+              userStore: context.read<UserStore>(),
             ),
           ),
         ],
@@ -56,47 +57,143 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  // Флаг для отслеживания активности виджета
+  bool _isActive = false;
+  
+  // Список для управления MobX reactions
+  final List<ReactionDisposer> _disposers = [];
+
   @override
   void initState() {
-    widget.store.loadPage(newFilters: [
-      skit.SkitFilter(
-          field: 'child_id',
-          operator: skit.FilterOperator.equals,
-          value: widget.childId),
-      skit.SkitFilter(
-          field: 'from_time',
-          operator: skit.FilterOperator.equals,
-          value: widget.store.startOfWeek.toUtc().toIso8601String()),
-      skit.SkitFilter(
-          field: 'to_time',
-          operator: skit.FilterOperator.equals,
-          value: widget.store.endOfWeek.toUtc().toIso8601String())
-    ]
-        //   queryParams: {
-        //   'child_id': widget.childId,
-        //   'from_time': widget.store.startOfWeek.toUtc().toIso8601String(),
-        //   'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
-        // }
-        );
-
-    widget.store.getIsShowInfo().then((v) {
-      setState(() {});
-    });
     super.initState();
+    _isActive = true;
+    
+    // Инициализация store
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isActive || !mounted) return;
+      
+      _initializeStore();
+      _setupChildIdObserver();
+    });
+  }
+
+  void _setupChildIdObserver() {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final userStore = context.read<UserStore>();
+      
+      // Добавляем reaction для отслеживания изменений childId
+      final childIdReaction = reaction(
+        (_) => userStore.selectedChild?.id,
+        (String? newChildId) {
+          if (_isActive && mounted && newChildId != null && newChildId.isNotEmpty) {
+            // Принудительно обновляем UI при смене ребенка
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_isActive && mounted) {
+                // Store сам загрузит данные через свой reaction
+                // Мы только обновляем UI
+                setState(() {});
+              }
+            });
+          }
+        },
+      );
+      
+      _disposers.add(childIdReaction);
+    } catch (e) {
+      // Игнорируем ошибки
+    }
+  }
+
+  void _initializeStore() {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final diapersStore = context.read<DiapersStore>();
+      
+      // Активируем store - он сам загрузит данные при активации
+      diapersStore.activate();
+      
+      final currentChildId = diapersStore.childId;
+      print('DiapersView _initializeStore: Current childId = $currentChildId');
+      
+      // Создаем безопасную асинхронную операцию
+      _loadInfoSafely();
+    } catch (e) {
+      print('DiapersView _initializeStore error: $e');
+    }
+  }
+
+  Future<void> _loadInfoSafely() async {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final diapersStore = context.read<DiapersStore>();
+      await diapersStore.getIsShowInfo();
+      if (_isActive && mounted) {
+        setState(() {});
+      }
+    } catch (error) {
+      if (_isActive && mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  Future<void> _setInfoSafely(bool value) async {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final diapersStore = context.read<DiapersStore>();
+      await diapersStore.setIsShowInfo(value);
+      if (_isActive && mounted) {
+        setState(() {});
+      }
+    } catch (error) {
+      if (_isActive && mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _isActive = false;
+    
+    // Деактивируем store если он был инициализирован
+    try {
+      final diapersStore = context.read<DiapersStore>();
+      diapersStore.deactivate();
+    } catch (e) {
+      // Игнорируем ошибки при деактивации
+    }
+    
+    // Очищаем все MobX subscriptions
+    for (final dispose in _disposers) {
+      dispose();
+    }
+    _disposers.clear();
+    
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_isActive || !mounted) {
+      return const SizedBox.shrink();
+    }
+
     return Observer(builder: (context) {
+      if (!_isActive || !mounted) {
+        return const SizedBox.shrink();
+      }
+
       return TrackerBody(
         // learnMoreStore: widget.store,
 
         isShowInfo: widget.store.isShowInfo,
-        setIsShowInfo: (v) {
-          widget.store.setIsShowInfo(v).then((v) {
-            setState(() {});
-          });
-        },
+        setIsShowInfo: (v) => _setInfoSafely(v),
         learnMoreWidgetText: t.trackers.findOutMoreTextDiapers,
         onPressLearnMore: () {
           context.pushNamed(AppViews.serviceKnowlegde);
@@ -129,8 +226,11 @@ class _BodyState extends State<_Body> {
             );
           },
           onTapAdd: () {
+            if (!_isActive || !mounted) return;
             context.pushNamed(AppViews.addDiaper, extra: {
               'onSave': (DiapersCreateDiaperDto data) {
+                if (!_isActive || !mounted) return;
+                
                 logger.info('Time: ${data.timeToEnd}');
                 DateTime? time = DateTime.tryParse(data.timeToEnd ?? '');
 
@@ -173,60 +273,16 @@ class _BodyState extends State<_Body> {
               subtitle: t.trackers.diaper
                   .averageCount(n: widget.store.averageOfDiapers),
               onLeftTap: () {
+                if (!_isActive || !mounted) return;
                 widget.store.resetPagination();
                 widget.store.setSelectedDate(
                     widget.store.startOfWeek.subtract(const Duration(days: 7)));
-                widget.store.loadPage(newFilters: [
-                  skit.SkitFilter(
-                      field: 'child_id',
-                      operator: skit.FilterOperator.equals,
-                      value: widget.childId),
-                  skit.SkitFilter(
-                      field: 'from_time',
-                      operator: skit.FilterOperator.greaterThan,
-                      value:
-                          widget.store.startOfWeek.toUtc().toIso8601String()),
-                  skit.SkitFilter(
-                      field: 'to_time',
-                      operator: skit.FilterOperator.lessThan,
-                      value: widget.store.endOfWeek.toUtc().toIso8601String()),
-                ]
-                    //   queryParams: {
-                    //   'child_id': widget.childId,
-                    //   'from_time': widget.store.startOfWeek
-                    //     ..toUtc().toIso8601String(),
-                    //   'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
-                    // }
-                    );
               },
               onRightTap: () {
+                if (!_isActive || !mounted) return;
                 widget.store.resetPagination();
                 widget.store.setSelectedDate(
                     widget.store.startOfWeek.add(const Duration(days: 7)));
-                widget.store.loadPage(
-                  newFilters: [
-                    skit.SkitFilter(
-                        field: 'child_id',
-                        operator: skit.FilterOperator.equals,
-                        value: widget.childId),
-                    skit.SkitFilter(
-                        field: 'from_time',
-                        operator: skit.FilterOperator.greaterThan,
-                        value:
-                            widget.store.startOfWeek.toUtc().toIso8601String()),
-                    skit.SkitFilter(
-                        field: 'to_time',
-                        operator: skit.FilterOperator.lessThan,
-                        value:
-                            widget.store.endOfWeek.toUtc().toIso8601String()),
-                  ],
-                  //   queryParams: {
-                  //   'child_id': widget.childId,
-                  //   'from_time': widget.store.startOfWeek
-                  //     ..toUtc().toIso8601String(),
-                  //   'to_time': widget.store.endOfWeek.toUtc().toIso8601String()
-                  // }
-                );
               },
             ),
           ),

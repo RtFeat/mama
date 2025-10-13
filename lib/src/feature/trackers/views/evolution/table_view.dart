@@ -4,6 +4,7 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 import 'package:mama/src/feature/trackers/services/pdf_service.dart';
+import 'package:mobx/mobx.dart';
 
 class TablePage extends StatelessWidget {
   const TablePage({
@@ -37,29 +38,121 @@ class TableEvolutionHistory extends StatefulWidget {
 }
 
 class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final UserStore store = context.read<UserStore>();
-
-      widget.store.loadPage(newFilters: [
-        SkitFilter(
-            field: 'child_id',
-            operator: FilterOperator.equals,
-            value: store.selectedChild!.id),
-      ]);
-    });
-    super.initState();
-  }
-
+  // Флаг для отслеживания активности виджета
+  bool _isActive = false;
+  
+  // Список для управления MobX reactions
+  final List<ReactionDisposer> _disposers = [];
+  
   List<bool> isSelectedWeight = [true, false];
   List<bool> isSelectedHeight = [true, false];
 
   @override
+  void initState() {
+    super.initState();
+    _isActive = true;
+    
+    // Инициализация stores
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isActive || !mounted) return;
+      
+      _initializeStores();
+      _setupChildIdObserver();
+    });
+  }
+
+  void _setupChildIdObserver() {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final userStore = context.read<UserStore>();
+      
+      // Добавляем reaction для отслеживания изменений childId
+      final childIdReaction = reaction(
+        (_) => userStore.selectedChild?.id,
+        (String? newChildId) {
+          if (_isActive && mounted && newChildId != null && newChildId.isNotEmpty) {
+            // Принудительно обновляем UI при смене ребенка
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_isActive && mounted) {
+                // Принудительно загружаем данные для нового ребенка
+                try {
+                  // Очищаем и загружаем данные для нового ребенка
+                  widget.store.refreshForChild(newChildId);
+                } catch (e) {
+                  // Игнорируем ошибки
+                }
+                
+                setState(() {});
+              }
+            });
+          }
+        },
+      );
+      
+      _disposers.add(childIdReaction);
+    } catch (e) {
+      // Игнорируем ошибки
+    }
+  }
+
+  void _initializeStores() {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      // Активируем store
+      widget.store.activate();
+      
+      final currentChildId = widget.store.childId;
+      print('TableEvolutionHistory _initializeStores: Current childId = $currentChildId');
+      
+      if (currentChildId.isNotEmpty) {
+        // Загружаем данные таблицы
+        widget.store.loadPage(
+          newFilters: [
+            SkitFilter(
+              field: 'child_id',
+              operator: FilterOperator.equals,
+              value: currentChildId,
+            ),
+          ],
+        ).then((_) {
+          print('TableEvolutionHistory: Table loaded with ${widget.store.listData.length} items');
+        });
+      }
+    } catch (e) {
+      print('TableEvolutionHistory _initializeStores error: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _isActive = false;
+    
+    // Деактивируем store если он был инициализирован
+    try {
+      widget.store.deactivate();
+    } catch (e) {
+      // Игнорируем ошибки при деактивации
+    }
+    
+    // Очищаем все MobX subscriptions
+    for (final dispose in _disposers) {
+      dispose();
+    }
+    _disposers.clear();
+    
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_isActive || !mounted) {
+      return const SizedBox.shrink();
+    }
+
     return Observer(builder: (context) {
-      if (!mounted) return const SizedBox.shrink();
+      if (!_isActive || !mounted) return const SizedBox.shrink();
       return CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -71,8 +164,8 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                         alignment: Alignment.topLeft,
                         items: [t.feeding.newS, t.feeding.old],
                         onTap: (index) {
-                          widget.store.setSortOrder(index);
-                          if (mounted) {
+                          if (_isActive && mounted) {
+                            widget.store.setSortOrder(index);
                             setState(() {});
                           }
                         },
@@ -90,14 +183,16 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                             height: 26,
                             width: 70,
                             onTap: () {
-                              PdfService.generateAndViewGrowthPdf(
-                                context: context,
-                                typeOfPdf: 'growth',
-                                title: t.trackers.report,
-                                onStart: () => _showSnack(context, 'Generating PDF...', bg: AppColors.primaryColor),
-                                onSuccess: () => _showSnack(context, 'PDF generated successfully!', bg: Colors.green, seconds: 3),
-                                onError: (m) => _showSnack(context, m),
-                              );
+                              if (_isActive && mounted) {
+                                PdfService.generateAndViewGrowthPdf(
+                                  context: context,
+                                  typeOfPdf: 'growth',
+                                  title: t.trackers.report,
+                                  onStart: () => _showSnack(context, 'Generating PDF...', bg: AppColors.primaryColor),
+                                  onSuccess: () => _showSnack(context, 'PDF generated successfully!', bg: Colors.green, seconds: 3),
+                                  onError: (m) => _showSnack(context, m),
+                                );
+                              }
                             },
                           )
                         ],
@@ -152,9 +247,9 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                   isSelected: isSelectedWeight,
                   measure: UnitMeasures.weight,
                   onChange: (int index) {
-                    widget.store.setWeightUnit(
-                        index == 0 ? WeightUnit.kg : WeightUnit.g);
-                    if (mounted) {
+                    if (_isActive && mounted) {
+                      widget.store.setWeightUnit(
+                          index == 0 ? WeightUnit.kg : WeightUnit.g);
                       setState(() {});
                     }
                   },
@@ -165,10 +260,10 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                   isSelected: isSelectedHeight,
                   measure: UnitMeasures.height,
                   onChange: (int index) {
-                    widget.store.setCircleUnit(
-                      index == 0 ? CircleUnit.cm : CircleUnit.m,
-                    );
-                    if (mounted) {
+                    if (_isActive && mounted) {
+                      widget.store.setCircleUnit(
+                        index == 0 ? CircleUnit.cm : CircleUnit.m,
+                      );
                       setState(() {});
                     }
                   },

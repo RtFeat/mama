@@ -12,6 +12,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:skit/skit.dart';
 import 'package:mama/src/feature/trackers/widgets/sleep/sleep_history_table.dart';
 import 'package:mama/src/feature/trackers/state/health/temperature/info_store.dart';
+import 'package:mobx/mobx.dart';
 
 class SleepScreen extends StatefulWidget {
   final bool isActiveTab;
@@ -22,14 +23,21 @@ class SleepScreen extends StatefulWidget {
 }
 
 class _SleepScreenState extends State<SleepScreen> {
+  // Флаг для отслеживания активности виджета
+  bool _isActive = false;
+  
+  // Список для управления MobX reactions
+  final List<ReactionDisposer> _disposers = [];
+  
   late DateTime startOfWeek;
   late DateTime endOfWeek;
-  String? _lastChildId;
   late final TemperatureInfoStore _infoStore;
 
   @override
   void initState() {
     super.initState();
+    _isActive = true;
+    
     final now = DateTime.now();
     final int weekday = now.weekday; // 1..7 (Mon..Sun)
     startOfWeek = DateTime(now.year, now.month, now.day)
@@ -41,33 +49,134 @@ class _SleepScreenState extends State<SleepScreen> {
       onLoad: () async => prefs.getBool('sleep_info') ?? true,
       onSet: (v) async => prefs.setBool('sleep_info', v),
     );
-    _infoStore.getIsShowInfo().then((_) => setState(() {}));
+    
+    // Инициализация stores
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_isActive || !mounted) return;
+      
+      _initializeStores();
+      _setupChildIdObserver();
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final userStore = context.read<UserStore>();
-    final childId = userStore.selectedChild?.id;
-    if (childId != null && childId.isNotEmpty && childId != _lastChildId) {
-      _lastChildId = childId;
+  void _setupChildIdObserver() {
+    if (!_isActive || !mounted) return;
+    
+    try {
+      final userStore = context.read<UserStore>();
+      
+      // Добавляем reaction для отслеживания изменений childId
+      final childIdReaction = reaction(
+        (_) => userStore.selectedChild?.id,
+        (String? newChildId) {
+          if (_isActive && mounted && newChildId != null && newChildId.isNotEmpty) {
+            // Принудительно обновляем UI при смене ребенка
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_isActive && mounted) {
+                // Принудительно загружаем данные для нового ребенка
+                try {
+                  final sleepTableStore = context.read<SleepTableStore>();
+                  
+                  // Очищаем и загружаем данные для нового ребенка
+                  sleepTableStore.refreshForChild(newChildId);
+                } catch (e) {
+                  // Игнорируем ошибки
+                }
+                
+                setState(() {});
+              }
+            });
+          }
+        },
+      );
+      
+      _disposers.add(childIdReaction);
+    } catch (e) {
+      // Игнорируем ошибки
+    }
+  }
+
+  void _initializeStores() {
+    if (!_isActive || !mounted) return;
+    
+    try {
       final sleepTableStore = context.read<SleepTableStore>();
-      sleepTableStore.loadPage(newFilters: [
-        SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
-      ]);
+      
+      // Активируем store
+      sleepTableStore.activate();
+      
+      final currentChildId = sleepTableStore.childId;
+      print('SleepScreen _initializeStores: Current childId = $currentChildId');
+      
+      if (currentChildId.isNotEmpty) {
+        // Загружаем данные таблицы
+        sleepTableStore.loadPage(
+          newFilters: [
+            SkitFilter(
+              field: 'child_id',
+              operator: FilterOperator.equals,
+              value: currentChildId,
+            ),
+          ],
+        ).then((_) {
+          print('SleepScreen: Table loaded with ${sleepTableStore.listData.length} items');
+        });
+      }
+      
+      // Загружаем информацию
+      _infoStore.getIsShowInfo().then((_) {
+        if (_isActive && mounted) {
+          setState(() {});
+        }
+      });
+    } catch (e) {
+      print('SleepScreen _initializeStores error: $e');
     }
   }
 
   @override
+  void dispose() {
+    _isActive = false;
+    
+    // Деактивируем store если он был инициализирован
+    try {
+      final sleepTableStore = context.read<SleepTableStore>();
+      sleepTableStore.deactivate();
+    } catch (e) {
+      // Игнорируем ошибки при деактивации
+    }
+    
+    // Очищаем все MobX subscriptions
+    for (final dispose in _disposers) {
+      dispose();
+    }
+    _disposers.clear();
+    
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_isActive || !mounted) {
+      return const SizedBox.shrink();
+    }
+
     return TrackerBody(
         isShowInfo: _infoStore.isShowInfo,
         setIsShowInfo: (v) {
-          _infoStore.setIsShowInfo(v).then((_) => setState(() {}));
+          if (_isActive && mounted) {
+            _infoStore.setIsShowInfo(v).then((_) {
+              if (_isActive && mounted) {
+                setState(() {});
+              }
+            });
+          }
         },
         learnMoreWidgetText: t.trackers.findOutMoreTextSleep,
         onPressLearnMore: () {
-          context.pushNamed(AppViews.serviceKnowlegde);
+          if (_isActive && mounted) {
+            context.pushNamed(AppViews.serviceKnowlegde);
+          }
         },
         children: [
           const SliverToBoxAdapter(child: SleepWidget()),
@@ -85,39 +194,43 @@ class _SleepScreenState extends State<SleepScreen> {
                   startDate: startOfWeek,
                   endDate: endOfWeek,
                   onLeftTap: () async {
-                    setState(() {
-                      startOfWeek =
-                          startOfWeek.subtract(const Duration(days: 7));
-                      endOfWeek = startOfWeek.add(const Duration(days: 6));
-                    });
-                    // Обновляем данные при смене недели
-                    final sleepTableStore = context.read<SleepTableStore>();
-                    final userStore = context.read<UserStore>();
-                    final childId = userStore.selectedChild?.id ?? '';
-                    
-                    sleepTableStore.loadPage(newFilters: [
-                      SkitFilter(
-                          field: 'child_id',
-                          operator: FilterOperator.equals,
-                          value: childId),
-                    ]);
+                    if (_isActive && mounted) {
+                      setState(() {
+                        startOfWeek =
+                            startOfWeek.subtract(const Duration(days: 7));
+                        endOfWeek = startOfWeek.add(const Duration(days: 6));
+                      });
+                      // Обновляем данные при смене недели
+                      final sleepTableStore = context.read<SleepTableStore>();
+                      final userStore = context.read<UserStore>();
+                      final childId = userStore.selectedChild?.id ?? '';
+                      
+                      sleepTableStore.loadPage(newFilters: [
+                        SkitFilter(
+                            field: 'child_id',
+                            operator: FilterOperator.equals,
+                            value: childId),
+                      ]);
+                    }
                   },
                   onRightTap: () async {
-                    setState(() {
-                      startOfWeek = startOfWeek.add(const Duration(days: 7));
-                      endOfWeek = startOfWeek.add(const Duration(days: 6));
-                    });
-                    // Обновляем данные при смене недели
-                    final sleepTableStore = context.read<SleepTableStore>();
-                    final userStore = context.read<UserStore>();
-                    final childId = userStore.selectedChild?.id ?? '';
-                    
-                    sleepTableStore.loadPage(newFilters: [
-                      SkitFilter(
-                          field: 'child_id',
-                          operator: FilterOperator.equals,
-                          value: childId),
-                    ]);
+                    if (_isActive && mounted) {
+                      setState(() {
+                        startOfWeek = startOfWeek.add(const Duration(days: 7));
+                        endOfWeek = startOfWeek.add(const Duration(days: 6));
+                      });
+                      // Обновляем данные при смене недели
+                      final sleepTableStore = context.read<SleepTableStore>();
+                      final userStore = context.read<UserStore>();
+                      final childId = userStore.selectedChild?.id ?? '';
+                      
+                      sleepTableStore.loadPage(newFilters: [
+                        SkitFilter(
+                            field: 'child_id',
+                            operator: FilterOperator.equals,
+                            value: childId),
+                      ]);
+                    }
                   },
                 ),
                 const SizedBox(height: 8),

@@ -28,6 +28,7 @@ class DoctorVisitScreen extends StatelessWidget {
                     .setShow(value);
               },
               faker: context.read<Dependencies>().faker,
+              userStore: context.read<UserStore>(),
             );
           })
         ],

@@ -9,12 +9,13 @@ class CircleStore extends _CircleStore with _$CircleStore {
     required super.apiClient,
     required super.restClient,
     required super.faker,
-    required super.childId,
+    required super.userStore,
     required super.onLoad,
     required super.onSet,
     this.tableStore,
   });
   
+  @override
   CircleTableStore? tableStore;
 }
 
@@ -24,7 +25,7 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     required super.apiClient,
     required this.restClient,
     required super.faker,
-    required this.childId,
+    required this.userStore,
     required super.onLoad,
     required super.onSet,
   }        ) : super(
@@ -41,27 +42,72 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
               'main': data.list ?? <EntityHistoryCircle>[],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
-  final String childId;
+  final UserStore userStore;
   final RestClient restClient;
+  ReactionDisposer? _childIdReaction;
 
   CircleTableStore? get tableStore => (this as CircleStore).tableStore;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
 
   @observable
   GrowthGetCircleResponse? circleDetails;
 
+  @observable
+  bool _isActive = true;
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          print('CircleStore reaction: childId changed to $newChildId');
+          
+          // Очищаем старые данные
+          runInAction(() {
+            circleDetails = null;
+            listData.clear();
+          });
+          
+          // Загружаем новые данные
+          fetchCircleDetails();
+          
+          // ВАЖНО: Используем новый метод refreshForChild для полной перезагрузки
+          if (tableStore != null) {
+            tableStore!.refreshForChild(newChildId);
+          }
+        }
+      },
+    );
+  }
+
   @computed
   Current get current {
+    print('CircleStore current: circleDetails = ${circleDetails != null}');
+    print('CircleStore current: currentCircle = ${circleDetails?.list?.currentCircle != null}');
+    print('CircleStore current: childId = $childId');
+    
+    // Проверяем API данные и их валидность
     if (circleDetails?.list?.currentCircle != null) {
       final current = circleDetails?.list?.currentCircle;
       final apiCircle = double.tryParse(current?.circle ?? '') ?? 0;
+      
+      print('CircleStore current: apiCircle = $apiCircle');
+      print('CircleStore current: current.circle = "${current?.circle}"');
+      print('CircleStore current: current.data = "${current?.data}"');
+      print('CircleStore current: current.days = "${current?.days}"');
+      print('CircleStore current: current.normal = "${current?.normal}"');
       
       // Если API вернул валидную окружность головы (> 0), используем её
       if (apiCircle > 0) {
         final String rawDays = current?.days ?? '';
         
-        // Извлекаем число дней из строки типа "20 дней назад" или "-11 дней назад"
+        // Извлекаем число дней из строки типа "20 дней назад" или "-207"
         String normalizedDays = '0';
         if (rawDays.isNotEmpty) {
           // Ищем число в строке (включая отрицательные)
@@ -80,7 +126,7 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
         String labelText = current?.data ?? '';
         if (labelText.contains('дней назад')) {
           // Если data содержит "дней назад", используем только дату без этого текста
-          labelText = labelText.replaceAll(RegExp(r'\s*-?\d+\s*дней\s*назад\s*'), '').trim();
+          labelText = labelText.replaceAll(RegExp(r'\s*\d+\s*дней\s*назад\s*'), '').trim();
         }
         
         // Преобразуем статус нормы для API данных
@@ -91,17 +137,27 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
           apiNormStatus = 'Показатель в норме'; // По умолчанию считаем в норме
         }
         
+        print('CircleStore current: Final values - value: $apiCircle, label: "$labelText", isNormal: "$apiNormStatus", days: "$normalizedDays"');
+        
         return Current(
           value: apiCircle,
           label: labelText,
           isNormal: apiNormStatus,
           days: normalizedDays,
         );
+      } else {
+        print('CircleStore current: apiCircle <= 0, using fallback');
       }
+    } else {
+      print('CircleStore current: currentCircle is null, using fallback');
     }
     
-    // Fallback: используем данные из истории если основных данных нет
+    // Fallback: используем данные из истории если основных данных нет (как в модуле роста)
     final historyData = tableStore?.listData ?? listData;
+    print('CircleStore current fallback: historyData.length = ${historyData.length}');
+    print('CircleStore current fallback: tableStore?.listData.length = ${tableStore?.listData.length}');
+    print('CircleStore current fallback: listData.length = ${listData.length}');
+    
     if (historyData.isNotEmpty) {
       // Сортируем по дате, чтобы получить самую позднюю запись
       final sortedData = List<EntityHistoryCircle>.from(historyData);
@@ -206,8 +262,12 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
 
   @computed
   Dynamic get dynamicValue {
-    // Всегда вычисляем динамику из истории для точности
+    // Всегда вычисляем динамику из истории для точности (как в модуле роста)
     final historyData = tableStore?.listData ?? listData;
+    print('CircleStore dynamicValue: historyData.length = ${historyData.length}');
+    print('CircleStore dynamicValue: tableStore?.listData.length = ${tableStore?.listData.length}');
+    print('CircleStore dynamicValue: listData.length = ${listData.length}');
+    
     if (historyData.length >= 2) {
       // Сортируем по дате для правильного расчета
       final sortedData = List<EntityHistoryCircle>.from(historyData);
@@ -468,39 +528,38 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
   @observable
   bool isDetailsLoading = false;
 
-  // Добавляем флаг для отслеживания активного состояния
-  @observable
-  bool _isActive = true;
-
   @action
   Future<void> fetchCircleDetails() async {
-    // Проверяем, активен ли еще store
-    if (!_isActive) return;
+    if (!_isActive || childId.isEmpty) return;
     
-    runInAction(() => isDetailsLoading = true);
+    runInAction(() {
+      isDetailsLoading = true;
+      circleDetails = null;
+    });
     
     try {
+      print('CircleStore fetchCircleDetails: Fetching data for childId: $childId');
       final response = await restClient.growth.getGrowthCircle(childId: childId);
+      print('CircleStore fetchCircleDetails: API response received');
+      print('CircleStore fetchCircleDetails: response.list = ${response.list != null}');
+      print('CircleStore fetchCircleDetails: currentCircle = ${response.list?.currentCircle != null}');
+      print('CircleStore fetchCircleDetails: table length = ${response.list?.table?.length}');
       
-      // Проверяем еще раз перед обновлением состояния
       if (_isActive) {
-        runInAction(() {
-          circleDetails = response;
-        });
+        runInAction(() => circleDetails = response);
+        print('CircleStore fetchCircleDetails: circleDetails set');
       }
       
-      // Если данных для графика нет, загружаем историю как fallback
-      if (_isActive && childId.isNotEmpty && (circleDetails?.list?.table == null || circleDetails!.list!.table!.isEmpty)) {
+      if (_isActive && childId.isNotEmpty && 
+          (circleDetails?.list?.table == null || circleDetails!.list!.table!.isEmpty)) {
         await _loadHistoryData();
       }
     } catch (e) {
       print('CircleStore fetchCircleDetails error: $e');
-      // В случае ошибки тоже пытаемся загрузить историю
       if (_isActive && childId.isNotEmpty) {
         await _loadHistoryData();
       }
     } finally {
-      // Всегда обновляем состояние, но только если store еще активен
       if (_isActive) {
         runInAction(() => isDetailsLoading = false);
       }
@@ -513,9 +572,14 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
       print('CircleStore _loadHistoryData: Skipping - not active or childId empty');
       return;
     }
+    
     print('CircleStore _loadHistoryData: Loading history for childId: $childId');
+    
+    runInAction(() {
+      listData.clear();
+    });
+    
     try {
-      // Используем loadPage с правильными фильтрами вместо refresh
       await loadPage(newFilters: [
         SkitFilter(
           field: 'child_id',
@@ -529,18 +593,22 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     }
   }
 
-  // Метод для деактивации store при размонтировании виджета
   @action
   void deactivate() {
     _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
   }
 
-  // Метод для реактивации store
   @action
   void activate() {
     _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
     // Загружаем данные при активации только если есть childId
     if (childId.isNotEmpty) {
+      print('CircleStore activate: Loading data for childId: $childId');
       fetchCircleDetails();
     }
   }

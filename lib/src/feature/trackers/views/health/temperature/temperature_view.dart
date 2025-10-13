@@ -33,7 +33,8 @@ class TemperatureView extends StatelessWidget {
                 // onSet: (value) =>
                 //     context.read<TemperatureDataSourceLocal>().setShow(value),
                 apiClient: context.read<Dependencies>().apiClient,
-                faker: context.read<Dependencies>().faker);
+                faker: context.read<Dependencies>().faker,
+                userStore: context.read<UserStore>());
           },
         ),
       ],

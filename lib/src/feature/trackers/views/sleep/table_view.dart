@@ -6,6 +6,7 @@ import 'package:mama/src/feature/trackers/widgets/date_range_selector.dart';
 import 'package:mama/src/feature/trackers/state/sleep/sleep_table_store.dart';
 import 'package:mama/src/feature/trackers/state/sleep/cry_table_store.dart';
 import 'package:provider/provider.dart';
+import 'package:skit/skit.dart';
 
 class TableScreen extends StatefulWidget {
   const TableScreen({super.key});
@@ -27,6 +28,40 @@ class _TableScreenState extends State<TableScreen> {
     endOfWeek = startOfWeek.add(const Duration(days: 6));
   }
 
+  void _updateDataForDateRange() {
+    // Обновляем данные в stores при изменении даты
+    final userStore = context.read<UserStore>();
+    final childId = userStore.selectedChild?.id;
+    
+    print('TableScreen _updateDataForDateRange: childId = $childId, startOfWeek = $startOfWeek, endOfWeek = $endOfWeek');
+    
+    if (childId != null && childId.isNotEmpty) {
+      // Принудительно обновляем данные в SleepTableStore
+      final sleepTableStore = context.read<SleepTableStore>();
+      print('TableScreen _updateDataForDateRange: Clearing sleep data (${sleepTableStore.listData.length} items)');
+      sleepTableStore.listData.clear(); // Очищаем старые данные
+      sleepTableStore.loadPage(newFilters: [
+        SkitFilter(
+          field: 'child_id',
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ]);
+      
+      // Принудительно обновляем данные в CryTableStore
+      final cryTableStore = context.read<CryTableStore>();
+      print('TableScreen _updateDataForDateRange: Clearing cry data (${cryTableStore.listData.length} items)');
+      cryTableStore.listData.clear(); // Очищаем старые данные
+      cryTableStore.loadPage(newFilters: [
+        SkitFilter(
+          field: 'child_id',
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -41,14 +76,16 @@ class _TableScreenState extends State<TableScreen> {
           create: (context) => SleepTableStore(
               faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
-              restClient: context.read<Dependencies>().restClient),
+              restClient: context.read<Dependencies>().restClient,
+              userStore: context.read<UserStore>()),
         ),
         Provider(
           key: const ValueKey('cry_table_store_provider'),
           create: (context) => CryTableStore(
               faker: context.read<Dependencies>().faker,
               apiClient: context.read<Dependencies>().apiClient,
-              restClient: context.read<Dependencies>().restClient),
+              restClient: context.read<Dependencies>().restClient,
+              userStore: context.read<UserStore>()),
         ),
       ],
       builder: (context, child) => Scaffold(
@@ -67,12 +104,18 @@ class _TableScreenState extends State<TableScreen> {
                       startOfWeek = startOfWeek.subtract(const Duration(days: 7));
                       endOfWeek = startOfWeek.add(const Duration(days: 6));
                     });
+                    print('TableScreen onLeftTap: New date range = $startOfWeek to $endOfWeek');
+                    // Обновляем данные при изменении даты
+                    _updateDataForDateRange();
                   },
                   onRightTap: () {
                     setState(() {
                       startOfWeek = startOfWeek.add(const Duration(days: 7));
                       endOfWeek = startOfWeek.add(const Duration(days: 6));
                     });
+                    print('TableScreen onRightTap: New date range = $startOfWeek to $endOfWeek');
+                    // Обновляем данные при изменении даты
+                    _updateDataForDateRange();
                   },
                 ),
                 const SizedBox(height: 8),

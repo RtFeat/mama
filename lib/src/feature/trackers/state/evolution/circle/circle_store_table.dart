@@ -35,9 +35,16 @@ abstract class _CircleTableStore extends TableStore<EntityHistoryCircle>
               'main': data.list ?? <EntityHistoryCircle>[],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
+  
   final RestClient restClient;
   final CircleStore store;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => store.userStore.selectedChild?.id ?? '';
 
   @observable
   String sortOrder = 'new'; // 'new' or 'old'
@@ -54,19 +61,89 @@ abstract class _CircleTableStore extends TableStore<EntityHistoryCircle>
 
   static const int _initialRowLimit = 6; // Количество записей по умолчанию
 
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('CircleTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
   @action
   void setSortOrder(int index) {
+    if (!_isActive) return;
     sortOrder = index == 0 ? 'new' : 'old';
   }
 
   @action
   void setCircleUnit(CircleUnit unit) {
+    if (!_isActive) return;
     circleUnit = unit;
   }
 
   @action
   void toggleShowAll() {
+    if (!_isActive) return;
     showAll = !showAll;
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('CircleTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+      showAll = false;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('CircleTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @computed
@@ -380,20 +457,4 @@ abstract class _CircleTableStore extends TableStore<EntityHistoryCircle>
     return ObservableList.of(result);
   }
 
-  // Метод для деактивации store при размонтировании виджета
-  @action
-  void deactivate() {
-    _isActive = false;
-  }
-
-  // Метод для реактивации store
-  @action
-  void activate() {
-    _isActive = true;
-  }
-
-  // Метод для установки связи с CircleStore
-  void setCircleStore(CircleStore circleStore) {
-    circleStore.tableStore = this as CircleTableStore;
-  }
 }

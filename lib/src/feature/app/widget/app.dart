@@ -88,6 +88,7 @@ class App extends StatelessWidget {
           Provider(
             create: (context) => MedicineStore(
               restClient: context.read<Dependencies>().apiClient,
+              userStore: context.read<UserStore>(),
             ),
           ),
           Provider(
@@ -126,7 +127,7 @@ class App extends StatelessWidget {
               apiClient: context.read<Dependencies>().apiClient,
               restClient: context.read<Dependencies>().restClient,
               faker: context.read<Dependencies>().faker,
-              childId: context.read<UserStore>().selectedChild?.id ?? '',
+              userStore: context.read<UserStore>(),
               onLoad: () async => true,
               onSet: (bool value) async {},
             ),

@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:mama/src/data.dart';
-
 import 'package:mobx/mobx.dart';
+import 'package:skit/skit.dart' as skit;
 
 part 'diapers.g.dart';
 
@@ -11,6 +11,7 @@ class DiapersStore extends _DiapersStore with _$DiapersStore {
     required super.onSet,
     required super.onLoad,
     required super.faker,
+    required super.userStore,
   });
 }
 
@@ -21,6 +22,7 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
     required super.onSet,
     required super.apiClient,
     required super.faker,
+    required this.userStore,
   }) : super(
           testDataGenerator: () {
             final format = DateFormat('dd MMMM',
@@ -53,14 +55,76 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
               'main': data.list ?? [],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
+
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
 
   @observable
   DateTime selectedDate = DateTime.now();
 
+  @observable
+  bool _isActive = true;
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          print('DiapersStore reaction: childId changed to $newChildId');
+          
+          // Очищаем старые данные
+          runInAction(() {
+            listData.clear();
+          });
+          
+          // Загружаем новые данные для выбранной недели
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('DiapersStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Сбрасываем пагинацию перед загрузкой новых данных
+    resetPagination();
+    
+    loadPage(newFilters: [
+      skit.SkitFilter(
+        field: 'child_id',
+        operator: skit.FilterOperator.equals,
+        value: childId,
+      ),
+      skit.SkitFilter(
+        field: 'from_time',
+        operator: skit.FilterOperator.equals,
+        value: startOfWeek.toUtc().toIso8601String(),
+      ),
+      skit.SkitFilter(
+        field: 'to_time',
+        operator: skit.FilterOperator.equals,
+        value: endOfWeek.toUtc().toIso8601String(),
+      ),
+    ]);
+  }
+
   @action
   void setSelectedDate(DateTime date) {
     selectedDate = date;
+    
+    // Перезагружаем данные при изменении даты
+    if (_isActive && childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
   }
 
   @computed
@@ -82,5 +146,25 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
     });
 
     return (totalDiapers ?? 0) ~/ listData.length;
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      print('DiapersStore activate: Loading data for childId: $childId');
+      _loadDataForChild(childId);
+    }
   }
 }

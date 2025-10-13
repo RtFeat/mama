@@ -8,7 +8,7 @@ class SleepStore extends _SleepStore with _$SleepStore {
     required super.apiClient,
     required super.restClient,
     required super.faker,
-    required super.childId,
+    required super.userStore,
     required super.onLoad,
     required super.onSet,
   });
@@ -20,7 +20,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     required super.apiClient,
     required this.restClient,
     required super.faker,
-    required this.childId,
+    required this.userStore,
     required super.onLoad,
     required super.onSet,
   }) : super(
@@ -37,10 +37,19 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
               'main': data.list ?? <EntitySleepHistoryTotal>[],
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
-  final String childId;
+  final UserStore userStore;
   final RestClient restClient;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool _isActive = true;
 
   @observable
   SleepcryGetSleepResponse? sleepDetails;
@@ -48,16 +57,66 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
   @observable
   bool isDetailsLoading = false;
 
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          print('SleepStore reaction: childId changed to $newChildId');
+          
+          // Очищаем старые данные
+          runInAction(() {
+            sleepDetails = null;
+            listData.clear();
+          });
+          
+          // Загружаем новые данные
+          fetchSleepDetails();
+        }
+      },
+    );
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      print('SleepStore activate: Loading data for childId: $childId');
+      fetchSleepDetails();
+    }
+  }
+
   @action
   Future<void> fetchSleepDetails() async {
-    isDetailsLoading = true;
+    if (!_isActive || childId.isEmpty) return;
+    
+    runInAction(() {
+      isDetailsLoading = true;
+      sleepDetails = null;
+    });
+    
     try {
-      sleepDetails =
-          await restClient.sleepCry.getSleepCrySleepGet(childId: childId);
+      final response = await restClient.sleepCry.getSleepCrySleepGet(childId: childId);
+      if (_isActive) {
+        runInAction(() => sleepDetails = response);
+      }
     } catch (e) {
-      // Игнорируем ошибки
+      print('SleepStore fetchSleepDetails error: $e');
     } finally {
-      isDetailsLoading = false;
+      if (_isActive) {
+        runInAction(() => isDetailsLoading = false);
+      }
     }
   }
 }

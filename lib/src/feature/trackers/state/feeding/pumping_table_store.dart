@@ -10,6 +10,7 @@ class PumpingTableStore extends _PumpingTableStore {
     required super.apiClient,
     required super.faker,
     required super.restClient,
+    required super.userStore,
   });
 }
 
@@ -18,6 +19,7 @@ abstract class _PumpingTableStore extends TableStore<EntityPumpingHistory> with 
     required super.apiClient,
     required super.faker,
     required this.restClient,
+    required this.userStore,
   }) : super(
           testDataGenerator: () => const EntityPumpingHistory(),
           basePath: 'feed/pumping/get',
@@ -59,9 +61,85 @@ abstract class _PumpingTableStore extends TableStore<EntityPumpingHistory> with 
             
             return {'main': result};
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
 
   final RestClient restClient;
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool _isActive = true;
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('PumpingTableStore _loadDataForChild: Loading for childId: $childId');
+    
+    // Используем новый метод refreshForChild для полной перезагрузки
+    refreshForChild(childId);
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive || childId.isEmpty) return;
+    
+    print('PumpingTableStore refreshForChild: $childId');
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+    });
+    
+    // Загружаем первую страницу
+    await loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+    
+    print('PumpingTableStore refreshForChild completed: ${listData.length} items loaded');
+  }
 
   @override
   TableData get tableData => TableData(
