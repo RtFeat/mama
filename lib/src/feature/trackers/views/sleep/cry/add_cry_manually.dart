@@ -10,7 +10,9 @@ import 'package:mama/src/feature/trackers/state/sleep/sleep.dart';
 import 'package:mama/src/core/api/models/entity_cry.dart';
 
 class AddCryManuallyView extends StatefulWidget {
-  const AddCryManuallyView({super.key});
+  const AddCryManuallyView({super.key, this.existingRecord});
+  
+  final EntityCry? existingRecord;
 
   @override
   State<AddCryManuallyView> createState() => _AddCryManuallyViewState();
@@ -20,14 +22,56 @@ class _AddCryManuallyViewState extends State<AddCryManuallyView> {
   @override
   void initState() {
     super.initState();
-    // Инициализируем timerEndTime для ручного режима
     final cryStore = context.read<CryStore>();
-    if (cryStore.timerEndTime == null) {
-      // Устанавливаем timerEndTime равным timerStartTime, чтобы total был 0
-      final now = DateTime.now();
-      cryStore.timerEndTime = now;
-      cryStore.timerStartTime = now;
+    
+    // Если редактируем существующую запись, инициализируем поля
+    if (widget.existingRecord != null) {
+      final record = widget.existingRecord!;
+      
+      // Сбрасываем состояние store перед редактированием (как в Sleep)
+      cryStore.resetWithoutSaving();
+
+      // Парсим время начала и окончания
+      final startTime = _parseDateTime(record.timeToStart);
+      final endTime = _parseDateTime(record.timeEnd);
+      
+      // Устанавливаем времена в store
+      cryStore.updateStartTime(startTime);
+      cryStore.updateEndTime(endTime);
+      
+      // Устанавливаем значения в форму
+      cryStore.formGroup.control('cryStart').value = DateFormat('HH:mm').format(startTime);
+      cryStore.formGroup.control('cryEnd').value = DateFormat('HH:mm').format(endTime);
+    } else {
+      // Инициализируем timerEndTime для ручного режима
+      if (cryStore.timerEndTime == null) {
+        // Устанавливаем timerEndTime равным timerStartTime, чтобы total был 0
+        final now = DateTime.now();
+        cryStore.timerEndTime = now;
+        cryStore.timerStartTime = now;
+      }
     }
+  }
+
+  DateTime _parseDateTime(String? timeString) {
+    if (timeString == null || timeString.isEmpty) return DateTime.now();
+    final String s = timeString.trim();
+
+    // HH:mm
+    final parts = s.split(':');
+    if (parts.length == 2 && int.tryParse(parts[0]) != null && int.tryParse(parts[1]) != null) {
+      final hour = int.parse(parts[0]);
+      final minute = int.parse(parts[1]);
+      final now = DateTime.now();
+      return DateTime(now.year, now.month, now.day, hour, minute);
+    }
+
+    // ISO 8601
+    try {
+      return DateTime.parse(s);
+    } catch (_) {}
+
+    return DateTime.now();
   }
 
   @override
@@ -61,6 +105,7 @@ class _AddCryManuallyViewState extends State<AddCryManuallyView> {
           timerManualEnd: cryStore.timerEndTime,
           formControlNameEnd: 'cryEnd',
           formControlNameStart: 'cryStart',
+          isCryMode: true,
           onStartTimeChanged: (v) {
             if (v != null && v.timeToDateTime != null) {
               final now = DateTime.now();
@@ -99,138 +144,50 @@ class _AddCryManuallyViewState extends State<AddCryManuallyView> {
               return;
             }
             
-            // Use the store's computed duration for consistency
-            final duration = cryStore.timerEndTime!.difference(cryStore.timerStartTime);
-            final minutes = duration.inMinutes.abs();
-            final seconds = duration.inSeconds % 60;
+            final childId = userStore.selectedChild!.id!;
             
-            // Format duration string to match the UI display
-            String durationString;
-            if (minutes > 0) {
-              durationString = '$minutes м';
-              if (seconds > 0) {
-                durationString += ' ${seconds}с';
-              }
-            } else {
-              durationString = '${seconds}с';
-            }
-
-            final dto = SleepcryInsertCryDto(
-              childId: userStore.selectedChild!.id,
-              // API expects time_end in UTC with Z
-              timeEnd: cryStore.timerEndTime?.toUtc().toIso8601String(),
-              // Keep local HH:mm values for grouping on server
-              timeToEnd: cryStore.timerEndTime?.formattedTime,
-              timeToStart: cryStore.timerStartTime.formattedTime,
-              allCry: durationString,
-              notes: noteStore.content,
-            );
-
-            await restClient.sleepCry.postSleepCryCry(dto: dto);
-            // Устанавливаем флаг, что запись была сохранена вручную
-            cryStore.setManuallySaved(true);
-            
-            // Обновляем Stories сразу (если провайдер доступен на текущем роуте)
-            CryTableStore? cryTableStore;
-            
-            // Попробуем найти CryTableStore через разные способы
             try {
-              cryTableStore = context.read<CryTableStore>();
-            } catch (e) {
-              // Попробуем через Provider.of
-              try {
-                cryTableStore = Provider.of<CryTableStore>(context, listen: false);
-              } catch (e2) {
-                // Попробуем найти через родительский контекст
-                try {
-                  final parentContext = context.findAncestorStateOfType<State>();
-                  if (parentContext != null) {
-                    cryTableStore = Provider.of<CryTableStore>(parentContext.context, listen: false);
-                  }
-                } catch (e3) {
-                  cryTableStore = null;
+              if (widget.existingRecord != null) {
+                // Редактируем существующую запись
+                final recordId = widget.existingRecord!.id;
+                if (recordId != null) {
+                  await cryStore.update(recordId, childId, noteStore.content);
+                } else {
+                  throw Exception('ID записи не найден');
                 }
+              } else {
+                // Создаем новую запись
+                await cryStore.add(childId, noteStore.content);
               }
-            }
             
-            if (cryTableStore != null) {
-              // Оптимистично добавляем запись сразу в список для мгновенного отображения
-              final optimisticRecord = EntityCry(
-                id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
-                childId: userStore.selectedChild!.id,
-                timeToStart: cryStore.timerStartTime.formattedTime,
-                timeToEnd: cryStore.timerEndTime?.formattedTime,
-                timeEnd: cryStore.timerEndTime?.toUtc().toIso8601String(),
-                allCry: durationString,
-                notes: noteStore.content,
-              );
-              cryTableStore.listData.insert(0, optimisticRecord);
-              
-              // For cry history API we must pass from_time/to_time range
-              final now = DateTime.now();
-              final startOfMonth = DateTime(now.year, now.month, 1);
-              final endOfMonth = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
-
-              // Фоново обновляем данные с сервера (Cry API не поддерживает from_time/to_time)
-              Future.delayed(const Duration(milliseconds: 500), () {
-                cryTableStore?.resetPagination();
-                cryTableStore?.loadPage(newFilters: [
-                  SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: userStore.selectedChild!.id),
+              // Обновляем Stories для плача
+              if (context.mounted) {
+                final cryTableStore = context.read<CryTableStore>();
+                cryTableStore.resetPagination();
+                cryTableStore.loadPage(newFilters: [
+                  SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
                 ]);
-              });
-            } else {
-              // Если CryTableStore недоступен, попробуем найти его через другие способы
-              
-              // Попробуем найти CryTableStore через Provider.of с listen: false
-              try {
-                final alternativeStore = Provider.of<CryTableStore>(context, listen: false);
                 
-                // Добавляем оптимистичную запись
-                final optimisticRecord = EntityCry(
-                  id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
-                  childId: userStore.selectedChild!.id,
-                  timeToStart: cryStore.timerStartTime.formattedTime,
-                  timeToEnd: cryStore.timerEndTime?.formattedTime,
-                  timeEnd: cryStore.timerEndTime?.toUtc().toIso8601String(),
-                  allCry: durationString,
-                  notes: noteStore.content,
-                );
-                alternativeStore.listData.insert(0, optimisticRecord);
+                // Сбросить таймерные значения (Start/End/Total) после подтверждения
+                cryStore.resetWithoutSaving();
                 
-              } catch (e) {
-                // Последняя попытка - создать новый экземпляр
+                // Также сбрасываем состояние SleepStore, чтобы избежать конфликта с таймером Sleep
                 try {
-                  final deps = context.read<Dependencies>();
-                  final newCryTableStore = CryTableStore(
-                    apiClient: deps.apiClient,
-                    restClient: deps.restClient,
-                    faker: deps.faker,
-                    userStore: context.read<UserStore>(),
-                  );
-                  
-                  // Загружаем данные с сервера (Cry API не поддерживает from_time/to_time)
-                  newCryTableStore.loadPage(newFilters: [
-                    SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: userStore.selectedChild!.id),
-                  ]);
-                } catch (e2) {
-                  // Игнорируем ошибки
+                  final sleepStore = context.read<SleepStore>();
+                  sleepStore.resetWithoutSaving();
+                } catch (_) {
+                  // SleepStore может быть недоступен на этом роуте
                 }
+                
+                context.pop(true);
               }
-            }
-            // Сбросить таймерные значения (Start/End/Total) после подтверждения
-            cryStore.resetWithoutSaving();
-            
-            // Также сбрасываем состояние SleepStore, чтобы избежать конфликта с таймером Sleep
-            try {
-              final sleepStore = context.read<SleepStore>();
-              sleepStore.resetWithoutSaving();
-            } catch (_) {
-              // SleepStore может быть недоступен на этом роуте
-            }
-            
-            // Передаем результат обратно, чтобы родительский экран мог обновить данные
-            if (context.mounted) {
-              context.pop(true); // true означает, что запись была добавлена
+            } catch (e) {
+              // Показываем ошибку пользователю
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Ошибка при сохранении: ${e.toString()}')),
+                );
+              }
             }
           },
           titleIfEditNotComplete: t.trackers.ifEditNotCompleteCry.title,

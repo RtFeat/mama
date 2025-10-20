@@ -15,6 +15,8 @@ import '../models/sleepcry_response_history_table.dart';
 import '../models/sleepcry_response_history_table_period.dart';
 import '../models/sleepcry_response_insert_dto.dart';
 import '../models/sleepcry_delete_sleep_dto.dart';
+import '../models/sleepcry_update_sleep_dto.dart';
+import '../models/sleepcry_update_cry_dto.dart';
 
 part 'sleep_cry_client.g.dart';
 
@@ -142,6 +144,14 @@ abstract class SleepCryClient {
     @Body() required SleepcryDeleteSleepDto dto,
   });
 
+  /// Обновить статистику крика.
+  ///
+  /// [dto] - Update cry stats.
+  @PATCH('/sleep_cry/cry/stats')
+  Future<void> patchSleepCryCryStats({
+    @Body() required SleepcryUpdateCryDto dto,
+  });
+
   /// Удалить заметку крика.
   ///
   /// [dto] - DTO.
@@ -179,6 +189,14 @@ abstract class SleepCryClient {
   @DELETE('/sleep_cry/sleep/delete/stats')
   Future<void> deleteSleepCrySleepDeleteStats({
     @Body() required SleepcryDeleteSleepDto dto,
+  });
+
+  /// Обновить статистику сна.
+  ///
+  /// [dto] - Update sleep stats.
+  @PATCH('/sleep_cry/sleep/stats')
+  Future<void> patchSleepCrySleepStats({
+    @Body() required SleepcryUpdateSleepDto dto,
   });
 
 }

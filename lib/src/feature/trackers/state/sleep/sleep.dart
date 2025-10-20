@@ -4,6 +4,9 @@ import 'package:mobx/mobx.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:mama/src/feature/trackers/widgets/timer_interface.dart';
 import 'package:mama/src/core/api/models/sleepcry_response_insert_dto.dart';
+import 'package:mama/src/core/api/models/sleepcry_update_sleep_dto.dart';
+import 'package:mama/src/core/api/models/sleepcry_insert_sleep_dto.dart';
+import 'package:mama/src/core/api/models/sleepcry_delete_sleep_dto.dart';
 
 part 'sleep.g.dart';
 
@@ -47,6 +50,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
       'sleepStart': FormControl(),
       'sleepEnd': FormControl(),
     });
+    init();
   }
 
   final UserStore userStore;
@@ -104,6 +108,9 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
   @observable
   DateTime? _timerStartTime;
   
+  @observable
+  bool _isManualEditMode = false;
+  
   // Real moment when user pressed pause. Used to compute paused duration on resume.
   @observable
   DateTime? _pauseMoment;
@@ -113,6 +120,17 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
 
   @action
   confirmButtonManuallyPressed() {}
+
+  void init() {
+    formGroup.control('sleepStart').value =
+        _dateTimeFormat.format(DateTime.now());
+    formGroup.control('sleepEnd').value =
+        _dateTimeFormat.format(DateTime.now());
+  }
+
+  void dispose() {
+    formGroup.dispose();
+  }
 
   @action
   changeStatusTimer() {
@@ -238,6 +256,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     _savedRecordId = null; // Сбрасываем ID сохраненной записи
     _isManuallySaved = false; // Сбрасываем флаг ручного сохранения
     _timerStartTime = null; // Сбрасываем время запуска таймера
+    _isManualEditMode = false; // Сбрасываем флаг ручного редактирования
     // Сбрасываем время на текущее
     timerStartTime = DateTime.now();
   }
@@ -256,6 +275,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     _savedRecordId = null;
     _isManuallySaved = false;
     _timerStartTime = null;
+    _isManualEditMode = false;
     timerStartTime = DateTime.now();
   }
 
@@ -287,11 +307,15 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
       raw.millisecond,
       raw.microsecond,
     );
+    
     // Update visible and original start
     timerStartTime = newStart;
     originalStartTime = newStart;
     // Also update effective baseline so Total recalculates immediately
     _timerStartTime = newStart;
+    // Mark as manual edit mode when user manually changes start time
+    _isManualEditMode = true;
+    
     updateTimerDisplay();
   }
 
@@ -334,18 +358,6 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     if (!timerSleepStart && timerEndTime == null && !_endManuallySet && !showEditMenu && !confirmSleepTimer) {
       timerEndTime = DateTime.now();
     }
-  }
-
-  void init() {
-    formGroup.control('sleepStart').value =
-        _dateTimeFormat.format(DateTime.now());
-    formGroup.control('sleepEnd').value =
-        _dateTimeFormat.format(DateTime.now());
-  }
-
-  @override
-  void dispose() {
-    formGroup.dispose();
   }
 
   @computed
@@ -432,7 +444,10 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     final _e = timerEndTime;
 
     // Use a single consistent baseline to prevent jumps between running and paused
-    final DateTime effectiveStart = _timerStartTime ?? timerStartTime;
+    // When manually editing, always use timerStartTime directly
+    final DateTime effectiveStart = _isManualEditMode 
+        ? timerStartTime 
+        : (_timerStartTime ?? timerStartTime);
 
     // When running, always show growing elapsed time regardless of explicit end
     if (timerSleepStart) {
@@ -522,6 +537,39 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     // Устанавливаем флаг ручного сохранения
     _isManuallySaved = true;
     return response;
+  }
+
+  Future<void> update(String recordId, String childId, String? notes) async {
+    try {
+      // Рассчитываем длительность в минутах между timerStartTime и timerEndTime (или сейчас)
+      final Duration duration = (timerEndTime ?? DateTime.now()).difference(timerStartTime);
+      final int minutes = duration.inMinutes.abs();
+
+      // Формируем DTO для PATCH /sleep_cry/sleep/stats с полным набором полей
+      final SleepcryUpdateSleepDto dto = SleepcryUpdateSleepDto(
+        id: recordId,
+        allSleep: '$minutes м',
+        timeEnd: timerEndTime,
+        timeToEnd: timerEndTime?.formattedTime,
+        timeToStart: timerStartTime.formattedTime,
+        notes: notes,
+      );
+
+      await restClient.sleepCry.patchSleepCrySleepStats(dto: dto);
+      // Если пришли заметки, а у записи их не было, обновим заметки отдельным PATCH
+      if (notes != null && notes.trim().isNotEmpty) {
+        try {
+          await apiClient.patch('sleep_cry/sleep/notes', body: {
+            'id': recordId,
+            'notes': notes,
+          });
+        } catch (_) {
+          // Игнорируем ошибки обновления заметок, чтобы не ломать общий сценарий
+        }
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
 }

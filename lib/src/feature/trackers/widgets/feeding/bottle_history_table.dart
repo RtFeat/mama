@@ -530,7 +530,15 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
                     children: [
                       Expanded(
                         flex: 2,
-                        child: Text(DateFormat('HH:mm').format(end), style: cellStyle, textAlign: TextAlign.left),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(DateFormat('HH:mm').format(end), style: cellStyle, textAlign: TextAlign.left),
+                            const SizedBox(width: 6),
+                            if ((e.notes != null && e.notes!.trim().isNotEmpty))
+                              Icon(AppIcons.pencil, size: 14, color: theme.colorScheme.primary.withOpacity(0.6)),
+                          ],
+                        ),
                       ),
                       Expanded(
                         child: Text('$chest', style: cellStyle, textAlign: TextAlign.center),

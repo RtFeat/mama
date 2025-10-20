@@ -189,7 +189,7 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                                   typeOfPdf: 'growth',
                                   title: t.trackers.report,
                                   onStart: () => _showSnack(context, 'Generating PDF...', bg: AppColors.primaryColor),
-                                  onSuccess: () => _showSnack(context, 'PDF generated successfully!', bg: Colors.green, seconds: 3),
+                                  onSuccess: () {},
                                   onError: (m) => _showSnack(context, m),
                                 );
                               }

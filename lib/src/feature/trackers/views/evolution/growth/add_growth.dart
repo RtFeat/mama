@@ -24,6 +24,7 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  bool _prefilled = false;
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
@@ -35,10 +36,23 @@ class _BodyState extends State<_Body> {
     final GrowthStore store = context.watch<GrowthStore>();
     final GrowthTableStore tableStore = context.watch<GrowthTableStore>();
 
+    // Detect edit mode from router extra
+    final Map? extra = GoRouterState.of(context).extra as Map?;
+    final EntityHistoryHeight? existing =
+        extra != null ? extra['entity'] as EntityHistoryHeight? : null;
+
+    // Prefill once in edit mode
+    if (existing != null && !_prefilled) {
+      final raw = (existing.height ?? '').replaceAll(',', '.');
+      final parsed = double.tryParse(raw) ?? 0;
+      addGrowthViewStore.updateGrowth(parsed);
+      _prefilled = true;
+    }
+
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
-        title: t.trackers.growth.add,
+        title: existing == null ? t.trackers.growth.add : t.trackers.edit,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
               color: AppColors.trackerColor,
@@ -81,17 +95,23 @@ class _BodyState extends State<_Body> {
               onChangedTime: addGrowthViewStore.updateDateTime,
               onPressedElevated: addGrowthViewStore.isFormValid
                   ? () async {
-                      addGrowthViewStore
-                          .add(userStore.selectedChild!.id!, noteStore.content)
-                          .then((v) async {
+                      if (existing == null) {
+                        await addGrowthViewStore
+                            .add(userStore.selectedChild!.id!, noteStore.content);
+                      } else {
+                        await addGrowthViewStore.edit(
+                          childId: userStore.selectedChild!.id!,
+                          id: existing.id ?? '',
+                          notes: noteStore.content,
+                        );
+                      }
+                      if (context.mounted) {
+                        context.pop();
                         if (context.mounted) {
-                          context.pop();
-                          if (context.mounted) {
-                            await store.fetchGrowthDetails();
-                            await tableStore.refresh();
-                          }
+                          await store.fetchGrowthDetails();
+                          await tableStore.refresh();
                         }
-                      });
+                      }
                     }
                   : null,
             );

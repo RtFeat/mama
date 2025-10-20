@@ -317,15 +317,21 @@ abstract class _CircleTableStore extends TableStore<EntityHistoryCircle>
               if (context.mounted) {
                 router.pushNamed(AppViews.addNote, extra: {
                   'initialValue': currentEntity.notes,
-                  'onSaved': (value) {
+                  'onSaved': (value) async {
                     if (!_isActive) return;
                     if (value != currentEntity.notes) {
-                      restClient.growth.patchGrowthCircleNotes(
-                          dto: GrowthChangeNotesCircleDto(
-                        id: currentEntity.id,
-                        notes: value,
-                      ));
-                      refresh();
+                      await restClient.growth.patchGrowthCircleNotes(
+                        dto: GrowthChangeNotesCircleDto(
+                          id: currentEntity.id,
+                          notes: value,
+                        ),
+                      );
+                      currentEntity.notes = value;
+                      if (builderContext.mounted) setState(() {});
+                      if (context.mounted) {
+                        await store.fetchCircleDetails();
+                        await refresh();
+                      }
                     }
                   },
                 });

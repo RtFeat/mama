@@ -5,6 +5,7 @@ import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/services/pdf_service.dart';
 import 'package:mama/src/feature/trackers/state/sleep/sleep_table_store.dart';
 import 'package:mama/src/feature/trackers/state/sleep/cry_table_store.dart';
+import 'package:mama/src/core/constant/generated/icons.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
@@ -147,6 +148,8 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
 
           // Группируем данные по датам
           final Map<String, Map<String, Duration>> dailyData = {};
+          final Map<String, bool> dailySleepHasNotes = {}; // отметка о заметках сна за день
+          final Map<String, bool> dailyCryHasNotes = {};   // отметка о заметках плача за день
           // Для исключения дублей одинаковых интервалов внутри дня
           final Map<String, Set<String>> dailyPairsSleep = {};
 
@@ -184,6 +187,10 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
 
             if (!dailyData.containsKey(date)) {
               dailyData[date] = {'sleep': Duration.zero, 'cry': Duration.zero};
+            }
+            // Помечаем наличие заметки для сна
+            if ((sleep.notes != null && sleep.notes!.trim().isNotEmpty)) {
+              dailySleepHasNotes[date] = true;
             }
 
             // Вычисляем продолжительность сна
@@ -252,6 +259,10 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
 
             if (!dailyData.containsKey(date)) {
               dailyData[date] = {'sleep': Duration.zero, 'cry': Duration.zero};
+            }
+            // Помечаем наличие заметки для плача
+            if ((cry.notes != null && cry.notes!.trim().isNotEmpty)) {
+              dailyCryHasNotes[date] = true;
             }
 
             // Вычисляем продолжительность плача
@@ -373,10 +384,19 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
                     children: [
                       Expanded(
                         flex: 2,
-                        child: Text(
-                          date,
+                        child: Row(
                           key: ValueKey('sleep_cry_date_$date'),
-                          style: dateStyle,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              date,
+                              style: dateStyle,
+                            ),
+                            if ((dailySleepHasNotes[date] == true) || (dailyCryHasNotes[date] == true)) ...[
+                              const SizedBox(width: 6),
+                              Icon(AppIcons.pencil, size: 14, color: theme.colorScheme.primary.withOpacity(0.6)),
+                            ],
+                          ],
                         ),
                       ),
                       Expanded(

@@ -47,6 +47,7 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
           timerManualEnd: addFeeding.timerEndTime,
           formControlNameEnd: 'feedingBreastEnd',
           formControlNameStart: 'feedingBreastStart',
+          isCryMode: false,
           onStartTimeChanged: (v) {
             final value = formGroup.control('feedingBreastStart').value;
             if (value != null) {

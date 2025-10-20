@@ -21,6 +21,8 @@ class BodyAddManuallySleepCryFeeding extends StatefulWidget {
   final VoidCallback? onTapNotes;
   final VoidCallback? onTapConfirm;
   final Function() stopIfStarted;
+  // Which store to bind time to
+  final bool isCryMode;
 
   const BodyAddManuallySleepCryFeeding({
     super.key,
@@ -38,6 +40,7 @@ class BodyAddManuallySleepCryFeeding extends StatefulWidget {
     required this.bodyWidget,
     required this.stopIfStarted,
     required this.needIfEditNotCompleteMessage,
+    required this.isCryMode,
   });
 
   @override
@@ -57,8 +60,8 @@ class _BodyAddManuallySleepCryFeedingState
     final cryStore = context.watch<CryStore>();
     
     // Используем store значения для реактивности, но fallback на переданные параметры
-    DateTime timerStart = sleepStore.timerStartTime;
-    DateTime? timerEnd = sleepStore.timerEndTime;
+    DateTime timerStart = widget.isCryMode ? cryStore.timerStartTime : sleepStore.timerStartTime;
+    DateTime? timerEnd = widget.isCryMode ? cryStore.timerEndTime : sleepStore.timerEndTime;
 
     return Scaffold(
       backgroundColor: const Color(0xFFE7F2FE),
@@ -142,8 +145,8 @@ class _BodyAddManuallySleepCryFeedingState
                           },
                           formControlNameStart: widget.formControlNameStart!,
                           formControlNameEnd: widget.formControlNameEnd!,
-                          cryStore: cryStore,
-                          sleepStore: sleepStore,
+                          cryStore: widget.isCryMode ? cryStore : null,
+                          sleepStore: widget.isCryMode ? null : sleepStore,
                         ),
                         32.h,
                         CustomButton(

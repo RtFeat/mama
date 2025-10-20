@@ -66,8 +66,11 @@ class EditTimeRow extends StatelessWidget {
     return Observer(
       builder: (context) {
         // Используем актуальные значения из store для отображения
-        final DateTime start = sleepStore?.timerStartTime ?? cryStore?.timerStartTime ?? timerStart;
-        final DateTime? end = sleepStore?.timerEndTime ?? cryStore?.timerEndTime ?? timerEnd;
+        // Prefer cry store values when provided (for Cry Add Manually), otherwise sleep store
+        final DateTime start =
+            (cryStore?.timerStartTime ?? sleepStore?.timerStartTime) ?? timerStart;
+        final DateTime? end =
+            (cryStore?.timerEndTime ?? sleepStore?.timerEndTime) ?? timerEnd;
         // Force reactive updates each second while running by observing currentTimerDisplay
         // even if we do not use it directly.
         final _tick = cryStore?.currentTimerDisplay ?? sleepStore?.currentTimerDisplay;

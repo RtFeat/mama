@@ -7,6 +7,8 @@ import 'package:skit/skit.dart';
 import 'package:faker_dart/faker_dart.dart';
 import 'package:mama/src/feature/trackers/widgets/timer_interface.dart';
 import 'package:mama/src/core/api/models/sleepcry_response_insert_dto.dart';
+import 'package:mama/src/core/api/models/sleepcry_delete_sleep_dto.dart';
+import 'package:mama/src/core/api/models/sleepcry_update_cry_dto.dart';
 
 part 'cry.g.dart';
 
@@ -84,6 +86,9 @@ abstract class _CryStore with Store implements TimerInterface {
 
   @observable
   DateTime? _timerStartTime;
+  
+  @observable
+  bool _isManualEditMode = false;
   
   // Real moment when user pressed pause. Used to compute paused duration on resume.
   @observable
@@ -216,6 +221,7 @@ abstract class _CryStore with Store implements TimerInterface {
     _savedRecordId = null; // Сбрасываем ID сохраненной записи
     _isManuallySaved = false; // Сбрасываем флаг ручного сохранения
     _timerStartTime = null; // Сбрасываем время запуска таймера
+    _isManualEditMode = false; // Сбрасываем флаг ручного редактирования
     // Сбрасываем время на текущее
     timerStartTime = DateTime.now();
   }
@@ -234,6 +240,7 @@ abstract class _CryStore with Store implements TimerInterface {
     _savedRecordId = null;
     _isManuallySaved = false;
     _timerStartTime = null;
+    _isManualEditMode = false;
     timerStartTime = DateTime.now();
   }
 
@@ -270,6 +277,8 @@ abstract class _CryStore with Store implements TimerInterface {
     originalStartTime = newStart;
     // Also update effective baseline so Total recalculates immediately
     _timerStartTime = newStart;
+    // Mark as manual edit mode when user manually changes start time
+    _isManualEditMode = true;
     updateTimerDisplay();
   }
 
@@ -403,7 +412,10 @@ abstract class _CryStore with Store implements TimerInterface {
     }
 
     // Use a single consistent baseline to prevent jumps between running and paused
-    final DateTime baseStart = _timerStartTime ?? timerStartTime;
+    // When manually editing, always use timerStartTime directly
+    final DateTime baseStart = _isManualEditMode 
+        ? timerStartTime 
+        : (_timerStartTime ?? timerStartTime);
     DateTime effectiveStart = normalizeToToday(baseStart);
 
     if (timerEndTime != null) {
@@ -486,7 +498,40 @@ abstract class _CryStore with Store implements TimerInterface {
     final response = await restClient.sleepCry.postSleepCryCry(dto: dto);
     // Сохраняем ID записи для возможной перезаписи
     _savedRecordId = response?.id;
+    _isManuallySaved = true;
     return response;
+  }
+
+  Future<void> update(String recordId, String childId, String? notes) async {
+    try {
+      // Рассчитываем длительность крика в минутах
+      final Duration duration = (timerEndTime ?? DateTime.now()).difference(timerStartTime);
+      final int minutes = duration.inMinutes.abs();
+
+      final dto = SleepcryUpdateCryDto(
+        id: recordId,
+        allCry: '$minutes м',
+        timeEnd: timerEndTime,
+        timeToEnd: timerEndTime?.formattedTime,
+        timeToStart: timerStartTime.formattedTime,
+        notes: notes,
+      );
+
+      await restClient.sleepCry.patchSleepCryCryStats(dto: dto);
+      // Если пришли заметки, а у записи их не было, обновим заметки отдельным PATCH
+      if (notes != null && notes.trim().isNotEmpty) {
+        try {
+          await apiClient.patch('sleep_cry/cry/notes', body: {
+            'id': recordId,
+            'notes': notes,
+          });
+        } catch (_) {
+          // Игнорируем ошибки обновления заметок
+        }
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
 }

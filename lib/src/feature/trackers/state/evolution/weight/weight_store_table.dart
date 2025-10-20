@@ -317,15 +317,26 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
               if (context.mounted) {
                 router.pushNamed(AppViews.addNote, extra: {
                   'initialValue': currentEntity.notes,
-                  'onSaved': (value) {
+                  'onSaved': (value) async {
                     if (!_isActive) return;
                     if (value != currentEntity.notes) {
-                      restClient.growth.patchGrowthWeightNotes(
-                          dto: GrowthChangeNotesWeightDto(
-                        id: currentEntity.id,
-                        notes: value,
-                      ));
-                      refresh();
+                      await restClient.growth.patchGrowthWeightNotes(
+                        dto: GrowthChangeNotesWeightDto(
+                          id: currentEntity.id,
+                          notes: value,
+                        ),
+                      );
+                      // Обновляем локальную модель для мгновенной консистентности
+                      currentEntity.notes = value;
+                      // Обновляем UI диалога (если он ещё на экране)
+                      if (builderContext.mounted) {
+                        setState(() {});
+                      }
+                      // Обновляем детали и таблицу
+                      if (context.mounted) {
+                        await store.fetchWeightDetails();
+                        await refresh();
+                      }
                     }
                   },
                 });

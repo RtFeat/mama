@@ -22,6 +22,7 @@ class _Body extends StatefulWidget {
 }
 
 class _BodyState extends State<_Body> {
+  bool _prefilled = false;
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
@@ -33,10 +34,23 @@ class _BodyState extends State<_Body> {
     final CircleStore store = context.watch<CircleStore>();
     final CircleTableStore tableStore = context.watch<CircleTableStore>();
 
+    // Detect edit mode from router extra
+    final Map? extra = GoRouterState.of(context).extra as Map?;
+    final EntityHistoryCircle? existing =
+        extra != null ? extra['entity'] as EntityHistoryCircle? : null;
+
+    // Prefill values in edit mode once
+    if (existing != null && !_prefilled) {
+      final raw = (existing.circle ?? '').replaceAll(',', '.');
+      final parsed = double.tryParse(raw) ?? 0;
+      addCircleViewStore.updateCircle(parsed);
+      _prefilled = true;
+    }
+
     return Scaffold(
       backgroundColor: AppColors.blueLighter1,
       appBar: CustomAppBar(
-        title: t.trackers.head.add,
+        title: existing == null ? t.trackers.head.add : t.trackers.edit,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(
               color: AppColors.trackerColor,
@@ -79,17 +93,23 @@ class _BodyState extends State<_Body> {
               onChangedTime: addCircleViewStore.updateDateTime,
               onPressedElevated: addCircleViewStore.isFormValid
                   ? () async {
-                      addCircleViewStore
-                          .add(userStore.selectedChild!.id!, noteStore.content)
-                          .then((v) async {
+                      if (existing == null) {
+                        await addCircleViewStore
+                            .add(userStore.selectedChild!.id!, noteStore.content);
+                      } else {
+                        await addCircleViewStore.edit(
+                          childId: userStore.selectedChild!.id!,
+                          id: existing.id ?? '',
+                          notes: noteStore.content,
+                        );
+                      }
+                      if (context.mounted) {
+                        context.pop();
                         if (context.mounted) {
-                          context.pop();
-                          if (context.mounted) {
-                            await store.fetchCircleDetails();
-                            await tableStore.refresh();
-                          }
+                          await store.fetchCircleDetails();
+                          await tableStore.refresh();
                         }
-                      });
+                      }
                     }
                   : null,
             );

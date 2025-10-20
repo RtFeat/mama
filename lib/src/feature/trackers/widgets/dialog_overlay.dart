@@ -106,10 +106,6 @@ class MeasurementOverlay extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
                 child: Row(
                   children: [
-                    Text(
-                      details.previousWeek,
-                      style: AppTextStyles.f10w400,
-                    ),
                     const Spacer(),
                     GestureDetector(
                       onTap: details.onPreviousWeekTap,
@@ -134,10 +130,7 @@ class MeasurementOverlay extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      details.nextWeek,
-                      style: AppTextStyles.f10w400,
-                    ),
+                  // Правый маленький текст даты убран по требованиям дизайна
                   ],
                 ),
               ),

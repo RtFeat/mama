@@ -83,11 +83,20 @@ abstract class _AddWeightViewStore with Store {
   }
 
   Future<void> add(String childId, String? notes) async {
+    String? formatCreatedAt(DateTime? dt) {
+      if (dt == null) return null;
+      final d = dt.toLocal();
+      String two(int v) => v.toString().padLeft(2, '0');
+      String three(int v) => v.toString().padLeft(3, '0');
+      return '${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}:${two(d.second)}.${three(d.millisecond)}';
+    }
+
     final dto = GrowthInsertWeightDto(
       childId: childId,
       weight: '$totalWeightKg',
       notes: notes,
-      createdAt: selectedDate?.toString(),
+      // POST expects space-separated local time per Swagger style
+      createdAt: formatCreatedAt(selectedDate),
     );
 
     await restClient.growth.postGrowthWeight(dto: dto);
@@ -103,11 +112,23 @@ abstract class _AddWeightViewStore with Store {
         id: id,
         childId: childId,
         weight: '$totalWeightKg',
-        notes: notes,
-        createdAt: selectedDate?.toString(),
+        // Изменение заметки делаем отдельным PATCH /growth/weight/notes
+        // поэтому здесь не передаём notes, чтобы избежать несогласованности API
+        createdAt: selectedDate?.toUtc().toIso8601String(),
       ),
     );
 
     await restClient.growth.patchGrowthWeightStats(dto: dto);
+
+    // Если пользователь ввёл новую заметку, отправим отдельным запросом
+    final String? trimmed = notes?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) {
+      await restClient.growth.patchGrowthWeightNotes(
+        dto: GrowthChangeNotesWeightDto(
+          id: id,
+          notes: trimmed,
+        ),
+      );
+    }
   }
 }

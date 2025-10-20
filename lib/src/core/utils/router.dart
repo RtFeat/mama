@@ -451,7 +451,9 @@ final GoRouter router = GoRouter(
                   GoRoute(
                     name: AppViews.addSleeping,
                     path: _Paths.addSleeping,
-                    builder: (context, state) => const AddSleepingView(),
+                    builder: (context, state) => AddSleepingView(
+                      existingRecord: state.extra as EntitySleep?,
+                    ),
                   ),
                   //   GoRoute(
                   //     name: AppViews.addPumping,

@@ -556,10 +556,18 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
                           child: Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              Text(
-                                DateFormat('HH:mm').format(start),
-                                style: cellStyle,
-                                textAlign: TextAlign.left,
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    DateFormat('HH:mm').format(start),
+                                    style: cellStyle,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  if ((e.notes != null && e.notes!.trim().isNotEmpty))
+                                    Icon(AppIcons.pencil, size: 14, color: theme.colorScheme.primary.withOpacity(0.6)),
+                                ],
                               ),
                               if (i == 0 || i == dayItems.length - 1)
                                 Positioned(

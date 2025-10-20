@@ -673,7 +673,15 @@ class _LureHistoryState extends State<_LureHistory> {
                         children: [
                           Expanded(
                             flex: 2,
-                            child: Text(dateLabel, style: dateStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(dateLabel, style: dateStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                const SizedBox(width: 6),
+                                if ((fullDayItems.any((e) => (e.notes != null && e.notes!.trim().isNotEmpty))))
+                                  Icon(AppIcons.pencil, size: 14, color: theme.textTheme.bodySmall?.color?.withOpacity(0.6) ?? Colors.grey),
+                              ],
+                            ),
                           ),
                         ],
                       ),
