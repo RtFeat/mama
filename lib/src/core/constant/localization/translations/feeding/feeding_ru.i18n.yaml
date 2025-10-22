@@ -3,13 +3,13 @@ breast: Грудь
 pumping: Сцеживание
 bottle: Бутылочка
 lure: Прикорм
-learnMoreText: Здесь вы можете отслеживать, как проходит кормление грудью.\n\nУзнайте больше про процесс грудного вскармливания в нашем Центре Знаний
+learnMoreText: Здесь вы можете отслеживать, как проходит грудное вскармливание.\n\nПодробнее о процессе кормления в нашем Центре знаний
 learnMoreBtn: Узнать\nбольше
 left: Левая
 right: Правая
 addManually: Добавить вручную
 pressForAddFeedingTime:
-  first: Нажмите на
+  first: Нажмите
   second: или добавьте вручную
 addFeeding: Добавить кормление
 story: История
@@ -17,13 +17,13 @@ newS: Новые
 old: Старые
 l: Л
 r: П
-general: Общее
+general: Итого
 wholeStory: Вся история
 feedingEndTime: Время окончания\nкормления
-endTimeOfPumping:  Время окончания\nсцеживания
+endTimeOfPumping: Время окончания\nсцеживания
 pumpingLeftSide: Л, мл
 pumpingRightSide: П, мл
-totalMl: Всего, мл
+totalMl: Итого, мл
 breastMl: Грудь,\nмл
 bottleMl: Бутылочка,\nмл
 table: Таблица
@@ -32,26 +32,26 @@ mixture: Смесь
 change: Изменить
 changeTime: Изменить время
 start: Начало
-end: Завершение
+end: Конец
 timerStarted: Таймер запущен
 total: Всего
 note: Заметка
 confirm: Подтвердить
 now: Сейчас
-cancel: Отменить
+cancel: Отмена
 addComplementaryFood: Добавить прикорм
 all: Все
-onlyWithAllergies: Только\nс аллергией
+onlyWithAllergies: Только\nс аллергиями
 time: Время
-food: Продукт
-quantityAndReaction: Кол-во и\nреакция
+food: Еда
+quantityAndReaction: Количество и\nреакция
 date: Дата
 gwTime: Время ГВ
 totalLiquidsMl: Всего\nжидкости,\nмл
 totalComplementary: Всего\nприкорма,\nг
-manualyInputComment: 
+manualyInputComment:
   title: Необязательно
-  subtitle: Можно просто указать общее время ниже
+  subtitle: Вы можете просто указать общее время ниже
 ifEditNotCompleteFeed:
-  title: У вас запущено кормление
-  text: Если вы измените значения вручную, запущенное кормление не сохранится
+  title: Вы начали кормление
+  text: Если вы измените значения вручную, начатое кормление не будет сохранено

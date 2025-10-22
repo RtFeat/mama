@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:skit/skit.dart';
 import 'package:mama/src/feature/trackers/state/feeding/breast_feeding_table_store.dart';
+import 'package:mama/src/feature/trackers/widgets/dialog_overlay.dart';
+import 'package:mama/src/core/api/models/feed_delete_chest_dto.dart';
 
 class BreastFeedingHistoryTableWidget extends StatefulWidget {
   const BreastFeedingHistoryTableWidget({super.key});
@@ -72,6 +74,106 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
     final minutes = minutesTotal % 60;
     if (hours == 0) return '${minutes}${t.trackers.min}';
     return '${hours}ч ${minutes}${t.trackers.min}';
+  }
+
+  void _showBreastFeedingDetailsDialog(BuildContext context, List<EntityFeeding> allForDay, int startIndex, String dayLabel) {
+    // Сохраняем ссылки на store и другие зависимости заранее
+    final store = context.read<BreastFeedingTableStore>();
+    final deps = context.read<Dependencies>();
+    final userStore = context.read<UserStore>();
+    // Сохраняем родительский контекст страницы для навигации после закрытия диалога
+    final parentContext = context;
+    
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (dialogContext) {
+        int index = startIndex;
+        return StatefulBuilder(builder: (context, setState) {
+          final rec = allForDay[index];
+          
+          final leftMinutes = rec.leftFeeding ?? 0;
+          final rightMinutes = rec.rightFeeding ?? 0;
+          final allMinutes = rec.allFeeding ?? 0;
+          
+          // Определяем цвет статуса кормления
+          Color feedingStatusColor = const Color(0xFF4CAF50); // Зеленый по умолчанию
+          String status = 'Нормальное кормление';
+          
+          if (allMinutes < 5) {
+            status = 'Короткое кормление';
+            feedingStatusColor = const Color(0xFFFF9800); // Оранжевый
+          } else if (allMinutes > 60) {
+            status = 'Длительное кормление';
+            feedingStatusColor = const Color(0xFF4CAF50); // Зеленый
+          }
+          
+          final details = MeasurementDetails(
+            title: t.feeding.breast,
+            currentWeek: dayLabel,
+            previousWeek: '',
+            selectedWeek: dayLabel,
+            nextWeek: '',
+            weight: '${allMinutes}м',
+            weightStatus: status,
+            weightStatusColor: feedingStatusColor,
+            medianWeight: 'Левая: ${leftMinutes}м,\nПравая: ${rightMinutes}м',
+            normWeightRange: '5-60 минут',
+            weightToGain: allMinutes < 5 ? 'Увеличить время\nкормления' : 'Кормление в\n норме',
+            note: rec.notes,
+            viewNormsLabel: 'Смотреть нормы кормления',
+            onClose: () => Navigator.of(dialogContext).pop(),
+            onEdit: () {
+              Navigator.of(dialogContext).pop();
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                if (!parentContext.mounted) return;
+                // TODO: Реализовать редактирование записи кормления грудью
+                ScaffoldMessenger.of(parentContext).showSnackBar(
+                  const SnackBar(content: Text('Редактирование записи кормления грудью пока не реализовано')),
+                );
+              });
+            },
+            onDelete: () async {
+              if (dialogContext.mounted) {
+                Navigator.of(dialogContext).pop();
+                try {
+                  if (rec.id != null && rec.id!.isNotEmpty) {
+                    print('Deleting feeding record with ID: ${rec.id}');
+                    await deps.restClient.feed.deleteFeedChestDeleteStats(
+                      dto: FeedDeleteChestDto(id: rec.id!),
+                    );
+                    // Обновляем данные в таблице
+                    await store.refreshForChild(store.childId);
+                    if (dialogContext.mounted) {
+                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        const SnackBar(content: Text('Запись кормления грудью удалена')),
+                      );
+                    }
+                  } else {
+                    print('Record ID is null or empty');
+                    if (dialogContext.mounted) {
+                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        const SnackBar(content: Text('ID записи не найден')),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (dialogContext.mounted) {
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                      SnackBar(content: Text('Ошибка удаления записи: $e')),
+                    );
+                  }
+                }
+              }
+            },
+            onNoteEdit: null, // Отключаем редактирование заметок, так как API не предоставляет UUID для записей кормления грудью
+            onNextWeekTap: index < allForDay.length - 1 ? () => setState(() => index++) : null,
+            onPreviousWeekTap: index > 0 ? () => setState(() => index--) : null,
+          );
+          return MeasurementOverlay(details: details);
+        });
+      },
+    );
   }
 
   @override
@@ -142,9 +244,9 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             ),
             child: Row(
               children: [
-                Expanded(child: Text('Left', style: headerStyle, textAlign: TextAlign.left)),
-                Expanded(child: Text('Right', style: headerStyle, textAlign: TextAlign.center)),
-                Expanded(child: Text('Total', style: headerStyle, textAlign: TextAlign.right)),
+                Expanded(child: Text(t.feeding.left, style: headerStyle, textAlign: TextAlign.left)),
+                Expanded(child: Text(t.feeding.right, style: headerStyle, textAlign: TextAlign.center)),
+                Expanded(child: Text(t.feeding.total, style: headerStyle, textAlign: TextAlign.right)),
               ],
             ),
           ),
@@ -177,14 +279,17 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
               totalRightMinutes += rightMinutes;
               totalAllMinutes += allMinutes;
               
-              rows.add(Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                margin: const EdgeInsets.only(top: 8),
-                child: Row(
+              rows.add(InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () => _showBreastFeedingDetailsDialog(context, dayItems, i, dateLabel),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Row(
                   children: [
                     Expanded(
                       child: Stack(
@@ -237,6 +342,7 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                     ),
                   ],
                 ),
+                ),
               ));
             }
 
@@ -254,7 +360,7 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('Total', style: smallHint),
+                          Text(t.feeding.total, style: smallHint),
                           const SizedBox(width: 8),
                           Text(
                             _minutesToHhMm(totalAllMinutes),
@@ -284,7 +390,7 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                 child: Column(
                   children: [
                     Text(
-                      store.showAll ? 'Свернуть историю' : 'Вся история',
+                      store.showAll ? 'Свернуть историю' : t.feeding.wholeStory,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w700,
@@ -297,6 +403,7 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             ),
           ),
         ],
+        const SizedBox(height: 10), // Добавляем дополнительное пространство снизу
       ],
     );
     });

@@ -234,7 +234,11 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                             } else {
                               await deps.restClient.feed.postFeedFood(dto: dto);
                             }
-                            if (mounted) context.pop(true);
+                            if (mounted) {
+                              // Небольшая задержка для обеспечения обновления сервера
+                              await Future.delayed(const Duration(milliseconds: 200));
+                              context.pop(true);
+                            }
                           } catch (e) {
                             if (!mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(

@@ -6,7 +6,9 @@ import 'package:mama/src/feature/trackers/data/entity/pumping_data.dart';
 import 'package:mobx/mobx.dart';
 
 class BottleGraphicWidget extends StatefulWidget {
-  const BottleGraphicWidget({super.key});
+  final int? reloadTick;
+  final VoidCallback? onRefreshRequested;
+  const BottleGraphicWidget({super.key, this.reloadTick, this.onRefreshRequested});
 
   @override
   State<BottleGraphicWidget> createState() => _BottleGraphicWidgetState();
@@ -16,6 +18,8 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
   int _weekOffset = 0; // 0 - текущая неделя, -1 - прошлая, +1 - следующая
   String? _currentChildId;
   ReactionDisposer? _childIdReaction;
+  int _lastReloadTick = 0;
+  Future<List<GraphicData>>? _cachedData;
 
   @override
   void initState() {
@@ -24,6 +28,11 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
       if (mounted) {
         final userStore = context.read<UserStore>();
         _currentChildId = userStore.selectedChild?.id;
+        // Если reloadTick больше 0, это означает что мы вернулись после добавления записи
+        if (widget.reloadTick != null && widget.reloadTick! > 0) {
+          _lastReloadTick = widget.reloadTick!;
+          _forceRefresh();
+        }
       }
     });
     _setupChildIdReaction();
@@ -40,11 +49,30 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
           if (mounted && newChildId != _currentChildId) {
             setState(() {
               _currentChildId = newChildId;
+              _cachedData = null; // Очищаем кэш при смене ребенка
             });
           }
         },
       );
     });
+  }
+
+  @override
+  void didUpdateWidget(BottleGraphicWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Если изменился reloadTick, принудительно обновляем график
+    if (widget.reloadTick != null && widget.reloadTick != _lastReloadTick) {
+      _lastReloadTick = widget.reloadTick!;
+      // Принудительно обновляем график
+      _forceRefresh();
+    }
+  }
+
+  void _forceRefresh() {
+    // Очищаем кэш для принудительного обновления
+    _cachedData = null;
+    // Принудительно перестраиваем FutureBuilder
+    setState(() {});
   }
 
   @override
@@ -59,8 +87,8 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
     final restClient = context.read<Dependencies>().restClient;
 
     return FutureBuilder<List<GraphicData>>(
-      key: ValueKey('${_currentChildId}_$_weekOffset'),
-      future: _loadChartData(restClient, _currentChildId, _weekOffset),
+      key: ValueKey('${_currentChildId}_${_weekOffset}_${widget.reloadTick ?? 0}'),
+      future: _cachedData ?? _loadChartData(restClient, _currentChildId, _weekOffset),
       builder: (context, snapshot) {
         final list = snapshot.data ?? const <GraphicData>[];
         final maxVal = list.fold<int>(0, (m, e) => e.general > m ? e.general : m);
@@ -86,8 +114,18 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
             rangeLabel:
                 '${DateFormat('d MMMM').format(start)} - ${DateFormat('d MMMM').format(end)}',
             averageLabel: '$avg мл в среднем в день',
-            onPrev: () => setState(() => _weekOffset--),
-            onNext: () => setState(() => _weekOffset++),
+            onPrev: () {
+              setState(() {
+                _weekOffset--;
+                _cachedData = null; // Очищаем кэш при смене недели
+              });
+            },
+            onNext: () {
+              setState(() {
+                _weekOffset++;
+                _cachedData = null; // Очищаем кэш при смене недели
+              });
+            },
           ),
         );
       },
@@ -97,17 +135,51 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
   Future<List<GraphicData>> _loadChartData(
       RestClient restClient, String? childId, int weekOffset) async {
     if (childId == null) return _emptyWeek();
-    try {
-      final resp =
-          await restClient.feed.getFeedFoodHistory(childId: childId, pageSize: 200);
+    
+    // Создаем Future и сохраняем его в кэш
+    final future = _loadChartDataInternal(restClient, childId, weekOffset);
+    _cachedData = future;
+    return future;
+  }
 
-      final Map<String, _Totals> byDate = {};
-      for (final total in resp.list ?? []) {
-        final dateKey = _normalizeDateKey(total.timeToEndTotal);
-        final left = total.totalChest ?? 0;
-        final right = total.totalMixture ?? 0;
-        final all = total.totalTotal ?? (left + right);
-        byDate[dateKey] = _Totals(left: left, right: right, total: all);
+  Future<List<GraphicData>> _loadChartDataInternal(
+      RestClient restClient, String? childId, int weekOffset) async {
+    if (childId == null) return _emptyWeek();
+    try {
+      // Выполняем до 5 попыток для текущей недели: сервер может кэшировать агрегированные данные
+      // Повторим запрос для текущей недели, чтобы добиться мгновенного обновления
+      Map<String, _Totals> byDate = {};
+      int maxAttempts = weekOffset == 0 ? 5 : 1; // Больше попыток только для текущей недели
+      
+      for (int attempt = 0; attempt < maxAttempts; attempt++) {
+        final resp = await restClient.feed.getFeedFoodHistory(childId: childId, pageSize: 200);
+        byDate.clear();
+        for (final total in resp.list ?? []) {
+          final dateKey = _normalizeDateKey(total.timeToEnd);
+          final left = total.totalChest ?? 0;
+          final right = total.totalMixture ?? 0;
+          final all = total.totalTotal ?? (left + right);
+          byDate[dateKey] = _Totals(left: left, right: right, total: all);
+        }
+        
+        // Если не текущая неделя — прерываемся после первой попытки
+        if (weekOffset != 0) break;
+        
+        // Для текущей недели проверяем наличие сегодняшних данных
+        final todayKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        final hasToday = byDate.containsKey(todayKey);
+        
+        // Если данные есть или это последняя попытка - прерываемся
+        if (hasToday || attempt == maxAttempts - 1) break;
+        
+        // Прогрессивная задержка: 500ms, 1000ms, 1500ms, 2000ms
+        await Future.delayed(Duration(milliseconds: 500 + (attempt * 500)));
+      }
+      
+      // Если после всех попыток данные все еще не актуальны, попробуем альтернативный подход
+      if (weekOffset == 0 && !byDate.containsKey(DateFormat('yyyy-MM-dd').format(DateTime.now()))) {
+        print('BottleGraphic: Fallback to individual records aggregation');
+        byDate = await _loadDataFromIndividualRecords(restClient, childId);
       }
 
       final (start, _) = _currentWeekRange(weekOffset);
@@ -152,28 +224,59 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
   }
 
   String _normalizeDateKey(String? date) {
-    if (date == null) return DateFormat('yyyy-MM-dd').format(DateTime.now());
+    if (date == null) {
+      print('BottleGraphic _normalizeDateKey: date is null, using current date');
+      return DateFormat('yyyy-MM-dd').format(DateTime.now());
+    }
     try {
-      // Handle Russian date format like "30 сентября", "22 сентября" FIRST
-      if (date.contains('сентября')) {
-        final day = int.tryParse(date.split(' ')[0]) ?? 1;
-        final currentYear = DateTime.now().year;
-        final d = DateTime(currentYear, 9, day); // September = 9
-        return DateFormat('yyyy-MM-dd').format(d);
-      }
-      
+      String result;
       if (date.contains('T')) {
         final d = DateTime.parse(date).toLocal();
-        return DateFormat('yyyy-MM-dd').format(d);
-      }
-      if (date.contains(' ')) {
+        result = DateFormat('yyyy-MM-dd').format(d);
+      } else if (date.contains(' ')) {
         final d = DateFormat('yyyy-MM-dd HH:mm:ss').parse(date, true).toLocal();
-        return DateFormat('yyyy-MM-dd').format(d);
+        result = DateFormat('yyyy-MM-dd').format(d);
+      } else {
+        final d = DateFormat('yyyy-MM-dd').parse(date, true).toLocal();
+        result = DateFormat('yyyy-MM-dd').format(d);
       }
-      final d = DateFormat('yyyy-MM-dd').parse(date, true).toLocal();
-      return DateFormat('yyyy-MM-dd').format(d);
-    } catch (_) {
+      print('BottleGraphic _normalizeDateKey: input="$date" -> output="$result"');
+      return result;
+    } catch (e) {
+      print('BottleGraphic _normalizeDateKey: error parsing "$date": $e');
       return DateFormat('yyyy-MM-dd').format(DateTime.now());
+    }
+  }
+
+  // Альтернативный метод: агрегация данных из отдельных записей
+  Future<Map<String, _Totals>> _loadDataFromIndividualRecords(
+      RestClient restClient, String childId) async {
+    try {
+      final response = await restClient.feed.getFeedFoodGet(childId: childId);
+      final Map<String, _Totals> byDate = {};
+      
+      for (final record in response.list ?? []) {
+        final dateKey = _normalizeDateKey(record.timeToEnd);
+        final chest = record.chest?.toInt() ?? 0;
+        final mixture = record.mixture?.toInt() ?? 0;
+        final total = chest + mixture;
+        
+        if (byDate.containsKey(dateKey)) {
+          final existing = byDate[dateKey]!;
+          byDate[dateKey] = _Totals(
+            left: (existing.left + chest).toInt(),
+            right: (existing.right + mixture).toInt(),
+            total: (existing.total + total).toInt(),
+          );
+        } else {
+          byDate[dateKey] = _Totals(left: chest, right: mixture, total: total);
+        }
+      }
+      
+      return byDate;
+    } catch (e) {
+      print('BottleGraphic _loadDataFromIndividualRecords error: $e');
+      return {};
     }
   }
 }

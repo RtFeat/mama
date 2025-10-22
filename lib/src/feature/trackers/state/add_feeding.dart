@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:mama/src/data.dart';
 import 'package:dio/dio.dart';
 import 'package:mama/src/feature/notes/state/add_note.dart';
+import 'package:uuid/uuid.dart';
+import 'package:mama/src/feature/trackers/state/feeding/breast_feeding_table_store.dart';
+import 'package:skit/skit.dart';
 
 part 'add_feeding.g.dart';
 
@@ -11,7 +15,8 @@ class AddFeeding extends _AddFeeding with _$AddFeeding {
     required this.childId,
     required this.restClient,
     required this.noteStore,
-  });
+    VoidCallback? onHistoryRefresh,
+  }) : super(onHistoryRefresh: onHistoryRefresh);
 
   final String childId;
   final RestClient restClient;
@@ -19,6 +24,10 @@ class AddFeeding extends _AddFeeding with _$AddFeeding {
 }
 
 abstract class _AddFeeding with Store {
+  final VoidCallback? onHistoryRefresh;
+
+  _AddFeeding({this.onHistoryRefresh});
+
   @observable
   bool isRightSideStart = false;
 
@@ -117,7 +126,7 @@ abstract class _AddFeeding with Store {
         // Resuming from pause - adjust start time to account for paused duration
         final pausedDuration = DateTime.now().difference(rightPauseTime!);
         rightTimerStartTime = rightTimerStartTime!.add(pausedDuration);
-        // Don't change rightTimerStartTime when resuming - keep original start time
+        rightPauseTime = null; // Clear pause time when resuming
       } else {
         // Fresh start - save original start time only if not set
         if (rightOriginalStartTime == null) {
@@ -184,7 +193,7 @@ abstract class _AddFeeding with Store {
         // Resuming from pause - adjust start time to account for paused duration
         final pausedDuration = DateTime.now().difference(leftPauseTime!);
         leftTimerStartTime = leftTimerStartTime!.add(pausedDuration);
-        // Don't change leftTimerStartTime when resuming - keep original start time
+        leftPauseTime = null; // Clear pause time when resuming
       } else {
         // Fresh start - save original start time only if not set
         if (leftOriginalStartTime == null) {
@@ -242,10 +251,32 @@ abstract class _AddFeeding with Store {
       final seconds = duration.inSeconds % 60;
       rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     }
+    
+    // Сохраняем запись при подтверждении
+    try {
+      await addFeeding();
+      print('Feeding record saved on confirm');
+      // Обновляем историю после успешного сохранения
+      onHistoryRefresh?.call();
+    } catch (e) {
+      print('Error saving feeding record on confirm: $e');
+      // Не пробрасываем ошибку, чтобы не блокировать UI
+    }
   }
 
   @action
-  goBackAndContinue() {
+  goBackAndContinue() async {
+    // Удаляем запись при возврате и продолжении (как в Sleep)
+    if (savedRecordId != null) {
+      try {
+        await deleteFeeding();
+        print('Feeding record deleted on go back and continue');
+      } catch (e) {
+        print('Error deleting feeding record on go back and continue: $e');
+        // Не пробрасываем ошибку, чтобы не блокировать UI
+      }
+    }
+    
     confirmFeedingTimer = false;
     isFeedingCanceled = false;
     // Восстанавливаем состояние таймера
@@ -277,16 +308,7 @@ abstract class _AddFeeding with Store {
 
   @action
   cancelFeedingClose() async {
-    // Сохраняем запись перед сбросом (если есть что сохранять)
-    if (timerEndTime != null && savedRecordId == null && !leftIsManuallySaved && !rightIsManuallySaved) {
-      try {
-        await addFeeding();
-        print('Feeding record saved on cancel close');
-      } catch (e) {
-        print('Error saving feeding record on cancel close: $e');
-      }
-    }
-    
+    // Крестик - просто сбрасываем все без сохранения
     isFeedingCanceled = false;
     showEditMenu = false;
     confirmFeedingTimer = false;
@@ -712,8 +734,7 @@ abstract class _AddFeeding with Store {
     }
   }
 
-  @action
-  Future<void> addFeeding() async {
+  Future<void> addFeeding({int? manualLeftMinutes, int? manualRightMinutes}) async {
     if (timerEndTime == null) return;
 
     // Calculate durations for left and right sides
@@ -725,9 +746,25 @@ abstract class _AddFeeding with Store {
         ? rightPauseTime!.difference(rightTimerStartTime ?? timerStartTime)
         : timerEndTime!.difference(rightTimerStartTime ?? timerStartTime);
 
-    final leftMinutes = leftDuration.inMinutes.abs();
-    final rightMinutes = rightDuration.inMinutes.abs();
-    // final totalMinutes = leftMinutes + rightMinutes; // not used currently
+    var leftMinutes = leftDuration.inMinutes.abs();
+    var rightMinutes = rightDuration.inMinutes.abs();
+    
+    // If manual values are provided (from manual input screen), use them instead
+    if (manualLeftMinutes != null && manualRightMinutes != null) {
+      leftMinutes = manualLeftMinutes;
+      rightMinutes = manualRightMinutes;
+    } else {
+      // Manual mode fallback: if user set time manually and both sides are 0,
+      // assign the whole duration to the left side to avoid saving zeros.
+      final totalMinutes = (timerEndTime != null)
+          ? timerEndTime!.difference(timerStartTime).inMinutes.abs()
+          : (leftMinutes + rightMinutes);
+      
+      if ((startTimeManuallySet || endTimeManuallySet) && leftMinutes == 0 && rightMinutes == 0) {
+        leftMinutes = totalMinutes;
+        rightMinutes = 0;
+      }
+    }
 
     // Backend expects local time with milliseconds: yyyy-MM-dd HH:mm:ss.SSS
     final formattedEnd = timerEndTime != null
@@ -739,8 +776,8 @@ abstract class _AddFeeding with Store {
     final dto = FeedInsertChestDto(
       childId: (this as AddFeeding).childId,
       timeToEnd: formattedEnd,
-      left: leftMinutes > 0 ? leftMinutes : 1, // Отправляем минимум 1 минуту
-      right: rightMinutes > 0 ? rightMinutes : 1, // Отправляем минимум 1 минуту
+      left: leftMinutes,
+      right: rightMinutes,
       notes: notesValue,
     );
     
@@ -748,8 +785,8 @@ abstract class _AddFeeding with Store {
     final jsonData = <String, dynamic>{
       'child_id': (this as AddFeeding).childId,
       'time_to_end': formattedEnd,
-      'left': leftMinutes > 0 ? leftMinutes : 1, // Минимум 1 минута
-      'right': rightMinutes > 0 ? rightMinutes : 1, // Минимум 1 минута
+      'left': leftMinutes,
+      'right': rightMinutes,
       if (notesValue.isNotEmpty) 'notes': notesValue,
     };
 
@@ -760,10 +797,12 @@ abstract class _AddFeeding with Store {
       print('Calling postFeedChest...');
       
       // Используем notes из noteStore
-      await (this as AddFeeding).restClient.feed.postFeedChest(dto: dto);
-      print('API response: success (void)');
-      // Бек может не возвращать id — помечаем как сохранённое
-      savedRecordId ??= 'unknown';
+      final response = await (this as AddFeeding).restClient.feed.postFeedChest(dto: dto);
+      print('API response: success with ID: ${response.id}');
+      
+      // Используем реальный ID с сервера для удаления
+      savedRecordId = response.id;
+      print('Saved record ID: $savedRecordId');
       print('Feeding record saved successfully');
     } catch (e) {
       if (e is DioException) {
@@ -790,6 +829,26 @@ abstract class _AddFeeding with Store {
         print('Error saving feeding record: $e');
       }
       // Для прочих ошибок пробрасываем дальше
+      rethrow;
+    }
+  }
+
+  @action
+  Future<void> deleteFeeding() async {
+    if (savedRecordId == null) {
+      print('No saved record to delete');
+      return;
+    }
+
+    try {
+      print('Deleting feeding record with UUID: $savedRecordId');
+      await (this as AddFeeding).restClient.feed.deleteFeedChestDeleteStats(
+        dto: FeedDeleteChestDto(id: savedRecordId!),
+      );
+      print('Feeding record deleted successfully');
+      savedRecordId = null; // Сбрасываем ID после удаления
+    } catch (e) {
+      print('Error deleting feeding record: $e');
       rethrow;
     }
   }

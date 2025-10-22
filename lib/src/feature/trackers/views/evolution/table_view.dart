@@ -188,7 +188,14 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
                                   context: context,
                                   typeOfPdf: 'growth',
                                   title: t.trackers.report,
-                                  onStart: () => _showSnack(context, 'Generating PDF...', bg: AppColors.primaryColor),
+                                  onStart: () {
+                                    final isEn = Localizations.localeOf(context).languageCode == 'en';
+                                    _showSnack(
+                                      context,
+                                      isEn ? 'Generating PDF...' : 'Генерация PDF...',
+                                      bg: AppColors.primaryColor,
+                                    );
+                                  },
                                   onSuccess: () {},
                                   onError: (m) => _showSnack(context, m),
                                 );

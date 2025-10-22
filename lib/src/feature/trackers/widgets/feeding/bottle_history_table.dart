@@ -12,17 +12,22 @@ import 'package:go_router/go_router.dart';
 
 class BottleHistoryTableWidgetWrapper extends StatelessWidget {
   final void Function(bool showSavedBanner)? showSavedBanner;
-  const BottleHistoryTableWidgetWrapper({super.key, this.showSavedBanner});
+  final VoidCallback? onRefreshRequested;
+  const BottleHistoryTableWidgetWrapper({super.key, this.showSavedBanner, this.onRefreshRequested});
 
   @override
   Widget build(BuildContext context) {
-    return BottleHistoryTableWidget(showSavedBanner: showSavedBanner);
+    return BottleHistoryTableWidget(
+      showSavedBanner: showSavedBanner,
+      onRefreshRequested: onRefreshRequested,
+    );
   }
 }
 
 class BottleHistoryTableWidget extends StatefulWidget {
   final void Function(bool showSavedBanner)? showSavedBanner;
-  const BottleHistoryTableWidget({super.key, this.showSavedBanner});
+  final VoidCallback? onRefreshRequested;
+  const BottleHistoryTableWidget({super.key, this.showSavedBanner, this.onRefreshRequested});
 
   @override
   State<BottleHistoryTableWidget> createState() => _BottleHistoryTableWidgetState();
@@ -188,6 +193,9 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
                   );
                 }
                 
+                // Notify chart to refresh immediately
+                widget.onRefreshRequested?.call();
+
                 // Refresh data from server in background to ensure consistency
                 final childId = userStore.selectedChild?.id;
                 store.loadPage(newFilters: [

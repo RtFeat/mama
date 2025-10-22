@@ -14,6 +14,7 @@ class EntityFoodHistoryTotal {
     this.foodHistory,
     this.object0,
     this.timeToEndTotal,
+    this.timeToEnd,
     this.totalChest,
     this.totalMixture,
     this.totalTotal,
@@ -30,6 +31,8 @@ class EntityFoodHistoryTotal {
   final String? object0;
   @JsonKey(name: 'time_to_end_total')
   final String? timeToEndTotal;
+  @JsonKey(name: 'TimeToEnd')
+  final String? timeToEnd;
   @JsonKey(name: 'total_chest')
   final int? totalChest;
   @JsonKey(name: 'total_mixture')

@@ -678,7 +678,7 @@ class _LureHistoryState extends State<_LureHistory> {
                               children: [
                                 Text(dateLabel, style: dateStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
                                 const SizedBox(width: 6),
-                                if ((fullDayItems.any((e) => (e.notes != null && e.notes!.trim().isNotEmpty))))
+                                if ((items.any((e) => (e.notes != null && e.notes!.trim().isNotEmpty))))
                                   Icon(AppIcons.pencil, size: 14, color: theme.textTheme.bodySmall?.color?.withOpacity(0.6) ?? Colors.grey),
                               ],
                             ),

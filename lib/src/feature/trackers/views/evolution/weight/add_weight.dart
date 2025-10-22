@@ -78,6 +78,7 @@ class _BodyState extends State<_Body> {
             min: 0,
             max: 10,
             step: 0.1,
+            initial: addWeightViewStore.kilograms.toDouble(),
             value: addWeightViewStore.kilograms.toDouble(),
             labelStep: 10,
             unit: t.trackers.kg.title,

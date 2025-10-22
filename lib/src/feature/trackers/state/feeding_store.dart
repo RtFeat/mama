@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
-import 'package:mama/src/feature/trackers/models/feeding_cell.dart';
-
 import 'package:mobx/mobx.dart';
 import 'package:skit/skit.dart';
 
@@ -11,6 +9,7 @@ class FeedingStore extends _FeedingStore with _$FeedingStore {
   FeedingStore({
     required super.apiClient,
     required super.faker,
+    required super.userStore,
   });
 }
 
@@ -18,6 +17,7 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
   _FeedingStore({
     required super.apiClient,
     required super.faker,
+    required this.userStore,
   }) : super(
           pageSize: 50,
           testDataGenerator: () {
@@ -39,13 +39,122 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
                 .map((e) => FeedingCell.fromJson(e))
                 .toList();
 
-            // return data;
-
             return {
               'main': data,
             };
           },
-        );
+        ) {
+    _setupChildIdReaction();
+  }
+
+  final UserStore userStore;
+  ReactionDisposer? _childIdReaction;
+
+  @computed
+  String get childId => userStore.selectedChild?.id ?? '';
+
+  @observable
+  bool _isActive = true;
+
+  void _setupChildIdReaction() {
+    _childIdReaction = reaction(
+      (_) => childId,
+      (String newChildId) {
+        if (_isActive && newChildId.isNotEmpty) {
+          _loadDataForChild(newChildId);
+        }
+      },
+    );
+  }
+
+  void _loadDataForChild(String childId) {
+    if (!_isActive || childId.isEmpty) return;
+    
+    // Сбрасываем все данные
+    runInAction(() {
+      listData.clear();
+      currentPage = 1;
+      hasMore = true;
+    });
+    
+    // Загружаем первую страницу
+    loadPage(
+      newFilters: [
+        SkitFilter(
+          field: 'child_id', 
+          operator: FilterOperator.equals,
+          value: childId,
+        ),
+      ],
+    );
+  }
+
+  @action
+  void deactivate() {
+    _isActive = false;
+    _childIdReaction?.call();
+    _childIdReaction = null;
+  }
+
+  @action
+  void activate() {
+    _isActive = true;
+    if (_childIdReaction == null) {
+      _setupChildIdReaction();
+    }
+    // Загружаем данные при активации только если есть childId
+    if (childId.isNotEmpty) {
+      _loadDataForChild(childId);
+    }
+  }
+
+  /// Исправляет заголовок на основе реального возраста ребенка
+  String _fixTitle(String? originalTitle) {
+    if (originalTitle == null || originalTitle.isEmpty) return '';
+    
+    // Если заголовок содержит "12 месяцев", проверяем реальный возраст ребенка
+    if (originalTitle.contains('12 месяцев')) {
+      final child = userStore.selectedChild;
+      if (child?.birthDate != null) {
+        final now = DateTime.now();
+        final birthDate = child!.birthDate!.toLocal();
+        final difference = now.difference(birthDate);
+        
+        final months = (difference.inDays / 30).floor();
+        final days = difference.inDays - (months * 30);
+        
+        // Если ребенку меньше 1 месяца, показываем возраст в неделях
+        if (months < 1) {
+          final weeks = difference.inDays ~/ 7;
+          
+          if (weeks > 0) {
+            // Если 4 недели или больше, показываем как месяцы
+            if (weeks >= 4) {
+              final monthsFromWeeks = weeks ~/ 4;
+              final remainingWeeks = weeks % 4;
+              
+              if (remainingWeeks > 0) {
+                return '$monthsFromWeeks ${monthsFromWeeks == 1 ? 'месяц' : monthsFromWeeks < 5 ? 'месяца' : 'месяцев'} $remainingWeeks ${remainingWeeks == 1 ? 'неделя' : remainingWeeks < 5 ? 'недели' : 'недель'}';
+              } else {
+                return '$monthsFromWeeks ${monthsFromWeeks == 1 ? 'месяц' : monthsFromWeeks < 5 ? 'месяца' : 'месяцев'}';
+              }
+            } else {
+              return '$weeks ${weeks == 1 ? 'неделя' : weeks < 5 ? 'недели' : 'недель'}';
+            }
+          } else {
+            // Если меньше недели, показываем дни
+            final days = difference.inDays;
+            return '$days ${days == 1 ? 'день' : days < 5 ? 'дня' : 'дней'}';
+          }
+        } else {
+          // Если ребенку 1 месяц или больше, показываем возраст в месяцах и днях
+          return '$months ${months == 1 ? 'месяц' : months < 5 ? 'месяца' : 'месяцев'} $days ${days == 1 ? 'день' : days < 5 ? 'дня' : 'дней'}';
+        }
+      }
+    }
+    
+    return originalTitle;
+  }
 
   @override
   TableData get tableData => TableData(
@@ -85,9 +194,9 @@ abstract class _FeedingStore extends TableStore<FeedingCell> with Store {
       final items = e.table ?? const <FeedingCellTable>[];
       if (items.isEmpty) continue;
 
-      // Добавляем заголовок месяца/периода
+      // Добавляем заголовок месяца/периода с исправленным возрастом
       result.add([
-        TableItem(title: e.title, row: i + 1, column: 1, trailing: null),
+        TableItem(title: _fixTitle(e.title), row: i + 1, column: 1, trailing: null),
         TableItem(title: '', row: i + 1, column: 2, trailing: null),
         TableItem(title: '', row: i + 1, column: 3, trailing: null),
         TableItem(title: '', row: i + 1, column: 4, trailing: null),

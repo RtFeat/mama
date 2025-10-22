@@ -168,6 +168,8 @@ export 'models/entity_work_slot.dart';
 export 'models/feed_get_feeding_response.dart';
 export 'models/feed_get_food_response.dart';
 export 'models/feed_insert_chest_dto.dart';
+export 'models/feed_delete_chest_dto.dart';
+export 'models/feed_delete_chest_notes_dto.dart';
 export 'models/feed_insert_food_dto.dart';
 export 'models/feed_insert_lure_dto.dart';
 export 'models/feed_delete_pumping_dto.dart';

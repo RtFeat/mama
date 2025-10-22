@@ -59,7 +59,7 @@ class _BottleScreenState extends State<BottleScreen> {
                 onClosed: () => setState(() => _showSavedBanner = false),
               ),
               // Rebuild chart after returning from Add Bottle using _reloadTick key
-              BottleGraphicWidget(key: ValueKey(_reloadTick)),
+              BottleGraphicWidget(key: ValueKey(_reloadTick), reloadTick: _reloadTick),
             ],
           ),
         ),
@@ -112,6 +112,13 @@ class _BottleScreenState extends State<BottleScreen> {
                   if (show) {
                     setState(() {
                       _showSavedBanner = true;
+                    });
+                  }
+                },
+                onRefreshRequested: () {
+                  if (mounted) {
+                    setState(() {
+                      _reloadTick++; // bump to refresh chart
                     });
                   }
                 },

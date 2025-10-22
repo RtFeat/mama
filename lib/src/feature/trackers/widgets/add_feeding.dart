@@ -7,9 +7,15 @@ import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:skit/skit.dart';
 import 'package:mama/src/feature/trackers/widgets/feeding_editing_track_widget.dart';
+import 'package:mama/src/feature/trackers/state/feeding/breast_feeding_table_store.dart';
 
 class AddFeedingWidget extends StatefulWidget {
-  const AddFeedingWidget({super.key});
+  final VoidCallback? onHistoryRefresh;
+
+  const AddFeedingWidget({
+    super.key,
+    this.onHistoryRefresh,
+  });
 
   @override
   State<AddFeedingWidget> createState() => _AddFeedingWidgetState();
@@ -76,6 +82,23 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
     });
   }
 
+  void _refreshBreastFeedingHistory() {
+    try {
+      // Find the BreastFeedingTableStore in the widget tree and refresh it
+      final store = context.read<BreastFeedingTableStore>();
+      final childId = context.read<UserStore>().selectedChild?.id;
+      if (childId != null) {
+        store.resetPagination();
+        store.loadPage(newFilters: [
+          SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
+        ]);
+      }
+    } catch (e) {
+      // Store might not be available in this context, ignore
+      print('Could not refresh breast feeding history: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ReactiveForm(
@@ -85,6 +108,7 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
           childId: context.read<UserStore>().selectedChild!.id!,
           restClient: context.read<Dependencies>().restClient,
           noteStore: context.read<AddNoteStore>(),
+          onHistoryRefresh: widget.onHistoryRefresh ?? () => _refreshBreastFeedingHistory(),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -187,8 +211,8 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                               learnMoreTap: () {
                                 context.pushNamed(AppViews.serviceKnowlegde);
                               },
-                              addButtonTap: () {
-                                Navigator.of(context).push(
+                              addButtonTap: () async {
+                                final result = await Navigator.of(context).push(
                                   MaterialPageRoute(builder: (context) {
                                     return Provider<AddFeeding>.value(
                                         value: addFeeding,
@@ -196,6 +220,11 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                                             const AddFeedingBreastManually());
                                   }),
                                 );
+                                
+                                // If a record was successfully added, refresh the history
+                                if (result == true && mounted) {
+                                  widget.onHistoryRefresh?.call();
+                                }
                               }),
                         ],
                       ),
@@ -203,12 +232,12 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                     ? TrackerStateContainer(
                         type: ContainerType.feedingSaved,
                         onTapClose: () async {
-                          // Крестик - сохранить запись и сбросить таймер
+                          // Крестик - сбросить все без сохранения
                           await addFeeding.cancelFeedingClose();
                         },
-                        onTapGoBack: () {
-                          // Go back and continue - восстановить состояние паузы
-                          addFeeding.goBackAndContinue();
+                        onTapGoBack: () async {
+                          // Go back and continue - удалить запись и восстановить состояние паузы
+                          await addFeeding.goBackAndContinue();
                         },
                         onTapNote: () {}, //Todo Заметки
                       )

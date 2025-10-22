@@ -20,7 +20,7 @@ r: R
 general: General
 wholeStory: The whole story
 feedingEndTime: Feeding end\ntime
-endTimeOfPumping:  End time of pumping
+endTimeOfPumping: End time of pumping
 pumpingLeftSide: L, ml
 pumpingRightSide: R, ml
 totalMl: Total, ml
@@ -49,7 +49,7 @@ date: Date
 gwTime: GW time
 totalLiquidsMl: Total\nliquids,\nml
 totalComplementary: Total\ncomplementary,\ng
-manualyInputComment: 
+manualyInputComment:
   title: Optional
   subtitle: You can simply specify the total time below
 ifEditNotCompleteFeed:

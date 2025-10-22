@@ -20,6 +20,8 @@ import '../models/feed_response_insert_dto.dart';
 import '../models/feed_delete_pumping_dto.dart';
 import '../models/feed_delete_food_dto.dart';
 import '../models/feed_delete_lure_dto.dart';
+import '../models/feed_delete_chest_dto.dart';
+import '../models/feed_delete_chest_notes_dto.dart';
 
 part 'feed_client.g.dart';
 
@@ -33,7 +35,7 @@ abstract class FeedClient {
   ///
   /// [dto] - Add chest.
   @POST('/feed/chest')
-  Future<void> postFeedChest({
+  Future<FeedResponseInsertDto> postFeedChest({
     @Body() required FeedInsertChestDto dto,
   });
 
@@ -215,6 +217,22 @@ abstract class FeedClient {
   @DELETE('/feed/lure/delete/notes')
   Future<void> deleteFeedLureDeleteNotes({
     @Body() required FeedDeleteLureDto dto,
+  });
+
+  /// Удалить статистику кормления грудью.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/chest/delete/stats')
+  Future<void> deleteFeedChestDeleteStats({
+    @Body() required FeedDeleteChestDto dto,
+  });
+
+  /// Удалить заметку кормления грудью.
+  ///
+  /// [dto] - DTO.
+  @DELETE('/feed/chest/delete/notes')
+  Future<void> deleteFeedChestDeleteNotes({
+    @Body() required FeedDeleteChestNotesDto dto,
   });
 
   /// Вывести таблицу.

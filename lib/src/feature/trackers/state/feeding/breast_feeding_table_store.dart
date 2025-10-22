@@ -25,18 +25,70 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
           fetchFunction: (params, path) => apiClient.get(path, queryParams: params),
           pageSize: 150,
           transformer: (raw) {
-            final data = FeedResponseHistoryChest.fromJson(raw);
+            // Robust parsing to extract per-record UUID when available
             final List<EntityFeeding> result = [];
-            for (final total in data.list ?? []) {
-              // API provides list of EntityChestHistory in 'chest_history'
-              if (total.chestHistory != null) {
-                // Use provided total end date as base day for each entry
+
+            // The API sometimes returns 'List' (capital L) instead of 'list'
+            final dynamic containerList = (raw is Map<String, dynamic>)
+                ? (raw['List'] ?? raw['list'])
+                : null;
+
+            if (containerList is List) {
+              for (final item in containerList) {
+                if (item is! Map<String, dynamic>) continue;
+
+                final String? timeToEndTotal = item['time_to_end_total'] as String?;
+                final String? fallbackGroupId = item['time_to_end_dont_use'] as String?;
+                final List<dynamic>? chestHistory = item['chest_history'] as List<dynamic>?;
+
+                if (chestHistory == null) continue;
+
+                final baseDate = _parseDateStatic(timeToEndTotal);
+
+                for (final ch in chestHistory) {
+                  if (ch is! Map<String, dynamic>) continue;
+
+                  // Prefer real UUID from record if provided by API
+                  final String? recordId = (ch['id'] as String?)
+                      // some backends may expose uuid under different key
+                      ?? (ch['uuid'] as String?)
+                      // rare case: id may be at the group level
+                      ?? (item['id'] as String?)
+                      // fallback to previous behavior (date string)
+                      ?? fallbackGroupId;
+
+                  final String? timeStr = ch['time'] as String?;
+                  final endTimeOnly = _parseTimeStatic(timeStr);
+                  final endDateTime = DateTime(
+                    baseDate.year,
+                    baseDate.month,
+                    baseDate.day,
+                    endTimeOnly.hour,
+                    endTimeOnly.minute,
+                  );
+
+                  result.add(EntityFeeding(
+                    id: recordId,
+                    childId: ch['child_id'] as String? ?? '',
+                    timeToEnd: endDateTime.toIso8601String(),
+                    leftFeeding: ch['left'] as int? ?? ch['left_feeding'] as int?,
+                    rightFeeding: ch['right'] as int? ?? ch['right_feeding'] as int?,
+                    allFeeding: ch['total'] as int? ?? ch['all_feeding'] as int?,
+                    notes: ch['notes'] as String?,
+                  ));
+                }
+              }
+            } else {
+              // Fallback to typed model in case of unexpected shape
+              final data = FeedResponseHistoryChest.fromJson(raw);
+              for (final total in data.list ?? []) {
+                if (total.chestHistory == null) continue;
                 final baseDate = _parseDateStatic(total.timeToEndTotal);
                 for (final c in total.chestHistory!) {
                   final end = _parseTimeStatic(c.time);
                   final endDateTime = DateTime(baseDate.year, baseDate.month, baseDate.day, end.hour, end.minute);
                   result.add(EntityFeeding(
-                    id: '${c.time}_${DateTime.now().millisecondsSinceEpoch}',
+                    id: total.timeToEndDontUse,
                     childId: '',
                     timeToEnd: endDateTime.toIso8601String(),
                     leftFeeding: c.left,
@@ -47,6 +99,7 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
                 }
               }
             }
+
             return {'main': result};
           },
         ) {
