@@ -28,7 +28,7 @@ abstract class DiaperClient {
   /// Обновить показатель подгузников.
   ///
   /// [dto] - Update diaper.
-  @PATCH('/diaper')
+  @PATCH('/diaper/')
   Future<void> patchDiaper({
     @Body() required DiapersUpdateDiaperDto dto,
   });

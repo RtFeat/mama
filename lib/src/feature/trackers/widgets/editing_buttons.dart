@@ -33,6 +33,8 @@ class EditingButtons extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             textStyle: textTheme.titleLarge?.copyWith(fontSize: 10),
             title: t.feeding.learnMoreBtn,
+            maxLines: 2,
+            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
         10.w,

@@ -75,8 +75,8 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
   Map<String, String> _getSleepInfoForRecord(EntitySleep record) {
     try {
       // Рассчитываем продолжительность конкретной записи сна
-      final start = _parseDateTime(record.timeToStart);
       final end = _parseDateTime(record.timeEnd);
+      final start = _parseDateTimeWithReference(record.timeToStart, end);
       
       int sleepMinutes;
       if (end.isBefore(start)) {
@@ -178,6 +178,31 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
     return DateTime.now();
   }
 
+  DateTime _parseDateTimeWithReference(String? dateTimeString, DateTime? referenceDate) {
+    if (dateTimeString == null) return DateTime.now();
+    try {
+      if (dateTimeString.contains('T')) {
+        return DateTime.parse(dateTimeString);
+      } else if (dateTimeString.contains(' ')) {
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+      } else if (dateTimeString.contains(':')) {
+        // Если это только время в формате HH:mm, используем дату из referenceDate
+        final timeParts = dateTimeString.split(':');
+        if (timeParts.length == 2) {
+          final hour = int.parse(timeParts[0]);
+          final minute = int.parse(timeParts[1]);
+          final baseDate = referenceDate ?? DateTime.now();
+          return DateTime(baseDate.year, baseDate.month, baseDate.day, hour, minute);
+        }
+      } else {
+        return DateFormat('yyyy-MM-dd').parse(dateTimeString);
+      }
+    } catch (_) {
+      return DateTime.now();
+    }
+    return DateTime.now();
+  }
+
   String _minutesToHhMm(int minutesTotal) {
     final hours = minutesTotal ~/ 60;
     final minutes = minutesTotal % 60;
@@ -188,15 +213,7 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
   // Создает правильную дату для времени начала, используя дату из timeEnd и время из timeToStart
   DateTime _parseStartTime(EntitySleep sleep) {
     final endDate = _parseDateTime(sleep.timeEnd);
-    if (sleep.timeToStart != null && sleep.timeToStart!.contains(':')) {
-      final timeParts = sleep.timeToStart!.split(':');
-      if (timeParts.length == 2) {
-        final hour = int.parse(timeParts[0]);
-        final minute = int.parse(timeParts[1]);
-        return DateTime(endDate.year, endDate.month, endDate.day, hour, minute);
-      }
-    }
-    return endDate;
+    return _parseDateTimeWithReference(sleep.timeToStart, endDate);
   }
 
   void _showSleepDetailsDialog(BuildContext context, List<EntitySleep> allForDay, int startIndex, String dayLabel) async {

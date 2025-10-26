@@ -130,6 +130,18 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
     showAll = !showAll;
   }
 
+  @action
+  void forceUpdate() {
+    if (!_isActive) return;
+    print('CryTableStore forceUpdate: Forcing UI update');
+    // Принудительно обновляем UI
+    runInAction(() {
+      // Триггерим реактивность
+      final temp = listData.length;
+      listData.length;
+    });
+  }
+
   @computed
   int get totalRecordsCount => listData.length;
 

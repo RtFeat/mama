@@ -190,7 +190,7 @@ class _PlayerButtonState extends State<PlayerButton>
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      'Change time',
+                                      t.feeding.changeTime,
                                       style: textTheme.bodyMedium?.copyWith(
                                         color: Colors.grey[600],
                                         fontSize: 10,

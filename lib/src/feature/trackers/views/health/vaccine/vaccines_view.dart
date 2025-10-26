@@ -58,16 +58,38 @@ class _Body extends StatefulWidget {
 class _BodyState extends State<_Body> {
   @override
   void initState() {
-    widget.store.loadPage(newFilters: [
-      SkitFilter(
-          field: 'child_id',
-          operator: FilterOperator.equals,
-          value: widget.childId),
-    ]);
+    // Загружаем данные только если childId не пустой
+    if (widget.childId.isNotEmpty) {
+      widget.store.loadPage(newFilters: [
+        SkitFilter(
+            field: 'child_id',
+            operator: FilterOperator.equals,
+            value: widget.childId),
+      ]);
+    }
     widget.store.getIsShowInfo().then((v) {
       setState(() {});
     });
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(_Body oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Если childId изменился, перезагружаем данные
+    if (oldWidget.childId != widget.childId) {
+      if (widget.childId.isNotEmpty) {
+        widget.store.loadPage(newFilters: [
+          SkitFilter(
+              field: 'child_id',
+              operator: FilterOperator.equals,
+              value: widget.childId),
+        ]);
+      } else {
+        // Если childId стал пустым, очищаем список
+        widget.store.listData.clear();
+      }
+    }
   }
 
   @override
@@ -95,7 +117,7 @@ class _BodyState extends State<_Body> {
             typeOfPdf: 'vaccines',
             title: t.trackers.vaccinations.title,
             onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
-            onSuccess: () => _showSnack(context, 'PDF успешно создан!', bg: const Color(0xFFDEF8E0), seconds: 3),
+            onSuccess: () {},
             onError: (message) => _showSnack(context, message),
           );
         },
@@ -206,8 +228,6 @@ class _BodyState extends State<_Body> {
         Color textColor = Colors.white; // по умолчанию
         if (message == 'Генерация PDF...') {
           textColor = const Color(0xFF4D4DE8); // primaryColor
-        } else if (message == 'PDF успешно создан!') {
-          textColor = const Color(0xFF059613); // greenLightTextColor
         }
         
         ScaffoldMessenger.of(ctx)

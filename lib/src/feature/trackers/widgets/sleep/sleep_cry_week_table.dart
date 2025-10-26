@@ -44,7 +44,8 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
       // Реагируем на изменения в sleepStore
       reaction(
         (_) => sleepStore.listData.length,
-        (_) {
+        (int length) {
+          print('SleepCryWeekTable sleepStore reaction: length = $length');
           if (mounted) {
             _updateEvents();
           }
@@ -53,7 +54,18 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
       // Реагируем на изменения в cryStore
       reaction(
         (_) => cryStore.listData.length,
-        (_) {
+        (int length) {
+          print('SleepCryWeekTable cryStore reaction: length = $length');
+          if (mounted) {
+            _updateEvents();
+          }
+        },
+      ),
+      // Дополнительная реакция на изменения в самих данных cryStore
+      reaction(
+        (_) => cryStore.listData,
+        (ObservableList<EntityCry> data) {
+          print('SleepCryWeekTable cryStore data reaction: length = ${data.length}');
           if (mounted) {
             _updateEvents();
           }
@@ -113,6 +125,8 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
   void _updateEvents() {
     if (!mounted) return;
     
+    print('SleepCryWeekTable _updateEvents: Updating events');
+    
     // Очищаем предыдущие события
     _controller.removeWhere((event) => true);
     
@@ -120,9 +134,11 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
     final sleepEvents = _buildSleepEvents();
     final cryEvents = _buildCryEvents();
     
+    print('SleepCryWeekTable _updateEvents: sleepEvents = ${sleepEvents.length}, cryEvents = ${cryEvents.length}');
     
     if (sleepEvents.isNotEmpty || cryEvents.isNotEmpty) {
       _controller.addAll([...sleepEvents, ...cryEvents]);
+      print('SleepCryWeekTable _updateEvents: Added ${sleepEvents.length + cryEvents.length} events to controller');
     }
   }
 
@@ -219,6 +235,8 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
 
     final DateTime weekStart = startOfWeek;
     final DateTime weekEnd = endOfWeek.add(const Duration(hours: 23, minutes: 59));
+    
+    print('SleepCryWeekTable _buildCryEvents: Processing ${cryStore.listData.length} cry records');
 
     for (final entity in cryStore.listData) {
       // Используем timeEnd для получения правильной даты (как в отдельных экранах)

@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mama/src/core/api/models/diapers_delete_diaper.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/feature/trackers/services/pdf_service.dart';
 import 'package:mama/src/feature/trackers/state/diapers/diapers_dao_impl.dart';
@@ -116,12 +117,11 @@ class _BodyState extends State<_Body> {
       diapersStore.activate();
       
       final currentChildId = diapersStore.childId;
-      print('DiapersView _initializeStore: Current childId = $currentChildId');
       
       // Создаем безопасную асинхронную операцию
       _loadInfoSafely();
     } catch (e) {
-      print('DiapersView _initializeStore error: $e');
+      // Игнорируем ошибки инициализации
     }
   }
 
@@ -221,17 +221,16 @@ class _BodyState extends State<_Body> {
               typeOfPdf: 'diapers',
               title: t.trackers.trackersName.diapers,
               onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
-              onSuccess: () => _showSnack(context, 'PDF успешно создан!', bg: const Color(0xFFDEF8E0), seconds: 3),
+              onSuccess: () {},
               onError: (message) => _showSnack(context, message),
             );
           },
           onTapAdd: () {
             if (!_isActive || !mounted) return;
             context.pushNamed(AppViews.addDiaper, extra: {
-              'onSave': (DiapersCreateDiaperDto data) {
+              'onSave': (DiapersCreateDiaperDto data, String? id, [Map<String, dynamic>? originalData]) {
                 if (!_isActive || !mounted) return;
                 
-                logger.info('Time: ${data.timeToEnd}');
                 DateTime? time = DateTime.tryParse(data.timeToEnd ?? '');
 
                 final String day =
@@ -243,9 +242,10 @@ class _BodyState extends State<_Body> {
                 if (item != null) {
                   item.diapersSub?.add(EntityDiapersSubMain(
                     howMuch: data.howMuch,
-                    notes: data.howMuch,
+                    notes: data.notes,
                     time: time?.formattedTime ?? 'time',
                     typeOfDiapers: data.typeOfDiapers,
+                    id: id,
                   ));
                 } else {
                   widget.store.listData.add(EntityDiapersMain(
@@ -254,12 +254,15 @@ class _BodyState extends State<_Body> {
                       diapersSub: ObservableList.of([
                         EntityDiapersSubMain(
                           howMuch: data.howMuch,
-                          notes: data.howMuch,
+                          notes: data.notes,
                           time: time?.formattedTime ?? 'time',
                           typeOfDiapers: data.typeOfDiapers,
+                          id: id,
                         )
                       ])));
                 }
+                // Принудительно обновляем UI
+                setState(() {});
               }
             });
           },
@@ -309,14 +312,152 @@ class _BodyState extends State<_Body> {
                     return BuildGridItem(
                       time: dateTime.formattedTime,
                       title: e.typeOfDiapers ?? '',
-                      // type: switch (e.typeOfDiapers) {
-                      //   ''
-                      // },
-                      // type: e.typeOfDiapers ?? '',
-                      type: TypeOfDiapers.dirty,
+                      type: _getTypeOfDiapers(e.typeOfDiapers),
                       description: e.howMuch ?? '',
-                      // AppColors.purpleLighterBackgroundColor,
-                      // AppColors.primaryColor,
+                      onTap: () {
+                        // Переходим к редактированию записи
+                        context.pushNamed(AppViews.addDiaper, extra: {
+                          'onSave': (DiapersCreateDiaperDto data, String? id, [Map<String, dynamic>? originalData]) {
+                            if (!_isActive || !mounted) return;
+                            
+                            DateTime? time = DateTime.tryParse(data.timeToEnd ?? '');
+
+                            final String day =
+                                '${time?.day} ${t.home.monthsData.withNumbers[(time?.month ?? 1) - 1]}';
+
+                            final EntityDiapersMain? item = widget.store.listData
+                                .firstWhereOrNull((element) => element.data == day);
+
+                            if (item != null && originalData != null) {
+                              // Находим индекс существующей записи по времени и типу
+                              // Используем оригинальные данные для поиска
+                              final originalTime = originalData['originalTime'] as String?;
+                              final originalType = originalData['originalType'] as String?;
+                              
+                              
+                              // Более гибкий поиск - сначала по точному совпадению, потом по частичному
+                              int? subIndex = item.diapersSub?.indexWhere(
+                                (sub) => sub.time == originalTime && sub.typeOfDiapers == originalType
+                              );
+                              
+                              // Если не найдено точное совпадение, ищем по типу и близкому времени
+                              if (subIndex == null || subIndex < 0) {
+                                subIndex = item.diapersSub?.indexWhere(
+                                  (sub) => sub.typeOfDiapers == originalType
+                                );
+                              }
+                              
+                              if (subIndex != null && subIndex >= 0 && item.diapersSub != null) {
+                                // Создаем новую запись с обновленными данными
+                                final updatedSub = EntityDiapersSubMain(
+                                  howMuch: data.howMuch,
+                                  notes: data.notes,
+                                  time: time?.formattedTime ?? 'time',
+                                  typeOfDiapers: data.typeOfDiapers,
+                                  id: item.diapersSub![subIndex].id, // Сохраняем существующий ID
+                                );
+                                
+                                // Заменяем старую запись на новую
+                                item.diapersSub![subIndex] = updatedSub;
+                                
+                                // Принудительно обновляем UI
+                                setState(() {});
+                              } else {
+                                // Если не нашли запись для обновления, добавляем новую
+                                item.diapersSub?.add(EntityDiapersSubMain(
+                                  howMuch: data.howMuch,
+                                  notes: data.notes,
+                                  time: time?.formattedTime ?? 'time',
+                                  typeOfDiapers: data.typeOfDiapers,
+                                  id: id,
+                                ));
+                                setState(() {});
+                              }
+                            } else if (originalData == null) {
+                              // Создание новой записи
+                              if (item != null) {
+                                item.diapersSub?.add(EntityDiapersSubMain(
+                                  howMuch: data.howMuch,
+                                  notes: data.notes,
+                                  time: time?.formattedTime ?? 'time',
+                                  typeOfDiapers: data.typeOfDiapers,
+                                  id: id,
+                                ));
+                              } else {
+                                widget.store.listData.add(EntityDiapersMain(
+                                    data:
+                                        '${time?.day} ${t.home.monthsData.withNumbers[(time?.month ?? 1) - 1]}',
+                                    diapersSub: ObservableList.of([
+                                      EntityDiapersSubMain(
+                                        howMuch: data.howMuch,
+                                        notes: data.notes,
+                                        time: time?.formattedTime ?? 'time',
+                                        typeOfDiapers: data.typeOfDiapers,
+                                        id: id,
+                                      )
+                                    ])));
+                              }
+                              // Принудительно обновляем UI
+                              setState(() {});
+                            }
+                          },
+                          'onDelete': (String idOrKey) {
+                            if (!_isActive || !mounted) return;
+                            
+                            // Удаляем запись из локального списка
+                            for (final mainItem in widget.store.listData) {
+                              if (mainItem.diapersSub != null) {
+                                mainItem.diapersSub!.removeWhere((sub) {
+                                  // Если это реальный ID, сравниваем по ID
+                                  if (sub.id != null && sub.id == idOrKey) {
+                                    return true;
+                                  }
+                                  // Если это составной ключ, сравниваем по времени и типу
+                                  if (sub.id == null) {
+                                    final subTime = sub.time ?? '';
+                                    final subType = sub.typeOfDiapers ?? '';
+                                    if ('COMPOSITE_${subTime}_${subType}' == idOrKey) {
+                                      return true;
+                                    }
+                                  }
+                                  return false;
+                                });
+                                if (mainItem.diapersSub!.isEmpty) {
+                                  widget.store.listData.remove(mainItem);
+                                }
+                                break;
+                              }
+                            }
+                            
+                            // Вызываем API для удаления только если есть реальный ID
+                            if (idOrKey.startsWith('COMPOSITE_')) {
+                              // Это составной ключ, не вызываем API
+                              if (context.mounted) {
+                                context.pop();
+                              }
+                            } else {
+                              // Это реальный ID, вызываем API
+                              final restClient = context.read<Dependencies>().restClient;
+                              restClient.diaper.deleteDiaper(dto: DiapersDeleteDiaper(id: idOrKey)).then((_) {
+                                if (context.mounted) {
+                                  context.pop();
+                                }
+                              }).catchError((error) {
+                                if (context.mounted) {
+                                  context.pop();
+                                }
+                              });
+                            }
+                          },
+                          'editData': {
+                            'time': e.time,
+                            'typeOfDiapers': e.typeOfDiapers,
+                            'howMuch': e.howMuch,
+                            'notes': e.notes,
+                            'id': e.id,
+                          }
+                        });
+                      },
                     );
                   }).toList());
             },
@@ -324,6 +465,19 @@ class _BodyState extends State<_Body> {
         ],
       );
     });
+  }
+
+  TypeOfDiapers _getTypeOfDiapers(String? typeOfDiapers) {
+    switch (typeOfDiapers?.toLowerCase()) {
+      case 'мокрый':
+        return TypeOfDiapers.wet;
+      case 'смешанный':
+        return TypeOfDiapers.mixed;
+      case 'грязный':
+        return TypeOfDiapers.dirty;
+      default:
+        return TypeOfDiapers.wet; // по умолчанию
+    }
   }
 
   void _showSnack(BuildContext ctx, String message, {Color? bg, int seconds = 2}) {
@@ -335,8 +489,6 @@ class _BodyState extends State<_Body> {
         Color textColor = Colors.white; // по умолчанию
         if (message == 'Генерация PDF...') {
           textColor = const Color(0xFF4D4DE8); // primaryColor
-        } else if (message == 'PDF успешно создан!') {
-          textColor = const Color(0xFF059613); // greenLightTextColor
         }
         
         ScaffoldMessenger.of(ctx)

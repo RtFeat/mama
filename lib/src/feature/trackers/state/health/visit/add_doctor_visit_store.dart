@@ -66,9 +66,20 @@ abstract class _AddDoctorVisitViewStore with Store {
   @observable
   EntityMainDoctor? model;
 
+  @observable
+  bool isSaving = false;
+
   @action
   void init(EntityMainDoctor? model) {
     this.model = model;
+
+    // Устанавливаем selectedDate из модели, если она есть
+    if (model != null && model.date != null) {
+      selectedDate = model.date!;
+      logger.info('init: установлена selectedDate из модели: $selectedDate', runtimeType: runtimeType);
+    } else {
+      logger.info('init: model.date == null, используем текущую дату: $selectedDate', runtimeType: runtimeType);
+    }
 
     if (model != null && model.photos != null && model.photos!.isNotEmpty) {
       imagesUrls = ObservableList.of(model.photos!.map((e) => e));
@@ -141,27 +152,64 @@ abstract class _AddDoctorVisitViewStore with Store {
 
   void dispose() => formGroup?.dispose();
 
+  @action
   Future save(String childId) async {
-    logger.info('Сохраняем данные для childId: $childId',
+    // Предотвращаем двойное нажатие
+    if (isSaving) {
+      logger.info('Попытка сохранить повторно, операция уже выполняется', runtimeType: runtimeType);
+      return;
+    }
+
+    isSaving = true;
+    logger.info('Сохраняем данные для childId: $childId, model.id = ${model?.id}',
         runtimeType: runtimeType);
 
-    model = EntityMainDoctor(
-      doctor: doctor?.value,
-      date: selectedDate,
-      clinic: clinic?.value,
-      notes: comment?.value,
-      photos: images.map((e) => e.path).toList(),
-      isLocal: true,
-    );
+    try {
+      // Если редактируем существующую запись (есть ID), используем PATCH
+      if (model?.id != null) {
+        logger.info('Редактируем существующую запись с ID: ${model!.id}', runtimeType: runtimeType);
+        // Добавляем время 12:00:00 чтобы избежать проблем с часовыми поясами
+        final dateWithTime = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 12, 0, 0);
+        final formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateWithTime);
+        logger.info('Отправляем dataStart: $formattedDate (исходная дата: $selectedDate)', runtimeType: runtimeType);
+        
+        return await restClient.health.patchHealthConsDoctor(
+          id: model!.id!,
+          photo: images.isNotEmpty ? File(images.first.path) : null,
+          dataStart: formattedDate,
+          doctor: doctor?.value,
+          clinic: clinic?.value,
+          notes: comment?.value,
+        );
+      } else {
+        // Если добавляем новую запись, используем POST
+        logger.info('Добавляем новую запись', runtimeType: runtimeType);
+        
+        model = EntityMainDoctor(
+          doctor: doctor?.value,
+          date: selectedDate,
+          clinic: clinic?.value,
+          notes: comment?.value,
+          photos: images.map((e) => e.path).toList(),
+          isLocal: true,
+        );
 
-    return await restClient.health.postHealthConsDoctor(
-      childId: childId,
-      photos: images.map((e) => File(e.path)).toList(),
-      dataStart: selectedDate.toString(),
-      doctor: doctor?.value,
-      clinic: clinic?.value,
-      notes: comment?.value,
-    );
+        // Добавляем время 12:00:00 чтобы избежать проблем с часовыми поясами
+        final dateWithTime = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 12, 0, 0);
+        final formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateWithTime);
+        
+        return await restClient.health.postHealthConsDoctor(
+          childId: childId,
+          photos: images.map((e) => File(e.path)).toList(),
+          dataStart: formattedDate,
+          doctor: doctor?.value,
+          clinic: clinic?.value,
+          notes: comment?.value,
+        );
+      }
+    } finally {
+      isSaving = false;
+    }
   }
 
   Future delete() async {

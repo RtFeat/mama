@@ -37,8 +37,14 @@ abstract class _DrugsStore extends LearnMoreStore<EntityMainDrug> with Store {
             );
           },
           basePath: Endpoint.drugs,
-          fetchFunction: (params, path) =>
-              apiClient.get(path, queryParams: params),
+          fetchFunction: (params, path) async {
+            try {
+              return await apiClient.get(path, queryParams: params);
+            } catch (e) {
+              // Возвращаем пустой ответ при ошибке сервера
+              return {'list': []};
+            }
+          },
           pageSize: 20,
           transformer: (raw) {
             final data = HealthResponseListDrug.fromJson(raw);
@@ -67,8 +73,6 @@ abstract class _DrugsStore extends LearnMoreStore<EntityMainDrug> with Store {
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('DrugsStore reaction: childId changed to $newChildId');
-          
           // Используем refreshForChild для полной перезагрузки
           refreshForChild(newChildId);
         }
@@ -79,8 +83,6 @@ abstract class _DrugsStore extends LearnMoreStore<EntityMainDrug> with Store {
   @action
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('DrugsStore refreshForChild: $childId');
     
     // Сбрасываем все данные
     runInAction(() {
@@ -93,14 +95,12 @@ abstract class _DrugsStore extends LearnMoreStore<EntityMainDrug> with Store {
     await loadPage(
       newFilters: [
         SkitFilter(
-          field: 'child_id',
+          field: 'child_id', 
           operator: FilterOperator.equals,
           value: childId,
         ),
       ],
     );
-    
-    print('DrugsStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action

@@ -13,6 +13,7 @@ class EntityDiapersSubMain {
     this.notes,
     this.time,
     this.typeOfDiapers,
+    this.id,
   });
   
   factory EntityDiapersSubMain.fromJson(Map<String, Object?> json) => _$EntityDiapersSubMainFromJson(json);
@@ -23,6 +24,7 @@ class EntityDiapersSubMain {
   final String? time;
   @JsonKey(name: 'type_of_diapers')
   final String? typeOfDiapers;
+  final String? id;
 
   Map<String, Object?> toJson() => _$EntityDiapersSubMainToJson(this);
 }

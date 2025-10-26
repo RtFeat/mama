@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mama/src/core/api/models/entity_sleep.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:reactive_forms/reactive_forms.dart';
@@ -139,6 +140,7 @@ class __BodyState extends State<_Body> with TickerProviderStateMixin {
                                         allSleep: '${optimisticEnd.difference(optimisticStart).inMinutes} м',
                                         notes: notes,
                                       ));
+                                      setState(() {});
                                     }
                                   }
                                   // Тригерим фоновой рефреш
@@ -226,7 +228,38 @@ class __BodyState extends State<_Body> with TickerProviderStateMixin {
                         widget.store.goBackAndContinue();
                       },
                       onTapNote: () {
-                        context.pushNamed(AppViews.addNote);
+                        final id = _lastSavedSleepId;
+                        if (id != null) {
+                          context.pushNamed(AppViews.addNote, extra: {
+                            'onSaved': (String value) async {
+                              try {
+                                final deps = context.read<Dependencies>();
+                                await deps.apiClient.patch('sleep_cry/sleep/notes', body: {
+                                  'id': id,
+                                  'notes': value,
+                                });
+                                // Обновляем локально
+                                final sleepTableStore = context.read<SleepTableStore>();
+                                final idx = sleepTableStore.listData.indexWhere((e) => e.id == id);
+                                if (idx >= 0) {
+                                  final old = sleepTableStore.listData[idx];
+                                  final updated = EntitySleep(
+                                    id: old.id,
+                                    childId: old.childId,
+                                    timeToStart: old.timeToStart,
+                                    timeToEnd: old.timeToEnd,
+                                    timeEnd: old.timeEnd,
+                                    allSleep: old.allSleep,
+                                    notes: value,
+                                  );
+                                  sleepTableStore.listData[idx] = updated;
+                                }
+                              } catch (e) {
+                                // Игнорируем ошибки
+                              }
+                            },
+                          });
+                        }
                       },
                     )
                   : const SizedBox(),

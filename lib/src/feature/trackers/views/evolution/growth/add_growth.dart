@@ -89,7 +89,6 @@ class _BodyState extends State<_Body> {
               value: addGrowthViewStore.growthValue,
               onChangedValue: (v) {
                 addGrowthViewStore.updateGrowthRaw(v);
-                logger.info(v);
                 setState(() {});
               },
               onChangedTime: addGrowthViewStore.updateDateTime,

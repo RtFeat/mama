@@ -204,7 +204,7 @@ class _CryScreenState extends State<CryScreen> {
             }
           },
           children: [
-            const SliverToBoxAdapter(child: CryWidget()),
+            SliverToBoxAdapter(child: CryWidget(cryTableStore: _cryTableStore)),
             SliverToBoxAdapter(
               child: Column(
                 children: [

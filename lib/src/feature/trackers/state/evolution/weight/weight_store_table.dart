@@ -75,8 +75,6 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('WeightTableStore _loadDataForChild: Loading for childId: $childId');
-    
     // Используем новый метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
   }
@@ -94,8 +92,8 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
     if (_childIdReaction == null) {
       _setupChildIdReaction();
     }
-    // Загружаем данные при активации только если есть childId
-    if (childId.isNotEmpty) {
+    // Загружаем данные при активации только если есть childId и данные еще не загружены
+    if (childId.isNotEmpty && listData.isEmpty) {
       _loadDataForChild(childId);
     }
   }
@@ -122,8 +120,6 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('WeightTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -142,8 +138,6 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
         ),
       ],
     );
-    
-    print('WeightTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @computed

@@ -87,7 +87,6 @@ class _BodyState extends State<_Body> {
               value: addCircleViewStore.circleValue,
               onChangedValue: (v) {
                 addCircleViewStore.updateCircleRaw(v);
-                logger.info(v);
                 setState(() {});
               },
               onChangedTime: addCircleViewStore.updateDateTime,

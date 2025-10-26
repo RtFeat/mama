@@ -67,20 +67,24 @@ class _BodyState extends State<_Body> {
                   final growthStore = context.read<GrowthStore>();
                   final tableStore = context.read<GrowthTableStore>();
                   
-                  // Очищаем и загружаем данные для нового ребенка
-                  growthStore.fetchGrowthDetails();
-                  
-                  // Принудительно загружаем историю для таблицы
-                  tableStore.refreshForChild(newChildId);
-                  
-                  // Дополнительно загружаем историю для GrowthStore
-                  growthStore.loadPage(newFilters: [
-                    SkitFilter(
-                      field: 'child_id',
-                      operator: FilterOperator.equals,
-                      value: newChildId,
-                    ),
-                  ]);
+                  // Проверяем, нужно ли принудительно обновить хранилища
+                  if (userStore.shouldRefreshGrowthStores(newChildId)) {
+                    growthStore.refreshForChild(newChildId);
+                    tableStore.refreshForChild(newChildId);
+                  } else {
+                    // Обычное обновление
+                    growthStore.fetchGrowthDetails();
+                    tableStore.refreshForChild(newChildId);
+                    
+                    // Дополнительно загружаем историю для GrowthStore
+                    growthStore.loadPage(newFilters: [
+                      SkitFilter(
+                        field: 'child_id',
+                        operator: FilterOperator.equals,
+                        value: newChildId,
+                      ),
+                    ]);
+                  }
                 } catch (e) {
                   // Игнорируем ошибки
                 }
@@ -104,36 +108,25 @@ class _BodyState extends State<_Body> {
     try {
       final growthStore = context.read<GrowthStore>();
       final tableStore = context.read<GrowthTableStore>();
+      final userStore = context.read<UserStore>();
       
       // Активируем stores
       growthStore.activate();
       tableStore.activate();
       
       final currentChildId = growthStore.childId;
-      print('GrowthView _initializeStores: Current childId = $currentChildId');
       
-      if (currentChildId.isNotEmpty) {
-        // Загружаем данные роста
-        growthStore.fetchGrowthDetails();
-        
-         // Явно загружаем данные таблицы
-         tableStore.loadPage(
-           newFilters: [
-             SkitFilter(
-               field: 'child_id',
-               operator: FilterOperator.equals,
-               value: currentChildId,
-             ),
-           ],
-         ).then((_) {
-           print('GrowthView: Table loaded with ${tableStore.listData.length} items');
-         });
+      // Проверяем, нужно ли принудительно обновить хранилища
+      if (userStore.shouldRefreshGrowthStores(currentChildId)) {
+        growthStore.refreshForChild(currentChildId);
+        tableStore.refreshForChild(currentChildId);
       }
+      // Убираем дублирующую загрузку - activate() уже загружает данные
       
       // Создаем безопасную асинхронную операцию
       _loadInfoSafely();
     } catch (e) {
-      print('GrowthView _initializeStores error: $e');
+      // Игнорируем ошибки
     }
   }
 

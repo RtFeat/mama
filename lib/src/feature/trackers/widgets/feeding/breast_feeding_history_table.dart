@@ -8,6 +8,10 @@ import 'package:skit/skit.dart';
 import 'package:mama/src/feature/trackers/state/feeding/breast_feeding_table_store.dart';
 import 'package:mama/src/feature/trackers/widgets/dialog_overlay.dart';
 import 'package:mama/src/core/api/models/feed_delete_chest_dto.dart';
+import 'package:mama/src/feature/trackers/state/add_feeding.dart';
+import 'package:mama/src/feature/notes/state/add_note.dart';
+import 'package:mama/src/feature/trackers/widgets/edit_feeding_breast_manually.dart';
+import 'package:go_router/go_router.dart';
 
 class BreastFeedingHistoryTableWidget extends StatefulWidget {
   const BreastFeedingHistoryTableWidget({super.key});
@@ -127,9 +131,15 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
               Navigator.of(dialogContext).pop();
               WidgetsBinding.instance.addPostFrameCallback((_) async {
                 if (!parentContext.mounted) return;
-                // TODO: Реализовать редактирование записи кормления грудью
-                ScaffoldMessenger.of(parentContext).showSnackBar(
-                  const SnackBar(content: Text('Редактирование записи кормления грудью пока не реализовано')),
+                
+                // Переходим к редактированию записи
+                Navigator.of(parentContext).push(
+                  MaterialPageRoute(
+                    builder: (context) => EditFeedingBreastManually(
+                      existingRecord: rec,
+                      store: store,
+                    ),
+                  ),
                 );
               });
             },
@@ -166,7 +176,64 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                 }
               }
             },
-            onNoteEdit: null, // Отключаем редактирование заметок, так как API не предоставляет UUID для записей кормления грудью
+            onNoteEdit: rec.id != null && rec.id!.isNotEmpty ? () async {
+              Navigator.of(dialogContext).pop();
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                if (!parentContext.mounted) return;
+                
+                // Создаем экземпляр AddFeeding для работы с заметками
+                final addFeeding = AddFeeding(
+                  childId: userStore.selectedChild!.id!,
+                  restClient: deps.restClient,
+                  noteStore: context.read<AddNoteStore>(),
+                );
+                
+                // Переходим к редактированию заметки
+                final router = GoRouter.of(parentContext);
+                router.pushNamed(AppViews.addNote, extra: {
+                  'initialValue': rec.notes ?? '',
+                  'onSaved': (String value) async {
+                    try {
+                      await addFeeding.updateFeedingNotes(rec.id!, value);
+                      // Обновляем данные в таблице
+                      await store.refreshForChild(store.childId);
+                    } catch (e) {
+                      if (parentContext.mounted) {
+                        ScaffoldMessenger.of(parentContext).showSnackBar(
+                          SnackBar(content: Text('Ошибка обновления заметки: $e')),
+                        );
+                      }
+                    }
+                  },
+                });
+              });
+            } : null,
+            onNoteDelete: rec.notes != null && rec.notes!.isNotEmpty && rec.id != null && rec.id!.isNotEmpty ? () async {
+              Navigator.of(dialogContext).pop();
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                if (!parentContext.mounted) return;
+                
+                try {
+                  // Создаем экземпляр AddFeeding для работы с заметками
+                  final addFeeding = AddFeeding(
+                    childId: userStore.selectedChild!.id!,
+                    restClient: deps.restClient,
+                    noteStore: context.read<AddNoteStore>(),
+                  );
+                  
+                  await addFeeding.deleteFeedingNotes(rec.id!);
+                  // Обновляем данные в таблице
+                  await store.refreshForChild(store.childId);
+                } catch (e) {
+                  // Показываем уведомление об ошибке только если контекст еще активен
+                  if (parentContext.mounted) {
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(content: Text('Ошибка удаления заметки: $e')),
+                    );
+                  }
+                }
+              });
+            } : null,
             onNextWeekTap: index < allForDay.length - 1 ? () => setState(() => index++) : null,
             onPreviousWeekTap: index > 0 ? () => setState(() => index--) : null,
           );

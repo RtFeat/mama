@@ -23,7 +23,7 @@ class DrugsBottomBarWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Observer(builder: (context) {
-        final bool hasData = addDrugsViewStore.model != null;
+        final bool hasData = addDrugsViewStore.model != null && addDrugsViewStore.model!.id != null;
         final bool isEnd = addDrugsViewStore.model?.isEnd ?? false;
 
         return Column(
@@ -124,15 +124,40 @@ class DrugsBottomBarWidget extends StatelessWidget {
                 vertical: 12,
                 horizontal: 8,
               ),
-              onTap: () async {
+              onTap: addDrugsViewStore.isSaving ? null : () async {
                 if (!hasData) {
-                  addDrugsViewStore
-                      .add(userStore.selectedChild!.id!, store)
-                      .then((v) {
-                    if (context.mounted) context.pop();
-                  });
+                  final childId = userStore.selectedChild?.id;
+                  if (childId != null) {
+                    logger.info('Начинаем добавление записи с childId: $childId, store: ${store != null ? "не null" : "null"}');
+                    addDrugsViewStore
+                        .add(childId, store)
+                        .then((v) {
+                      if (context.mounted) context.pop();
+                    });
+                  } else {
+                    logger.error('childId равен null!');
+                  }
                 } else {
                   addDrugsViewStore.update().then((v) {
+                    // Обновляем модель с новыми данными
+                    if (addDrugsViewStore.model != null && store != null) {
+                      final index = store?.listData.indexWhere((e) => e.id == addDrugsViewStore.model!.id);
+                      if (index != null && index >= 0) {
+                        // Создаем обновленную модель с новыми данными
+                        final updatedModel = EntityMainDrug(
+                          id: addDrugsViewStore.model!.id,
+                          name: addDrugsViewStore.name?.value,
+                          dose: addDrugsViewStore.dose?.value,
+                          notes: addDrugsViewStore.comment?.value,
+                          imageId: addDrugsViewStore.model!.imageId,
+                          imagePath: addDrugsViewStore.image?.path,
+                          reminder: addDrugsViewStore.model!.reminder,
+                          reminderAfter: addDrugsViewStore.model!.reminderAfter,
+                          dataStart: addDrugsViewStore.selectedDate.toIso8601String(),
+                        );
+                        store?.listData[index] = updatedModel;
+                      }
+                    }
                     if (context.mounted) context.pop();
                   });
                 }

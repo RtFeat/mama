@@ -38,7 +38,8 @@ class App extends StatelessWidget {
                 chatsViewStore: context.read(),
                 faker: context.read<Dependencies>().faker,
                 apiClient: context.read<Dependencies>().apiClient,
-                verifyStore: context.read()),
+                verifyStore: context.read(),
+                restClient: context.read<Dependencies>().restClient),
           ),
           Provider(
             create: (context) => MessagesStore(
@@ -83,6 +84,37 @@ class App extends StatelessWidget {
             create: (context) => ChildStore(
               userStore: context.read<UserStore>(),
               apiClient: context.read<Dependencies>().apiClient,
+              restClient: context.read<Dependencies>().restClient,
+            ),
+          ),
+          Provider(
+            create: (context) => GrowthStore(
+              apiClient: context.read<Dependencies>().apiClient,
+              restClient: context.read<Dependencies>().restClient,
+              faker: context.read<Dependencies>().faker,
+              userStore: context.read<UserStore>(),
+              onLoad: () async => true,
+              onSet: (bool value) async {},
+            ),
+          ),
+          Provider(
+            create: (context) => WeightStore(
+              apiClient: context.read<Dependencies>().apiClient,
+              restClient: context.read<Dependencies>().restClient,
+              faker: context.read<Dependencies>().faker,
+              userStore: context.read<UserStore>(),
+              onLoad: () async => true,
+              onSet: (bool value) async {},
+            ),
+          ),
+          Provider(
+            create: (context) => CircleStore(
+              apiClient: context.read<Dependencies>().apiClient,
+              restClient: context.read<Dependencies>().restClient,
+              faker: context.read<Dependencies>().faker,
+              userStore: context.read<UserStore>(),
+              onLoad: () async => true,
+              onSet: (bool value) async {},
             ),
           ),
           Provider(

@@ -7,6 +7,9 @@ import 'package:mama/src/feature/notes/state/add_note.dart';
 import 'package:uuid/uuid.dart';
 import 'package:mama/src/feature/trackers/state/feeding/breast_feeding_table_store.dart';
 import 'package:skit/skit.dart';
+import 'package:mama/src/core/api/models/feed_chest_notes_dto.dart';
+import 'package:mama/src/core/api/models/feed_delete_chest_notes_dto.dart';
+import 'package:mama/src/core/api/models/feed_chest_stats_dto.dart';
 
 part 'add_feeding.g.dart';
 
@@ -21,6 +24,54 @@ class AddFeeding extends _AddFeeding with _$AddFeeding {
   final String childId;
   final RestClient restClient;
   final AddNoteStore noteStore;
+
+  /// Обновить заметки для записи кормления грудью
+  @action
+  Future<void> updateFeedingNotes(String recordId, String notes) async {
+    try {
+      await restClient.feed.patchFeedChestNotes(
+        dto: FeedChestNotesDto(id: recordId, notes: notes),
+      );
+      print('Feeding notes updated successfully for record: $recordId');
+    } catch (e) {
+      print('Error updating feeding notes: $e');
+      rethrow;
+    }
+  }
+
+  /// Удалить заметки для записи кормления грудью
+  @action
+  Future<void> deleteFeedingNotes(String recordId) async {
+    try {
+      await restClient.feed.deleteFeedChestDeleteNotes(
+        dto: FeedDeleteChestNotesDto(id: recordId),
+      );
+      print('Feeding notes deleted successfully for record: $recordId');
+    } catch (e) {
+      print('Error deleting feeding notes: $e');
+      rethrow;
+    }
+  }
+
+  /// Обновить статистику кормления грудью
+  @action
+  Future<void> updateFeedingStats(String recordId, int leftMinutes, int rightMinutes, DateTime timeToEnd) async {
+    try {
+      final formattedTime = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(timeToEnd);
+      await restClient.feed.patchFeedChestStats(
+        dto: FeedChestStatsDto(
+          id: recordId,
+          left: leftMinutes,
+          right: rightMinutes,
+          timeToEnd: formattedTime,
+        ),
+      );
+      print('Feeding stats updated successfully for record: $recordId');
+    } catch (e) {
+      print('Error updating feeding stats: $e');
+      rethrow;
+    }
+  }
 }
 
 abstract class _AddFeeding with Store {
@@ -140,9 +191,11 @@ abstract class _AddFeeding with Store {
         rightTimerStartTime = rightTimerStartTime;
       }
       rightPauseTime = null;
-      timerEndTime = null; // Show infinity when running
-      endTimeManuallySet = false;
-      startTimeManuallySet = false;
+      // Only reset timerEndTime if it wasn't manually set
+      if (!endTimeManuallySet) {
+        timerEndTime = null; // Show infinity when running
+      }
+      // Don't reset manual flags when starting timer
     } else {
       // Pause right side timer
       isRightSideStart = false;
@@ -161,6 +214,8 @@ abstract class _AddFeeding with Store {
       final now = DateTime.now();
       timerStartTime = parsed.copyWith(year: now.year, month: now.month, day: now.day);
       startTimeManuallySet = true;
+      
+      print('Feeding: Start time set manually - ${DateFormat('HH:mm').format(timerStartTime)}');
     }
   }
 
@@ -170,8 +225,17 @@ abstract class _AddFeeding with Store {
     if (value.length == 5) {
       final DateTime parsed = format.parse(value);
       final now = DateTime.now();
-      timerEndTime = parsed.copyWith(year: now.year, month: now.month, day: now.day);
+      DateTime endTime = parsed.copyWith(year: now.year, month: now.month, day: now.day);
+      
+      // If end time is before start time, assume it's the next day
+      if (endTime.isBefore(timerStartTime)) {
+        endTime = endTime.add(const Duration(days: 1));
+      }
+      
+      timerEndTime = endTime;
       endTimeManuallySet = true;
+      
+      print('Feeding: End time set manually - Start: ${DateFormat('HH:mm').format(timerStartTime)}, End: ${DateFormat('HH:mm').format(endTime)}, endTimeManuallySet: $endTimeManuallySet');
     }
   }
 
@@ -207,9 +271,11 @@ abstract class _AddFeeding with Store {
         leftTimerStartTime = leftTimerStartTime;
       }
       leftPauseTime = null;
-      timerEndTime = null; // Show infinity when running
-      endTimeManuallySet = false;
-      startTimeManuallySet = false;
+      // Only reset timerEndTime if it wasn't manually set
+      if (!endTimeManuallySet) {
+        timerEndTime = null; // Show infinity when running
+      }
+      // Don't reset manual flags when starting timer
     } else {
       // Pause left side timer
       isLeftSideStart = false;
@@ -228,9 +294,15 @@ abstract class _AddFeeding with Store {
     // Скрываем редактор как в Sleep и показываем контейнер состояния
     showEditMenu = false;
     confirmFeedingTimer = true;
-    // Фиксируем момент окончания
+    // Фиксируем момент окончания только если время не было установлено вручную
     final DateTime endMoment = DateTime.now();
-    timerEndTime = endMoment;
+    print('Feeding: Confirm pressed - endTimeManuallySet: $endTimeManuallySet, timerEndTime: ${timerEndTime != null ? DateFormat('HH:mm').format(timerEndTime!) : 'null'}');
+    if (!endTimeManuallySet) {
+      timerEndTime = endMoment;
+      print('Feeding: Confirm pressed - Setting end time to current moment: ${DateFormat('HH:mm').format(endMoment)}');
+    } else {
+      print('Feeding: Confirm pressed - Keeping manually set end time: ${DateFormat('HH:mm').format(timerEndTime!)}');
+    }
     // Если какая-то сторона была без паузы, фиксируем ей pause к моменту Confirm
     leftPauseTime ??= endMoment;
     rightPauseTime ??= endMoment;
@@ -445,8 +517,10 @@ abstract class _AddFeeding with Store {
           leftCurrentTimerText = '00:00';
         }
         
-        // Don't set end time when running - show infinity
-        timerEndTime = null;
+        // Don't set end time when running - show infinity (only if not manually set)
+        if (!endTimeManuallySet) {
+          timerEndTime = null;
+        }
       }
       
       leftLastUpdateTime = now;
@@ -511,8 +585,10 @@ abstract class _AddFeeding with Store {
           rightCurrentTimerText = '00:00';
         }
         
-        // Don't set end time when running - show infinity
-        timerEndTime = null;
+        // Don't set end time when running - show infinity (only if not manually set)
+        if (!endTimeManuallySet) {
+          timerEndTime = null;
+        }
       }
       
       rightLastUpdateTime = now;
@@ -738,31 +814,60 @@ abstract class _AddFeeding with Store {
     if (timerEndTime == null) return;
 
     // Calculate durations for left and right sides
-    final leftDuration = leftPauseTime != null 
-        ? leftPauseTime!.difference(leftTimerStartTime ?? timerStartTime)
-        : timerEndTime!.difference(leftTimerStartTime ?? timerStartTime);
+    var leftMinutes = 0;
+    var rightMinutes = 0;
     
-    final rightDuration = rightPauseTime != null 
-        ? rightPauseTime!.difference(rightTimerStartTime ?? timerStartTime)
-        : timerEndTime!.difference(rightTimerStartTime ?? timerStartTime);
+    // Only calculate durations if timers were actually used (not manual mode)
+    if (!startTimeManuallySet && !endTimeManuallySet) {
+      final leftDuration = leftPauseTime != null 
+          ? leftPauseTime!.difference(leftTimerStartTime ?? timerStartTime)
+          : timerEndTime!.difference(leftTimerStartTime ?? timerStartTime);
+      
+      final rightDuration = rightPauseTime != null 
+          ? rightPauseTime!.difference(rightTimerStartTime ?? timerStartTime)
+          : timerEndTime!.difference(rightTimerStartTime ?? timerStartTime);
 
-    var leftMinutes = leftDuration.inMinutes.abs();
-    var rightMinutes = rightDuration.inMinutes.abs();
+      leftMinutes = leftDuration.inMinutes.abs();
+      rightMinutes = rightDuration.inMinutes.abs();
+    }
     
     // If manual values are provided (from manual input screen), use them instead
     if (manualLeftMinutes != null && manualRightMinutes != null) {
       leftMinutes = manualLeftMinutes;
       rightMinutes = manualRightMinutes;
     } else {
-      // Manual mode fallback: if user set time manually and both sides are 0,
-      // assign the whole duration to the left side to avoid saving zeros.
-      final totalMinutes = (timerEndTime != null)
-          ? timerEndTime!.difference(timerStartTime).inMinutes.abs()
-          : (leftMinutes + rightMinutes);
+      // Manual mode: if user set time manually and both sides are 0,
+      // distribute the total time equally between left and right sides
+      int totalMinutes;
+      if (timerEndTime != null) {
+        Duration duration = timerEndTime!.difference(timerStartTime);
+        // If end time is before start time, it means it's the next day
+        if (duration.isNegative) {
+          // Add 24 hours to get the correct duration
+          duration = duration + const Duration(days: 1);
+        }
+        totalMinutes = duration.inMinutes;
+      } else {
+        totalMinutes = leftMinutes + rightMinutes;
+      }
       
-      if ((startTimeManuallySet || endTimeManuallySet) && leftMinutes == 0 && rightMinutes == 0) {
-        leftMinutes = totalMinutes;
-        rightMinutes = 0;
+      print('Feeding: Time calculation - Start: ${DateFormat('HH:mm').format(timerStartTime)}, End: ${timerEndTime != null ? DateFormat('HH:mm').format(timerEndTime!) : 'null'}, Duration: ${timerEndTime != null ? timerEndTime!.difference(timerStartTime).inMinutes : 'null'}min, Total: ${totalMinutes}min');
+      
+      // If manual time was set OR if we're in manual mode (no timers used), distribute time equally
+      if ((startTimeManuallySet || endTimeManuallySet) && (leftMinutes == 0 && rightMinutes == 0)) {
+        // Distribute total time equally between left and right sides
+        final halfTime = totalMinutes ~/ 2;
+        leftMinutes = halfTime;
+        rightMinutes = totalMinutes - halfTime; // Ensure we don't lose any time due to rounding
+        
+        print('Feeding: Manual time distribution - Total: ${totalMinutes}min, Left: ${leftMinutes}min, Right: ${rightMinutes}min');
+      } else if (startTimeManuallySet || endTimeManuallySet) {
+        // If manual time was set but we have some timer values, still distribute equally
+        final halfTime = totalMinutes ~/ 2;
+        leftMinutes = halfTime;
+        rightMinutes = totalMinutes - halfTime;
+        
+        print('Feeding: Manual time override - Total: ${totalMinutes}min, Left: ${leftMinutes}min, Right: ${rightMinutes}min');
       }
     }
 
@@ -858,4 +963,5 @@ abstract class _AddFeeding with Store {
     timerEndTime = value;
     endTimeManuallySet = true;
   }
+
 }

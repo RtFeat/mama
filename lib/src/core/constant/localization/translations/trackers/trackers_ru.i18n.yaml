@@ -43,6 +43,7 @@ doctor:
   calendarButton: Календарь посещений врача
   addNewVisitButton: Добавить визит к врачу
   addNewVisitTitle: Визит к врачу
+  editVisitTitle: Редактировать визит
   addNewVisitField1Title: Врач
   addNewVisitField1Hint: Нажмите, чтобы добавить данные врача. Удобно писать в формате «Педиатр Иванов»
   addNewVisitField2Title: Дата визита
@@ -283,6 +284,7 @@ m:
 diaper:
   diapers: Подгузники
   add: Добавить подгузник
+  edit: Редактировать подгузник
   averageCount(param=n):
     one: 1 подгузник в день в среднем
     two: $n подгузника в день в среднем
@@ -372,3 +374,6 @@ daysFor(param=n):
   two: за $n дня
   few: за $n дней
   other: за $n дней
+
+sleepCry: Сон и плач
+retry: Повторить

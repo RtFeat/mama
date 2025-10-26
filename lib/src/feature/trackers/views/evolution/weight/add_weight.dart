@@ -115,7 +115,6 @@ class _BodyState extends State<_Body> {
               value: addWeightViewStore.inputValue,
               onChangedValue: (v) {
                 addWeightViewStore.updateWeightRaw(v);
-                logger.info(v);
                 setState(() {});
               },
               onChangedTime: addWeightViewStore.updateDateTime,

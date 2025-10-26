@@ -165,7 +165,7 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                 0.h,
                 addFeeding.showEditMenu
                     ? FeedingEditingTrackWidget(
-                        title: 'Current feeding',
+                        title: t.trackers.currentEditTrackFeedingTitle,
                         noteTitle:
                             t.trackers.currentEditTrackCountTextTitleFeed,
                         noteText: t.trackers.currentEditTrackCountTextFeed,

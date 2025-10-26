@@ -475,10 +475,10 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
               ),
               child: Row(
                 children: [
-                  Expanded(flex: 2, child: Text('End time of pumping', style: headerStyle, textAlign: TextAlign.left)),
-                  Expanded(child: Text('L, ml', style: headerStyle, textAlign: TextAlign.center)),
-                  Expanded(child: Text('R, ml', style: headerStyle, textAlign: TextAlign.center)),
-                  Expanded(child: Text('Total, ml', style: headerStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 2, child: Text(t.feeding.endTimeOfPumping, style: headerStyle, textAlign: TextAlign.left)),
+                  Expanded(child: Text(t.feeding.leftMl, style: headerStyle, textAlign: TextAlign.center)),
+                  Expanded(child: Text(t.feeding.rightMl, style: headerStyle, textAlign: TextAlign.center)),
+                  Expanded(child: Text(t.feeding.totalMl, style: headerStyle, textAlign: TextAlign.center)),
                 ],
               ),
             ),
@@ -520,10 +520,10 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
             ),
             child: Row(
               children: [
-                Expanded(flex: 2, child: Text('End time of pumping', style: headerStyle, textAlign: TextAlign.left)),
-                Expanded(child: Text('L, ml', style: headerStyle, textAlign: TextAlign.center)),
-                Expanded(child: Text('R, ml', style: headerStyle, textAlign: TextAlign.center)),
-                Expanded(child: Text('Total, ml', style: headerStyle, textAlign: TextAlign.center)),
+                Expanded(flex: 2, child: Text(t.feeding.endTimeOfPumping, style: headerStyle, textAlign: TextAlign.left)),
+                Expanded(child: Text(t.feeding.leftMl, style: headerStyle, textAlign: TextAlign.center)),
+                Expanded(child: Text(t.feeding.rightMl, style: headerStyle, textAlign: TextAlign.center)),
+                Expanded(child: Text(t.feeding.totalMl, style: headerStyle, textAlign: TextAlign.center)),
               ],
             ),
           ),

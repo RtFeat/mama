@@ -104,36 +104,25 @@ class _BodyState extends State<_Body> {
     try {
       final weightStore = context.read<WeightStore>();
       final tableStore = context.read<WeightTableStore>();
+      final userStore = context.read<UserStore>();
       
       // Активируем stores
       weightStore.activate();
       tableStore.activate();
       
       final currentChildId = weightStore.childId;
-      print('WeightView _initializeStores: Current childId = $currentChildId');
       
-      if (currentChildId.isNotEmpty) {
-        // Загружаем данные веса
-        weightStore.fetchWeightDetails();
-        
-         // Явно загружаем данные таблицы
-         tableStore.loadPage(
-           newFilters: [
-             SkitFilter(
-               field: 'child_id',
-               operator: FilterOperator.equals,
-               value: currentChildId,
-             ),
-           ],
-         ).then((_) {
-           print('WeightView: Table loaded with ${tableStore.listData.length} items');
-         });
+      // Проверяем, нужно ли принудительно обновить хранилища
+      if (userStore.shouldRefreshGrowthStores(currentChildId)) {
+        weightStore.refreshForChild(currentChildId);
+        tableStore.refreshForChild(currentChildId);
       }
+      // Убираем дублирующую загрузку - activate() уже загружает данные
       
       // Создаем безопасную асинхронную операцию
       _loadInfoSafely();
     } catch (e) {
-      print('WeightView _initializeStores error: $e');
+      // Игнорируем ошибки
     }
   }
 

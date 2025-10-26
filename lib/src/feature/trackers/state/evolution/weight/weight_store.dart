@@ -59,8 +59,6 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('WeightStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             weightDetails = null;
@@ -70,7 +68,6 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
           // Загружаем новые данные
           fetchWeightDetails();
           
-          // ВАЖНО: Используем новый метод refreshForChild для полной перезагрузки
           if (tableStore != null) {
             tableStore!.refreshForChild(newChildId);
           }
@@ -143,31 +140,122 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
     }
     final tableForCurrent = weightDetails?.list?.table;
     if (tableForCurrent != null && tableForCurrent.isNotEmpty) {
-      final first = tableForCurrent.first;
-      final value = double.tryParse(first.weight?.replaceAll(',', '.') ?? '') ?? 0;
+      // Сортируем по дате и берем последнюю запись (самую новую)
+      final sortedTable = List.from(tableForCurrent);
+      sortedTable.sort((a, b) {
+        // Парсим даты из time (формат DD.MM)
+        final aParts = (a.time ?? '').split('.');
+        final bParts = (b.time ?? '').split('.');
+        
+        if (aParts.length == 2 && bParts.length == 2) {
+          final aDay = int.tryParse(aParts[0]) ?? 0;
+          final aMonth = int.tryParse(aParts[1]) ?? 0;
+          final bDay = int.tryParse(bParts[0]) ?? 0;
+          final bMonth = int.tryParse(bParts[1]) ?? 0;
+          
+          // Сравниваем по месяцу, затем по дню
+          if (aMonth != bMonth) {
+            return aMonth.compareTo(bMonth);
+          }
+          return aDay.compareTo(bDay);
+        }
+        return 0;
+      });
+      
+      final last = sortedTable.last; // Берем последнюю (самую новую) запись
+      final value = double.tryParse(last.weight?.replaceAll(',', '.') ?? '') ?? 0;
+      
+      // Рассчитываем количество дней назад для API данных
+      String daysAgo = '0';
+      final timeStr = last.time ?? '';
+      if (timeStr.isNotEmpty) {
+        final parts = timeStr.split('.');
+        if (parts.length == 2) {
+          final day = int.tryParse(parts[0]);
+          final month = int.tryParse(parts[1]);
+          if (day != null && month != null && month >= 1 && month <= 12) {
+            final recordDate = DateTime(DateTime.now().year, month, day);
+            final now = DateTime.now();
+            final daysDifference = now.difference(recordDate).inDays.abs();
+            daysAgo = daysDifference.toString();
+          }
+        }
+      }
+      
       return Current(
         value: value,
-        label: first.time ?? '',
+        label: last.time ?? '',
         isNormal: '',
-        days: '0',
+        days: daysAgo,
       );
     }
     
     // Fallback: используем данные из истории если основных данных нет
     final historyData = tableStore?.listData ?? listData;
     if (historyData.isNotEmpty) {
-      final latestRecord = historyData.last; // Берем последнюю запись
+      // Сортируем данные по дате и берем последнюю (самую новую) запись
+      final sortedHistoryData = List<EntityHistoryWeight>.from(historyData);
+      sortedHistoryData.sort((a, b) {
+        DateTime? dateA, dateB;
+        
+        // Парсим дату из allData (ISO формат)
+        if (a.allData != null && a.allData!.isNotEmpty) {
+          try {
+            dateA = DateTime.parse(a.allData!);
+          } catch (e) {
+            // Игнорируем ошибки парсинга
+          }
+        }
+        
+        if (b.allData != null && b.allData!.isNotEmpty) {
+          try {
+            dateB = DateTime.parse(b.allData!);
+          } catch (e) {
+            // Игнорируем ошибки парсинга
+          }
+        }
+        
+        // Если allData не сработал, пытаемся парсить data (формат DD.MM)
+        if (dateA == null && a.data != null && a.data!.isNotEmpty) {
+          final parts = a.data!.split('.');
+          if (parts.length == 2) {
+            final day = int.tryParse(parts[0]);
+            final month = int.tryParse(parts[1]);
+            if (day != null && month != null && month >= 1 && month <= 12) {
+              dateA = DateTime(DateTime.now().year, month, day);
+            }
+          }
+        }
+        
+        if (dateB == null && b.data != null && b.data!.isNotEmpty) {
+          final parts = b.data!.split('.');
+          if (parts.length == 2) {
+            final day = int.tryParse(parts[0]);
+            final month = int.tryParse(parts[1]);
+            if (day != null && month != null && month >= 1 && month <= 12) {
+              dateB = DateTime(DateTime.now().year, month, day);
+            }
+          }
+        }
+        
+        if (dateA == null || dateB == null) return 0;
+        return dateA.compareTo(dateB);
+      });
+      
+      final latestRecord = sortedHistoryData.last; // Берем последнюю (самую новую) запись
       
       // Парсим вес
       final rawWeight = (latestRecord.weight ?? '').replaceAll(',', '.');
       final value = double.tryParse(rawWeight) ?? 0;
       
-      // Парсим дату
+      // Парсим дату и рассчитываем дни назад
       String labelText = '';
+      DateTime? recordDate;
+      
       if (latestRecord.allData != null && latestRecord.allData!.isNotEmpty) {
         try {
-          final dateTime = DateTime.parse(latestRecord.allData!);
-          labelText = '${dateTime.day} ${_getMonthName(dateTime.month)}';
+          recordDate = DateTime.parse(latestRecord.allData!);
+          labelText = '${recordDate.day} ${_getMonthName(recordDate.month)}';
         } catch (e) {
           // Игнорируем ошибки парсинга
         }
@@ -180,6 +268,7 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
           final day = int.tryParse(parts[0]);
           final month = int.tryParse(parts[1]);
           if (day != null && month != null && month >= 1 && month <= 12) {
+            recordDate = DateTime(DateTime.now().year, month, day);
             labelText = '$day ${_getMonthName(month)}';
           } else {
             labelText = latestRecord.data!;
@@ -187,6 +276,14 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
         } else {
           labelText = latestRecord.data!;
         }
+      }
+      
+      // Рассчитываем количество дней назад
+      String daysAgo = '0';
+      if (recordDate != null) {
+        final now = DateTime.now();
+        final daysDifference = now.difference(recordDate).inDays.abs();
+        daysAgo = daysDifference.toString();
       }
       
       // Преобразуем статус нормы
@@ -201,7 +298,7 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
         value: value,
         label: labelText,
         isNormal: normStatus,
-        days: '0', // Для истории не показываем "дней назад"
+        days: daysAgo,
       );
     }
     
@@ -377,34 +474,21 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
 
   @computed
   List<ChartData> get chartData {
-    // Если нет childId, возвращаем пустой список
     if (childId.isEmpty) {
-      print('WeightStore chartData: childId is empty');
+      if (userStore.shouldRefreshGrowthStores('')) {
+        Future.microtask(() => _loadHistoryData());
+      }
       return [];
     }
     
-    print('WeightStore chartData: childId = $childId');
-    print('WeightStore chartData: weightDetails?.list?.table = ${weightDetails?.list?.table}');
-    print('WeightStore chartData: listData.length = ${listData.length}');
-    
-    // Сначала пытаемся получить данные из weightDetails (API графика)
-    if (weightDetails?.list?.table != null && weightDetails!.list!.table!.isNotEmpty) {
-      print('WeightStore chartData: Using data from weightDetails');
-      return _processChartDataFromTable(weightDetails!.list!.table!);
-    }
-    
-    // Если данных нет, используем данные из истории как fallback
-    // Сначала пробуем данные из tableStore, потом из собственного listData
+    // Используем данные из истории
     final historyData = tableStore?.listData ?? listData;
     if (historyData.isNotEmpty) {
-      print('WeightStore chartData: Using data from history (${historyData.length} items)');
       return _processChartDataFromHistory(historyData);
     }
     
-    // Если и истории нет, пытаемся загрузить данные
-    print('WeightStore chartData: No data found, attempting to load history');
+    // Если данных нет, пытаемся загрузить
     if (_isActive && childId.isNotEmpty) {
-      // Асинхронно загружаем историю
       Future.microtask(() => _loadHistoryData());
     }
     
@@ -430,13 +514,10 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
   }
 
   List<ChartData> _processChartDataFromHistory(List<EntityHistoryWeight> historyData) {
-    print('WeightStore _processChartDataFromHistory: Processing ${historyData.length} items');
     final now = DateTime.now();
     final List<_DateValue> dateValues = [];
     
     for (final item in historyData) {
-      print('WeightStore _processChartDataFromHistory: Processing item - data: ${item.data}, allData: ${item.allData}, weight: ${item.weight}');
-      
       int? month, day;
       
       // Сначала пытаемся парсить allData (ISO формат)
@@ -445,9 +526,8 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
           final dateTime = DateTime.parse(item.allData!);
           month = dateTime.month;
           day = dateTime.day;
-          print('WeightStore _processChartDataFromHistory: Parsed from allData - month: $month, day: $day');
         } catch (e) {
-          print('WeightStore _processChartDataFromHistory: Failed to parse allData: $e');
+          // Игнорируем ошибки
         }
       }
       
@@ -465,13 +545,11 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
               month = int.tryParse(parts[1]);
               day = int.tryParse(parts[0]);
             }
-            print('WeightStore _processChartDataFromHistory: Parsed from data - month: $month, day: $day');
           }
         }
       }
       
       if (month == null || day == null || month > 12 || day > 31) {
-        print('WeightStore _processChartDataFromHistory: Skipping item - invalid date (month: $month, day: $day)');
         continue;
       }
       
@@ -484,10 +562,8 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
     }
     
     if (dateValues.isEmpty) {
-      print('WeightStore _processChartDataFromHistory: No valid date values found');
       return [];
     }
-    print('WeightStore _processChartDataFromHistory: Found ${dateValues.length} valid date values');
     return _convertDateValuesToChartData(dateValues, now);
   }
 
@@ -582,20 +658,10 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
     });
     
     try {
-      final response = await restClient.growth.getGrowthWeight(childId: childId);
-      if (_isActive) {
-        runInAction(() => weightDetails = response);
-      }
-      
-      if (_isActive && childId.isNotEmpty && 
-          (weightDetails?.list?.table == null || weightDetails!.list!.table!.isEmpty)) {
-        await _loadHistoryData();
-      }
+      // Загружаем только историю, так как основной endpoint не работает
+      await _loadHistoryData();
     } catch (e) {
-      print('WeightStore fetchWeightDetails error: $e');
-      if (_isActive && childId.isNotEmpty) {
-        await _loadHistoryData();
-      }
+      // Игнорируем ошибки
     } finally {
       if (_isActive) {
         runInAction(() => isDetailsLoading = false);
@@ -606,11 +672,8 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
   @action
   Future<void> _loadHistoryData() async {
     if (!_isActive || childId.isEmpty) {
-      print('WeightStore _loadHistoryData: Skipping - not active or childId empty');
       return;
     }
-    
-    print('WeightStore _loadHistoryData: Loading history for childId: $childId');
     
     runInAction(() {
       listData.clear();
@@ -624,9 +687,8 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
           value: childId,
         ),
       ]);
-      print('WeightStore _loadHistoryData: Successfully loaded ${listData.length} items');
     } catch (e) {
-      print('WeightStore _loadHistoryData error: $e');
+      // Игнорируем ошибки
     }
   }
 
@@ -871,12 +933,27 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
     if (_childIdReaction == null) {
       _setupChildIdReaction();
     }
-    // Загружаем данные при активации только если есть childId
-    if (childId.isNotEmpty) {
-      print('WeightStore activate: Loading data for childId: $childId');
+    // Загружаем данные при активации только если есть childId и данные еще не загружены
+    if (childId.isNotEmpty && listData.isEmpty) {
       fetchWeightDetails();
     }
   }
+
+  /// Принудительно обновляет данные для конкретного ребенка
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive) return;
+    
+    // Очищаем старые данные
+    runInAction(() {
+      weightDetails = null;
+      listData.clear();
+    });
+    
+    // Загружаем данные один раз
+    await _loadHistoryData();
+  }
+  
 }
 
 class _DateValue {

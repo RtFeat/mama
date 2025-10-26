@@ -194,18 +194,67 @@ abstract class _ChildModel with Store {
   @computed
   String get formattedDifference {
     DateTime currentDate = DateTime.now();
+    DateTime birth = birthDate?.toLocal() ?? DateTime.now();
 
-    Duration difference =
-        currentDate.difference(birthDate?.toLocal() ?? DateTime.now());
+    // Правильный расчет возраста с учетом реальных месяцев и годов
+    int years = currentDate.year - birth.year;
+    int months = currentDate.month - birth.month;
+    int days = currentDate.day - birth.day;
 
-    int months = (difference.inDays / 30).floor();
-    int days = difference.inDays - (months * 30);
+    // Корректировка если день рождения еще не наступил в этом месяце
+    if (days < 0) {
+      months--;
+      // Получаем количество дней в предыдущем месяце
+      DateTime previousMonth = DateTime(currentDate.year, currentDate.month - 1);
+      days += DateTime(previousMonth.year, previousMonth.month + 1, 0).day;
+    }
+
+    // Корректировка если месяц рождения еще не наступил в этом году
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
 
     String formattedDifference = '';
 
-    if (months >= 12) {
+    if (years > 0) {
       formattedDifference =
-          '${t.home.years(n: months ~/ 12)} ${t.home.months(n: months % 12)}';
+          '${t.home.years(n: years)} ${t.home.months(n: months)}';
+    } else {
+      formattedDifference =
+          '${t.home.months(n: months)} ${t.home.days(n: days)}';
+    }
+    return formattedDifference;
+  }
+
+  /// Рассчитывает возраст ребенка на конкретную дату
+  String calculateAgeAtDate(DateTime targetDate) {
+    DateTime birth = birthDate?.toLocal() ?? DateTime.now();
+
+    // Правильный расчет возраста с учетом реальных месяцев и годов
+    int years = targetDate.year - birth.year;
+    int months = targetDate.month - birth.month;
+    int days = targetDate.day - birth.day;
+
+    // Корректировка если день рождения еще не наступил в этом месяце
+    if (days < 0) {
+      months--;
+      // Получаем количество дней в предыдущем месяце
+      DateTime previousMonth = DateTime(targetDate.year, targetDate.month - 1);
+      days += DateTime(previousMonth.year, previousMonth.month + 1, 0).day;
+    }
+
+    // Корректировка если месяц рождения еще не наступил в этом году
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    String formattedDifference = '';
+
+    if (years > 0) {
+      formattedDifference =
+          '${t.home.years(n: years)} ${t.home.months(n: months)}';
     } else {
       formattedDifference =
           '${t.home.months(n: months)} ${t.home.days(n: days)}';
@@ -228,14 +277,28 @@ abstract class _ChildModel with Store {
   @computed
   String get birthDateCounterInverted {
     DateTime currentDate = DateTime.now();
+    DateTime birth = birthDate?.toLocal() ?? DateTime.now();
 
-    Duration difference =
-        currentDate.difference(birthDate?.toLocal() ?? DateTime.now());
+    // Правильный расчет возраста с учетом реальных месяцев и годов
+    int years = currentDate.year - birth.year;
+    int months = currentDate.month - birth.month;
+    int days = currentDate.day - birth.day;
 
-    int months = (difference.inDays / 30).floor();
-    int days = difference.inDays - (months * 30);
+    // Корректировка если день рождения еще не наступил в этом месяце
+    if (days < 0) {
+      months--;
+      // Получаем количество дней в предыдущем месяце
+      DateTime previousMonth = DateTime(currentDate.year, currentDate.month - 1);
+      days += DateTime(previousMonth.year, previousMonth.month + 1, 0).day;
+    }
 
-    int weeks = difference.inDays ~/ 7;
+    // Корректировка если месяц рождения еще не наступил в этом году
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    int weeks = currentDate.difference(birth).inDays ~/ 7;
 
     String formattedDifference =
         '${t.home.months(n: months)} ${t.home.days(n: days)}';

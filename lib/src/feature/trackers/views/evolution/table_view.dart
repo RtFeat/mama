@@ -104,7 +104,6 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
       widget.store.activate();
       
       final currentChildId = widget.store.childId;
-      print('TableEvolutionHistory _initializeStores: Current childId = $currentChildId');
       
       if (currentChildId.isNotEmpty) {
         // Загружаем данные таблицы
@@ -116,12 +115,10 @@ class _TableEvolutionHistoryState extends State<TableEvolutionHistory> {
               value: currentChildId,
             ),
           ],
-        ).then((_) {
-          print('TableEvolutionHistory: Table loaded with ${widget.store.listData.length} items');
-        });
+        );
       }
     } catch (e) {
-      print('TableEvolutionHistory _initializeStores error: $e');
+      // Игнорируем ошибки
     }
   }
 

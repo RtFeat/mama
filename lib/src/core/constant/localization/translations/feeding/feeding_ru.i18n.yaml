@@ -20,10 +20,15 @@ r: П
 general: Итого
 wholeStory: Вся история
 feedingEndTime: Время окончания\nкормления
-endTimeOfPumping: Время окончания\nсцеживания
+endTimeOfFeeding: Время окончания кормления
+endTimeOfPumping: Время окончания сцеживания
+chestMl: Грудь, мл
+mixtureMl: Смесь, мл
+totalMl: Итого, мл
+leftMl: Л, мл
+rightMl: П, мл
 pumpingLeftSide: Л, мл
 pumpingRightSide: П, мл
-totalMl: Итого, мл
 breastMl: Грудь,\nмл
 bottleMl: Бутылочка,\nмл
 table: Таблица

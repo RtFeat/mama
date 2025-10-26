@@ -91,7 +91,7 @@ class VaccineSaveButton extends StatelessWidget {
                             .toLanguageTag(),
                       ).format(store.selectedDate),
                       markDescription:
-                          userStore.selectedChild!.formattedDifference,
+                          userStore.selectedChild!.calculateAgeAtDate(store.selectedDate),
                       name: store.vaccine?.value,
                     ));
                     if (context.mounted) context.pop();
@@ -107,7 +107,7 @@ class VaccineSaveButton extends StatelessWidget {
                           .toLanguageTag(),
                     ).format(store.selectedDate));
                     vaccine?.setMarkDescription(
-                        userStore.selectedChild!.formattedDifference);
+                        userStore.selectedChild!.calculateAgeAtDate(store.selectedDate));
 
                     if (context.mounted) context.pop();
                   });

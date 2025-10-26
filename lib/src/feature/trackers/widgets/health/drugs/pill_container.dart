@@ -66,7 +66,7 @@ class DrugWidget extends StatelessWidget {
                 children: [
                   8.h,
                   Text(
-                    model.reminder.first,
+                    'В ${model.reminder.first.split(':').take(2).join(':')}',
                     style: Theme.of(context)
                         .textTheme
                         .labelMedium

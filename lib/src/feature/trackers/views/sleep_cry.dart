@@ -15,7 +15,7 @@ class SleepCryView extends StatelessWidget {
       ),
       builder: (context, child) => Scaffold(
         appBar: AppBar(
-          title: Text('Sleep Cry'),
+          title: Text(t.trackers.sleepCry),
         ),
         body: _Body(
           store: context.watch(),

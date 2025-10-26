@@ -193,7 +193,7 @@ class _PdfViewState extends State<PdfView> {
             ElevatedButton.icon(
               onPressed: _loadPdf,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(t.trackers.retry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: Colors.white,

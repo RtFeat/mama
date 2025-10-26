@@ -588,11 +588,15 @@ final GoRouter router = GoRouter(
                   name: AppViews.addDiaper,
                   builder: (context, state) {
                     final Map? extra = state.extra as Map?;
-                    final Function(DiapersCreateDiaperDto data) onSave =
+                    final Function(DiapersCreateDiaperDto data, String? id, [Map<String, dynamic>? originalData]) onSave =
                         extra?['onSave'];
+                    final Function(String id)? onDelete = extra?['onDelete'];
+                    final Map<String, dynamic>? editData = extra?['editData'];
 
                     return AddDiaper(
-                      onSave: (data) => onSave(data),
+                      onSave: (data, id, [originalData]) => onSave(data, id, originalData),
+                      onDelete: onDelete,
+                      editData: editData,
                     );
                   })
             ]),

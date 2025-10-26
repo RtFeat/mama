@@ -26,7 +26,7 @@ class _InputItemWidgetState extends State<InputItemWidget> {
     focusNode.addListener(() {
       setState(() {
         if (focusNode.hasFocus && widget.item.needBackgroundOnFocus) {
-          backgroundColor = AppColors.primaryColor;
+          backgroundColor = const Color(0xFF4D4DE8); // #4D4DE8 при фокусе
           hintColor = AppColors.softPeach;
         } else {
           backgroundColor = widget.item.backgroundColor;
@@ -54,7 +54,12 @@ class _InputItemWidgetState extends State<InputItemWidget> {
       autofocus: widget.item.autoFocus,
       focusNode: focusNode,
       style: widget.item.titleStyle ??
-          textTheme.bodyLarge?.copyWith(color: hintColor),
+          textTheme.bodyLarge?.copyWith(
+            color: focusNode.hasFocus && widget.item.needBackgroundOnFocus 
+                ? Colors.white  // Белый текст при фокусе
+                : hintColor,
+            fontSize: 14,
+          ),
       maxLines: widget.item.maxLines,
       keyboardType: widget.item.keyboardType,
       inputFormatters: [

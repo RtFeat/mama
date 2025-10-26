@@ -104,36 +104,25 @@ class _BodyState extends State<_Body> {
     try {
       final circleStore = context.read<CircleStore>();
       final tableStore = context.read<CircleTableStore>();
+      final userStore = context.read<UserStore>();
       
       // Активируем stores
       circleStore.activate();
       tableStore.activate();
       
       final currentChildId = circleStore.childId;
-      print('CircleView _initializeStores: Current childId = $currentChildId');
       
-      if (currentChildId.isNotEmpty) {
-        // Загружаем данные окружности головы
-        circleStore.fetchCircleDetails();
-        
-         // Явно загружаем данные таблицы
-         tableStore.loadPage(
-           newFilters: [
-             SkitFilter(
-               field: 'child_id',
-               operator: FilterOperator.equals,
-               value: currentChildId,
-             ),
-           ],
-         ).then((_) {
-           print('CircleView: Table loaded with ${tableStore.listData.length} items');
-         });
+      // Проверяем, нужно ли принудительно обновить хранилища
+      if (userStore.shouldRefreshGrowthStores(currentChildId)) {
+        circleStore.refreshForChild(currentChildId);
+        tableStore.refreshForChild(currentChildId);
       }
+      // Убираем дублирующую загрузку - activate() уже загружает данные
       
       // Создаем безопасную асинхронную операцию
       _loadInfoSafely();
     } catch (e) {
-      print('CircleView _initializeStores error: $e');
+      // Игнорируем ошибки
     }
   }
 

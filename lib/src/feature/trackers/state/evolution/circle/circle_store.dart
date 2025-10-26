@@ -66,8 +66,6 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('CircleStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             circleDetails = null;
@@ -77,7 +75,6 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
           // Загружаем новые данные
           fetchCircleDetails();
           
-          // ВАЖНО: Используем новый метод refreshForChild для полной перезагрузки
           if (tableStore != null) {
             tableStore!.refreshForChild(newChildId);
           }
@@ -88,75 +85,8 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
 
   @computed
   Current get current {
-    print('CircleStore current: circleDetails = ${circleDetails != null}');
-    print('CircleStore current: currentCircle = ${circleDetails?.list?.currentCircle != null}');
-    print('CircleStore current: childId = $childId');
-    
-    // Проверяем API данные и их валидность
-    if (circleDetails?.list?.currentCircle != null) {
-      final current = circleDetails?.list?.currentCircle;
-      final apiCircle = double.tryParse(current?.circle ?? '') ?? 0;
-      
-      print('CircleStore current: apiCircle = $apiCircle');
-      print('CircleStore current: current.circle = "${current?.circle}"');
-      print('CircleStore current: current.data = "${current?.data}"');
-      print('CircleStore current: current.days = "${current?.days}"');
-      print('CircleStore current: current.normal = "${current?.normal}"');
-      
-      // Если API вернул валидную окружность головы (> 0), используем её
-      if (apiCircle > 0) {
-        final String rawDays = current?.days ?? '';
-        
-        // Извлекаем число дней из строки типа "20 дней назад" или "-207"
-        String normalizedDays = '0';
-        if (rawDays.isNotEmpty) {
-          // Ищем число в строке (включая отрицательные)
-          final RegExp numberRegex = RegExp(r'-?\d+');
-          final Match? match = numberRegex.firstMatch(rawDays);
-          if (match != null) {
-            final int? parsedDays = int.tryParse(match.group(0)!);
-            if (parsedDays != null) {
-              // Убираем минус, если он есть
-              normalizedDays = parsedDays.abs().toString();
-            }
-          }
-        }
-        
-        // Проверяем, содержит ли data текст "дней назад" и извлекаем только дату
-        String labelText = current?.data ?? '';
-        if (labelText.contains('дней назад')) {
-          // Если data содержит "дней назад", используем только дату без этого текста
-          labelText = labelText.replaceAll(RegExp(r'\s*\d+\s*дней\s*назад\s*'), '').trim();
-        }
-        
-        // Преобразуем статус нормы для API данных
-        String apiNormStatus = current?.normal ?? '';
-        if (apiNormStatus == 'Граница нормы') {
-          apiNormStatus = 'Показатель в норме';
-        } else if (apiNormStatus.isEmpty) {
-          apiNormStatus = 'Показатель в норме'; // По умолчанию считаем в норме
-        }
-        
-        print('CircleStore current: Final values - value: $apiCircle, label: "$labelText", isNormal: "$apiNormStatus", days: "$normalizedDays"');
-        
-        return Current(
-          value: apiCircle,
-          label: labelText,
-          isNormal: apiNormStatus,
-          days: normalizedDays,
-        );
-      } else {
-        print('CircleStore current: apiCircle <= 0, using fallback');
-      }
-    } else {
-      print('CircleStore current: currentCircle is null, using fallback');
-    }
-    
-    // Fallback: используем данные из истории если основных данных нет (как в модуле роста)
+    // Fallback: используем данные из истории если основных данных нет
     final historyData = tableStore?.listData ?? listData;
-    print('CircleStore current fallback: historyData.length = ${historyData.length}');
-    print('CircleStore current fallback: tableStore?.listData.length = ${tableStore?.listData.length}');
-    print('CircleStore current fallback: listData.length = ${listData.length}');
     
     if (historyData.isNotEmpty) {
       // Сортируем по дате, чтобы получить самую позднюю запись
@@ -214,12 +144,14 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
       final rawCircle = (latestRecord.circle ?? '').replaceAll(',', '.');
       final value = double.tryParse(rawCircle) ?? 0;
       
-      // Парсим дату
+      // Парсим дату и рассчитываем дни назад
       String labelText = '';
+      DateTime? recordDate;
+      
       if (latestRecord.allData != null && latestRecord.allData!.isNotEmpty) {
         try {
-          final dateTime = DateTime.parse(latestRecord.allData!);
-          labelText = '${dateTime.day} ${_getMonthName(dateTime.month)}';
+          recordDate = DateTime.parse(latestRecord.allData!);
+          labelText = '${recordDate.day} ${_getMonthName(recordDate.month)}';
         } catch (e) {
           // Игнорируем ошибки парсинга
         }
@@ -232,6 +164,7 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
           final day = int.tryParse(parts[0]);
           final month = int.tryParse(parts[1]);
           if (day != null && month != null && month >= 1 && month <= 12) {
+            recordDate = DateTime(DateTime.now().year, month, day);
             labelText = '$day ${_getMonthName(month)}';
           } else {
             labelText = latestRecord.data!;
@@ -249,11 +182,19 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
         normStatus = 'Показатель в норме'; // По умолчанию считаем в норме
       }
       
+      // Рассчитываем количество дней назад
+      String daysAgo = '0';
+      if (recordDate != null) {
+        final now = DateTime.now();
+        final daysDifference = now.difference(recordDate).inDays.abs();
+        daysAgo = daysDifference.toString();
+      }
+      
       return Current(
         value: value,
         label: labelText,
         isNormal: normStatus,
-        days: '0', // Для истории не показываем "дней назад"
+        days: daysAgo,
       );
     }
     
@@ -262,11 +203,8 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
 
   @computed
   Dynamic get dynamicValue {
-    // Всегда вычисляем динамику из истории для точности (как в модуле роста)
+    // Всегда вычисляем динамику из истории для точности
     final historyData = tableStore?.listData ?? listData;
-    print('CircleStore dynamicValue: historyData.length = ${historyData.length}');
-    print('CircleStore dynamicValue: tableStore?.listData.length = ${tableStore?.listData.length}');
-    print('CircleStore dynamicValue: listData.length = ${listData.length}');
     
     if (historyData.length >= 2) {
       // Сортируем по дате для правильного расчета
@@ -393,7 +331,7 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
       );
     }
     
-    return Dynamic(value: 0, label: '', days: '', duration: '');
+    return Dynamic(value: 0, label: '0', days: '0', duration: '');
   }
 
   @computed
@@ -412,34 +350,18 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
 
   @computed
   List<ChartData> get chartData {
-    // Если нет childId, возвращаем пустой список
     if (childId.isEmpty) {
-      print('CircleStore chartData: childId is empty');
       return [];
     }
     
-    print('CircleStore chartData: childId = $childId');
-    print('CircleStore chartData: circleDetails?.list?.table = ${circleDetails?.list?.table}');
-    print('CircleStore chartData: listData.length = ${listData.length}');
-    
-    // Сначала пытаемся получить данные из circleDetails (API графика)
-    if (circleDetails?.list?.table != null && circleDetails!.list!.table!.isNotEmpty) {
-      print('CircleStore chartData: Using data from circleDetails');
-      return _processChartDataFromTable(circleDetails!.list!.table!);
-    }
-    
-    // Если данных нет, используем данные из истории как fallback
-    // Сначала пробуем данные из tableStore, потом из собственного listData
+    // Используем данные из истории
     final historyData = tableStore?.listData ?? listData;
     if (historyData.isNotEmpty) {
-      print('CircleStore chartData: Using data from history (${historyData.length} items)');
       return _processChartDataFromHistory(historyData);
     }
     
-    // Если и истории нет, пытаемся загрузить данные
-    print('CircleStore chartData: No data found, attempting to load history');
+    // Если данных нет, пытаемся загрузить
     if (_isActive && childId.isNotEmpty) {
-      // Асинхронно загружаем историю
       Future.microtask(() => _loadHistoryData());
     }
     
@@ -464,13 +386,10 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
   }
 
   List<ChartData> _processChartDataFromHistory(List<EntityHistoryCircle> historyData) {
-    print('CircleStore _processChartDataFromHistory: Processing ${historyData.length} items');
     final now = DateTime.now();
     final List<_DateValue> dateValues = [];
     
     for (final item in historyData) {
-      print('CircleStore _processChartDataFromHistory: Processing item - data: ${item.data}, allData: ${item.allData}, circle: ${item.circle}');
-      
       int? month, day;
       
       // Сначала пытаемся парсить allData (ISO формат)
@@ -479,9 +398,8 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
           final dateTime = DateTime.parse(item.allData!);
           month = dateTime.month;
           day = dateTime.day;
-          print('CircleStore _processChartDataFromHistory: Parsed from allData - month: $month, day: $day');
         } catch (e) {
-          print('CircleStore _processChartDataFromHistory: Failed to parse allData: $e');
+          // Игнорируем ошибки
         }
       }
       
@@ -499,13 +417,11 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
               month = int.tryParse(parts[1]);
               day = int.tryParse(parts[0]);
             }
-            print('CircleStore _processChartDataFromHistory: Parsed from data - month: $month, day: $day');
           }
         }
       }
       
       if (month == null || day == null || month > 12 || day > 31) {
-        print('CircleStore _processChartDataFromHistory: Skipping item - invalid date (month: $month, day: $day)');
         continue;
       }
       
@@ -518,10 +434,8 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     }
     
     if (dateValues.isEmpty) {
-      print('CircleStore _processChartDataFromHistory: No valid date values found');
-    return [];
+      return [];
     }
-    print('CircleStore _processChartDataFromHistory: Found ${dateValues.length} valid date values');
     return _convertDateValuesToChartData(dateValues, now);
   }
 
@@ -538,27 +452,10 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     });
     
     try {
-      print('CircleStore fetchCircleDetails: Fetching data for childId: $childId');
-      final response = await restClient.growth.getGrowthCircle(childId: childId);
-      print('CircleStore fetchCircleDetails: API response received');
-      print('CircleStore fetchCircleDetails: response.list = ${response.list != null}');
-      print('CircleStore fetchCircleDetails: currentCircle = ${response.list?.currentCircle != null}');
-      print('CircleStore fetchCircleDetails: table length = ${response.list?.table?.length}');
-      
-      if (_isActive) {
-        runInAction(() => circleDetails = response);
-        print('CircleStore fetchCircleDetails: circleDetails set');
-      }
-      
-      if (_isActive && childId.isNotEmpty && 
-          (circleDetails?.list?.table == null || circleDetails!.list!.table!.isEmpty)) {
-        await _loadHistoryData();
-      }
+      // Загружаем только историю, так как основной endpoint не работает
+      await _loadHistoryData();
     } catch (e) {
-      print('CircleStore fetchCircleDetails error: $e');
-      if (_isActive && childId.isNotEmpty) {
-        await _loadHistoryData();
-      }
+      // Игнорируем ошибки
     } finally {
       if (_isActive) {
         runInAction(() => isDetailsLoading = false);
@@ -568,12 +465,7 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
 
   @action
   Future<void> _loadHistoryData() async {
-    if (!_isActive || childId.isEmpty) {
-      print('CircleStore _loadHistoryData: Skipping - not active or childId empty');
-      return;
-    }
-    
-    print('CircleStore _loadHistoryData: Loading history for childId: $childId');
+    if (!_isActive || childId.isEmpty) return;
     
     runInAction(() {
       listData.clear();
@@ -587,9 +479,8 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
           value: childId,
         ),
       ]);
-      print('CircleStore _loadHistoryData: Successfully loaded ${listData.length} items');
     } catch (e) {
-      print('CircleStore _loadHistoryData error: $e');
+      // Игнорируем ошибки
     }
   }
 
@@ -606,11 +497,25 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
     if (_childIdReaction == null) {
       _setupChildIdReaction();
     }
-    // Загружаем данные при активации только если есть childId
-    if (childId.isNotEmpty) {
-      print('CircleStore activate: Loading data for childId: $childId');
+    // Загружаем данные при активации только если есть childId и данные еще не загружены
+    if (childId.isNotEmpty && listData.isEmpty) {
       fetchCircleDetails();
     }
+  }
+
+  /// Принудительно обновляет данные для конкретного ребенка
+  @action
+  Future<void> refreshForChild(String childId) async {
+    if (!_isActive) return;
+    
+    // Очищаем старые данные
+    runInAction(() {
+      circleDetails = null;
+      listData.clear();
+    });
+    
+    // Загружаем данные один раз
+    await _loadHistoryData();
   }
 
   String _calculateDateRange() {

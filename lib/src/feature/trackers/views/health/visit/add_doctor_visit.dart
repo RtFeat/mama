@@ -66,7 +66,9 @@ class __BodyState extends State<_Body> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
-        title: t.trackers.doctor.addNewVisitTitle,
+        title: widget.type == AddDocVisitType.edit 
+            ? t.trackers.doctor.editVisitTitle 
+            : t.trackers.doctor.addNewVisitTitle,
         appBarColor: AppColors.e8ddf9,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: textTheme.headlineSmall!

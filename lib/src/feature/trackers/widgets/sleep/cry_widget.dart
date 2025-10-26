@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mama/src/core/api/models/entity_cry.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:mama/src/feature/trackers/views/sleep/cry/add_cry_manually.dart';
@@ -13,21 +14,25 @@ import 'package:mama/src/feature/notes/state/add_note.dart';
 import 'package:mama/src/core/api/models/sleepcry_delete_sleep_dto.dart';
 
 class CryWidget extends StatelessWidget {
-  const CryWidget({super.key});
+  const CryWidget({super.key, this.cryTableStore});
+  
+  final CryTableStore? cryTableStore;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
-      child: _Body(store: context.watch<CryStore>()),
+      child: _Body(store: context.watch<CryStore>(), cryTableStore: cryTableStore),
     );
   }
 }
 
 class _Body extends StatefulWidget {
   final CryStore store;
+  final CryTableStore? cryTableStore;
   const _Body({
     required this.store,
+    this.cryTableStore,
   });
 
   @override
@@ -109,7 +114,7 @@ class __BodyState extends State<_Body> {
                           // Сохранение на Confirm: сначала захватываем зависимости синхронно
                           final addNoteStore = context.read<AddNoteStore>();
                           final userStore = context.read<UserStore>();
-                          final cryTableStore = context.read<CryTableStore>();
+                          final cryTableStore = widget.cryTableStore ?? context.read<CryTableStore>();
                           final childId = userStore.selectedChild?.id ?? '';
                           final notes = addNoteStore.content;
                           final DateTime optimisticStart = widget.store.timerStartTime;
@@ -129,14 +134,20 @@ class __BodyState extends State<_Body> {
                                   timeToStart: optimisticStart.toIso8601String(),
                                   timeEnd: optimisticEnd.toIso8601String(),
                                   timeToEnd: '${optimisticEnd.difference(optimisticStart).inMinutes} м',
+                                  allCry: '${optimisticEnd.difference(optimisticStart).inMinutes} м',
                                   notes: notes,
                                 ));
+                                setState(() {});
                               }
                             }
                             // Фоновый рефреш для синхронизации
                             cryTableStore.loadPage(newFilters: [
                               SkitFilter(field: 'child_id', operator: FilterOperator.equals, value: childId),
                             ]);
+                            
+                            // Принудительно обновляем UI для графиков
+                            cryTableStore.forceUpdate();
+                            setState(() {});
                           });
                         },
                         onPressCancel: () {
@@ -145,16 +156,20 @@ class __BodyState extends State<_Body> {
                         onPressManually: () async {
                           final result = await Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) {
-                              return Provider<CryStore>.value(
-                                  value: widget.store,
-                                  child: const AddCryManuallyView());
+                              return MultiProvider(
+                                providers: [
+                                  Provider<CryStore>.value(value: widget.store),
+                                  Provider<CryTableStore>.value(value: widget.cryTableStore ?? context.read<CryTableStore>()),
+                                ],
+                                child: const AddCryManuallyView(),
+                              );
                             }),
                           );
                           
                           // Если запись была добавлена (result == true), обновляем истории
                           if (result == true) {
                             try {
-                              final cryTableStore = context.read<CryTableStore>();
+                              final cryTableStore = widget.cryTableStore ?? context.read<CryTableStore>();
                               final userStore = context.read<UserStore>();
                               final childId = userStore.selectedChild?.id ?? '';
                               
@@ -190,16 +205,20 @@ class __BodyState extends State<_Body> {
                             addButtonTap: () async {
                               final result = await Navigator.of(context).push(
                                 MaterialPageRoute(builder: (context) {
-                                  return Provider<CryStore>.value(
-                                      value: widget.store,
-                                      child: const AddCryManuallyView());
+                                  return MultiProvider(
+                                    providers: [
+                                      Provider<CryStore>.value(value: widget.store),
+                                      Provider<CryTableStore>.value(value: widget.cryTableStore ?? context.read<CryTableStore>()),
+                                    ],
+                                    child: const AddCryManuallyView(),
+                                  );
                                 }),
                               );
                               
                               // Если запись была добавлена (result == true), обновляем истории
                               if (result == true) {
                                 try {
-                                  final cryTableStore = context.read<CryTableStore>();
+                                  final cryTableStore = widget.cryTableStore ?? context.read<CryTableStore>();
                                   final userStore = context.read<UserStore>();
                                   final childId = userStore.selectedChild?.id ?? '';
                                   
@@ -228,7 +247,7 @@ class __BodyState extends State<_Body> {
                       onTapGoBack: () {
                         // Удаляем только что созданную запись и возвращаемся к редактированию
                         final deps = context.read<Dependencies>();
-                        final cryTableStore = context.read<CryTableStore>();
+                        final cryTableStore = widget.cryTableStore ?? context.read<CryTableStore>();
                         final id = _lastSavedCryId;
                         if (id != null) {
                           Future.microtask(() async {
@@ -244,7 +263,38 @@ class __BodyState extends State<_Body> {
                         widget.store.goBackAndContinue();
                       },
                       onTapNote: () {
-                        context.pushNamed(AppViews.addNote);
+                        final id = _lastSavedCryId;
+                        if (id != null) {
+                          context.pushNamed(AppViews.addNote, extra: {
+                            'onSaved': (String value) async {
+                              try {
+                                final deps = context.read<Dependencies>();
+                                await deps.apiClient.patch('sleep_cry/cry/notes', body: {
+                                  'id': id,
+                                  'notes': value,
+                                });
+                                // Обновляем локально
+                                final cryTableStore = widget.cryTableStore ?? context.read<CryTableStore>();
+                                final idx = cryTableStore.listData.indexWhere((e) => e.id == id);
+                                if (idx >= 0) {
+                                  final old = cryTableStore.listData[idx];
+                                  final updated = EntityCry(
+                                    id: old.id,
+                                    childId: old.childId,
+                                    timeToStart: old.timeToStart,
+                                    timeToEnd: old.timeToEnd,
+                                    timeEnd: old.timeEnd,
+                                    allCry: old.allCry,
+                                    notes: value,
+                                  );
+                                  cryTableStore.listData[idx] = updated;
+                                }
+                              } catch (e) {
+                                // Игнорируем ошибки
+                              }
+                            },
+                          });
+                        }
                       },
                     )
                   : const SizedBox(),

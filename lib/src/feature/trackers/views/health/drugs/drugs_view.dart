@@ -100,7 +100,7 @@ class _BodyState extends State<_Body> {
               typeOfPdf: 'drug',
               title: t.trackers.medicines.title,
               onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
-              onSuccess: () => _showSnack(context, 'PDF успешно создан!', bg: const Color(0xFFDEF8E0), seconds: 3),
+              onSuccess: () {},
               onError: (message) => _showSnack(context, message),
             );
           },
@@ -197,8 +197,6 @@ class _BodyState extends State<_Body> {
         Color textColor = Colors.white; // по умолчанию
         if (message == 'Генерация PDF...') {
           textColor = const Color(0xFF4D4DE8); // primaryColor
-        } else if (message == 'PDF успешно создан!') {
-          textColor = const Color(0xFF059613); // greenLightTextColor
         }
         
         ScaffoldMessenger.of(ctx)

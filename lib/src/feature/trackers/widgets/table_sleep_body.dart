@@ -210,8 +210,8 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
 
 
              if (durationMinutes > 0 && durationMinutes < 24 * 60) {
-               final startTimeForLabel = _parseDateTime(sleep.timeToStart);
                final endTimeForLabel = _parseDateTime(sleep.timeEnd);
+               final startTimeForLabel = _parseDateTimeWithReference(sleep.timeToStart, endTimeForLabel);
                if (startTimeForLabel != null && endTimeForLabel != null) {
                  final startLabel = DateFormat('HH:mm').format(startTimeForLabel);
                  final endLabel = DateFormat('HH:mm').format(endTimeForLabel);
@@ -493,6 +493,32 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
     return null;
   }
 
+  DateTime? _parseDateTimeWithReference(String? dateTimeString, DateTime? referenceDate) {
+    if (dateTimeString == null) return null;
+    try {
+      // Если это полная дата с временем
+      if (dateTimeString.contains('T')) {
+        return DateTime.parse(dateTimeString);
+      } else if (dateTimeString.contains(' ')) {
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+      } else if (dateTimeString.contains(':')) {
+        // Если это только время в формате HH:mm, используем дату из referenceDate
+        final timeParts = dateTimeString.split(':');
+        if (timeParts.length == 2) {
+          final hour = int.parse(timeParts[0]);
+          final minute = int.parse(timeParts[1]);
+          final baseDate = referenceDate ?? DateTime.now();
+          return DateTime(baseDate.year, baseDate.month, baseDate.day, hour, minute);
+        }
+      } else {
+        return DateFormat('yyyy-MM-dd').parse(dateTimeString);
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
   int _parseMinutesFromString(String? timeString) {
     if (timeString == null) return 0;
     try {
@@ -604,7 +630,7 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
                           typeOfPdf: 'sleep_cry',
                           title: t.feeding.story,
                           onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
-                          onSuccess: () => _showSnack(context, 'PDF успешно создан!', bg: const Color(0xFFDEF8E0), seconds: 3),
+                          onSuccess: () {},
                           onError: (message) => _showSnack(context, message),
                         );
                       },
@@ -648,8 +674,6 @@ class _TableSleepHistoryState extends State<TableSleepHistory> {
         Color textColor = Colors.white; // по умолчанию
         if (message == 'Генерация PDF...') {
           textColor = const Color(0xFF4D4DE8); // primaryColor
-        } else if (message == 'PDF успешно создан!') {
-          textColor = const Color(0xFF059613); // greenLightTextColor
         }
         
         ScaffoldMessenger.of(ctx)

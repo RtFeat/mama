@@ -18,6 +18,7 @@ class EntityMainDrug extends _EntityMainDrug with _$EntityMainDrug {
     super.isEnd,
     super.name,
     super.notes,
+    super.dataStart,
     required super.reminder,
     required super.reminderAfter,
   });
@@ -39,6 +40,7 @@ abstract class _EntityMainDrug with Store {
     this.isEnd,
     this.name,
     this.notes,
+    this.dataStart,
     required this.reminder,
     required this.reminderAfter,
   });
@@ -63,6 +65,10 @@ abstract class _EntityMainDrug with Store {
   @observable
   @JsonKey(name: 'notes')
   String? notes;
+
+  @observable
+  @JsonKey(name: 'data_start')
+  String? dataStart;
 
   @observable
   @JsonKey(name: 'reminder', fromJson: _listFromJson, toJson: _listToJson)

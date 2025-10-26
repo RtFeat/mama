@@ -478,10 +478,10 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
       ),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text('End time of feeding', style: headerStyle, textAlign: TextAlign.left)),
-          Expanded(child: Text('Chest, ml', style: headerStyle, textAlign: TextAlign.center)),
-          Expanded(child: Text('Mixture, ml', style: headerStyle, textAlign: TextAlign.center)),
-          Expanded(child: Text('Total, ml', style: headerStyle, textAlign: TextAlign.center)),
+          Expanded(flex: 2, child: Text(t.feeding.endTimeOfFeeding, style: headerStyle, textAlign: TextAlign.left)),
+          Expanded(child: Text(t.feeding.chestMl, style: headerStyle, textAlign: TextAlign.center)),
+          Expanded(child: Text(t.feeding.mixtureMl, style: headerStyle, textAlign: TextAlign.center)),
+          Expanded(child: Text(t.feeding.totalMl, style: headerStyle, textAlign: TextAlign.center)),
         ],
       ),
     );

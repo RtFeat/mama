@@ -49,6 +49,7 @@ doctor:
   calendarButton: Calendar of doctor visits
   addNewVisitButton: Add a visit to the doctor
   addNewVisitTitle: Visit to the doctor
+  editVisitTitle: Edit visit
   addNewVisitField1Title: Doctor
   addNewVisitField1Hint: Click to add physician details. It is convenient to write in the format "Pediatrician Ivanov"
   addNewVisitField2Title: Date of visit
@@ -282,6 +283,7 @@ m:
 diaper:
   diapers: Diapers
   add: Add diaper
+  edit: Edit diaper
   averageCount(param=n):
     one: 1 diaper in a day
     two: $n diapers in a day
@@ -371,3 +373,6 @@ daysFor(param=n):
   two: for $n days
   few: for $n days
   other: for $n days
+
+sleepCry: Sleep Cry
+retry: Retry

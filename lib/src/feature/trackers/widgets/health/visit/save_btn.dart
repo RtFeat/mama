@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -52,37 +53,65 @@ class VisitSaveButton extends StatelessWidget {
           // Todo сделать кнопку неактивной если not valid
           Expanded(
             flex: 2,
-            child: CustomButton(
-              height: 48,
-              width: double.infinity,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 5,
-              ),
-              title: t.trackers.doctor.addNewVisitButtonSave,
-              maxLines: 1,
-              // onTap:
-              //     store.isDoctorValid && widget.store.isDataStartValid ||
-              //             widget.store.image != null
-              //         ? () async {
-              //             final model = DoctorVisitModel(
-              //               child_id: 'ad35f5d5-9911-4c12-bcda-9735b1946c8f',
-              //               data_start: dateStartController.text,
-              //               // photo: nameDrugValue,
-              //               clinic: clinicValue,
-              //               notes: commentValue,
-              //             );
-              //             widget.doctorVisitStore.postData(model: model);
-              //           }
-              //         : null,
-
-              onTap: () {
-                store.save(userStore.selectedChild!.id!).then((value) {
-                  doctorVisitsStore?.listData.add(store.model!);
+            child: Observer(
+              builder: (_) => CustomButton(
+                height: 48,
+                width: double.infinity,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 5,
+                ),
+                title: t.trackers.doctor.addNewVisitButtonSave,
+                maxLines: 1,
+                onTap: store.isSaving ? null : () async {
+                  await store.save(userStore.selectedChild!.id!);
+                  
+                  if (type == AddDocVisitType.add) {
+                    // После добавления новой записи обновляем список с сервера, чтобы получить корректный ID
+                    await doctorVisitsStore?.refreshForChild(userStore.selectedChild!.id!);
+                    
+                    // Находим только что созданную запись в обновленном списке и обновляем локальную модель
+                    // Используем комбинацию полей для поиска (doctor + date), так как это уникальная комбинация
+                    final visitsStore = doctorVisitsStore;
+                    if (visitsStore != null) {
+                      try {
+                        final savedModel = visitsStore.listData.firstWhere(
+                          (e) => e.doctor == store.doctor?.value && 
+                                e.date?.day == store.selectedDate.day &&
+                                e.date?.month == store.selectedDate.month &&
+                                e.date?.year == store.selectedDate.year,
+                        );
+                        
+                        // Обновляем модель с ID с сервера
+                        if (savedModel.id != null) {
+                          store.model = savedModel;
+                        }
+                      } catch (e) {
+                        // Если запись не найдена, ничего не делаем
+                        logger.info('Запись не найдена в обновленном списке: $e', runtimeType: runtimeType);
+                      }
+                    }
+                  } else {
+                    // При редактировании обновляем существующую запись
+                    final index = doctorVisitsStore?.listData.indexWhere((e) => e.id == store.model!.id);
+                    if (index != null && index >= 0) {
+                      // Создаем обновленную модель с новыми данными
+                      final updatedModel = EntityMainDoctor(
+                        id: store.model!.id,
+                        doctor: store.doctor?.value,
+                        date: store.selectedDate,
+                        clinic: store.clinic?.value,
+                        notes: store.comment?.value,
+                        photos: store.imagesUrls?.toList() ?? [],
+                        isLocal: false,
+                      );
+                      doctorVisitsStore?.listData[index] = updatedModel;
+                    }
+                  }
                   if (context.mounted) context.pop();
-                });
-              },
-              icon: AppIcons.stethoscope,
+                },
+                icon: AppIcons.stethoscope,
+              ),
             ),
           ),
         ],

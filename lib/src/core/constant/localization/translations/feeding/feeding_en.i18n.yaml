@@ -20,10 +20,15 @@ r: R
 general: General
 wholeStory: The whole story
 feedingEndTime: Feeding end\ntime
+endTimeOfFeeding: End time of feeding
 endTimeOfPumping: End time of pumping
+chestMl: Chest, ml
+mixtureMl: Mixture, ml
+totalMl: Total, ml
+leftMl: L, ml
+rightMl: R, ml
 pumpingLeftSide: L, ml
 pumpingRightSide: R, ml
-totalMl: Total, ml
 breastMl: Breast,\nml
 bottleMl: Bottle,\nml
 table: Table

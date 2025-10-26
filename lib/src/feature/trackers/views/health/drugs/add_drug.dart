@@ -13,7 +13,8 @@ class AddDrugView extends StatelessWidget {
     return Provider(
       create: (context) => AddDrugsViewStore(
           picker: context.read<Dependencies>().imagePicker,
-          restClient: context.read<Dependencies>().restClient),
+          restClient: context.read<Dependencies>().restClient,
+          sharedPreferences: context.read<Dependencies>().sharedPreferences),
       builder: (context, child) {
         return _Body(
           addDrugsStore: context.watch(),
@@ -61,7 +62,7 @@ class __BodyState extends State<_Body> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
-        title: t.trackers.doctor.addNewVisitTitle,
+        title: widget.model != null ? t.trackers.medicines.edit : t.trackers.medicines.add,
         appBarColor: AppColors.e8ddf9,
         padding: const EdgeInsets.only(right: 8),
         titleTextStyle: textTheme.headlineSmall!

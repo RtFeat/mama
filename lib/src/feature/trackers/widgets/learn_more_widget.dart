@@ -53,6 +53,8 @@ class LearnMoreWidget extends StatelessWidget {
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               textStyle: textTheme.titleLarge?.copyWith(fontSize: 10),
+              maxLines: 2,
+              mainAxisAlignment: MainAxisAlignment.center,
             ),
             16.h
           ],

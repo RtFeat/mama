@@ -63,6 +63,8 @@ class ButtonsLearnPdfAdd extends StatelessWidget {
                     Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontSize: 10,
                         ),
+                maxLines: 2,
+                mainAxisAlignment: MainAxisAlignment.center,
               ),
             ),
             8.w,
