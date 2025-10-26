@@ -68,7 +68,7 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
         'toGain': deficitMl > 0 ? '${deficitMl} мл' : '0 мл', // Сколько нужно добрать до нормы для этой записи
       };
     } catch (e) {
-      debugPrint('Error getting pumping info for record: $e');
+      // Error getting pumping info for record
     }
     
     return {

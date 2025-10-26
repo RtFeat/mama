@@ -16,6 +16,8 @@ class AddPumpingInput extends StatefulWidget {
 class _AddPumpingInputState extends State<AddPumpingInput> {
   bool _rulerOpen = false;
   OverlayEntry? _rulerEntry;
+  bool _isLeftSelected = false;
+  bool _isRightSelected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,8 @@ class _AddPumpingInputState extends State<AddPumpingInput> {
                             controlName: 'left',
                             inputHint: '0 мл',
                             readOnly: true,
+                            unit: 'мл',
+                            isSelected: _isLeftSelected,
                             onTap: (_) => _openRuler(context, model, isLeft: true),
                           ),
                           InputContainer(
@@ -64,6 +68,8 @@ class _AddPumpingInputState extends State<AddPumpingInput> {
                             controlName: 'right',
                             inputHint: '0 мл',
                             readOnly: true,
+                            unit: 'мл',
+                            isSelected: _isRightSelected,
                             onTap: (_) => _openRuler(context, model, isLeft: false),
                           )
                         ],
@@ -128,6 +134,15 @@ class _AddPumpingInputState extends State<AddPumpingInput> {
     final currentValue = _extractNumericValue(currentRaw).toDouble();
 
     _rulerOpen = true;
+    
+    // Устанавливаем состояние выбранности
+    setState(() {
+      if (isLeft) {
+        _isLeftSelected = true;
+      } else {
+        _isRightSelected = true;
+      }
+    });
 
     _rulerEntry = OverlayEntry(
       builder: (ctx) {
@@ -197,7 +212,10 @@ class _AddPumpingInputState extends State<AddPumpingInput> {
       _rulerEntry = null;
     }
     _rulerOpen = false;
-    if (mounted) setState(() {});
+    if (mounted) setState(() {
+      _isLeftSelected = false;
+      _isRightSelected = false;
+    });
   }
 
   @override

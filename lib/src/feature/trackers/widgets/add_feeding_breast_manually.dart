@@ -64,7 +64,6 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
       }
     } catch (e) {
       // Store might not be available in this context, ignore
-      print('Could not refresh breast feeding history: $e');
     }
   }
 
@@ -123,14 +122,12 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
           onStartTimeChanged: (v) {
             final value = formGroup.control('feedingBreastStart').value;
             if (v != null && v is String) {
-              print('Start time changed to: $v');
               addFeeding.setTimeStartManually(v);
             }
           },
           onEndTimeChanged: (v) {
             // ИСПОЛЬЗУЕМ ПАРАМЕТР v НАПРЯМУЮ, а не читаем из formGroup!
             if (v != null && v is String) {
-              print('End time changed to: $v');
               addFeeding.setTimeEndManually(v);
             }
           },
@@ -176,7 +173,6 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
                     manualLeftMinutes = halfTime;
                     manualRightMinutes = totalMinutes - halfTime;
                     
-                    print('Feeding: Manual form auto-distribution - Total: ${totalMinutes}min, Left: ${manualLeftMinutes}min, Right: ${manualRightMinutes}min');
                   }
                 }
               }
@@ -193,7 +189,6 @@ class _AddFeedingBreastManuallyState extends State<AddFeedingBreastManually> {
               // Проверяем, есть ли заметка в AddNoteStore
               final noteStore = context.read<AddNoteStore>();
               final noteContent = noteStore.content;
-              print('Manual feeding: Note content from AddNoteStore: "$noteContent"');
               
               await addFeeding.addFeeding(
                 manualLeftMinutes: manualLeftMinutes,

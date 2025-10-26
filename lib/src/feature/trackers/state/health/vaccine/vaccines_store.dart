@@ -65,8 +65,6 @@ abstract class _VaccinesStore extends LearnMoreStore<EntityVaccinationMain>
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('VaccinesStore reaction: childId changed to $newChildId');
-          
           // Используем refreshForChild для полной перезагрузки
           refreshForChild(newChildId);
         }
@@ -77,8 +75,6 @@ abstract class _VaccinesStore extends LearnMoreStore<EntityVaccinationMain>
   @action
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('VaccinesStore refreshForChild: $childId');
     
     // Сбрасываем все данные
     runInAction(() {
@@ -97,8 +93,6 @@ abstract class _VaccinesStore extends LearnMoreStore<EntityVaccinationMain>
         ),
       ],
     );
-    
-    print('VaccinesStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action

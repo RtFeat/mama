@@ -54,8 +54,6 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('CryTableStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             listData.clear();
@@ -70,8 +68,6 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
 
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('CryTableStore _loadDataForChild: Loading for childId: $childId');
     
     // Используем новый метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
@@ -100,8 +96,6 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('CryTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -120,8 +114,6 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
         ),
       ],
     );
-    
-    print('CryTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action
@@ -133,7 +125,6 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
   @action
   void forceUpdate() {
     if (!_isActive) return;
-    print('CryTableStore forceUpdate: Forcing UI update');
     // Принудительно обновляем UI
     runInAction(() {
       // Триггерим реактивность

@@ -24,7 +24,6 @@ class CryWeekTableWidget extends StatelessWidget {
       final List<CalendarEventData> events = [];
       
       // Принудительно обновляем события при изменении данных
-      print('CryWeekTableWidget Observer: listData.length = ${cryTableStore.listData.length}');
 
       for (final entity in cryTableStore.listData) {
         // Используем timeEnd для получения правильной даты

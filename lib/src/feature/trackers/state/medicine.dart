@@ -51,8 +51,6 @@ abstract class _MedicineStore with Store {
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('MedicineStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             drugModel = null;
@@ -68,8 +66,6 @@ abstract class _MedicineStore with Store {
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('MedicineStore _loadDataForChild: Loading for childId: $childId');
-    
     // Здесь можно добавить логику загрузки данных для конкретного ребенка
     // Например, загрузить список лекарств для этого ребенка
     _refreshDataForChild(childId);
@@ -78,8 +74,6 @@ abstract class _MedicineStore with Store {
   @action
   void _refreshDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('MedicineStore _refreshDataForChild: Refreshing data for childId: $childId');
     
     // Очищаем текущие данные
     runInAction(() {
@@ -93,8 +87,6 @@ abstract class _MedicineStore with Store {
   @action
   void _loadMedicineDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('MedicineStore _loadMedicineDataForChild: Loading medicine data for childId: $childId');
     
     // Здесь можно добавить API вызов для загрузки списка лекарств для конкретного ребенка
     // Например: restClient.get('medicine/$childId') или подобное
@@ -127,7 +119,7 @@ abstract class _MedicineStore with Store {
   void postData({required DrugModel model}) {
     restClient.post(Endpoint.medicine, body: model.toJson()).then(
       (value) {
-        return print('Drug was successfully added');
+        // Drug was successfully added
       },
     );
   }

@@ -69,8 +69,6 @@ abstract class _EvolutionTableStore extends TableStore<EntityTable> with Store {
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('EvolutionTableStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             listData.clear();
@@ -85,8 +83,6 @@ abstract class _EvolutionTableStore extends TableStore<EntityTable> with Store {
 
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('EvolutionTableStore _loadDataForChild: Loading for childId: $childId');
     
     // Используем новый метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
@@ -115,8 +111,6 @@ abstract class _EvolutionTableStore extends TableStore<EntityTable> with Store {
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('EvolutionTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -134,8 +128,6 @@ abstract class _EvolutionTableStore extends TableStore<EntityTable> with Store {
         ),
       ],
     );
-    
-    print('EvolutionTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action

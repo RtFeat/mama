@@ -73,8 +73,6 @@ abstract class _TemperatureStore
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('TemperatureStore _loadDataForChild: Loading for childId: $childId');
-    
     // Используем новый метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
   }
@@ -102,8 +100,6 @@ abstract class _TemperatureStore
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('TemperatureStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -121,8 +117,6 @@ abstract class _TemperatureStore
         ),
       ],
     );
-    
-    print('TemperatureStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   static const _cellTextStyle = TextStyle(

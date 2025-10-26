@@ -65,8 +65,6 @@ abstract class _DoctorVisitsStore extends LearnMoreStore<EntityMainDoctor>
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('DoctorVisitsStore reaction: childId changed to $newChildId');
-          
           // Используем refreshForChild для полной перезагрузки
           refreshForChild(newChildId);
         }
@@ -77,8 +75,6 @@ abstract class _DoctorVisitsStore extends LearnMoreStore<EntityMainDoctor>
   @action
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('DoctorVisitsStore refreshForChild: $childId');
     
     // Сбрасываем все данные
     runInAction(() {
@@ -97,8 +93,6 @@ abstract class _DoctorVisitsStore extends LearnMoreStore<EntityMainDoctor>
         ),
       ],
     );
-    
-    print('DoctorVisitsStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action

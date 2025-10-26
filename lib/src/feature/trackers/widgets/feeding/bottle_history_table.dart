@@ -86,7 +86,7 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
         'toGain': deficitMl > 0 ? '${deficitMl} мл' : '0 мл', // Сколько нужно добрать до нормы для этой записи
       };
     } catch (e) {
-      debugPrint('Error getting bottle feeding info for record: $e');
+      // Error getting bottle feeding info for record
     }
     
     return {
@@ -362,7 +362,7 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
         }
       }
     } catch (e) {
-      debugPrint('Error resolving food ID: $e');
+      // Error resolving food ID
     }
     return null;
   }

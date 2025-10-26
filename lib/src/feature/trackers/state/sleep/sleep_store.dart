@@ -62,8 +62,6 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('SleepStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             sleepDetails = null;
@@ -92,7 +90,6 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
     }
     // Загружаем данные при активации только если есть childId
     if (childId.isNotEmpty) {
-      print('SleepStore activate: Loading data for childId: $childId');
       fetchSleepDetails();
     }
   }
@@ -112,7 +109,7 @@ abstract class _SleepStore extends LearnMoreStore<EntitySleepHistoryTotal>
         runInAction(() => sleepDetails = response);
       }
     } catch (e) {
-      print('SleepStore fetchSleepDetails error: $e');
+      // Error fetching sleep details
     } finally {
       if (_isActive) {
         runInAction(() => isDetailsLoading = false);

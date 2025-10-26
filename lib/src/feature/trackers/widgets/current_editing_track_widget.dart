@@ -48,11 +48,9 @@ class CurrentEditingTrackWidget extends StatelessWidget {
       if (context.mounted) {
         store = context.watch<TimerInterface>();
       } else {
-        print('Context not mounted, cannot get TimerInterface');
         return const SizedBox.shrink();
       }
     } catch (e) {
-      print('Error getting TimerInterface: $e');
       // Возвращаем заглушку если не удалось получить store
       return Container(
         padding: const EdgeInsets.all(20),
@@ -102,7 +100,6 @@ class CurrentEditingTrackWidget extends StatelessWidget {
               sleepStore: store is SleepStore ? store as SleepStore : null,
             );
           } catch (e) {
-            print('Error in Observer: $e');
             return Container(
               padding: const EdgeInsets.all(20),
               child: Text(

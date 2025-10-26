@@ -105,6 +105,8 @@ class _BodyState extends State<_Body> {
                         );
                       }
                       if (context.mounted) {
+                        // Очищаем заметку после успешного сохранения
+                        noteStore.setContent(null);
                         context.pop();
                         if (context.mounted) {
                           await store.fetchGrowthDetails();

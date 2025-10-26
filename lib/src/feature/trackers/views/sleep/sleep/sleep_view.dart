@@ -106,7 +106,6 @@ class _SleepScreenState extends State<SleepScreen> {
       sleepTableStore.activate();
       
       final currentChildId = sleepTableStore.childId;
-      print('SleepScreen _initializeStores: Current childId = $currentChildId');
       
       if (currentChildId.isNotEmpty) {
         // Загружаем данные таблицы
@@ -119,7 +118,7 @@ class _SleepScreenState extends State<SleepScreen> {
             ),
           ],
         ).then((_) {
-          print('SleepScreen: Table loaded with ${sleepTableStore.listData.length} items');
+          // Table loaded
         });
       }
       
@@ -130,7 +129,7 @@ class _SleepScreenState extends State<SleepScreen> {
         }
       });
     } catch (e) {
-      print('SleepScreen _initializeStores error: $e');
+      // Error initializing stores
     }
   }
 

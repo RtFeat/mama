@@ -135,8 +135,6 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('BreastFeedingTableStore _loadDataForChild: Loading for childId: $childId');
-    
     // Используем метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
   }
@@ -164,8 +162,6 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('BreastFeedingTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -184,13 +180,13 @@ abstract class _BreastFeedingTableStore extends TableStore<EntityFeeding> with S
         ),
       ],
     );
-    
-    print('BreastFeedingTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action
   void toggleShowAll() {
-    showAll = !showAll;
+    if (_isActive) {
+      showAll = !showAll;
+    }
   }
 
   @computed

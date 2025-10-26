@@ -10,14 +10,7 @@ class AddWeightView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-        //  Provider(
-        //     create: (context) => AddWeightViewStore(
-        //         store: store, restClient: context.read<Dependencies>().restClient),
-        //     builder: (context, child) =>
-        _Body(
-            // )
-            );
+    return _Body();
   }
 }
 
@@ -28,6 +21,9 @@ class _Body extends StatefulWidget {
 
 class _BodyState extends State<_Body> {
   bool _prefilled = false;
+  double _kilogramsSlider = 0.0;
+  double _gramsSlider = 0.0;
+  
   @override
   Widget build(BuildContext context) {
     final UserStore userStore = context.watch<UserStore>();
@@ -51,6 +47,13 @@ class _BodyState extends State<_Body> {
       final grams = ((parsed - kg) * 1000).round().clamp(0, 999);
       addWeightViewStore.updateKilograms(kg);
       addWeightViewStore.updateGrams(grams);
+      _kilogramsSlider = kg.toDouble();
+      _gramsSlider = grams.toDouble();
+      _prefilled = true;
+    } else if (!_prefilled) {
+      // Инициализируем слайдеры при первом рендере
+      _kilogramsSlider = addWeightViewStore.kilograms.toDouble();
+      _gramsSlider = addWeightViewStore.grams.toDouble();
       _prefilled = true;
     }
 
@@ -78,13 +81,15 @@ class _BodyState extends State<_Body> {
             min: 0,
             max: 10,
             step: 0.1,
-            initial: addWeightViewStore.kilograms.toDouble(),
-            value: addWeightViewStore.kilograms.toDouble(),
+            initial: _kilogramsSlider,
+            value: _kilogramsSlider,
             labelStep: 10,
             unit: t.trackers.kg.title,
             onChanged: (v) {
+              setState(() {
+                _kilogramsSlider = v;
+              });
               addWeightViewStore.updateKilograms(v.toInt());
-              setState(() {});
             },
           ),
           8.h,
@@ -99,13 +104,15 @@ class _BodyState extends State<_Body> {
             min: 0,
             max: 1000,
             step: 10,
-            initial: addWeightViewStore.grams.toDouble(),
-            value: addWeightViewStore.grams.toDouble(),
+            initial: _gramsSlider,
+            value: _gramsSlider,
             labelStep: 10,
             unit: t.trackers.g.title,
             onChanged: (v) {
+              setState(() {
+                _gramsSlider = v;
+              });
               addWeightViewStore.updateGrams(v.toInt());
-              setState(() {});
             },
           ),
           8.h,
@@ -115,7 +122,10 @@ class _BodyState extends State<_Body> {
               value: addWeightViewStore.inputValue,
               onChangedValue: (v) {
                 addWeightViewStore.updateWeightRaw(v);
-                setState(() {});
+                setState(() {
+                  _kilogramsSlider = addWeightViewStore.kilograms.toDouble();
+                  _gramsSlider = addWeightViewStore.grams.toDouble();
+                });
               },
               onChangedTime: addWeightViewStore.updateDateTime,
               onPressedElevated: addWeightViewStore.isFormValid
@@ -125,6 +135,7 @@ class _BodyState extends State<_Body> {
                             .add(userStore.selectedChild!.id!, noteStore.content)
                             .then((v) async {
                           if (context.mounted) {
+                            noteStore.setContent(null);
                             context.pop();
                             if (context.mounted) {
                               await store.fetchWeightDetails();
@@ -133,13 +144,13 @@ class _BodyState extends State<_Body> {
                           }
                         });
                       } else {
-                        // Edit flow: PATCH /growth/weight/stats
                         await addWeightViewStore.edit(
                           childId: userStore.selectedChild!.id!,
                           id: existing.id ?? '',
                           notes: noteStore.content,
                         );
                         if (context.mounted) {
+                          noteStore.setContent(null);
                           context.pop();
                           if (context.mounted) {
                             await store.fetchWeightDetails();

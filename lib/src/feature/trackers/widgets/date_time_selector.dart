@@ -285,7 +285,6 @@ class DateTimeSelectorWidget extends StatelessWidget {
                                 pickedTime.hour,
                                 pickedTime.minute);
                             store.setDateTime(dateTime);
-                            print('DateTimeSelectorWidget: calling onChanged with $dateTime');
                             onChanged?.call(dateTime);
                           } else {
                             // Если время не выбрано, используем только дату с текущим временем
@@ -296,7 +295,6 @@ class DateTimeSelectorWidget extends StatelessWidget {
                                 DateTime.now().hour,
                                 DateTime.now().minute);
                             store.setDateTime(dateTime);
-                            print('DateTimeSelectorWidget: calling onChanged with $dateTime (date only)');
                             onChanged?.call(dateTime);
                           }
                         }
@@ -324,7 +322,6 @@ class DateTimeSelectorWidget extends StatelessWidget {
                                     pickedTime.hour,
                                     pickedTime.minute);
                                 store.setDateTime(dateTime);
-                                print('DateTimeSelectorWidget: calling onChanged with $dateTime (time only)');
                                 onChanged?.call(dateTime);
                               }
                             },
@@ -353,7 +350,6 @@ class DateTimeSelectorWidget extends StatelessWidget {
                                     currentTime.hour,
                                     currentTime.minute);
                                 store.setDateTime(dateTime);
-                                print('DateTimeSelectorWidget: calling onChanged with $dateTime (date only)');
                                 onChanged?.call(dateTime);
                               }
                             },

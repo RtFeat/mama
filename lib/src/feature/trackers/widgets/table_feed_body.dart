@@ -300,12 +300,9 @@ class _TableFeedHistoryState extends State<TableFeedHistory> {
         if (chestData.chestHistory != null) {
           // Check if this chest data is for the target date
           final chestDate = _parseChestDate(chestData.timeToEndTotal);
-          print('DEBUG: Comparing $dayTitle with ${chestData.timeToEndTotal} -> chestDate: $chestDate, targetDate: $targetDate');
           if (chestDate != null && _isSameDay(chestDate, targetDate)) {
-            print('DEBUG: Found matching date, calculating total...');
             for (final chest in chestData.chestHistory!) {
               totalMinutes += chest.total ?? 0;
-              print('DEBUG: Added ${chest.total} minutes, total now: $totalMinutes');
             }
           }
         }

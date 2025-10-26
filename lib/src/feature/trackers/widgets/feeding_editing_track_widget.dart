@@ -89,7 +89,6 @@ class FeedingEditingTrackWidget extends StatelessWidget {
                       addFeeding: addFeeding,
                     );
                   } catch (e) {
-                    print('Error in Observer: $e');
                     return Container(
                       padding: const EdgeInsets.all(20),
                       child: Text(

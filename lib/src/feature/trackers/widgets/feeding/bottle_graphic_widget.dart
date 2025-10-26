@@ -178,7 +178,6 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
       
       // Если после всех попыток данные все еще не актуальны, попробуем альтернативный подход
       if (weekOffset == 0 && !byDate.containsKey(DateFormat('yyyy-MM-dd').format(DateTime.now()))) {
-        print('BottleGraphic: Fallback to individual records aggregation');
         byDate = await _loadDataFromIndividualRecords(restClient, childId);
       }
 
@@ -225,7 +224,6 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
 
   String _normalizeDateKey(String? date) {
     if (date == null) {
-      print('BottleGraphic _normalizeDateKey: date is null, using current date');
       return DateFormat('yyyy-MM-dd').format(DateTime.now());
     }
     try {
@@ -240,10 +238,8 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
         final d = DateFormat('yyyy-MM-dd').parse(date, true).toLocal();
         result = DateFormat('yyyy-MM-dd').format(d);
       }
-      print('BottleGraphic _normalizeDateKey: input="$date" -> output="$result"');
       return result;
     } catch (e) {
-      print('BottleGraphic _normalizeDateKey: error parsing "$date": $e');
       return DateFormat('yyyy-MM-dd').format(DateTime.now());
     }
   }
@@ -275,7 +271,6 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
       
       return byDate;
     } catch (e) {
-      print('BottleGraphic _loadDataFromIndividualRecords error: $e');
       return {};
     }
   }

@@ -11,6 +11,8 @@ class InputContainer extends StatefulWidget {
   final bool? readOnly;
   final Function(String? value)? onTap;
   final String? subtitle;
+  final String? unit;
+  final bool? isSelected; // Добавляем параметр для отслеживания выбранного состояния
 
   const InputContainer(
       {super.key,
@@ -20,7 +22,9 @@ class InputContainer extends StatefulWidget {
       required this.inputHint,
       this.readOnly,
       this.onTap,
-      this.subtitle});
+      this.subtitle,
+      this.unit,
+      this.isSelected});
 
   @override
   State<InputContainer> createState() => _InputContainerState();
@@ -40,7 +44,6 @@ class _InputContainerState extends State<InputContainer> {
       });
     });
     
-    // Добавляем listener для форматирования
     _controller.addListener(() {
       final value = _controller.text;
       if (value.isNotEmpty) {
@@ -63,29 +66,26 @@ class _InputContainerState extends State<InputContainer> {
   }
   
   String formatTimeInput(String value) {
-    // Убираем все нецифровые символы
     final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
     
     if (digits.isEmpty) return '';
     
-    // Интерпретируем число
+    if (widget.unit == 'мл') {
+      return '$digits мл';
+    }
+    
     if (digits.length == 1) {
-      // Одна цифра: X → Xм
       return '${digits}м';
     } else if (digits.length == 2) {
-      // Две цифры: XX → XXм
       return '${digits}м';
     } else if (digits.length == 3) {
-      // Три цифры: XXX → XXм Xс
       final minutes = digits.substring(0, 2);
       final seconds = int.parse(digits.substring(2, 3));
       if (seconds > 9) {
-        // Если последняя цифра > 9, берем её как 9
         return '${minutes}м 9с';
       }
       return '${minutes}м ${digits[2]}с';
     } else if (digits.length >= 4) {
-      // Четыре и более цифр: XXXX → XXм XXс
       final minutes = digits.substring(0, 2);
       final seconds = int.parse(digits.substring(2, 4));
       final limitedSeconds = seconds > 59 ? 59 : seconds;
@@ -106,7 +106,6 @@ class _InputContainerState extends State<InputContainer> {
     );
     const EdgeInsets inputPadding = EdgeInsets.only(left: 0, right: 0, top: 10, bottom: 10);
 
-    // Кастомный форматтер для интерпретации чисел
     final maskFormatter = MaskTextInputFormatter(
       mask: '##м ##с',
       filter: {'#': RegExp('[0-9]')},
@@ -137,7 +136,6 @@ class _InputContainerState extends State<InputContainer> {
                 final isReadOnly = widget.readOnly ?? false;
                 if (!isReadOnly) {
                   _focusNode.requestFocus();
-                  // Открываем клавиатуру
                   Future.delayed(const Duration(milliseconds: 100), () {
                     _focusNode.requestFocus();
                   });
@@ -152,7 +150,7 @@ class _InputContainerState extends State<InputContainer> {
                     maxHeight: 60,
                   ),
                   decoration: BoxDecoration(
-                    color: _isFocused ? const Color(0xFF4D4DE8) : const Color(0xD9F8FAFF),
+                    color: (_isFocused || widget.isSelected == true) ? const Color(0xFF4D4DE8) : const Color(0xD9F8FAFF),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
@@ -163,63 +161,61 @@ class _InputContainerState extends State<InputContainer> {
                       Flexible(
                         child: Focus(
                           focusNode: _focusNode,
-                          child: InputItemWidget(
-                          item: InputItem(
-                            inputHint: widget.inputHint,
-                            keyboardType: TextInputType.number,
-                            inputHintStyle: inputHintStyle?.copyWith(
-                              color: _isFocused ? Colors.white : const Color(0xFF4D4DE8),
-                              fontSize: 14,
+                          // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: IgnorePointer блокирует события от TextField
+                          child: IgnorePointer(
+                            ignoring: widget.readOnly ?? false,
+                            child: InputItemWidget(
+                              item: InputItem(
+                                inputHint: widget.inputHint,
+                                keyboardType: TextInputType.number,
+                                inputHintStyle: inputHintStyle?.copyWith(
+                                  color: (_isFocused || widget.isSelected == true) ? Colors.white : const Color(0xFF4D4DE8),
+                                  fontSize: 14,
+                                ),
+                                controlName: widget.controlName,
+                                controller: _controller,
+                                isCollapsed: true,
+                                needBackgroundOnFocus: false,
+                                textAlign: inputTextAlign,
+                                textInputAction: TextInputAction.next,
+                                maskFormatter: widget.formatter ?? maskFormatter,
+                                border: inputBorder,
+                                contentPadding: inputPadding,
+                                backgroundColor: Colors.transparent,
+                                readOnly: widget.readOnly,
+                                onTap: widget.onTap,
+                                titleStyle: (_isFocused || widget.isSelected == true)
+                                    ? TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      )
+                                    : TextStyle(
+                                        color: const Color(0xFF4D4DE8),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                              ),
                             ),
-                            controlName: widget.controlName,
-                            controller: _controller,
-                            isCollapsed: true,
-                            needBackgroundOnFocus: false, // Управляем фоном сами
-                            textAlign: inputTextAlign,
-                            textInputAction: TextInputAction.next,
-                            maskFormatter: widget.formatter ?? maskFormatter,
-                            border: inputBorder,
-                            contentPadding: inputPadding,
-                            backgroundColor: Colors.transparent,
-                            readOnly: widget.readOnly,
-                            onTap: widget.onTap,
-                            titleStyle: _isFocused 
-                                ? TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  )
-                                : TextStyle(
-                                    color: const Color(0xFF4D4DE8),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                  ),
                           ),
                         ),
                       ),
-                    ),
-                    // Показываем subtitle только если нет фокуса
-                    if (widget.subtitle != null && !_isFocused) ...[
-                      Text(
-                        widget.subtitle!,
-                        textAlign: TextAlign.center,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: AppColors.greyBrighterColor,
+                      if (widget.subtitle != null && !_isFocused) ...[
+                        Text(
+                          widget.subtitle!,
+                          textAlign: TextAlign.center,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: AppColors.greyBrighterColor,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-              ),
             ),
-            // 10.w,
-            // IconButton(
-            //     onPressed: (){},
-            //     icon: Icon(Icons.close))
           ],
         )
-        
       ],
     );
   }

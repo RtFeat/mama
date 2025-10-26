@@ -135,7 +135,6 @@ abstract class _UserStore extends SingleDataStore<UserData> with Store {
   void notifyGrowthStoresRefresh(String childId) {
     // Этот метод будет вызываться из ChildStore после создания ребенка
     // для принудительного обновления всех хранилищ роста
-    print('UserStore: Уведомление об обновлении хранилищ роста для childId: $childId');
     
     // Устанавливаем флаг для принудительного обновления хранилищ роста
     // Это будет использоваться в виджетах для принудительного обновления

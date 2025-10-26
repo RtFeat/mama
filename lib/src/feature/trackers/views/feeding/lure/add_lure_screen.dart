@@ -286,7 +286,13 @@ class _AddLureScreenState extends State<AddLureScreen> {
                                 } else {
                                   await deps.restClient.feed.postFeedLure(dto: dto);
                                 }
-                                if (mounted) context.pop(true);
+                                if (mounted) {
+                                  // Очищаем заметку после успешного сохранения
+                                  setState(() {
+                                    _noteText = null;
+                                  });
+                                  context.pop(true);
+                                }
                               } catch (e) {
                                 if (!mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(

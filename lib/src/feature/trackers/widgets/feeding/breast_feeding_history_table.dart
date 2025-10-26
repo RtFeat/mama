@@ -148,7 +148,6 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                 Navigator.of(dialogContext).pop();
                 try {
                   if (rec.id != null && rec.id!.isNotEmpty) {
-                    print('Deleting feeding record with ID: ${rec.id}');
                     await deps.restClient.feed.deleteFeedChestDeleteStats(
                       dto: FeedDeleteChestDto(id: rec.id!),
                     );
@@ -160,7 +159,6 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                       );
                     }
                   } else {
-                    print('Record ID is null or empty');
                     if (dialogContext.mounted) {
                       ScaffoldMessenger.of(dialogContext).showSnackBar(
                         const SnackBar(content: Text('ID записи не найден')),
@@ -450,7 +448,9 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             child: InkWell(
               borderRadius: BorderRadius.circular(6),
               onTap: () {
-                store.toggleShowAll();
+                setState(() {
+                  store.toggleShowAll();
+                });
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

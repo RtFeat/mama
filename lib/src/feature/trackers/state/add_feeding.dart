@@ -32,9 +32,7 @@ class AddFeeding extends _AddFeeding with _$AddFeeding {
       await restClient.feed.patchFeedChestNotes(
         dto: FeedChestNotesDto(id: recordId, notes: notes),
       );
-      print('Feeding notes updated successfully for record: $recordId');
     } catch (e) {
-      print('Error updating feeding notes: $e');
       rethrow;
     }
   }
@@ -46,9 +44,7 @@ class AddFeeding extends _AddFeeding with _$AddFeeding {
       await restClient.feed.deleteFeedChestDeleteNotes(
         dto: FeedDeleteChestNotesDto(id: recordId),
       );
-      print('Feeding notes deleted successfully for record: $recordId');
     } catch (e) {
-      print('Error deleting feeding notes: $e');
       rethrow;
     }
   }
@@ -66,9 +62,7 @@ class AddFeeding extends _AddFeeding with _$AddFeeding {
           timeToEnd: formattedTime,
         ),
       );
-      print('Feeding stats updated successfully for record: $recordId');
     } catch (e) {
-      print('Error updating feeding stats: $e');
       rethrow;
     }
   }
@@ -215,7 +209,6 @@ abstract class _AddFeeding with Store {
       timerStartTime = parsed.copyWith(year: now.year, month: now.month, day: now.day);
       startTimeManuallySet = true;
       
-      print('Feeding: Start time set manually - ${DateFormat('HH:mm').format(timerStartTime)}');
     }
   }
 
@@ -235,7 +228,6 @@ abstract class _AddFeeding with Store {
       timerEndTime = endTime;
       endTimeManuallySet = true;
       
-      print('Feeding: End time set manually - Start: ${DateFormat('HH:mm').format(timerStartTime)}, End: ${DateFormat('HH:mm').format(endTime)}, endTimeManuallySet: $endTimeManuallySet');
     }
   }
 
@@ -296,12 +288,8 @@ abstract class _AddFeeding with Store {
     confirmFeedingTimer = true;
     // Фиксируем момент окончания только если время не было установлено вручную
     final DateTime endMoment = DateTime.now();
-    print('Feeding: Confirm pressed - endTimeManuallySet: $endTimeManuallySet, timerEndTime: ${timerEndTime != null ? DateFormat('HH:mm').format(timerEndTime!) : 'null'}');
     if (!endTimeManuallySet) {
       timerEndTime = endMoment;
-      print('Feeding: Confirm pressed - Setting end time to current moment: ${DateFormat('HH:mm').format(endMoment)}');
-    } else {
-      print('Feeding: Confirm pressed - Keeping manually set end time: ${DateFormat('HH:mm').format(timerEndTime!)}');
     }
     // Если какая-то сторона была без паузы, фиксируем ей pause к моменту Confirm
     leftPauseTime ??= endMoment;
@@ -327,11 +315,9 @@ abstract class _AddFeeding with Store {
     // Сохраняем запись при подтверждении
     try {
       await addFeeding();
-      print('Feeding record saved on confirm');
       // Обновляем историю после успешного сохранения
       onHistoryRefresh?.call();
     } catch (e) {
-      print('Error saving feeding record on confirm: $e');
       // Не пробрасываем ошибку, чтобы не блокировать UI
     }
   }
@@ -342,9 +328,7 @@ abstract class _AddFeeding with Store {
     if (savedRecordId != null) {
       try {
         await deleteFeeding();
-        print('Feeding record deleted on go back and continue');
       } catch (e) {
-        print('Error deleting feeding record on go back and continue: $e');
         // Не пробрасываем ошибку, чтобы не блокировать UI
       }
     }
@@ -444,6 +428,9 @@ abstract class _AddFeeding with Store {
     endTimeManuallySet = false;
     startTimeManuallySet = false;
     savedRecordId = null;
+    
+    // Очищаем заметку при сбросе
+    (this as AddFeeding).noteStore.setContent(null);
   }
 
   @action
@@ -452,15 +439,12 @@ abstract class _AddFeeding with Store {
     if (timerEndTime != null && savedRecordId == null && !leftIsManuallySaved && !rightIsManuallySaved) {
       try {
         await addFeeding();
-        print('Feeding record saved on final save');
         // Устанавливаем флаги после успешного сохранения
         leftIsManuallySaved = true;
         rightIsManuallySaved = true;
       } catch (e) {
-        print('Error saving feeding record on final save: $e');
+        // Error saving feeding record
       }
-    } else {
-      print('Final save skipped - timerEndTime: $timerEndTime, savedRecordId: $savedRecordId, leftIsManuallySaved: $leftIsManuallySaved, rightIsManuallySaved: $rightIsManuallySaved');
     }
   }
 
@@ -483,7 +467,6 @@ abstract class _AddFeeding with Store {
         final timeDiff = now.difference(leftLastUpdateTime!).inSeconds.abs();
         if (timeDiff > 5) { // Если разница больше 5 секунд - возможно изменили время
           leftSystemTimeChangeDetected = now;
-          print('System time change detected in Left timer: $timeDiff seconds');
           // Не обновляем время при изменении системного времени
           leftLastUpdateTime = now; // Обновляем lastUpdateTime чтобы избежать повторных срабатываний
           return;
@@ -526,7 +509,6 @@ abstract class _AddFeeding with Store {
       leftLastUpdateTime = now;
     } catch (e) {
       // Если произошла ошибка, просто не обновляем время
-      print('Error updating Left timer display: $e');
     } finally {
       leftIsUpdating = false;
     }
@@ -551,7 +533,6 @@ abstract class _AddFeeding with Store {
         final timeDiff = now.difference(rightLastUpdateTime!).inSeconds.abs();
         if (timeDiff > 5) { // Если разница больше 5 секунд - возможно изменили время
           rightSystemTimeChangeDetected = now;
-          print('System time change detected in Right timer: $timeDiff seconds');
           // Не обновляем время при изменении системного времени
           rightLastUpdateTime = now; // Обновляем lastUpdateTime чтобы избежать повторных срабатываний
           return;
@@ -594,7 +575,6 @@ abstract class _AddFeeding with Store {
       rightLastUpdateTime = now;
     } catch (e) {
       // Если произошла ошибка, просто не обновляем время
-      print('Error updating Right timer display: $e');
     } finally {
       rightIsUpdating = false;
     }
@@ -851,8 +831,6 @@ abstract class _AddFeeding with Store {
         totalMinutes = leftMinutes + rightMinutes;
       }
       
-      print('Feeding: Time calculation - Start: ${DateFormat('HH:mm').format(timerStartTime)}, End: ${timerEndTime != null ? DateFormat('HH:mm').format(timerEndTime!) : 'null'}, Duration: ${timerEndTime != null ? timerEndTime!.difference(timerStartTime).inMinutes : 'null'}min, Total: ${totalMinutes}min');
-      
       // If manual time was set OR if we're in manual mode (no timers used), distribute time equally
       if ((startTimeManuallySet || endTimeManuallySet) && (leftMinutes == 0 && rightMinutes == 0)) {
         // Distribute total time equally between left and right sides
@@ -860,14 +838,12 @@ abstract class _AddFeeding with Store {
         leftMinutes = halfTime;
         rightMinutes = totalMinutes - halfTime; // Ensure we don't lose any time due to rounding
         
-        print('Feeding: Manual time distribution - Total: ${totalMinutes}min, Left: ${leftMinutes}min, Right: ${rightMinutes}min');
       } else if (startTimeManuallySet || endTimeManuallySet) {
         // If manual time was set but we have some timer values, still distribute equally
         final halfTime = totalMinutes ~/ 2;
         leftMinutes = halfTime;
         rightMinutes = totalMinutes - halfTime;
         
-        print('Feeding: Manual time override - Total: ${totalMinutes}min, Left: ${leftMinutes}min, Right: ${rightMinutes}min');
       }
     }
 
@@ -896,42 +872,24 @@ abstract class _AddFeeding with Store {
     };
 
     try {
-      print('Sending feeding data (DTO): ${dto.toJson()}');
-      print('Sending feeding data (Manual JSON): $jsonData');
-      print('Using restClient: ${(this as AddFeeding).restClient}');
-      print('Calling postFeedChest...');
-      
       // Используем notes из noteStore
       final response = await (this as AddFeeding).restClient.feed.postFeedChest(dto: dto);
-      print('API response: success with ID: ${response.id}');
       
       // Используем реальный ID с сервера для удаления
       savedRecordId = response.id;
-      print('Saved record ID: $savedRecordId');
-      print('Feeding record saved successfully');
+      
+      // Очищаем заметку после успешного сохранения
+      (this as AddFeeding).noteStore.setContent(null);
     } catch (e) {
       if (e is DioException) {
         // Некоторые окружения возвращают пустой ответ (нет JSON), что вызывает ошибку парсинга у retrofit.
         // Больше не маскируем такую ситуацию как успех — сигнализируем об ошибке выше.
         final isEmptyOrInvalidJson = e.error is FormatException || e.response == null || e.response?.data == null;
         if (isEmptyOrInvalidJson) {
-          print('Empty/invalid JSON response from /feed/chest — will show error to user');
           rethrow;
         }
 
         // Подробный лог только для реальных сетевых/серверных ошибок
-        print('Error saving feeding record: DioException');
-        print('  Request path: ${e.requestOptions.path}');
-        print('  Request baseUrl: ${e.requestOptions.baseUrl}');
-        print('  Request full URL: ${e.requestOptions.uri}');
-        print('  Response data: ${e.response?.data}');
-        print('  Response status: ${e.response?.statusCode}');
-        print('  Response headers: ${e.response?.headers}');
-        print('  Response statusMessage: ${e.response?.statusMessage}');
-        print('  Request data: ${e.requestOptions.data}');
-        print('  Request headers: ${e.requestOptions.headers}');
-      } else {
-        print('Error saving feeding record: $e');
       }
       // Для прочих ошибок пробрасываем дальше
       rethrow;
@@ -941,19 +899,15 @@ abstract class _AddFeeding with Store {
   @action
   Future<void> deleteFeeding() async {
     if (savedRecordId == null) {
-      print('No saved record to delete');
       return;
     }
 
     try {
-      print('Deleting feeding record with UUID: $savedRecordId');
       await (this as AddFeeding).restClient.feed.deleteFeedChestDeleteStats(
         dto: FeedDeleteChestDto(id: savedRecordId!),
       );
-      print('Feeding record deleted successfully');
       savedRecordId = null; // Сбрасываем ID после удаления
     } catch (e) {
-      print('Error deleting feeding record: $e');
       rethrow;
     }
   }

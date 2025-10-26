@@ -37,13 +37,9 @@ abstract class _CalendarStore with Store {
 
   void updateEvents() {
     store.weekConsultations.asMap().forEach((dayIndex, dailySlots) {
-      // print('Day Index: $dayIndex, Slots: ${dailySlots.length}');
-
       for (var slot in dailySlots) {
         // Расчёт даты для текущего слота, добавляя индекс дня недели к начальной дате
         DateTime slotDate = store.weekStart.add(Duration(days: dayIndex));
-
-        // print('Adding slot: ${slot.workSlot} for date: $slotDate');
 
         // startedAt: e.slotTime(doctorStore.weekStart, true),
 

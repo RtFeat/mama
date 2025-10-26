@@ -127,6 +127,8 @@ class __BodyState extends State<_Body> with TickerProviderStateMixin {
                                 Future.microtask(() async {
                                   final response = await widget.store.add(childId, notes);
                                   _lastSavedSleepId = response?.id;
+                                  // Очищаем заметку после успешного сохранения
+                                  addNoteStore.setContent(null);
                                   // Оптимистично добавляем запись в локальный список
                                   if (response?.id != null) {
                                     final exists = sleepTableStore.listData.any((e) => e.id == response!.id);

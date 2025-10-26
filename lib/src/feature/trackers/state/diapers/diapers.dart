@@ -76,8 +76,6 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
       (_) => childId,
       (String newChildId) {
         if (_isActive && newChildId.isNotEmpty) {
-          print('DiapersStore reaction: childId changed to $newChildId');
-          
           // Очищаем старые данные
           runInAction(() {
             listData.clear();
@@ -92,8 +90,6 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
 
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
-    
-    print('DiapersStore _loadDataForChild: Loading for childId: $childId');
     
     // Сбрасываем пагинацию перед загрузкой новых данных
     resetPagination();
@@ -163,7 +159,6 @@ abstract class _DiapersStore extends LearnMoreStore<EntityDiapersMain>
     }
     // Загружаем данные при активации только если есть childId
     if (childId.isNotEmpty) {
-      print('DiapersStore activate: Loading data for childId: $childId');
       _loadDataForChild(childId);
     }
   }

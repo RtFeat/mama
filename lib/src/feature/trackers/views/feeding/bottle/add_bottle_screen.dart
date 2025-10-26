@@ -235,6 +235,10 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                               await deps.restClient.feed.postFeedFood(dto: dto);
                             }
                             if (mounted) {
+                              // Очищаем заметку после успешного сохранения
+                              setState(() {
+                                _noteText = null;
+                              });
                               // Небольшая задержка для обеспечения обновления сервера
                               await Future.delayed(const Duration(milliseconds: 200));
                               context.pop(true);

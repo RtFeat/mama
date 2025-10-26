@@ -67,8 +67,6 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('SleepTableStore _loadDataForChild: Loading for childId: $childId');
-    
     // Используем новый метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
   }
@@ -96,8 +94,6 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('SleepTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -116,8 +112,6 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
         ),
       ],
     );
-    
-    print('SleepTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action

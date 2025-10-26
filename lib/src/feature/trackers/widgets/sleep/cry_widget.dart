@@ -125,6 +125,8 @@ class __BodyState extends State<_Body> {
                           Future.microtask(() async {
                             final response = await widget.store.add(childId, notes);
                             _lastSavedCryId = response?.id;
+                            // Очищаем заметку после успешного сохранения
+                            addNoteStore.setContent(null);
                             if (response?.id != null) {
                               final exists = cryTableStore.listData.any((e) => e.id == response!.id);
                               if (!exists) {

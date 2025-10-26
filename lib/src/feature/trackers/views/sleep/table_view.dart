@@ -33,12 +33,9 @@ class _TableScreenState extends State<TableScreen> {
     final userStore = context.read<UserStore>();
     final childId = userStore.selectedChild?.id;
     
-    print('TableScreen _updateDataForDateRange: childId = $childId, startOfWeek = $startOfWeek, endOfWeek = $endOfWeek');
-    
     if (childId != null && childId.isNotEmpty) {
       // Принудительно обновляем данные в SleepTableStore
       final sleepTableStore = context.read<SleepTableStore>();
-      print('TableScreen _updateDataForDateRange: Clearing sleep data (${sleepTableStore.listData.length} items)');
       sleepTableStore.listData.clear(); // Очищаем старые данные
       sleepTableStore.loadPage(newFilters: [
         SkitFilter(
@@ -50,7 +47,6 @@ class _TableScreenState extends State<TableScreen> {
       
       // Принудительно обновляем данные в CryTableStore
       final cryTableStore = context.read<CryTableStore>();
-      print('TableScreen _updateDataForDateRange: Clearing cry data (${cryTableStore.listData.length} items)');
       cryTableStore.listData.clear(); // Очищаем старые данные
       cryTableStore.loadPage(newFilters: [
         SkitFilter(
@@ -104,7 +100,6 @@ class _TableScreenState extends State<TableScreen> {
                       startOfWeek = startOfWeek.subtract(const Duration(days: 7));
                       endOfWeek = startOfWeek.add(const Duration(days: 6));
                     });
-                    print('TableScreen onLeftTap: New date range = $startOfWeek to $endOfWeek');
                     // Обновляем данные при изменении даты
                     _updateDataForDateRange();
                   },
@@ -113,7 +108,6 @@ class _TableScreenState extends State<TableScreen> {
                       startOfWeek = startOfWeek.add(const Duration(days: 7));
                       endOfWeek = startOfWeek.add(const Duration(days: 6));
                     });
-                    print('TableScreen onRightTap: New date range = $startOfWeek to $endOfWeek');
                     // Обновляем данные при изменении даты
                     _updateDataForDateRange();
                   },

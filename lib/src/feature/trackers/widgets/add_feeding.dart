@@ -50,33 +50,33 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
         timer.cancel();
         return;
       }
-      
+
       // Проверяем, что AddFeeding доступен
       if (_addFeeding == null) {
         return;
       }
-      
+
       // Во время экрана Confirm ничего не обновляем и не триггерим setState,
       // чтобы бейджи под кнопками не «тикали» визуально
       if (_addFeeding!.confirmFeedingTimer) {
         return;
       }
-      
+
       // Обновляем левый таймер если он запущен и не зафиксирован Confirm
       if (_addFeeding!.isLeftSideStart && !_addFeeding!.confirmFeedingTimer) {
         _addFeeding!.updateLeftTimerDisplay();
       }
-      
+
       // Обновляем правый таймер если он запущен и не зафиксирован Confirm
       if (_addFeeding!.isRightSideStart && !_addFeeding!.confirmFeedingTimer) {
         _addFeeding!.updateRightTimerDisplay();
       }
-      
+
       // Если оба таймера на паузе, обновляем время окончания под текущее время телефона
       if (!_addFeeding!.isLeftSideStart && !_addFeeding!.isRightSideStart) {
         _addFeeding!.setPausedEndToNow();
       }
-      
+
       // Обновляем UI для обновления времени в реальном времени
       setState(() {});
     });
@@ -95,7 +95,6 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
       }
     } catch (e) {
       // Store might not be available in this context, ignore
-      print('Could not refresh breast feeding history: $e');
     }
   }
 
@@ -170,7 +169,15 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                             t.trackers.currentEditTrackCountTextTitleFeed,
                         noteText: t.trackers.currentEditTrackCountTextFeed,
                         onPressNote: () {
-                          context.pushNamed(AppViews.addNote);
+                          context.pushNamed(AppViews.addNote, extra: {
+                            'initialValue': addFeeding.noteStore.content ?? '',
+                            'onSaved': (String value) {
+                              // Сохраняем заметку в store
+                              addFeeding.noteStore.setContent(value);
+                              // Очищаем store после сохранения, чтобы заметка не переносилась в другие модули
+                              Future.microtask(() => addFeeding.noteStore.setContent(null));
+                            },
+                          });
                         },
                         onPressSubmit: () {
                           addFeeding.confirmButtonPressed();
@@ -220,7 +227,7 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                                             const AddFeedingBreastManually());
                                   }),
                                 );
-                                
+
                                 // If a record was successfully added, refresh the history
                                 if (result == true && mounted) {
                                   widget.onHistoryRefresh?.call();
@@ -239,7 +246,21 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                           // Go back and continue - удалить запись и восстановить состояние паузы
                           await addFeeding.goBackAndContinue();
                         },
-                        onTapNote: () {}, //Todo Заметки
+                        onTapNote: () {
+                          context.pushNamed(AppViews.addNote, extra: {
+                            'initialValue': addFeeding.noteStore.content ?? '',
+                            'onSaved': (String value) async {
+                              // Сохраняем заметки в локальный store
+                              addFeeding.noteStore.setContent(value);
+                              // Обновляем заметки на сервере для уже сохраненной записи
+                              if (addFeeding.savedRecordId != null) {
+                                await addFeeding.updateFeedingNotes(addFeeding.savedRecordId!, value);
+                              }
+                              // Очищаем store после сохранения
+                              Future.microtask(() => addFeeding.noteStore.setContent(null));
+                            },
+                          });
+                        },
                       )
                     : const SizedBox(),
                 isFeedingCanceled

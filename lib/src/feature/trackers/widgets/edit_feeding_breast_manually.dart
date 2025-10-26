@@ -81,7 +81,6 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
       }
     } catch (e) {
       // Store might not be available in this context, ignore
-      print('Could not refresh breast feeding history: $e');
     }
   }
 
@@ -91,15 +90,8 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
     
     // Инициализируем форму только один раз с данными существующей записи
     if (!_isInitialized) {
-      print('EditFeeding: Initializing with record data:');
-      print('  - timeToEnd: ${widget.existingRecord.timeToEnd}');
-      print('  - allFeeding: ${widget.existingRecord.allFeeding}');
-      print('  - leftFeeding: ${widget.existingRecord.leftFeeding}');
-      print('  - rightFeeding: ${widget.existingRecord.rightFeeding}');
-      
       final endTime = DateTime.tryParse(widget.existingRecord.timeToEnd ?? '');
       if (endTime == null) {
-        print('EditFeeding: Failed to parse timeToEnd, using current time');
         final now = DateTime.now();
         _currentStartTime = now;
         _currentEndTime = now;
@@ -109,8 +101,6 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
         final startTime = endTime.subtract(Duration(minutes: widget.existingRecord.allFeeding ?? 0));
         _currentStartTime = startTime;
         _currentEndTime = endTime;
-        
-        print('EditFeeding: Calculated times - Start: ${DateFormat('HH:mm').format(startTime)}, End: ${DateFormat('HH:mm').format(endTime)}');
         
         formGroup.control('feedingBreastStart').value = DateFormat('HH:mm').format(startTime);
         formGroup.control('feedingBreastEnd').value = DateFormat('HH:mm').format(endTime);
@@ -132,8 +122,6 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
       _editAddFeeding!.timerEndTime = _currentEndTime!;
       _editAddFeeding!.startTimeManuallySet = true;
       _editAddFeeding!.endTimeManuallySet = true;
-      
-      print('EditFeeding: Initialized editAddFeeding - Start: ${DateFormat('HH:mm').format(_currentStartTime!)}, End: ${DateFormat('HH:mm').format(_currentEndTime!)}');
       
       _isInitialized = true;
     }
@@ -176,7 +164,6 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
             isTimerStart: false,
              onStartTimeChanged: (v) {
                if (v != null && v is String) {
-                 print('Start time changed to: $v');
                  try {
                    final time = DateFormat('HH:mm').parse(v);
                    
@@ -202,16 +189,13 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
                     _timeChanged = true;
                     setState(() {}); // Обновляем UI
                     
-                    print('Updated start time to: ${DateFormat('HH:mm').format(_currentStartTime!)}');
-                    print('Full start DateTime: $_currentStartTime');
                  } catch (e) {
-                   print('Error parsing start time: $e');
+                   // Error parsing start time
                  }
                }
              },
              onEndTimeChanged: (v) {
                if (v != null && v is String) {
-                 print('End time changed to: $v');
                  try {
                    final time = DateFormat('HH:mm').parse(v);
                    
@@ -237,10 +221,8 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
                     _timeChanged = true;
                     setState(() {}); // Обновляем UI
                     
-                    print('Updated end time to: ${DateFormat('HH:mm').format(_currentEndTime!)}');
-                    print('Full end DateTime: $_currentEndTime');
                  } catch (e) {
-                   print('Error parsing end time: $e');
+                   // Error parsing end time
                  }
                }
              },
@@ -279,10 +261,6 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
                    final startTime = _currentStartTime!;
                    final endTime = _currentEndTime!;
                    
-                   print('Feeding: Using times from editAddFeeding - Start: ${DateFormat('HH:mm').format(startTime)}, End: ${DateFormat('HH:mm').format(endTime)}');
-                   print('Feeding: Full start time: $startTime');
-                   print('Feeding: Full end time: $endTime');
-                   
                    Duration duration = endTime.difference(startTime);
                    // If end time is before start time, it means it's the next day
                    if (duration.isNegative) {
@@ -296,7 +274,6 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
                      manualLeftMinutes = halfTime;
                      manualRightMinutes = totalMinutes - halfTime;
                      
-                     print('Feeding: Edit form time changed - Total: ${totalMinutes}min, Left: ${manualLeftMinutes}min, Right: ${manualRightMinutes}min');
                    }
                  } else if (manualLeftMinutes == 0 && manualRightMinutes == 0) {
                    // If time wasn't changed and both values are 0, distribute total time equally
@@ -314,10 +291,9 @@ class _EditFeedingBreastManuallyState extends State<EditFeedingBreastManually> {
                      manualLeftMinutes = halfTime;
                      manualRightMinutes = totalMinutes - halfTime;
                      
-                     print('Feeding: Edit form auto-distribution - Total: ${totalMinutes}min, Left: ${manualLeftMinutes}min, Right: ${manualRightMinutes}min');
                    }
                  } else {
-                   print('Feeding: Edit form using manual values - Left: ${manualLeftMinutes}min, Right: ${manualRightMinutes}min');
+                   // Using manual values
                  }
                } catch (e) {
                 if (context.mounted) {

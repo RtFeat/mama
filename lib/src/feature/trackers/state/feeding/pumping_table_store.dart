@@ -89,8 +89,6 @@ abstract class _PumpingTableStore extends TableStore<EntityPumpingHistory> with 
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('PumpingTableStore _loadDataForChild: Loading for childId: $childId');
-    
     // Используем новый метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
   }
@@ -118,8 +116,6 @@ abstract class _PumpingTableStore extends TableStore<EntityPumpingHistory> with 
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('PumpingTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -137,8 +133,6 @@ abstract class _PumpingTableStore extends TableStore<EntityPumpingHistory> with 
         ),
       ],
     );
-    
-    print('PumpingTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @override

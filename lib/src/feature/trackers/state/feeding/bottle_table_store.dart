@@ -104,8 +104,6 @@ abstract class _BottleTableStore extends TableStore<EntityFood> with Store {
   void _loadDataForChild(String childId) {
     if (!_isActive || childId.isEmpty) return;
     
-    print('BottleTableStore _loadDataForChild: Loading for childId: $childId');
-    
     // Используем метод refreshForChild для полной перезагрузки
     refreshForChild(childId);
   }
@@ -133,8 +131,6 @@ abstract class _BottleTableStore extends TableStore<EntityFood> with Store {
   Future<void> refreshForChild(String childId) async {
     if (!_isActive || childId.isEmpty) return;
     
-    print('BottleTableStore refreshForChild: $childId');
-    
     // Сбрасываем все данные
     runInAction(() {
       listData.clear();
@@ -153,8 +149,6 @@ abstract class _BottleTableStore extends TableStore<EntityFood> with Store {
         ),
       ],
     );
-    
-    print('BottleTableStore refreshForChild completed: ${listData.length} items loaded');
   }
 
   @action

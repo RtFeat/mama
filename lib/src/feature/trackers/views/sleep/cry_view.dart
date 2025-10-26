@@ -112,7 +112,6 @@ class _CryScreenState extends State<CryScreen> {
       _cryTableStore.activate();
       
       final currentChildId = _cryTableStore.childId;
-      print('CryScreen _initializeStores: Current childId = $currentChildId');
       
       if (currentChildId.isNotEmpty) {
         // Загружаем данные плача
@@ -125,14 +124,14 @@ class _CryScreenState extends State<CryScreen> {
             ),
           ],
         ).then((_) {
-          print('CryScreen: Table loaded with ${_cryTableStore.listData.length} items');
+          // Table loaded
         });
       }
       
       // Создаем безопасную асинхронную операцию
       _loadInfoSafely();
     } catch (e) {
-      print('CryScreen _initializeStores error: $e');
+      // Error initializing stores
     }
   }
 
