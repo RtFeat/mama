@@ -80,8 +80,12 @@ vaccines:
   addNewVacField4Hint: Click to add a comment
   addNewVacButtonSave: Save
   calendarViewAppBar: Vaccination calendar
-  calendarViewRecomended: Recommended vaccination calendar
-  calendarViewIdeal: Perfect vaccination calendar
+  calendarViewRecomended: National vaccination calendar
+  calendarViewIdeal: Ideal vaccination calendar
+  calendarViewRecomendedShort: National
+  calendarViewIdealShort: Ideal
+  calendarViewRecomendedOrg: Ministry of Health of the Russian Federation
+  calendarViewIdealOrg: Union of Pediatricians of Russia
   calendarViewVOZ: World Health Organization (WHO)
   pdf: PDF
 

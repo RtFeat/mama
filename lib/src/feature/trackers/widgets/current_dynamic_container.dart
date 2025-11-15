@@ -70,32 +70,36 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      switch (trackerType) {
-                        EvolutionCategory.weight =>
-                          '${current.value ~/ 1} ${t.trackers.kg.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
-                        EvolutionCategory.growth =>
-                          '${current.value ~/ 1} ${t.trackers.cm.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
-                        EvolutionCategory.head =>
-                          '${current.value.toStringAsFixed(1)} ${t.trackers.cm.title.toLowerCase()}',
-                        _ => ''
-                      },
-                      // trackerType.currentLabel,
-                      style: AppTextStyles.f17w400.copyWith(
-                        color: AppColors.blackColor,
+                    Flexible(
+                      child: Text(
+                        switch (trackerType) {
+                          EvolutionCategory.weight =>
+                            '${current.value ~/ 1} ${t.trackers.kg.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
+                          EvolutionCategory.growth =>
+                            '${current.value ~/ 1} ${t.trackers.cm.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
+                          EvolutionCategory.head =>
+                            '${current.value.toStringAsFixed(1)} ${t.trackers.cm.title.toLowerCase()}',
+                          _ => ''
+                        },
+                        // trackerType.currentLabel,
+                        style: AppTextStyles.f17w400.copyWith(
+                          color: AppColors.blackColor,
+                        ),
                       ),
                     ),
                     5.w,
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 3),
-                      child: Text(
-                        current.isNormal,
-                        style: AppTextStyles.f10w700.copyWith(
-                          color: current.isNormal == 'Вне нормы' 
-                            ? AppColors.orangeTextColor 
-                            : AppColors.greenTextColor,
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 3),
+                        child: Text(
+                          current.isNormal,
+                          softWrap: true,
+                          style: AppTextStyles.f10w700.copyWith(
+                            color: current.isNormal == 'Вне нормы' 
+                              ? AppColors.orangeTextColor 
+                              : AppColors.greenTextColor,
+                          ),
                         ),
                       ),
                     ),

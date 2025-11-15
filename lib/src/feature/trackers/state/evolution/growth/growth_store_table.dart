@@ -232,6 +232,10 @@ abstract class _GrowthTableStore extends TableStore<EntityHistoryHeight>
             normWeightRange: '243-234',
             weightToGain: '234',
             note: currentEntity.notes,
+            viewNormsLabel: 'Смотреть нормы роста',
+            onViewNormsTap: () {
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onEdit: () {
               if (!_isActive || !builderContext.mounted) return;
               Navigator.of(builderContext).pop();

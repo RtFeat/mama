@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/core/utils/who_growth_standards.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
@@ -272,10 +273,27 @@ class _BodyState extends State<_Body> {
                           if (!_isActive || !mounted) {
                             return const SizedBox.shrink();
                           }
+                          // Generate WHO norms for height
+                          final userStore = context.read<UserStore>();
+                          final child = userStore.selectedChild;
+                          final gender = child?.gender?.name.toLowerCase() ?? 'male';
+                          
+                          final chartData = growthStore.chartData;
+                          // Extend norm range to cover full graph width
+                          final minAgeDays = 0;
+                          final maxAgeDays = chartData.isEmpty ? 730 : (chartData.last.x + 60).toInt();
+                          
+                          final normData = WHOGrowthStandards.getHeightNorms(
+                            minAgeDays: minAgeDays,
+                            maxAgeDays: maxAgeDays,
+                            gender: gender,
+                          );
+                          
                           return FlProgressChart(
                             min: growthStore.minValue,
                             max: growthStore.maxValue,
                             chartData: growthStore.chartData,
+                            normData: normData,
                           );
                         },
                       ),

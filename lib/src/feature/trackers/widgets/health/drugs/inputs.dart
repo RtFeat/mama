@@ -60,10 +60,6 @@ class _DrugsInputsState extends State<DrugsInputs> {
             titleStyle:
                 textTheme.bodySmall!.copyWith(color: AppColors.blackColor),
             maxLines: 1,
-            readOnly: true,
-            onTap: (value) {
-              store.incrementSpoons(context);
-            },
             onChanged: (value) {
               // doseValue = value;
             },

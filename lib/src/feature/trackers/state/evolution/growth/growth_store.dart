@@ -560,6 +560,9 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
     
     // Загружаем данные один раз
     await _loadHistoryData();
+    
+    // Также обновляем growthDetails для отображения текущих данных
+    await fetchGrowthDetails();
   }
 
   String _calculateDateRange() {

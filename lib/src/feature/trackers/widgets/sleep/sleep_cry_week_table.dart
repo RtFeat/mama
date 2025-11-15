@@ -288,7 +288,8 @@ class _SleepCryWeekTableState extends State<SleepCryWeekTable> {
   DateTime? _parseDateTime(String? dateTimeString) {
     if (dateTimeString == null) return null;
     try {
-      return DateTime.parse(dateTimeString);
+      final dt = DateTime.parse(dateTimeString);
+      return dt.isUtc ? dt.toLocal() : dt.toLocal();
     } catch (_) {
       return null;
     }

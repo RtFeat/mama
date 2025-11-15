@@ -14,6 +14,7 @@ class SleepMusicView extends StatelessWidget {
         audioPlayerStore: context.read(),
         apiClient: context.read<Dependencies>().apiClient,
       ),
+      dispose: (_, store) => store.dispose(),
       builder: (context, child) {
         final MusicStore store = context.watch<MusicStore>();
 
@@ -40,6 +41,12 @@ class __ContentState extends State<_Content>
     _tabController =
         TabController(initialIndex: widget.index, length: 3, vsync: this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
   }
 
   @override

@@ -27,6 +27,8 @@ class _LureScreenState extends State<LureScreen> {
   String _sortOrder = 'new';
   int _emojiIndex = 0; // 0=all, 1=🙂, 2=🤢, 3=⚠
   int _reloadTick = 0;
+  // Для мгновенного UI-обновления после удаления
+  final Set<String> _optimisticallyDeletedIds = <String>{};
 
   late final TemperatureInfoStore _infoStore;
 
@@ -145,6 +147,29 @@ class _LureHistoryState extends State<_LureHistory> {
   bool _showAll = false; // show full history or first N rows
   static const int _initialRowLimit = 13; // show "Вся история" only if > 6 rows
   int _reloadTick = 0; // Для принудительного обновления данных
+  // Оптимистично скрытые элементы (по id)
+  final Set<String> _optimisticallyDeletedIds = <String>{};
+  ReactionDisposer? _childReaction;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userStore = context.read<UserStore>();
+      _childReaction = reaction<String?>(
+        (_) => userStore.selectedChild?.id,
+        (_) {
+          if (mounted) setState(() => _reloadTick++);
+        },
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _childReaction?.call();
+    super.dispose();
+  }
 
   Map<String, String> _getLureFeedingInfoForRecord(EntityLureHistory record) {
     try {
@@ -173,7 +198,7 @@ class _LureHistoryState extends State<_LureHistory> {
       } else {
         // Нет реакции или неизвестная реакция
         if (gram >= 50) {
-          status = 'Нормальный прикорм';
+          status = 'Нормальный\n прикорм';
           statusColor = 'green';
         } else if (gram >= 20) {
           status = 'Мало съел';
@@ -187,13 +212,13 @@ class _LureHistoryState extends State<_LureHistory> {
       // Рассчитываем рекомендации
       String recommendation = '';
       if (reaction == 'allergy') {
-        recommendation = 'Исключить из рациона';
+        recommendation = 'Исключить\nиз рациона';
       } else if (reaction == 'dislike') {
-        recommendation = 'Попробовать позже';
+        recommendation = 'Попробовать\nпозже';
       } else if (gram < 30) {
         recommendation = 'Увеличить порцию';
       } else {
-        recommendation = 'Продолжать вводить';
+        recommendation = 'Продолжать\nвводить';
       }
       
       return {
@@ -229,7 +254,7 @@ class _LureHistoryState extends State<_LureHistory> {
       barrierColor: Colors.black.withOpacity(0.5),
       builder: (dialogContext) {
         int index = startIndex;
-        return StatefulBuilder(builder: (context, setState) {
+        return StatefulBuilder(builder: (context, setDialogState) {
           final rec = allForDay[index];
           
           // Получаем информацию о прикорме для конкретной записи
@@ -263,59 +288,53 @@ class _LureHistoryState extends State<_LureHistory> {
             weightToGain: feedingInfo['recommendation'] ?? '',
             note: rec.notes,
             viewNormsLabel: 'Смотреть нормы прикорма',
+            onViewNormsTap: () {
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onClose: () => Navigator.of(dialogContext).pop(),
             onEdit: () {
-              final parentContext = context;
               Navigator.of(dialogContext).pop();
+              // Обновим из родительского стейта, если он еще смонтирован
+              if (!mounted) return;
               WidgetsBinding.instance.addPostFrameCallback((_) async {
-                if (!parentContext.mounted) return;
+                if (!mounted) return;
                 final res = await router.pushNamed(AppViews.addLure, extra: rec);
-                if (res == true && parentContext.mounted) {
-                  setState(() => _reloadTick++);
+                if (res == true && mounted) {
+                  this.setState(() => _reloadTick++);
                 }
               });
             },
             onDelete: () async {
-              
-              if (rec.id == null || rec.id!.isEmpty) {
-                // Если нет ID, показываем сообщение
-                if (dialogContext.mounted) {
-                  Navigator.of(dialogContext).pop();
-                  ScaffoldMessenger.of(dialogContext).showSnackBar(
-                    const SnackBar(content: Text('Не удалось удалить запись: отсутствует ID')),
-                  );
+              // Если есть настоящий ID – используем его напрямую
+              if (rec.id != null && rec.id!.isNotEmpty && !rec.id!.startsWith('temp_')) {
+                // Optimistic UI remove
+                _optimisticallyDeletedIds.add(rec.id!);
+                if (mounted) this.setState(() {});
+                if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+                try {
+                  await deps.restClient.feed
+                      .deleteFeedLureDeleteStats(dto: FeedDeleteLureDto(id: rec.id!));
+                  if (mounted) {
+                    this.setState(() => _reloadTick++);
+                  }
+                } catch (error) {
+                  // Если прямое удаление по ID не удалось, переходим к fallback-стратегиям ниже
+                  _optimisticallyDeletedIds.remove(rec.id!);
+                  if (mounted) this.setState(() {});
                 }
                 return;
               }
-              
-              // Сначала закрываем диалог
-              if (dialogContext.mounted) {
-                Navigator.of(dialogContext).pop();
-              }
-              
-              // Попробуем несколько подходов для удаления
-              // Подход 1: Генерируем UUID на основе данных записи
-              final uuidId = _generateUuidForRecord(rec);
-              
+
+              // Fallback для записей без реального ID (старые данные): используем эвристики
+              final tempId = rec.id ?? 'temp_${rec.time}_${rec.nameProduct}_${rec.gram}';
+              _optimisticallyDeletedIds.add(tempId);
+              if (mounted) this.setState(() {});
+              if (dialogContext.mounted) Navigator.of(dialogContext).pop();
               try {
+                final uuidId = _generateUuidForRecord(rec);
                 await deps.restClient.feed
-                    .deleteFeedLureDeleteStats(
-                        dto: FeedDeleteLureDto(id: uuidId));
-                
-                // Show success message using the main context
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Запись удалена успешно!')),
-                  );
-                  // Обновляем данные с небольшой задержкой
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    if (context.mounted) {
-                      setState(() {
-                        _reloadTick++;
-                      });
-                    }
-                  });
-                }
+                    .deleteFeedLureDeleteStats(dto: FeedDeleteLureDto(id: uuidId));
+                if (mounted) this.setState(() => _reloadTick++);
               } catch (error) {
                 // Если не получилось с UUID, попробуем другой подход
                 try {
@@ -325,15 +344,7 @@ class _LureHistoryState extends State<_LureHistory> {
                   await deps.restClient.feed
                       .deleteFeedLureDeleteStats(
                           dto: FeedDeleteLureDto(id: simpleUuid));
-                  
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Запись удалена')),
-                    );
-                    setState(() {
-                      _reloadTick++;
-                    });
-                  }
+                  if (mounted) this.setState(() => _reloadTick++);
                 } catch (error2) {
                   // Подход 3: Попробуем использовать только имя продукта для UUID
                   try {
@@ -342,15 +353,7 @@ class _LureHistoryState extends State<_LureHistory> {
                     await deps.restClient.feed
                         .deleteFeedLureDeleteStats(
                             dto: FeedDeleteLureDto(id: productUuid));
-                    
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Запись удалена (по имени продукта)')),
-                      );
-                      setState(() {
-                        _reloadTick++;
-                      });
-                    }
+                    if (mounted) this.setState(() => _reloadTick++);
                   } catch (error3) {
                     
                     // Подход 4: Попробуем использовать время для UUID
@@ -360,15 +363,7 @@ class _LureHistoryState extends State<_LureHistory> {
                       await deps.restClient.feed
                           .deleteFeedLureDeleteStats(
                               dto: FeedDeleteLureDto(id: timeUuid));
-                      
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Запись удалена (по времени)')),
-                        );
-                        setState(() {
-                          _reloadTick++;
-                        });
-                      }
+                      if (mounted) this.setState(() => _reloadTick++);
                     } catch (error4) {
                       
                       // Если все подходы не работают, показываем сообщение
@@ -379,6 +374,10 @@ class _LureHistoryState extends State<_LureHistory> {
                             duration: Duration(seconds: 4),
                           ),
                         );
+                      }
+                      if (mounted) {
+                        _optimisticallyDeletedIds.remove(tempId);
+                        this.setState(() {});
                       }
                     }
                   }
@@ -520,13 +519,12 @@ class _LureHistoryState extends State<_LureHistory> {
         ),
         const SizedBox(height: 4),
         FutureBuilder<FeedResponseHistoryLure>(
-          key: ValueKey(_reloadTick),
+          key: ValueKey('${_reloadTick}-${context.watch<UserStore>().selectedChild?.id ?? ''}'),
           future: Provider.of<Dependencies>(context, listen: false)
               .restClient
               .feed
               .getFeedLureHistory(
-                childId:
-                    Provider.of<UserStore>(context, listen: false).selectedChild?.id ?? '',
+                childId: context.watch<UserStore>().selectedChild?.id ?? '',
                 pageSize: 200,
               ),
           builder: (context, snapshot) {
@@ -608,8 +606,10 @@ class _LureHistoryState extends State<_LureHistory> {
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                 final dayKey = sections[index].key;
-                final dateLabel = DateFormat('dd MMMM').format(DateTime.parse(dayKey));
-                final items = List<EntityLureHistory>.from(sections[index].value);
+                final String localeTag = t.$meta.locale.flutterLocale.toLanguageTag();
+                final dateLabel = DateFormat('dd MMMM', localeTag).format(DateTime.parse(dayKey));
+                final items = List<EntityLureHistory>.from(sections[index].value)
+                  ..removeWhere((e) => e.id != null && _optimisticallyDeletedIds.contains(e.id!));
 
                 final rows = <Widget>[];
                 String lastTime = '';

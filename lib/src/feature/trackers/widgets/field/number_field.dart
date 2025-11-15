@@ -48,6 +48,10 @@ class _NumberFieldState extends State<NumberField> {
     return TextField(
       controller: _controller,
       keyboardType: TextInputType.numberWithOptions(decimal: true),
+      textInputAction: TextInputAction.done,
+      onSubmitted: (_) {
+        FocusScope.of(context).unfocus();
+      },
       onChanged: _onChanged,
       textAlign: TextAlign.center,
       decoration: InputDecoration(

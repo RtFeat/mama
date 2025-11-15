@@ -238,14 +238,17 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
 
   DateTime _parseDateTime(String? dateTimeString) {
     if (dateTimeString == null) return DateTime.now();
-    
     try {
       if (dateTimeString.contains('T')) {
-        return DateTime.parse(dateTimeString);
+        final dt = DateTime.parse(dateTimeString);
+        // Convert to local time if parsed as UTC or with offset
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
       } else if (dateTimeString.contains(' ')) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+        // Treat as local wall time
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString).toLocal();
       } else {
-        return DateFormat('yyyy-MM-dd').parse(dateTimeString);
+        // Date only, keep as local date at midnight
+        return DateFormat('yyyy-MM-dd').parse(dateTimeString).toLocal();
       }
     } catch (e) {
       return DateTime.now();
@@ -257,11 +260,12 @@ abstract class _SleepTableStore extends TableStore<EntitySleep> with Store {
     
     try {
       if (dateTimeString.contains('T')) {
-        return DateTime.parse(dateTimeString);
+        final dt = DateTime.parse(dateTimeString);
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
       } else if (dateTimeString.contains(' ')) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString).toLocal();
       } else {
-        return DateFormat('yyyy-MM-dd').parse(dateTimeString);
+        return DateFormat('yyyy-MM-dd').parse(dateTimeString).toLocal();
       }
     } catch (e) {
       return DateTime(2024, 1, 1); // Стабильное значение

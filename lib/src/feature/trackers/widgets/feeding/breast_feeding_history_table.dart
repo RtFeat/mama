@@ -12,6 +12,7 @@ import 'package:mama/src/feature/trackers/state/add_feeding.dart';
 import 'package:mama/src/feature/notes/state/add_note.dart';
 import 'package:mama/src/feature/trackers/widgets/edit_feeding_breast_manually.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mama/src/core/constant/generated/strings.g.dart' as L;
 
 class BreastFeedingHistoryTableWidget extends StatefulWidget {
   const BreastFeedingHistoryTableWidget({super.key});
@@ -65,9 +66,14 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
   DateTime _parse(String? s) {
     if (s == null) return DateTime.now();
     try {
-      if (s.contains('T')) return DateTime.parse(s);
-      if (s.contains(' ')) return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s);
-      return DateFormat('yyyy-MM-dd').parse(s);
+      if (s.contains('T')) {
+        final d = DateTime.parse(s);
+        return d.isUtc ? d.toLocal() : d.toLocal();
+      }
+      if (s.contains(' ')) {
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s).toLocal();
+      }
+      return DateFormat('yyyy-MM-dd').parse(s).toLocal();
     } catch (_) {
       return DateTime.now();
     }
@@ -121,11 +127,15 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             weight: '${allMinutes}м',
             weightStatus: status,
             weightStatusColor: feedingStatusColor,
-            medianWeight: 'Левая: ${leftMinutes}м,\nПравая: ${rightMinutes}м',
-            normWeightRange: '5-60 минут',
-            weightToGain: allMinutes < 5 ? 'Увеличить время\nкормления' : 'Кормление в\n норме',
+            medianWeight: 'Л: ${leftMinutes}м,\nП: ${rightMinutes}м',
+            normWeightRange: '5-60 мин',
+            weightToGain: allMinutes < 5 ? 'Увеличить вре-\nмя кормления' : 'Кормление\nв норме',
             note: rec.notes,
             viewNormsLabel: 'Смотреть нормы кормления',
+            onViewNormsTap: () {
+              final router = GoRouter.of(parentContext);
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onClose: () => Navigator.of(dialogContext).pop(),
             onEdit: () {
               Navigator.of(dialogContext).pop();
@@ -325,7 +335,8 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
           itemBuilder: (context, index) {
             final inputFormat = DateFormat('yyyy-MM-dd');
             final input = inputFormat.parse(datesToShow[index]);
-            final dateLabel = DateFormat('dd MMMM').format(input);
+            final String localeTag = t.$meta.locale.flutterLocale.toLanguageTag();
+            final dateLabel = DateFormat('dd MMMM', localeTag).format(input);
             final dayItems = List<EntityFeeding>.from(grouped[datesToShow[index]] ?? [])
               ..sort((a, b) => _parse(a.timeToEnd).compareTo(_parse(b.timeToEnd)));
 

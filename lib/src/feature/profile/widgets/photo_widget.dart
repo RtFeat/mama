@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/core/utils/image_orientation_fixer.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePhoto extends StatelessWidget {
@@ -87,9 +88,11 @@ class ProfilePhoto extends StatelessWidget {
                     () async {
                       await picker
                           .pickImage(source: ImageSource.gallery)
-                          .then((value) {
+                          .then((value) async {
                         if (value != null) {
-                          userStore.updateAvatar(value);
+                          // Fix image orientation before uploading
+                          final fixedImage = await ImageOrientationFixer.fixOrientationAsXFile(value);
+                          userStore.updateAvatar(fixedImage);
                         }
                       });
                     },
@@ -137,9 +140,11 @@ class DashedPhotoProfile extends StatelessWidget {
           () {
             final ImagePicker picker = ImagePicker();
 
-            picker.pickImage(source: ImageSource.gallery).then((value) {
+            picker.pickImage(source: ImageSource.gallery).then((value) async {
               if (value != null) {
-                userStore.updateAvatar(value);
+                // Fix image orientation before uploading
+                final fixedImage = await ImageOrientationFixer.fixOrientationAsXFile(value);
+                userStore.updateAvatar(fixedImage);
               }
             });
           },

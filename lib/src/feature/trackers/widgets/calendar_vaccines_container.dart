@@ -5,10 +5,12 @@ import 'package:skit/skit.dart';
 
 class CalendarVaccineContainer extends StatelessWidget {
   final String nameCalendar;
+  final String organization;
   final VoidCallback onTapPDF;
   const CalendarVaccineContainer({
     super.key,
     required this.nameCalendar,
+    required this.organization,
     required this.onTapPDF,
   });
 
@@ -38,7 +40,7 @@ class CalendarVaccineContainer extends StatelessWidget {
                     ),
                     5.h,
                     Text(
-                      t.trackers.vaccines.calendarViewVOZ,
+                      organization,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                             fontSize: 14,
                             letterSpacing: -0.5,

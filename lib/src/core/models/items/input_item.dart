@@ -21,6 +21,7 @@ class InputItem extends BodyItem {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final MaskTextInputFormatter? maskFormatter;
+  final TextCapitalization textCapitalization;
 
   final Color? backgroundColor;
   final bool needBackgroundOnFocus;
@@ -47,6 +48,7 @@ class InputItem extends BodyItem {
     this.inputHintStyle,
     this.maskFormatter,
     this.keyboardType,
+    this.textCapitalization = TextCapitalization.words,
     super.titleStyle,
     super.maxLines,
     this.border,

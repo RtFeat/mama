@@ -52,10 +52,12 @@ dependencies:
   # sqlite3_flutter_libs: ^0.5.18
 
   # Logging
-  ispect: ^4.1.2
-  stack_trace: ^1.11.0
-  ispectify_dio: ^4.0.1
-  televerse: ^2.4.4
+  ispect: ^4.4.7
+  ispectify: ^4.4.7
+  ispectify_dio: ^4.4.7
+  stack_trace: ^1.12.1
+  televerse: ^3.0.1
+
   # sentry_flutter: ^8.9.0
   # logging: ^1.2.0
 
@@ -77,10 +79,11 @@ dependencies:
 
   # -- audio -- #
   audioplayers: ^6.1.0
-  record: ^5.2.0
+  record: 5.2.0
 
   # -- media -- #
   image_picker: ^1.1.2
+  image: ^4.5.4
   cached_network_image: ^3.4.1
   webview_flutter: ^4.10.0
   flutter_pdfview: ^1.3.3
@@ -182,5 +185,6 @@ icons_launcher:
     ios:
       enable: true
 dependency_overrides:
+  record_linux: 1.2.1
   skit:
-    path: D:/skit
+    path: ../skit

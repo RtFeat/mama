@@ -180,12 +180,21 @@ abstract class _ChildModel with Store {
   @JsonKey(name: 'birth_date', toJson: _birthDateToJson)
   DateTime? birthDate;
 
+  // Временное поле для хранения предыдущей даты рождения (не сериализуется)
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  DateTime? _previousBirthDate;
+
   @action
   setBirthDate(DateTime value) {
+    // Сохраняем старую дату перед обновлением
+    _previousBirthDate = birthDate;
     birthDate = value;
 
     isChanged = true;
   }
+
+  /// Получить предыдущую дату рождения (до последнего изменения)
+  DateTime? get previousBirthDate => _previousBirthDate;
 
   static String? _birthDateToJson(DateTime? date) {
     return date?.toUtc().toIso8601String();

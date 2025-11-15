@@ -157,9 +157,10 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
     if (dateTimeString == null) return DateTime.now();
     try {
       if (dateTimeString.contains('T')) {
-        return DateTime.parse(dateTimeString);
+        final dt = DateTime.parse(dateTimeString);
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
       } else if (dateTimeString.contains(' ')) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString).toLocal();
       } else if (dateTimeString.contains(':')) {
         // Если это только время в формате HH:mm, создаем дату на сегодня
         final timeParts = dateTimeString.split(':');
@@ -170,7 +171,7 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
           return DateTime(now.year, now.month, now.day, hour, minute);
         }
       } else {
-        return DateFormat('yyyy-MM-dd').parse(dateTimeString);
+        return DateFormat('yyyy-MM-dd').parse(dateTimeString).toLocal();
       }
     } catch (_) {
       return DateTime.now();
@@ -182,9 +183,10 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
     if (dateTimeString == null) return DateTime.now();
     try {
       if (dateTimeString.contains('T')) {
-        return DateTime.parse(dateTimeString);
+        final dt = DateTime.parse(dateTimeString);
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
       } else if (dateTimeString.contains(' ')) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString).toLocal();
       } else if (dateTimeString.contains(':')) {
         // Если это только время в формате HH:mm, используем дату из referenceDate
         final timeParts = dateTimeString.split(':');
@@ -195,7 +197,7 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
           return DateTime(baseDate.year, baseDate.month, baseDate.day, hour, minute);
         }
       } else {
-        return DateFormat('yyyy-MM-dd').parse(dateTimeString);
+        return DateFormat('yyyy-MM-dd').parse(dateTimeString).toLocal();
       }
     } catch (_) {
       return DateTime.now();
@@ -266,6 +268,10 @@ class _SleepHistoryTableWidgetState extends State<SleepHistoryTableWidget> {
             weightToGain: sleepInfo['toGain'] ?? '',
             note: rec.notes,
             viewNormsLabel: 'Смотреть нормы сна',
+            onViewNormsTap: () {
+              final router = GoRouter.of(pageContext);
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onClose: () => Navigator.of(dialogContext).pop(),
             onEdit: () {
               final parentContext = pageContext;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:mama/src/data.dart';
 
@@ -44,15 +46,61 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
             };
           },
         ) {
-    audioPlayerStore.player.onPlayerStateChanged.listen((event) {
-      if (event == PlayerState.completed && isLooping) {
-        runInAction(() {
-          nextMusic();
-          audioPlayerStore.play(selectedMusic!.source!);
-          audioPlayerStore.playerState = event;
-        });
+    _playerStateSub = audioPlayerStore.player.onPlayerStateChanged.listen(
+      (event) {
+        if (event == PlayerState.completed && isLooping) {
+          runInAction(() {
+            nextMusic();
+            if (selectedMusic?.source != null) {
+              audioPlayerStore.play(selectedMusic!.source!);
+            }
+            audioPlayerStore.playerState = event;
+          });
+        }
+      },
+    );
+
+    _sourceReaction = reaction<Source?>(
+      (_) => audioPlayerStore.source,
+      (source) {
+        if (source == null) {
+          setSelectedMusic(null);
+        } else {
+          _syncSelectedMusicWithPlayer(source);
+        }
+      },
+      fireImmediately: true,
+    );
+
+    _listDataReaction = reaction<int>(
+      (_) => listData.length,
+      (_) {
+        final Source? currentSource = audioPlayerStore.source;
+        if (selectedMusic == null && currentSource != null) {
+          _syncSelectedMusicWithPlayer(currentSource);
+        }
+      },
+    );
+  }
+
+  StreamSubscription<PlayerState>? _playerStateSub;
+  ReactionDisposer? _sourceReaction;
+  ReactionDisposer? _listDataReaction;
+
+  void _syncSelectedMusicWithPlayer(Source source) {
+    if (source is! UrlSource) return;
+    final Uri? uri = Uri.tryParse(source.url);
+    if (uri == null || uri.pathSegments.isEmpty) return;
+    final String trackId = uri.pathSegments.last;
+    if (selectedMusic?.id == trackId) {
+      return;
+    }
+    for (final TrackModel track in listData) {
+      if (track.id == trackId) {
+        setSelectedMusic(track);
+        break;
       }
-    });
+    }
   }
 
   @computed
@@ -98,5 +146,11 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
     if (selectedMusic != null) {
       setSelectedMusic(null);
     }
+  }
+
+  void dispose() {
+    _playerStateSub?.cancel();
+    _sourceReaction?.call();
+    _listDataReaction?.call();
   }
 }

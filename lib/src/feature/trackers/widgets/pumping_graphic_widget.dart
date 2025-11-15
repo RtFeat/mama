@@ -74,7 +74,8 @@ class _PumpingGraphicWidgetState extends State<PumpingGraphicWidget> {
             ? 0
             : (list.map((e) => e.general).reduce((a, b) => a + b) / list.length)
                 .round();
-        final rangeLabel = '${DateFormat('d MMMM').format(start)} - ${DateFormat('d MMMM').format(end)}';
+        final String localeTag = LocaleSettings.currentLocale.flutterLocale.toLanguageTag();
+        final rangeLabel = '${DateFormat('d MMMM', localeTag).format(start)} - ${DateFormat('d MMMM', localeTag).format(end)}';
         final averageLabel = '$avg мл в среднем в день';
 
         return Padding(
@@ -113,8 +114,9 @@ class _PumpingGraphicWidgetState extends State<PumpingGraphicWidget> {
       }
 
       // 7 последовательных дней выбранной недели
+      final String localeTag = LocaleSettings.currentLocale.flutterLocale.toLanguageTag();
       final DateFormat keyFmt = DateFormat('yyyy-MM-dd');
-      final DateFormat labelFmt = DateFormat('E d');
+      final DateFormat labelFmt = DateFormat('E d', localeTag);
       final List<GraphicData> result = [];
       for (int i = 0; i < 7; i++) {
         final d = start.add(Duration(days: i));
@@ -145,7 +147,8 @@ class _PumpingGraphicWidgetState extends State<PumpingGraphicWidget> {
 
   List<GraphicData> _emptyWeek() {
     final (start, _) = _currentWeekRange(0);
-    final DateFormat labelFmt = DateFormat('E d');
+    final String localeTag = LocaleSettings.currentLocale.flutterLocale.toLanguageTag();
+    final DateFormat labelFmt = DateFormat('E d', localeTag);
     final List<GraphicData> list = [];
     for (int i = 0; i < 7; i++) {
       final d = start.add(Duration(days: i));

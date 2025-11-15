@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:typed_data';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
@@ -159,6 +163,42 @@ class PdfService {
       onSuccess: onSuccess,
       onError: onError,
     );
+  }
+
+  // Open local PDF from assets
+  static Future<void> openLocalVaccinePdf({
+    required BuildContext context,
+    required String assetPath,
+    required String title,
+    VoidCallback? onStart,
+    VoidCallback? onSuccess,
+    void Function(String message)? onError,
+  }) async {
+    if (!context.mounted) return;
+
+    try {
+      onStart?.call();
+
+      // Load PDF from assets
+      final ByteData data = await rootBundle.load(assetPath);
+      final Uint8List bytes = data.buffer.asUint8List();
+
+      // Save to temporary directory
+      final dir = await getTemporaryDirectory();
+      final path = '${dir.path}/${assetPath.split('/').last}';
+      final file = File(path);
+      await file.writeAsBytes(bytes);
+
+      if (context.mounted) {
+        context.pushNamed(AppViews.pdfView, extra: {
+          'path': file.path,
+          'title': title,
+        });
+      }
+      onSuccess?.call();
+    } catch (e) {
+      onError?.call('Не удалось открыть PDF-файл');
+    }
   }
 
   static Future<void> generateAndViewDiapersPdf({

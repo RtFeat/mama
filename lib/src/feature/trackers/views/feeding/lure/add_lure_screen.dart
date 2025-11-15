@@ -114,16 +114,19 @@ class _AddLureScreenState extends State<AddLureScreen> {
 
     final bool canSubmit = _productController.text.trim().isNotEmpty;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        height: 55,
-        titleWidget: Text(
-          t.feeding.addComplementaryFood,
-          style: textTheme.titleMedium?.copyWith(color: AppColors.darkSlateBlue),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          height: 55,
+          titleWidget: Text(
+            t.feeding.addComplementaryFood,
+            style: textTheme.titleMedium?.copyWith(color: AppColors.darkSlateBlue),
+          ),
         ),
-      ),
-      body: SafeArea(
+        body: SafeArea(
         child: Container(
           color: Colors.white,
           child: SingleChildScrollView(
@@ -309,6 +312,7 @@ class _AddLureScreenState extends State<AddLureScreen> {
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -371,7 +375,9 @@ class _AddLureScreenState extends State<AddLureScreen> {
                     const SizedBox(height: 6),
                     TextField(
                       controller: _gramsController,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         filled: true,
@@ -471,7 +477,9 @@ class _AddLureScreenState extends State<AddLureScreen> {
                     const SizedBox(height: 6),
                     TextField(
                       controller: entry.grams,
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => FocusScope.of(context).unfocus(),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         filled: true,

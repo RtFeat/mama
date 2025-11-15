@@ -25,7 +25,7 @@ class _AddNoteViewState extends State<AddNoteView> {
   void initState() {
     super.initState();
     controller = TextEditingController(
-        text: widget.initialValue ?? widget.store?.content);
+        text: widget.initialValue ?? '');
   }
 
   @override
@@ -84,7 +84,7 @@ class _BtmBarWidget extends StatelessWidget {
                 backgroundColor: AppColors.redLighterBackgroundColor,
                 onTap: () {
                   store.setContent(null);
-                  onSaved?.call('');
+                  controller?.clear();
                   context.pop();
                 },
               )),
@@ -97,8 +97,17 @@ class _BtmBarWidget extends StatelessWidget {
                           onTap: value.text.isEmpty
                               ? null
                               : () {
-                                  store.setContent(controller?.text);
-                                  onSaved?.call(controller!.text);
+                                  final text = controller!.text;
+                                  if (onSaved != null) {
+                                    onSaved!(text);
+                                    // Когда вызывается явный onSaved (история), очищаем локальное состояние сразу
+                                    store.setContent(null);
+                                    controller?.clear();
+                                  } else {
+                                    // Когда экран заметки используется без колбэка (таймер/ручные экраны),
+                                    // сохраняем в сторе, чтобы родитель прочитал после pop
+                                    store.setContent(text);
+                                  }
                                   context.pop();
                                 },
                           maxLines: 1,

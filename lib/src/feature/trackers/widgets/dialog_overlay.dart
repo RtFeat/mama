@@ -19,6 +19,7 @@ class MeasurementDetails {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final String? viewNormsLabel;
+  final VoidCallback? onViewNormsTap;
 
   final VoidCallback? onNoteEdit;
   final VoidCallback? onNoteDelete;
@@ -47,6 +48,7 @@ class MeasurementDetails {
     this.onNextWeekTap,
     this.onPreviousWeekTap,
     this.viewNormsLabel,
+    this.onViewNormsTap,
   });
 }
 
@@ -137,7 +139,10 @@ class MeasurementOverlay extends StatelessWidget {
               const SizedBox(height: 8),
               _MeasurementCard(details: details),
               const SizedBox(height: 8),
-              _ViewNormsButton(label: details.viewNormsLabel ?? 'Смотреть нормы веса'),
+              _ViewNormsButton(
+                label: details.viewNormsLabel ?? 'Смотреть нормы веса',
+                onTap: details.onViewNormsTap,
+              ),
               if (details.note != null && details.note!.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 _NoteCard(details: details),
@@ -212,38 +217,51 @@ class _MeasurementCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                details.currentWeek,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 17,
-                  fontFamily: 'SF Pro Text',
-                  fontWeight: FontWeight.w400,
+              Flexible(
+                flex: 0,
+                child: Text(
+                  details.currentWeek,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 17,
+                    fontFamily: 'SF Pro Text',
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
-              16.w,
-              Row(
-                children: [
-                  Text(
-                    details.weight,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 17,
-                      fontFamily: 'SF Pro Text',
-                      fontWeight: FontWeight.w400,
+              12.w,
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      details.weight,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 17,
+                        fontFamily: 'SF Pro Text',
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    details.weightStatus,
-                    style: TextStyle(
-                      color: details.weightStatusColor,
-                      fontSize: 10,
-                      fontFamily: 'SF Pro Text',
-                      fontWeight: FontWeight.w700,
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        details.weightStatus,
+                        softWrap: true,
+                        maxLines: 2,
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                          color: details.weightStatusColor,
+                          fontSize: 10,
+                          fontFamily: 'SF Pro Text',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -309,6 +327,7 @@ class _InfoColumn extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (icon != null) ...[
               Icon(icon, size: 14, color: AppColors.greenLightTextColor),
@@ -332,15 +351,14 @@ class _InfoColumn extends StatelessWidget {
 
 class _ViewNormsButton extends StatelessWidget {
   final String label;
-  const _ViewNormsButton({super.key, required this.label});
+  final VoidCallback? onTap;
+  const _ViewNormsButton({super.key, required this.label, this.onTap});
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          // TODO:Handle tap
-        },
+        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
           height: 48,

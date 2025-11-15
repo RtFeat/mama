@@ -74,9 +74,13 @@ vaccines:
   addNewVacField4Hint: Нажмите, чтобы добавить комментарий
   addNewVacButtonSave: Сохранить
   calendarViewAppBar: Календарь прививок
-  calendarViewRecomended: Рекомендуемый календарь прививок
+  calendarViewRecomended: Национальный календарь прививок
   calendarViewIdeal: Идеальный календарь прививок
-  calendarViewVOZ: Всемирная Организация Здравоохранения (ВОЗ)
+  calendarViewRecomendedShort: Национальный
+  calendarViewIdealShort: Идеальный
+  calendarViewRecomendedOrg: Министерство здравоохранения РФ
+  calendarViewIdealOrg: Союз педиатров РФ
+  calendarViewVOZ: Министерство здравоохранения РФ
   pdf: ПДФ
 
 finishMedicine:

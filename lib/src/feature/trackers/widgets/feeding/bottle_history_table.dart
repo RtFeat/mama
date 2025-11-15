@@ -62,10 +62,10 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
       String status;
       String statusColor;
       if (total >= 120) { // 120+ мл = хорошее кормление
-        status = 'Хорошее кормление';
+        status = 'Хорошее\nкормление';
         statusColor = 'green';
       } else if (total >= 80) { // 80-120 мл = среднее кормление
-        status = 'Среднее кормление';
+        status = 'Среднее\nкормление';
         statusColor = 'orange';
       } else { // < 80 мл = мало еды
         status = 'Мало еды';
@@ -145,6 +145,10 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
             weightToGain: feedingInfo['toGain'] ?? '',
             note: rec.notes,
             viewNormsLabel: 'Смотреть нормы кормления',
+            onViewNormsTap: () {
+              final router = GoRouter.of(parentContext);
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onClose: () => Navigator.of(dialogContext).pop(),
           onEdit: () {
             Navigator.of(dialogContext).pop();
@@ -186,12 +190,7 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
                     .deleteFeedFoodDeleteStats(
                         dto: FeedDeleteFoodDto(id: rec.id!));
                 
-                // Show success message using the main context - проверяем mounted
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Запись удалена')),
-                  );
-                }
+                // Убираем показ SnackBar, чтобы избежать ошибок контекста после закрытия диалога
                 
                 // Notify chart to refresh immediately
                 widget.onRefreshRequested?.call();
@@ -205,12 +204,7 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
                 // В случае ошибки возвращаем запись обратно в список
                 store.listData.add(rec);
                 
-                // Show error message using the main context - проверяем mounted
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Ошибка при удалении записи: ${error.toString()}')),
-                  );
-                }
+                // В случае ошибки можно добавить обработку в родительском экране через onRefreshRequested
               }
             } : null,
           onNoteEdit: () async {
@@ -330,9 +324,14 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
   DateTime _parse(String? s) {
     if (s == null) return DateTime.now();
     try {
-      if (s.contains('T')) return DateTime.parse(s);
-      if (s.contains(' ')) return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s);
-      return DateFormat('yyyy-MM-dd').parse(s);
+      if (s.contains('T')) {
+        final d = DateTime.parse(s);
+        return d.isUtc ? d.toLocal() : d.toLocal();
+      }
+      if (s.contains(' ')) {
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s).toLocal();
+      }
+      return DateFormat('yyyy-MM-dd').parse(s).toLocal();
     } catch (_) {
       return DateTime.now();
     }
@@ -505,7 +504,8 @@ class _BottleHistoryTableWidgetState extends State<BottleHistoryTableWidget> {
           itemBuilder: (context, index) {
             final dateKey = sections[index].key;
             final input = DateFormat('yyyy-MM-dd').parse(dateKey);
-            final dateLabel = DateFormat('dd MMMM').format(input);
+            final String localeTag = t.$meta.locale.flutterLocale.toLanguageTag();
+            final dateLabel = DateFormat('dd MMMM', localeTag).format(input);
             final fullDayItems = List<EntityFood>.from(grouped[dateKey] ?? [])
               ..sort((a, b) => _parse(a.timeToEnd).compareTo(_parse(b.timeToEnd)));
             final dayItems = List<EntityFood>.from(sections[index].value)

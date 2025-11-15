@@ -232,6 +232,10 @@ abstract class _WeightTableStore extends TableStore<EntityHistoryWeight>
             normWeightRange: '243-234',
             weightToGain: '234',
             note: currentEntity.notes,
+            viewNormsLabel: 'Смотреть нормы веса',
+            onViewNormsTap: () {
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onEdit: () {
               if (!_isActive || !builderContext.mounted) return;
               Navigator.of(builderContext).pop();

@@ -799,16 +799,25 @@ abstract class _AddFeeding with Store {
     
     // Only calculate durations if timers were actually used (not manual mode)
     if (!startTimeManuallySet && !endTimeManuallySet) {
-      final leftDuration = leftPauseTime != null 
-          ? leftPauseTime!.difference(leftTimerStartTime ?? timerStartTime)
-          : timerEndTime!.difference(leftTimerStartTime ?? timerStartTime);
-      
-      final rightDuration = rightPauseTime != null 
-          ? rightPauseTime!.difference(rightTimerStartTime ?? timerStartTime)
-          : timerEndTime!.difference(rightTimerStartTime ?? timerStartTime);
+      // Compute LEFT only if left timer was ever started
+      if (leftTimerStartTime != null) {
+        final leftDuration = leftPauseTime != null
+            ? leftPauseTime!.difference(leftTimerStartTime!)
+            : timerEndTime!.difference(leftTimerStartTime!);
+        leftMinutes = leftDuration.inMinutes.abs();
+      } else {
+        leftMinutes = 0;
+      }
 
-      leftMinutes = leftDuration.inMinutes.abs();
-      rightMinutes = rightDuration.inMinutes.abs();
+      // Compute RIGHT only if right timer was ever started
+      if (rightTimerStartTime != null) {
+        final rightDuration = rightPauseTime != null
+            ? rightPauseTime!.difference(rightTimerStartTime!)
+            : timerEndTime!.difference(rightTimerStartTime!);
+        rightMinutes = rightDuration.inMinutes.abs();
+      } else {
+        rightMinutes = 0;
+      }
     }
     
     // If manual values are provided (from manual input screen), use them instead

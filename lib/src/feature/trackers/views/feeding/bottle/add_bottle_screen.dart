@@ -177,26 +177,7 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                               fontSize: 17,
                             ),
                         onTap: () async {
-                          // Сохраняем текущий ввод
-                          if (_type == BottleType.breast) {
-                            _breastMl = _ml;
-                            _breastAdded = true;
-                          } else {
-                            _formulaMl = _ml;
-                            _formulaAdded = true;
-                          }
-                          
-                          // Переключаем на следующий тип, если он еще не добавлен
-                          if (!_breastAdded) {
-                            setState(() => _type = BottleType.breast);
-                            return;
-                          }
-                          if (!_formulaAdded) {
-                            setState(() => _type = BottleType.formula);
-                            return;
-                          }
-                          
-                          // Если оба типа добавлены, отправляем данные
+                          // Сохраняем одну запись по текущему выбранному типу без автопереключения
                           final deps = context.read<Dependencies>();
                           final user = context.read<UserStore>();
                           final childId = user.selectedChild?.id;
@@ -207,13 +188,9 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                           final timeToEnd = DateFormat('yyyy-MM-dd HH:mm:ss.SSS')
                               .format(when.toUtc());
 
-                          final dto = FeedInsertFoodDto(
-                            childId: childId,
-                            timeToEnd: timeToEnd,
-                            chest: _breastMl,
-                            mixture: _formulaMl,
-                            notes: _noteText,
-                          );
+                          final bool isBreast = _type == BottleType.breast;
+                          final int chestMl = isBreast ? _ml : 0;
+                          final int mixtureMl = isBreast ? 0 : _ml;
 
                           try {
                             if (existingRec != null && (existingRec!.id?.isNotEmpty == true)) {
@@ -222,8 +199,8 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                                 'id': existingRec!.id,
                                 'child_id': childId,
                                 'time_to_end': timeToEnd,
-                                if (_breastMl != null) 'chest': _breastMl,
-                                if (_formulaMl != null) 'mixture': _formulaMl,
+                                'chest': chestMl,
+                                'mixture': mixtureMl,
                               });
                               if (_noteText != null) {
                                 await deps.apiClient.patch('feed/food/notes', body: {
@@ -232,6 +209,13 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                                 });
                               }
                             } else {
+                              final dto = FeedInsertFoodDto(
+                                childId: childId,
+                                timeToEnd: timeToEnd,
+                                chest: chestMl,
+                                mixture: mixtureMl,
+                                notes: _noteText,
+                              );
                               await deps.restClient.feed.postFeedFood(dto: dto);
                             }
                             if (mounted) {
@@ -239,7 +223,6 @@ class _AddBottleScreenState extends State<AddBottleScreen> {
                               setState(() {
                                 _noteText = null;
                               });
-                              // Небольшая задержка для обеспечения обновления сервера
                               await Future.delayed(const Duration(milliseconds: 200));
                               context.pop(true);
                             }

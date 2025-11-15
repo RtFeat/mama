@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mama/src/data.dart';
+import 'package:mama/src/core/utils/capitalize_formatter.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:skit/skit.dart';
 
@@ -62,7 +63,10 @@ class _InputItemWidgetState extends State<InputItemWidget> {
           ),
       maxLines: widget.item.maxLines,
       keyboardType: widget.item.keyboardType,
+      textCapitalization: widget.item.textCapitalization,
       inputFormatters: [
+        if (widget.item.textCapitalization == TextCapitalization.words)
+          CapitalizeWordsFormatter(),
         if (widget.item.maskFormatter != null) widget.item.maskFormatter!
       ],
       onTap: (control) {
@@ -79,14 +83,16 @@ class _InputItemWidgetState extends State<InputItemWidget> {
         if (widget.item.onSubmitted != null) {
           widget.item.onSubmitted!(control.value as String?);
         }
+        FocusScope.of(context).unfocus();
       },
       onEditingComplete: (control) {
         if (widget.item.onEditingComplete != null) {
           widget.item.onEditingComplete!(control.value as String?);
         }
+        FocusScope.of(context).unfocus();
       },
       textAlign: widget.item.textAlign ?? TextAlign.start,
-      textInputAction: widget.item.textInputAction,
+      textInputAction: widget.item.textInputAction ?? TextInputAction.done,
       formControlName: widget.item.controlName,
       onTapOutside: (event) {},
       readOnly: widget.item.readOnly ?? false,

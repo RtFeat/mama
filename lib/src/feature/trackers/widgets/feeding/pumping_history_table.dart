@@ -8,6 +8,7 @@ import 'package:mama/src/feature/trackers/widgets/dialog_overlay.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:skit/skit.dart';
 import 'package:mama/src/core/api/models/feed_delete_pumping_dto.dart';
+// Using t from data.dart for locale
 
 class PumpingHistoryTableWidgetWrapper extends StatelessWidget {
   final void Function(bool showSavedBanner)? showSavedBanner;
@@ -44,10 +45,10 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
       String status;
       String statusColor;
       if (total >= 100) { // 100+ мл = хорошее сцеживание
-        status = 'Хорошее сцеживание';
+        status = 'Хорошее\nсцеживание';
         statusColor = 'green';
       } else if (total >= 50) { // 50-100 мл = среднее сцеживание
-        status = 'Среднее сцеживание';
+        status = 'Среднее\nсцеживание';
         statusColor = 'orange';
       } else { // < 50 мл = мало молока
         status = 'Мало молока';
@@ -127,6 +128,10 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
             weightToGain: pumpingInfo['toGain'] ?? '',
             note: rec.notes,
             viewNormsLabel: 'Смотреть нормы сцеживания',
+            onViewNormsTap: () {
+              final router = GoRouter.of(parentContext);
+              router.pushNamed(AppViews.serviceKnowlegde);
+            },
             onClose: () => Navigator.of(dialogContext).pop(),
             onEdit: () {
               Navigator.of(dialogContext).pop();
@@ -169,13 +174,7 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
                 await deps.restClient.feed
                     .deleteFeedPumpingDeleteStats(
                         dto: FeedDeletePumpingDto(id: rec.id!));
-                
-                // Show success message using the main context
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Запись удалена')),
-                  );
-                }
+                // Do not show SnackBar here to avoid context issues after dialog close
                 
                 // Refresh data from server in background to ensure consistency
                 final childId = userStore.selectedChild?.id;
@@ -185,12 +184,7 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
               } catch (error) {
                 // В случае ошибки возвращаем запись обратно в список
                 store.listData.add(rec);
-                
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Ошибка при удалении записи: ${error.toString()}')),
-                  );
-                }
+                // Optionally report error elsewhere; avoid SnackBar here
               }
             } : null,
             onNoteEdit: () async {
@@ -350,9 +344,14 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
   DateTime _parse(String? s) {
     if (s == null) return DateTime.now();
     try {
-      if (s.contains('T')) return DateTime.parse(s);
-      if (s.contains(' ')) return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s);
-      return DateFormat('yyyy-MM-dd').parse(s);
+      if (s.contains('T')) {
+        final d = DateTime.parse(s);
+        return d.isUtc ? d.toLocal() : d.toLocal();
+      }
+      if (s.contains(' ')) {
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s).toLocal();
+      }
+      return DateFormat('yyyy-MM-dd').parse(s).toLocal();
     } catch (_) {
       return DateTime.now();
     }
@@ -537,7 +536,8 @@ class _PumpingHistoryTableWidgetState extends State<PumpingHistoryTableWidget> {
             itemBuilder: (context, index) {
               final dateKey = sections[index].key;
               final input = DateFormat('yyyy-MM-dd').parse(dateKey);
-              final dateLabel = DateFormat('dd MMMM').format(input);
+              final String localeTag = t.$meta.locale.flutterLocale.toLanguageTag();
+              final dateLabel = DateFormat('dd MMMM', localeTag).format(input);
               final fullDayItems = List<EntityPumpingHistory>.from(grouped[dateKey] ?? [])
                 ..sort((a, b) => _parse(a.time).compareTo(_parse(b.time)));
               final dayItems = List<EntityPumpingHistory>.from(sections[index].value)

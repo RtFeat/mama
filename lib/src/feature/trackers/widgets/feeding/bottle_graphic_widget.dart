@@ -112,7 +112,7 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
             maximum: safeMax.toDouble(),
             interval: step.toDouble(),
             rangeLabel:
-                '${DateFormat('d MMMM').format(start)} - ${DateFormat('d MMMM').format(end)}',
+                '${DateFormat('d MMMM', LocaleSettings.currentLocale.flutterLocale.toLanguageTag()).format(start)} - ${DateFormat('d MMMM', LocaleSettings.currentLocale.flutterLocale.toLanguageTag()).format(end)}',
             averageLabel: '$avg мл в среднем в день',
             onPrev: () {
               setState(() {
@@ -183,7 +183,7 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
 
       final (start, _) = _currentWeekRange(weekOffset);
       final DateFormat keyFmt = DateFormat('yyyy-MM-dd');
-      final DateFormat labelFmt = DateFormat('E d');
+      final DateFormat labelFmt = DateFormat('E d', LocaleSettings.currentLocale.flutterLocale.toLanguageTag());
       final List<GraphicData> result = [];
       for (int i = 0; i < 7; i++) {
         final d = start.add(Duration(days: i));
@@ -213,7 +213,7 @@ class _BottleGraphicWidgetState extends State<BottleGraphicWidget> {
 
   List<GraphicData> _emptyWeek() {
     final (start, _) = _currentWeekRange(0);
-    final DateFormat labelFmt = DateFormat('E d');
+    final DateFormat labelFmt = DateFormat('E d', LocaleSettings.currentLocale.flutterLocale.toLanguageTag());
     final List<GraphicData> list = [];
     for (int i = 0; i < 7; i++) {
       final d = start.add(Duration(days: i));

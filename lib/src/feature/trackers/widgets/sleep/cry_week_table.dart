@@ -202,9 +202,12 @@ class CryWeekTableWidget extends StatelessWidget {
   DateTime? _tryParse(String? v) {
     if (v == null || v.isEmpty) return null;
     try {
-      if (v.contains('T')) return DateTime.parse(v);
+      if (v.contains('T')) {
+        final dt = DateTime.parse(v);
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
+      }
       if (v.contains(' ')) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(v);
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(v).toLocal();
       }
       if (v.contains(':')) {
         // Если это только время в формате HH:mm, создаем дату на сегодня
@@ -216,7 +219,7 @@ class CryWeekTableWidget extends StatelessWidget {
           return DateTime(now.year, now.month, now.day, hour, minute);
         }
       }
-      return DateFormat('yyyy-MM-dd').parse(v);
+      return DateFormat('yyyy-MM-dd').parse(v).toLocal();
     } catch (_) {
       return null;
     }

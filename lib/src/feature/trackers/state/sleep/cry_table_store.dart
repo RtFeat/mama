@@ -179,8 +179,8 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
     
     final List<List<TableItem>> result = [];
     for (final e in listData) {
-      final start = DateTime.tryParse(e.timeToStart ?? '') ?? DateTime.now();
-      DateTime end = DateTime.tryParse(e.timeEnd ?? '') ?? start;
+      final start = _parseToLocal(e.timeToStart);
+      DateTime end = _parseToLocal(e.timeEnd);
       if (end.isBefore(start)) {
         end = end.add(const Duration(days: 1));
       }
@@ -205,9 +205,12 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
   static DateTime _parseDateStatic(String? date) {
     if (date == null) return DateTime(2024, 1, 1); // Стабильное значение
     try {
-      if (date.contains('T')) return DateTime.parse(date);
-      if (date.contains(' ')) return DateFormat('yyyy-MM-dd HH:mm:ss').parse(date);
-      return DateFormat('yyyy-MM-dd').parse(date);
+      if (date.contains('T')) {
+        final dt = DateTime.parse(date);
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
+      }
+      if (date.contains(' ')) return DateFormat('yyyy-MM-dd HH:mm:ss').parse(date).toLocal();
+      return DateFormat('yyyy-MM-dd').parse(date).toLocal();
     } catch (_) {
       return DateTime(2024, 1, 1); // Стабильное значение
     }
@@ -219,6 +222,25 @@ abstract class _CryTableStore extends TableStore<EntityCry> with Store {
       return DateFormat('HH:mm').parse(t);
     } catch (_) {
       return DateTime(2024, 1, 1, 12, 0); // Стабильное значение
+    }
+  }
+
+  static DateTime _parseToLocal(String? value) {
+    if (value == null || value.isEmpty) return DateTime.now();
+    try {
+      if (value.contains('T')) {
+        final dt = DateTime.parse(value);
+        return dt.isUtc ? dt.toLocal() : dt.toLocal();
+      }
+      if (value.contains(' ')) return DateFormat('yyyy-MM-dd HH:mm:ss').parse(value).toLocal();
+      if (value.contains(':')) {
+        final time = DateFormat('HH:mm').parse(value);
+        final now = DateTime.now();
+        return DateTime(now.year, now.month, now.day, time.hour, time.minute);
+      }
+      return DateFormat('yyyy-MM-dd').parse(value).toLocal();
+    } catch (_) {
+      return DateTime.now();
     }
   }
 }

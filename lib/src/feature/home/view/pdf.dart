@@ -106,6 +106,11 @@ class _PdfViewState extends State<PdfView> {
     return Scaffold(
       appBar: CustomAppBar(
         title: _getDocumentTitle(),
+        titleTextStyle: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          fontSize: 18,
+          color: AppColors.blueDark,
+          fontWeight: FontWeight.w600,
+        ),
         leading: const CustomBackButton(),
         action: _totalPages > 0
             ? Padding(

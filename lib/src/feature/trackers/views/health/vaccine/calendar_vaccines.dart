@@ -34,12 +34,13 @@ class _CalendarVaccinesState extends State<CalendarVaccines> {
           children: [
             CalendarVaccineContainer(
               nameCalendar: t.trackers.vaccines.calendarViewRecomended,
+              organization: t.trackers.vaccines.calendarViewRecomendedOrg,
               onTapPDF: () {
-                PdfService.generateAndViewVaccinePdf(
+                PdfService.openLocalVaccinePdf(
                   context: context,
-                  typeOfPdf: 'recommended',
-                  title: t.trackers.vaccines.calendarViewRecomended,
-                  onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
+                  assetPath: 'assets/docs/National.pdf',
+                  title: t.trackers.vaccines.calendarViewRecomendedShort,
+                  onStart: () => _showSnack(context, 'Открытие PDF...', bg: const Color(0xFFE1E6FF)),
                   onSuccess: () {},
                   onError: (message) => _showSnack(context, message),
                 );
@@ -48,12 +49,13 @@ class _CalendarVaccinesState extends State<CalendarVaccines> {
             16.h,
             CalendarVaccineContainer(
               nameCalendar: t.trackers.vaccines.calendarViewIdeal,
+              organization: t.trackers.vaccines.calendarViewIdealOrg,
               onTapPDF: () {
-                PdfService.generateAndViewVaccinePdf(
+                PdfService.openLocalVaccinePdf(
                   context: context,
-                  typeOfPdf: 'ideal',
-                  title: t.trackers.vaccines.calendarViewIdeal,
-                  onStart: () => _showSnack(context, 'Генерация PDF...', bg: const Color(0xFFE1E6FF)),
+                  assetPath: 'assets/docs/Ideal.pdf',
+                  title: t.trackers.vaccines.calendarViewIdealShort,
+                  onStart: () => _showSnack(context, 'Открытие PDF...', bg: const Color(0xFFE1E6FF)),
                   onSuccess: () {},
                   onError: (message) => _showSnack(context, message),
                 );

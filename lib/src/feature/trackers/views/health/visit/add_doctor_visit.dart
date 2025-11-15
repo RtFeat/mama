@@ -64,7 +64,7 @@ class __BodyState extends State<_Body> {
     final TextTheme textTheme = theme.textTheme;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         title: widget.type == AddDocVisitType.edit 
             ? t.trackers.doctor.editVisitTitle 
@@ -83,11 +83,20 @@ class __BodyState extends State<_Body> {
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
+        ),
         children: [
           VisitPhotoWidget(store: widget.store),
           20.h,
-          VisitInputsWidget(store: widget.store),
+          GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.translucent,
+            child: VisitInputsWidget(store: widget.store),
+          ),
           16.h,
         ],
       ),

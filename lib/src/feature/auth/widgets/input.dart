@@ -92,6 +92,7 @@ class _InputWidgetState extends State<InputWidget> {
                               autofocus: true,
                               showErrors: (control) => false,
                               keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
                               style: textTheme.bodyMedium!.copyWith(
                                 fontWeight: FontWeight.w400,
                               ),
@@ -99,6 +100,12 @@ class _InputWidgetState extends State<InputWidget> {
                                 isFocused = false;
                                 focusNode.unfocus();
                                 setState(() {});
+                              },
+                              onSubmitted: (control) {
+                                focusNode.unfocus();
+                              },
+                              onEditingComplete: (control) {
+                                focusNode.unfocus();
                               },
                               inputFormatters: [maskFormatter],
                               decoration: InputDecoration(

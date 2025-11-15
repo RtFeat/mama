@@ -26,6 +26,13 @@ class DottedInput extends StatelessWidget {
           child: ReactiveTextField(
             formControlName: 'about',
             maxLines: null,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (control) {
+              FocusScope.of(context).unfocus();
+            },
+            onEditingComplete: (control) {
+              FocusScope.of(context).unfocus();
+            },
             style: titlesStyle.copyWith(
               color: AppColors.greyBrighterColor,
             ),

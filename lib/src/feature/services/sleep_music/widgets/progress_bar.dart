@@ -4,8 +4,15 @@ import 'package:mama/src/data.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 
-class ProgressBar extends StatelessWidget {
+class ProgressBar extends StatefulWidget {
   const ProgressBar({super.key});
+
+  @override
+  State<ProgressBar> createState() => _ProgressBarState();
+}
+
+class _ProgressBarState extends State<ProgressBar> {
+  double? _dragValue;
 
   @override
   Widget build(BuildContext context) {
@@ -15,43 +22,72 @@ class ProgressBar extends StatelessWidget {
 
     return Observer(
       builder: (context) {
-        if (audioPlayerStore.isPlaying) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              /// #start
-              Text(
-                  audioPlayerStore.position?.inSeconds.toMinutes ?? 0.toMinutes,
-                  style: textTheme.labelSmall),
+        final bool hasSource = audioPlayerStore.source != null;
+        if (!hasSource) {
+          return const SizedBox.shrink();
+        }
 
-              /// #slider
-              Expanded(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 8,
-                  ),
-                  child: Slider(
-                    value: audioPlayerStore.position?.inSeconds.toDouble() ?? 0,
-                    max: audioPlayerStore.duration?.inSeconds.toDouble() ?? 1,
-                    onChanged: (value) {
-                      audioPlayerStore.seek(Duration(seconds: value.toInt()));
-                    },
-                    secondaryActiveColor: Colors.red,
-                    thumbColor: AppColors.blueLighter,
-                    activeColor: AppColors.purpleBrighterBackgroundColor,
-                    inactiveColor: AppColors.purpleLighterBackgroundColor,
-                  ),
+        final double maxSeconds =
+            audioPlayerStore.duration?.inSeconds.toDouble() ?? 0;
+        final double sliderMax = maxSeconds > 0 ? maxSeconds : 1;
+
+        final double currentSeconds = (_dragValue ??
+                audioPlayerStore.position?.inSeconds.toDouble() ??
+                0)
+            .clamp(0, sliderMax);
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            /// #start
+            Text(
+              currentSeconds.toInt().toMinutes,
+              style: textTheme.labelSmall,
+            ),
+
+            /// #slider
+            Expanded(
+              child: SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  trackHeight: 8,
+                ),
+                child: Slider(
+                  value: currentSeconds,
+                  max: sliderMax,
+                  onChangeStart: (value) {
+                    setState(() {
+                      _dragValue = value;
+                    });
+                  },
+                  onChanged: (value) {
+                    setState(() {
+                      _dragValue = value;
+                    });
+                  },
+                  onChangeEnd: (value) {
+                    audioPlayerStore.seek(
+                      Duration(
+                        seconds: value.round(),
+                      ),
+                    );
+                    setState(() {
+                      _dragValue = null;
+                    });
+                  },
+                  thumbColor: AppColors.blueLighter,
+                  activeColor: AppColors.purpleBrighterBackgroundColor,
+                  inactiveColor: AppColors.purpleLighterBackgroundColor,
                 ),
               ),
+            ),
 
-              /// #end
-              Text(
-                  audioPlayerStore.duration?.inSeconds.toMinutes ?? 0.toMinutes,
-                  style: textTheme.labelSmall),
-            ],
-          );
-        }
-        return const SizedBox.shrink();
+            /// #end
+            Text(
+              audioPlayerStore.duration?.inSeconds.toMinutes ?? 0.toMinutes,
+              style: textTheme.labelSmall,
+            ),
+          ],
+        );
       },
     );
   }

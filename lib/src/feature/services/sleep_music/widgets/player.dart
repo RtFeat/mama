@@ -138,19 +138,20 @@ class _Trailing extends StatelessWidget {
           }),
         ),
         Observer(builder: (_) {
-          final bool isPlaying = audioPlayerStore.isPlaying;
-          final bool isHasNext = store.isHasNextMusic;
+          final bool canSkip = store.isHasNextMusic;
 
           return IconButton(
-            icon: isHasNext && isPlaying
-                ? const Icon(AppIcons.forwardEndAltFill)
-                : const Icon(AppIcons.xmark),
+            icon: Icon(
+              canSkip ? AppIcons.forwardEndAltFill : AppIcons.xmark,
+              color:
+                  canSkip ? AppColors.primaryColor : AppColors.greyLighterColor,
+            ),
             onPressed: () {
-              if (isHasNext && isPlaying) {
+              if (canSkip) {
                 store.nextMusic();
-                if (store.selectedMusic != null &&
-                    store.selectedMusic?.source != null) {
-                  audioPlayerStore.play(store.selectedMusic!.source!);
+                final source = store.selectedMusic?.source;
+                if (source != null) {
+                  audioPlayerStore.play(source);
                 }
               } else {
                 store.setSelectedMusic(null);

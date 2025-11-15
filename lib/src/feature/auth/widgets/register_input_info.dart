@@ -47,6 +47,13 @@ class RegisterInputInfo extends StatelessWidget {
                     formControlName: controlName,
                     showErrors: (control) => false,
                     keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (control) {
+                      FocusScope.of(context).unfocus();
+                    },
+                    onEditingComplete: (control) {
+                      FocusScope.of(context).unfocus();
+                    },
                     style: textTheme.headlineSmall
                         ?.copyWith(color: AppColors.primaryColor),
                     onTapOutside: (event) {},

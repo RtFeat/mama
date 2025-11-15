@@ -52,13 +52,14 @@ class ButtonsLearnPdfAdd extends StatelessWidget {
                 height: buttonsHeight,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 8,
-                  horizontal: 20,
+                  horizontal: 12,
                 ),
                 title: t.trackers.knowMoreText.title,
                 onTap: () => onTapLearnMore(),
                 icon: AppIcons.graduationcapFill,
                 type: CustomButtonType.outline,
                 iconSize: 28,
+                iconPadding: 6,
                 textStyle: knowMoreTextStyle ??
                     Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontSize: 10,

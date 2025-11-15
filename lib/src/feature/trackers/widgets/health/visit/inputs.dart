@@ -23,6 +23,7 @@ class _VisitInputsWidgetState extends State<VisitInputsWidget> {
             controlName: 'doctor',
             inputHint: t.trackers.doctor.addNewVisitField1Title,
             hintText: t.trackers.doctor.addNewVisitField1Hint,
+            textInputAction: TextInputAction.next,
             inputHintStyle: textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
             titleStyle:
                 textTheme.bodySmall!.copyWith(color: AppColors.blackColor),
@@ -60,6 +61,7 @@ class _VisitInputsWidgetState extends State<VisitInputsWidget> {
             controlName: 'clinic',
             inputHint: t.trackers.doctor.addNewVisitField3Title,
             hintText: t.trackers.doctor.addNewVisitField3Hint,
+            textInputAction: TextInputAction.next,
             inputHintStyle: textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
             titleStyle:
                 textTheme.bodySmall!.copyWith(color: AppColors.blackColor),
@@ -76,6 +78,8 @@ class _VisitInputsWidgetState extends State<VisitInputsWidget> {
             controlName: 'comment',
             inputHint: t.trackers.doctor.addNewVisitField4Title,
             hintText: t.trackers.doctor.addNewVisitField4Hint,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => FocusScope.of(context).unfocus(),
             inputHintStyle: textTheme.bodySmall!.copyWith(letterSpacing: -0.5),
             titleStyle:
                 textTheme.bodySmall!.copyWith(color: AppColors.blackColor),
