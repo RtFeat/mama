@@ -134,7 +134,7 @@ dependencies:
   skit:
     git:
       url: https://github.com/RtFeat/skit.git
-      ref: future
+      ref: main
 
 dev_dependencies:
   # -- testing -- #
