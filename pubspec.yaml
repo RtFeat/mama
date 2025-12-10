@@ -133,7 +133,7 @@ dependencies:
 
   skit:
     git:
-      url: https://github.com/nikondrat/skit.git
+      url: https://github.com/RtFeat/skit.git
       ref: future
 
 dev_dependencies:
