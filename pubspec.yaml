@@ -55,7 +55,6 @@ dependencies:
   ispect: ^4.4.7
   ispectify: ^4.4.7
   ispectify_dio: ^4.4.7
-  stack_trace: ^1.12.1
   televerse: ^3.0.1
 
   # sentry_flutter: ^8.9.0
