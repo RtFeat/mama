@@ -186,5 +186,5 @@ icons_launcher:
       enable: true
 dependency_overrides:
   record_linux: 1.2.1
-  skit:
-    path: https://github.com/nikondrat/skit.git
+  # skit override убран для CI - используется git версия из dependencies
+
