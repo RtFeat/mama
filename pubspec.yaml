@@ -187,4 +187,4 @@ icons_launcher:
 dependency_overrides:
   record_linux: 1.2.1
   skit:
-    path: ../skit
+    path: https://github.com/nikondrat/skit.git

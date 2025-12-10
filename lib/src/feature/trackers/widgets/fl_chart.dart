@@ -60,8 +60,7 @@ class FlProgressChart extends StatelessWidget {
     double pad = (maxX - minX).abs();
     if (pad < 15) pad = 30; // Ensure visibility for single/close points (~2 weeks)
     
-    // Calculate dynamic Y-axis range based on actual data FIRST
-    // Limit to ~30 units range for better visualization
+    // Use provided min/max as base, but expand if data goes beyond
     double dynamicMin = min;
     double dynamicMax = max;
     
@@ -69,25 +68,15 @@ class FlProgressChart extends StatelessWidget {
       final double dataMin = data.map((e) => e.value).reduce((a, b) => a < b ? a : b);
       final double dataMax = data.map((e) => e.value).reduce((a, b) => a > b ? a : b);
       
-      // Calculate center and create 30-unit range
-      final double dataCenter = (dataMin + dataMax) / 2;
-      final double dataRange = dataMax - dataMin;
-      
-      // If data range is small, use 30 units centered on data
-      // If data range is large, add some padding
-      if (dataRange < 25) {
-        dynamicMin = ((dataCenter - 15) / 5).floorToDouble() * 5;
-        dynamicMax = ((dataCenter + 15) / 5).ceilToDouble() * 5;
-      } else {
-        // For larger ranges, add 20% padding
-        final padding = dataRange * 0.2;
-        dynamicMin = ((dataMin - padding) / 5).floorToDouble() * 5;
-        dynamicMax = ((dataMax + padding) / 5).ceilToDouble() * 5;
+      // If data goes below min, expand downward
+      if (dataMin < dynamicMin) {
+        dynamicMin = (dataMin / 5).floorToDouble() * 5;
+        if (dynamicMin < 0) dynamicMin = 0;
       }
       
-      // Ensure minimum is never negative
-      if (dynamicMin < 0) {
-        dynamicMin = 0;
+      // If data goes above max, expand upward
+      if (dataMax > dynamicMax) {
+        dynamicMax = (dataMax / 5).ceilToDouble() * 5;
       }
     }
     
@@ -183,7 +172,7 @@ class FlProgressChart extends StatelessWidget {
         axisLine: const AxisLine(color: Colors.transparent),
         minimum: dynamicMin,
         maximum: dynamicMax,
-        interval: 5,
+        interval: _calculateYAxisInterval(dynamicMin, dynamicMax),
         labelStyle: Theme.of(context)
             .textTheme
             .labelSmall!
@@ -223,7 +212,7 @@ class FlProgressChart extends StatelessWidget {
             borderWidth: 0,
           ),
           // Median line (green)
-          SplineSeries<NormData, double>(
+          LineSeries<NormData, double>(
             dataSource: effectiveNormData,
             xValueMapper: (NormData data, _) => data.x,
             yValueMapper: (NormData data, _) => data.median,
@@ -232,8 +221,8 @@ class FlProgressChart extends StatelessWidget {
           ),
         ],
         if (!isSingle) ...[
-          // Old SplineAreaSeries removed - using norm zones instead
-          SplineSeries<ChartData, double>(
+          // Straight lines with sharp angles between points
+          LineSeries<ChartData, double>(
             dataSource: data,
             xValueMapper: (ChartData data, _) => data.x,
             yValueMapper: (ChartData data, _) => data.value,
@@ -253,50 +242,34 @@ class FlProgressChart extends StatelessWidget {
               labelPosition: ChartDataLabelPosition.outside,
               margin: EdgeInsets.zero,
               builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
-                return Transform.translate(
-                  offset: const Offset(14, 5), // Move down significantly
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Vertical black line from marker upward
-                      Container(
-                        width: 1,
-                        height: 30,
-                        color: Colors.black,
-                      ),
-                      const SizedBox(width: 4),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '${point.y}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${point.y}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${data.label}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall!
-                                .copyWith(
-                                  fontWeight: FontWeight.w400, 
-                                  fontSize: 9,
-                                  color: const Color(0xFF9E9E9E),
-                                ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${data.label}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall!
+                          .copyWith(
+                            fontWeight: FontWeight.w400, 
+                            fontSize: 9,
+                            color: const Color(0xFF9E9E9E),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -320,50 +293,34 @@ class FlProgressChart extends StatelessWidget {
             labelPosition: ChartDataLabelPosition.outside,
             margin: const EdgeInsets.only(bottom: 15),
             builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
-              return Transform.translate(
-                offset: const Offset(0, 50), // Move down significantly
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Vertical black line from marker upward
-                    Container(
-                      width: 2,
-                      height: 50,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(width: 4),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '${point.y}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .copyWith(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                              ),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${point.y}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium!
+                        .copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${data.label}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(
-                                fontWeight: FontWeight.w400, 
-                                fontSize: 9,
-                                color: const Color(0xFF9E9E9E),
-                              ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${data.label}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall!
+                        .copyWith(
+                          fontWeight: FontWeight.w400, 
+                          fontSize: 9,
+                          color: const Color(0xFF9E9E9E),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),
@@ -371,5 +328,23 @@ class FlProgressChart extends StatelessWidget {
       ],
       tooltipBehavior: TooltipBehavior(enable: false),
     );
+  }
+
+  /// Calculate appropriate Y-axis interval based on the data range
+  double _calculateYAxisInterval(double min, double max) {
+    final range = max - min;
+    
+    // For small ranges (like weight 2-9 kg), use interval of 1
+    if (range <= 10) {
+      return 1;
+    }
+    // For medium ranges (like height 0-50 cm), use interval of 5
+    else if (range <= 50) {
+      return 5;
+    }
+    // For larger ranges, use interval of 10
+    else {
+      return 10;
+    }
   }
 }

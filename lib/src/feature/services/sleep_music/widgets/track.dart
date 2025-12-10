@@ -41,20 +41,35 @@ class TrackWidget extends StatelessWidget {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     /// #name
-                    AutoSizeText(
+                    Text(
                       model.title,
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: const TextStyle(
                         fontSize: 17,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF000000),
+                        fontFamily: 'SF Pro Text',
                       ),
                     ),
+                    2.h,
 
                     /// #author
-                    AutoSizeText(model.author ?? '',
+                    if (model.author != null)
+                      Text(
+                        model.author!.name,
                         overflow: TextOverflow.ellipsis,
-                        style: textTheme.bodySmall),
+                        maxLines: 1,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF666E80),
+                          fontFamily: 'SF Pro Text',
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -65,10 +80,13 @@ class TrackWidget extends StatelessWidget {
         /// #time range
         Padding(
           padding: const EdgeInsets.only(left: 20),
-          child: AutoSizeText(
+          child: Text(
             model.duration.toMinutes,
-            style: textTheme.titleSmall?.copyWith(
+            style: const TextStyle(
               fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF000000),
+              fontFamily: 'SF Pro Text',
             ),
           ),
         ),

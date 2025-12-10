@@ -1,1 +1,39 @@
-
+workflows:
+  ios-workflow:
+    name: iOS Build
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    
+    environment:
+      flutter: 3.24.0
+      xcode: latest
+      cocoapods: default
+      groups:
+        - app_store_credentials  # Настрой в Codemagic UI
+      vars:
+        BUNDLE_ID: "mama.and.co.app"
+    
+    scripts:
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE
+          keychain add-certificates
+          xcode-project use-profiles
+      
+      - name: Get Flutter packages
+        script: flutter pub get
+      
+      - name: Build runner
+        script: dart run build_runner build --delete-conflicting-outputs
+      
+      - name: Build iOS
+        script: flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+    
+    artifacts:
+      - build/ios/ipa/*.ipa
+    
+    publishing:
+      email:
+        recipients:
+          - markelov5371vip@gmail.com  # Замени на свой email

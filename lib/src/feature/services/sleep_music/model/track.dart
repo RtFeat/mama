@@ -17,8 +17,7 @@ class TrackModel extends _TrackModel with _$TrackModel {
 
   final String description;
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  final String? author;
+  final MusicAuthorModel? author;
 
   final double duration;
 

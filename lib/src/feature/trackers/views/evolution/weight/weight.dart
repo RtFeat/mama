@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/core/utils/who_growth_standards.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
+import 'package:mama/src/feature/trackers/widgets/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 import 'package:mobx/mobx.dart';
@@ -276,21 +277,56 @@ class _BodyState extends State<_Body> {
                           final gender = child?.gender?.name.toLowerCase() ?? 'male';
                           
                           final chartData = weightStore.chartData;
-                          // Extend norm range to cover full graph width
-                          final minAgeDays = 0;
-                          final maxAgeDays = chartData.isEmpty ? 730 : (chartData.last.x + 60).toInt();
                           
-                          final normData = WHOGrowthStandards.getWeightNorms(
-                            minAgeDays: minAgeDays,
-                            maxAgeDays: maxAgeDays,
-                            gender: gender,
-                          );
+                          // Calculate age range for norm data
+                          // We need to get the child's age at first data point
+                          List<NormData>? transformedNormData;
+                          
+                          if (chartData.isNotEmpty) {
+                            // Get child's birth date to calculate age
+                            final birthDate = child?.birthDate;
+                            if (birthDate != null) {
+                              // Calculate child's age in days at first data point
+                              final firstPointDate = DateTime.fromMillisecondsSinceEpoch(
+                                chartData.first.epochDays * Duration.millisecondsPerDay,
+                                isUtc: false,
+                              );
+                              final ageAtFirstPoint = firstPointDate.difference(birthDate).inDays;
+                              
+                              // Generate norm data starting from child's age at first point
+                              // Extend to cover full graph width with padding
+                              final minAgeDays = (ageAtFirstPoint - 2).clamp(0, double.infinity).toInt();
+                              final maxAgeDays = ageAtFirstPoint + (chartData.last.x - chartData.first.x).toInt() + 60;
+                              
+                              final rawNormData = WHOGrowthStandards.getWeightNorms(
+                                minAgeDays: minAgeDays,
+                                maxAgeDays: maxAgeDays,
+                                gender: gender,
+                              );
+                              
+                              // Transform norm data to use relative X coordinates (same as chartData)
+                              transformedNormData = rawNormData.map((norm) {
+                                // Convert absolute age days to relative days from first point
+                                final relativeX = norm.x - ageAtFirstPoint;
+                                return NormData(
+                                  x: relativeX,
+                                  median: norm.median,
+                                  sd1Lower: norm.sd1Lower,
+                                  sd1Upper: norm.sd1Upper,
+                                  sd2Lower: norm.sd2Lower,
+                                  sd2Upper: norm.sd2Upper,
+                                  sd3Lower: norm.sd3Lower,
+                                  sd3Upper: norm.sd3Upper,
+                                );
+                              }).toList();
+                            }
+                          }
                           
                           return FlProgressChart(
                             min: weightStore.minValue,
                             max: weightStore.maxValue,
                             chartData: weightStore.chartData,
-                            normData: normData,
+                            normData: transformedNormData,
                           );
                         },
                       ),

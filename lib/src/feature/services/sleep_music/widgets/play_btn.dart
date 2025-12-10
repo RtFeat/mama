@@ -10,7 +10,7 @@ class PlayButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isPlaying ? AppColors.blueLighter : AppColors.primaryColor,
+        color: isPlaying ? AppColors.blueLighter : const Color(0xFF4D4DE8),
       ),
       child: SizedBox(
         width: 50,
@@ -26,6 +26,7 @@ class PlayButton extends StatelessWidget {
             child: Icon(
               isPlaying ? Icons.pause : Icons.play_arrow,
               color: Colors.white,
+              size: 32,
               key: ValueKey<bool>(isPlaying),
             ),
           ),

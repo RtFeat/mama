@@ -19,7 +19,7 @@ class _CalendarVaccinesState extends State<CalendarVaccines> {
     final TextTheme textTheme = theme.textTheme;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         title: t.trackers.vaccines.calendarViewAppBar,
         appBarColor: AppColors.e8ddf9,
@@ -40,7 +40,7 @@ class _CalendarVaccinesState extends State<CalendarVaccines> {
                   context: context,
                   assetPath: 'assets/docs/National.pdf',
                   title: t.trackers.vaccines.calendarViewRecomendedShort,
-                  onStart: () => _showSnack(context, 'Открытие PDF...', bg: const Color(0xFFE1E6FF)),
+                  onStart: () {},
                   onSuccess: () {},
                   onError: (message) => _showSnack(context, message),
                 );
@@ -55,7 +55,7 @@ class _CalendarVaccinesState extends State<CalendarVaccines> {
                   context: context,
                   assetPath: 'assets/docs/Ideal.pdf',
                   title: t.trackers.vaccines.calendarViewIdealShort,
-                  onStart: () => _showSnack(context, 'Открытие PDF...', bg: const Color(0xFFE1E6FF)),
+                  onStart: () {},
                   onSuccess: () {},
                   onError: (message) => _showSnack(context, message),
                 );

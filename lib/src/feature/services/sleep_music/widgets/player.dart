@@ -22,7 +22,7 @@ class TrackPlayer extends StatelessWidget {
         color: AppColors.whiteColor,
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.only(left: 12, right: 12, bottom: 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -57,6 +57,7 @@ class _PlayPauseButton extends StatelessWidget {
     final AudioPlayerStore audioPlayerStore = context.watch();
 
     return IconButton(
+      iconSize: 32,
       onPressed: () {
         if (audioPlayerStore.isPlaying) {
           audioPlayerStore.pause();
@@ -85,28 +86,47 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
-    final TextTheme textTheme = themeData.textTheme;
     final MusicStore store = context.watch<MusicStore>();
 
     return Observer(builder: (context) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// #name
-          Text(
-            store.selectedMusic?.title ?? '',
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.titleSmall,
-          ),
+      final author = store.selectedMusic?.author;
+      
+      return Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// #name
+            Text(
+              store.selectedMusic?.title ?? '',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              textScaleFactor: 1.0,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF000000),
+                fontFamily: 'SF Pro Text',
+              ),
+            ),
 
-          /// #author
-          Text(
-            store.selectedMusic?.author ?? 'author',
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.labelSmall,
-          ),
-        ],
+            /// #author
+            if (author != null)
+              Text(
+                author.name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                textScaleFactor: 1.0,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF666E80),
+                  fontFamily: 'SF Pro Text',
+                ),
+              ),
+          ],
+        ),
       );
     });
   }
@@ -123,6 +143,7 @@ class _Trailing extends StatelessWidget {
     return Row(
       children: [
         IconButton(
+          iconSize: 28,
           onPressed: () {
             store.toggleIsLooping();
           },

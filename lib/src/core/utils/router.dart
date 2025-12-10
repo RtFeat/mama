@@ -90,6 +90,9 @@ abstract class AppViews {
 
 final GlobalKey<NavigatorState> navKey = GlobalKey();
 
+// Глобальная ссылка на TabController главного экрана для навигации из дочерних экранов
+TabController? homeTabController;
+
 final GoRouter router = GoRouter(
   navigatorKey: navKey,
   initialLocation: '/',

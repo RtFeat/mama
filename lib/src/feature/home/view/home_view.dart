@@ -49,8 +49,18 @@ class __BodyState extends State<_Body> with SingleTickerProviderStateMixin {
     super.initState();
     isUser = widget.userStore.role == Role.user;
     _tabController = TabController(length: isUser ? 4 : 3, vsync: this);
+    // Сохраняем TabController в глобальную переменную для доступа из дочерних экранов
+    homeTabController = _tabController;
     widget.socket.socket.initialize();
     widget.firebaseMessageStore.init();
+  }
+
+  @override
+  void dispose() {
+    // Очищаем глобальную ссылку при удалении виджета
+    homeTabController = null;
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override

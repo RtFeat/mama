@@ -28,7 +28,10 @@ abstract class _MusicStore extends PaginatedListStore<TrackModel> with Store {
               id: faker.datatype.uuid(),
               title: faker.lorem.word(),
               description: faker.lorem.text(),
-              author: faker.name.fullName(),
+              author: MusicAuthorModel(
+                id: faker.datatype.uuid(),
+                name: faker.name.fullName(),
+              ),
               duration: faker.datatype.float(max: 1000),
               createdAt: faker.date.past(DateTime.now()),
             );

@@ -127,7 +127,13 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
         if (apiNormStatus == 'Граница нормы') {
           apiNormStatus = 'Вес в норме';
         } else if (apiNormStatus.isEmpty) {
-          apiNormStatus = 'Вес в норме'; // По умолчанию считаем в норме
+          // Если статус не пришел с сервера, проверяем по нормам ВОЗ
+          // Для веса нормальный диапазон примерно 2-9 кг (зависит от возраста)
+          if (apiWeight < 2 || apiWeight > 9) {
+            apiNormStatus = 'Вне нормы';
+          } else {
+            apiNormStatus = 'Вес в норме';
+          }
         }
         
         return Current(
@@ -291,7 +297,13 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
       if (normStatus == 'Граница нормы') {
         normStatus = 'Вес в норме';
       } else if (normStatus.isEmpty) {
-        normStatus = 'Вес в норме'; // По умолчанию считаем в норме
+        // Если статус не пришел с сервера, проверяем по нормам ВОЗ
+        // Для веса нормальный диапазон примерно 2-9 кг (зависит от возраста)
+        if (value < 2 || value > 9) {
+          normStatus = 'Вне нормы';
+        } else {
+          normStatus = 'Вес в норме';
+        }
       }
       
       return Current(
@@ -459,10 +471,65 @@ abstract class _WeightStore extends LearnMoreStore<EntityHistoryWeight> with Sto
   }
 
   @computed
-  double get minValue => weightUnit == WeightUnit.kg ? 0 : 0;
+  double get minValue {
+    // Получаем все значения из графика
+    final values = chartData.map((e) => e.value).toList();
+    if (values.isEmpty) {
+      // По умолчанию показываем 2-9 кг (или 2000-9000 г)
+      return weightUnit == WeightUnit.kg ? 2.0 : 2000.0;
+    }
+    
+    final minDataValue = values.reduce((a, b) => a < b ? a : b);
+    final maxDataValue = values.reduce((a, b) => a > b ? a : b);
+    
+    // Диапазон данных
+    final dataRange = maxDataValue - minDataValue;
+    
+    // Желаемый диапазон отображения (7 кг или 7000 г)
+    final displayRange = weightUnit == WeightUnit.kg ? 7.0 : 7000.0;
+    
+    // Если данные помещаются в диапазон 7, центрируем их
+    if (dataRange <= displayRange) {
+      final center = (minDataValue + maxDataValue) / 2;
+      final calculatedMin = center - displayRange / 2;
+      // Не опускаемся ниже 0
+      return (calculatedMin).clamp(0, double.infinity);
+    }
+    
+    // Если данные больше 7, показываем их с небольшим отступом
+    final offset = weightUnit == WeightUnit.kg ? 0.5 : 500.0;
+    return (minDataValue - offset).clamp(0, double.infinity);
+  }
 
   @computed
-  double get maxValue => weightUnit == WeightUnit.kg ? 9 : 9000;
+  double get maxValue {
+    // Получаем все значения из графика
+    final values = chartData.map((e) => e.value).toList();
+    if (values.isEmpty) {
+      // По умолчанию показываем 2-9 кг (или 2000-9000 г)
+      return weightUnit == WeightUnit.kg ? 9.0 : 9000.0;
+    }
+    
+    final minDataValue = values.reduce((a, b) => a < b ? a : b);
+    final maxDataValue = values.reduce((a, b) => a > b ? a : b);
+    
+    // Диапазон данных
+    final dataRange = maxDataValue - minDataValue;
+    
+    // Желаемый диапазон отображения (7 кг или 7000 г)
+    final displayRange = weightUnit == WeightUnit.kg ? 7.0 : 7000.0;
+    
+    // Если данные помещаются в диапазон 7, центрируем их
+    if (dataRange <= displayRange) {
+      final center = (minDataValue + maxDataValue) / 2;
+      final calculatedMax = center + displayRange / 2;
+      return calculatedMax;
+    }
+    
+    // Если данные больше 7, показываем их с небольшим отступом
+    final offset = weightUnit == WeightUnit.kg ? 0.5 : 500.0;
+    return maxDataValue + offset;
+  }
 
   @observable
   WeightUnit weightUnit = WeightUnit.kg;

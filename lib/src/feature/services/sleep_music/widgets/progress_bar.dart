@@ -13,6 +13,7 @@ class ProgressBar extends StatefulWidget {
 
 class _ProgressBarState extends State<ProgressBar> {
   double? _dragValue;
+  bool _isDragging = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +32,18 @@ class _ProgressBarState extends State<ProgressBar> {
             audioPlayerStore.duration?.inSeconds.toDouble() ?? 0;
         final double sliderMax = maxSeconds > 0 ? maxSeconds : 1;
 
-        final double currentSeconds = (_dragValue ??
-                audioPlayerStore.position?.inSeconds.toDouble() ??
-                0)
-            .clamp(0, sliderMax);
+        final double currentSeconds = (_isDragging
+                ? _dragValue
+                : audioPlayerStore.position?.inSeconds.toDouble()) ??
+            0;
+        final double clampedValue = currentSeconds.clamp(0, sliderMax);
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             /// #start
             Text(
-              currentSeconds.toInt().toMinutes,
+              clampedValue.toInt().toMinutes,
               style: textTheme.labelSmall,
             ),
 
@@ -52,10 +54,11 @@ class _ProgressBarState extends State<ProgressBar> {
                   trackHeight: 8,
                 ),
                 child: Slider(
-                  value: currentSeconds,
+                  value: clampedValue,
                   max: sliderMax,
                   onChangeStart: (value) {
                     setState(() {
+                      _isDragging = true;
                       _dragValue = value;
                     });
                   },
@@ -70,8 +73,14 @@ class _ProgressBarState extends State<ProgressBar> {
                         seconds: value.round(),
                       ),
                     );
-                    setState(() {
-                      _dragValue = null;
+                    // Задержка перед сбросом, чтобы плеер успел обновить позицию
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      if (mounted) {
+                        setState(() {
+                          _isDragging = false;
+                          _dragValue = null;
+                        });
+                      }
                     });
                   },
                   thumbColor: AppColors.blueLighter,

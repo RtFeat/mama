@@ -119,7 +119,13 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
         if (apiNormStatus == 'Граница нормы') {
           apiNormStatus = 'Рост в норме';
         } else if (apiNormStatus.isEmpty) {
-          apiNormStatus = 'Рост в норме'; // По умолчанию считаем в норме
+          // Если статус не пришел с сервера, проверяем по нормам ВОЗ
+          // Для роста нормальный диапазон примерно 0-80 см (зависит от возраста)
+          if (apiHeight < 0 || apiHeight > 80) {
+            apiNormStatus = 'Вне нормы';
+          } else {
+            apiNormStatus = 'Рост в норме';
+          }
         }
         
         return Current(
@@ -232,7 +238,13 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
       if (normStatus == 'Граница нормы') {
         normStatus = 'Рост в норме';
       } else if (normStatus.isEmpty) {
-        normStatus = 'Рост в норме'; // По умолчанию считаем в норме
+        // Если статус не пришел с сервера, проверяем по нормам ВОЗ
+        // Для роста нормальный диапазон примерно 0-80 см (зависит от возраста)
+        if (value < 0 || value > 80) {
+          normStatus = 'Вне нормы';
+        } else {
+          normStatus = 'Рост в норме';
+        }
       }
       
       return Current(
@@ -379,10 +391,65 @@ abstract class _GrowthStore extends LearnMoreStore<EntityHistoryHeight>
   }
 
   @computed
-  double get minValue => growthUnit == GrowthUnit.m ? 0.5 : 50;
+  double get minValue {
+    // Получаем все значения из графика
+    final values = chartData.map((e) => e.value).toList();
+    if (values.isEmpty) {
+      // По умолчанию показываем 0-30 см (или 0-0.3 м)
+      return growthUnit == GrowthUnit.m ? 0.0 : 0.0;
+    }
+    
+    final minDataValue = values.reduce((a, b) => a < b ? a : b);
+    final maxDataValue = values.reduce((a, b) => a > b ? a : b);
+    
+    // Диапазон данных
+    final dataRange = maxDataValue - minDataValue;
+    
+    // Желаемый диапазон отображения (30 см или 0.3 м)
+    final displayRange = growthUnit == GrowthUnit.m ? 0.3 : 30.0;
+    
+    // Если данные помещаются в диапазон 30, центрируем их
+    if (dataRange <= displayRange) {
+      final center = (minDataValue + maxDataValue) / 2;
+      final calculatedMin = center - displayRange / 2;
+      // Не опускаемся ниже 0
+      return (calculatedMin).clamp(0, double.infinity);
+    }
+    
+    // Если данные больше 30, показываем их с небольшим отступом
+    final offset = growthUnit == GrowthUnit.m ? 0.05 : 5.0;
+    return (minDataValue - offset).clamp(0, double.infinity);
+  }
 
   @computed
-  double get maxValue => growthUnit == GrowthUnit.m ? 1.5 : 150;
+  double get maxValue {
+    // Получаем все значения из графика
+    final values = chartData.map((e) => e.value).toList();
+    if (values.isEmpty) {
+      // По умолчанию показываем 0-30 см (или 0-0.3 м)
+      return growthUnit == GrowthUnit.m ? 0.3 : 30.0;
+    }
+    
+    final minDataValue = values.reduce((a, b) => a < b ? a : b);
+    final maxDataValue = values.reduce((a, b) => a > b ? a : b);
+    
+    // Диапазон данных
+    final dataRange = maxDataValue - minDataValue;
+    
+    // Желаемый диапазон отображения (30 см или 0.3 м)
+    final displayRange = growthUnit == GrowthUnit.m ? 0.3 : 30.0;
+    
+    // Если данные помещаются в диапазон 30, центрируем их
+    if (dataRange <= displayRange) {
+      final center = (minDataValue + maxDataValue) / 2;
+      final calculatedMax = center + displayRange / 2;
+      return calculatedMax;
+    }
+    
+    // Если данные больше 30, показываем их с небольшим отступом
+    final offset = growthUnit == GrowthUnit.m ? 0.05 : 5.0;
+    return maxDataValue + offset;
+  }
 
   @observable
   GrowthUnit growthUnit = GrowthUnit.cm;

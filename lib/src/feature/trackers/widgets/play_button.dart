@@ -10,6 +10,7 @@ class PlayerButton extends StatefulWidget {
   final String? timer;
   final bool needTimer;
   final bool showTimerBadge;
+  final Function(TimeOfDay)? onTimeChange;
 
   const PlayerButton({
     super.key,
@@ -19,6 +20,7 @@ class PlayerButton extends StatefulWidget {
     this.needTimer = false,
     this.timer,
     this.showTimerBadge = true,
+    this.onTimeChange,
   });
 
   @override
@@ -165,8 +167,34 @@ class _PlayerButtonState extends State<PlayerButton>
                     if (widget.showTimerBadge)
                       Positioned(
                         bottom: widget.isStart ? -28 : 4, // При запуске еще ниже (-28), при остановке чуть выше (4)
-                        child: IgnorePointer(
-                          ignoring: false,
+                        child: GestureDetector(
+                          onTap: () async {
+                            // Открываем time picker для выбора времени
+                            final TimeOfDay? picked = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    timePickerTheme: TimePickerThemeData(
+                                      backgroundColor: Colors.white,
+                                      hourMinuteShape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      ),
+                                      dayPeriodShape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            
+                            if (picked != null && widget.onTimeChange != null) {
+                              widget.onTimeChange!(picked);
+                            }
+                          },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: BackdropFilter(

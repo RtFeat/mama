@@ -49,7 +49,6 @@ class CurrentAndDymanicContainer extends StatelessWidget {
         /// Current Container
         Expanded(
           child: Container(
-            height: 110,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
@@ -68,40 +67,42 @@ class CurrentAndDymanicContainer extends StatelessWidget {
                     color: AppColors.greyBrighterColor,
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        switch (trackerType) {
-                          EvolutionCategory.weight =>
-                            '${current.value ~/ 1} ${t.trackers.kg.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
-                          EvolutionCategory.growth =>
-                            '${current.value ~/ 1} ${t.trackers.cm.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
-                          EvolutionCategory.head =>
-                            '${current.value.toStringAsFixed(1)} ${t.trackers.cm.title.toLowerCase()}',
-                          _ => ''
-                        },
-                        // trackerType.currentLabel,
-                        style: AppTextStyles.f17w400.copyWith(
-                          color: AppColors.blackColor,
-                        ),
-                      ),
-                    ),
-                    5.w,
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: Text(
-                          current.isNormal,
-                          softWrap: true,
-                          style: AppTextStyles.f10w700.copyWith(
-                            color: current.isNormal == 'Вне нормы' 
-                              ? AppColors.orangeTextColor 
-                              : AppColors.greenTextColor,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          switch (trackerType) {
+                            EvolutionCategory.weight =>
+                              '${current.value ~/ 1} ${t.trackers.kg.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
+                            EvolutionCategory.growth =>
+                              '${current.value ~/ 1} ${t.trackers.cm.title.toLowerCase()} ${current.value % 1 != 0 ? '${((current.value % 1) * 1000).toInt()} ${t.trackers.g.title.toLowerCase()}' : ''}',
+                            EvolutionCategory.head =>
+                              '${current.value.toStringAsFixed(1)} ${t.trackers.cm.title.toLowerCase()}',
+                            _ => ''
+                          },
+                          // trackerType.currentLabel,
+                          style: AppTextStyles.f17w400.copyWith(
+                            color: AppColors.blackColor,
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            current.isNormal,
+                            softWrap: true,
+                            maxLines: 2,
+                            overflow: TextOverflow.visible,
+                            style: AppTextStyles.f10w700.copyWith(
+                              color: current.isNormal == 'Вне нормы' 
+                                ? AppColors.orangeTextColor 
+                                : AppColors.greenTextColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -137,7 +138,6 @@ class CurrentAndDymanicContainer extends StatelessWidget {
         /// Dynamic Container
         Expanded(
           child: Container(
-            height: 110,
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),

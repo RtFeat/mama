@@ -68,12 +68,12 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
     try {
       if (s.contains('T')) {
         final d = DateTime.parse(s);
-        return d.isUtc ? d.toLocal() : d.toLocal();
+        return d.isUtc ? d.toLocal() : d;
       }
       if (s.contains(' ')) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s).toLocal();
+        return DateFormat('yyyy-MM-dd HH:mm:ss').parse(s);
       }
-      return DateFormat('yyyy-MM-dd').parse(s).toLocal();
+      return DateFormat('yyyy-MM-dd').parse(s);
     } catch (_) {
       return DateTime.now();
     }
@@ -319,9 +319,10 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             ),
             child: Row(
               children: [
-                Expanded(child: Text(t.feeding.left, style: headerStyle, textAlign: TextAlign.left)),
-                Expanded(child: Text(t.feeding.right, style: headerStyle, textAlign: TextAlign.center)),
-                Expanded(child: Text(t.feeding.total, style: headerStyle, textAlign: TextAlign.right)),
+                Expanded(flex: 2, child: Text('Время окончания\nкормления', style: headerStyle, textAlign: TextAlign.left)),
+                Expanded(child: Text('Л', style: headerStyle, textAlign: TextAlign.center)),
+                Expanded(child: Text('П', style: headerStyle, textAlign: TextAlign.center)),
+                Expanded(child: Text('Общее', style: headerStyle, textAlign: TextAlign.right)),
               ],
             ),
           ),
@@ -368,6 +369,7 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                   child: Row(
                   children: [
                     Expanded(
+                      flex: 2,
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -375,7 +377,7 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '${leftMinutes}м',
+                                DateFormat('HH:mm').format(end),
                                 style: cellStyle,
                                 textAlign: TextAlign.left,
                               ),
@@ -404,7 +406,14 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
                     ),
                     Expanded(
                       child: Text(
-                        '${rightMinutes}м',
+                        _minutesToHhMm(leftMinutes),
+                        style: cellStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        _minutesToHhMm(rightMinutes),
                         style: cellStyle,
                         textAlign: TextAlign.center,
                       ),
@@ -425,26 +434,44 @@ class _BreastFeedingHistoryTableWidgetState extends State<BreastFeedingHistoryTa
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(dateLabel, style: dateStyle, maxLines: 1),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(t.feeding.total, style: smallHint),
-                          const SizedBox(width: 8),
-                          Text(
-                            _minutesToHhMm(totalAllMinutes),
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w400,
-                            ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(dateLabel, style: dateStyle, maxLines: 1),
+                      ),
+                      Expanded(
+                        child: Text(
+                          _minutesToHhMm(totalLeftMinutes),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
                           ),
-                        ],
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          _minutesToHhMm(totalRightMinutes),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          _minutesToHhMm(totalAllMinutes),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
                       ),
                     ],
                   ),

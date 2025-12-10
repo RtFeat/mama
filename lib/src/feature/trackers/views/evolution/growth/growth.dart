@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mama/src/data.dart';
 import 'package:mama/src/core/utils/who_growth_standards.dart';
 import 'package:mama/src/feature/trackers/widgets/evolution_category.dart';
+import 'package:mama/src/feature/trackers/widgets/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:skit/skit.dart';
 import 'package:mobx/mobx.dart';
@@ -279,21 +280,59 @@ class _BodyState extends State<_Body> {
                           final gender = child?.gender?.name.toLowerCase() ?? 'male';
                           
                           final chartData = growthStore.chartData;
-                          // Extend norm range to cover full graph width
-                          final minAgeDays = 0;
-                          final maxAgeDays = chartData.isEmpty ? 730 : (chartData.last.x + 60).toInt();
                           
-                          final normData = WHOGrowthStandards.getHeightNorms(
-                            minAgeDays: minAgeDays,
-                            maxAgeDays: maxAgeDays,
-                            gender: gender,
-                          );
+                          // Calculate age range for norm data
+                          // We need to get the child's age at first data point
+                          List<NormData>? transformedNormData;
+                          
+                          if (chartData.isNotEmpty) {
+                            // Get child's birth date to calculate age
+                            final birthDate = child?.birthDate;
+                            if (birthDate != null) {
+                              // Calculate child's age in days at first data point
+                              final firstPointDate = DateTime.fromMillisecondsSinceEpoch(
+                                chartData.first.epochDays * Duration.millisecondsPerDay,
+                                isUtc: false,
+                              );
+                              final ageAtFirstPoint = firstPointDate.difference(birthDate).inDays;
+                              
+                              // Generate norm data starting well before first point to cover full graph
+                              // We need to extend left padding to ensure zone covers from xMin
+                              final minAgeDays = (ageAtFirstPoint - 10).clamp(0, double.infinity).toInt();
+                              final maxAgeDays = ageAtFirstPoint + (chartData.last.x - chartData.first.x).toInt() + 60;
+                              
+                              final rawNormData = WHOGrowthStandards.getHeightNorms(
+                                minAgeDays: minAgeDays,
+                                maxAgeDays: maxAgeDays,
+                                gender: gender,
+                              );
+                              
+                              // Transform norm data to use relative X coordinates (same as chartData)
+                              final relativeNormData = rawNormData.map((norm) {
+                                // Convert absolute age days to relative days from first point
+                                final relativeX = norm.x - ageAtFirstPoint;
+                                return NormData(
+                                  x: relativeX,
+                                  median: norm.median,
+                                  sd1Lower: norm.sd1Lower,
+                                  sd1Upper: norm.sd1Upper,
+                                  sd2Lower: norm.sd2Lower,
+                                  sd2Upper: norm.sd2Upper,
+                                  sd3Lower: norm.sd3Lower,
+                                  sd3Upper: norm.sd3Upper,
+                                );
+                              }).toList();
+                              
+                              // Smooth the norm data to ensure monotonic increase (no dips)
+                              transformedNormData = _smoothNormData(relativeNormData);
+                            }
+                          }
                           
                           return FlProgressChart(
                             min: growthStore.minValue,
                             max: growthStore.maxValue,
                             chartData: growthStore.chartData,
-                            normData: normData,
+                            normData: transformedNormData,
                           );
                         },
                       ),
@@ -387,6 +426,47 @@ class _BodyState extends State<_Body> {
         );
       },
     );
+  }
+
+  /// Smooths norm data to ensure monotonic increase (no dips)
+  /// This prevents unrealistic height loss in the norm zones
+  List<NormData> _smoothNormData(List<NormData> data) {
+    if (data.length < 2) return data;
+    
+    final smoothed = <NormData>[];
+    
+    for (int i = 0; i < data.length; i++) {
+      final current = data[i];
+      
+      if (i == 0) {
+        smoothed.add(current);
+      } else {
+        final prev = smoothed[i - 1];
+        
+        // Ensure each value is at least as high as the previous
+        // This prevents dips in the growth curve
+        final smoothedMedian = current.median < prev.median ? prev.median : current.median;
+        final smoothedSd1Lower = current.sd1Lower < prev.sd1Lower ? prev.sd1Lower : current.sd1Lower;
+        final smoothedSd1Upper = current.sd1Upper < prev.sd1Upper ? prev.sd1Upper : current.sd1Upper;
+        final smoothedSd2Lower = current.sd2Lower < prev.sd2Lower ? prev.sd2Lower : current.sd2Lower;
+        final smoothedSd2Upper = current.sd2Upper < prev.sd2Upper ? prev.sd2Upper : current.sd2Upper;
+        final smoothedSd3Lower = current.sd3Lower < prev.sd3Lower ? prev.sd3Lower : current.sd3Lower;
+        final smoothedSd3Upper = current.sd3Upper < prev.sd3Upper ? prev.sd3Upper : current.sd3Upper;
+        
+        smoothed.add(NormData(
+          x: current.x,
+          median: smoothedMedian,
+          sd1Lower: smoothedSd1Lower,
+          sd1Upper: smoothedSd1Upper,
+          sd2Lower: smoothedSd2Lower,
+          sd2Upper: smoothedSd2Upper,
+          sd3Lower: smoothedSd3Lower,
+          sd3Upper: smoothedSd3Upper,
+        ));
+      }
+    }
+    
+    return smoothed;
   }
 }
 

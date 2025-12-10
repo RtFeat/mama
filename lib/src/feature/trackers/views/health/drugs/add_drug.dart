@@ -60,7 +60,7 @@ class __BodyState extends State<_Body> {
     final TextTheme textTheme = theme.textTheme;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         title: widget.model != null ? t.trackers.medicines.edit : t.trackers.medicines.add,
         appBarColor: AppColors.e8ddf9,

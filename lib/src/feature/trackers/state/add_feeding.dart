@@ -279,6 +279,58 @@ abstract class _AddFeeding with Store {
   }
 
   @action
+  void setLeftTimerManually(DateTime time) {
+    // Устанавливаем время начала для левой стороны вручную
+    final now = DateTime.now();
+    
+    // Если время в будущем, используем текущее время
+    if (time.isAfter(now)) {
+      leftTimerStartTime = now;
+      leftOriginalStartTime = now;
+    } else {
+      leftTimerStartTime = time;
+      leftOriginalStartTime = time;
+    }
+    
+    // Останавливаем таймер и устанавливаем паузу на текущее время
+    // чтобы зафиксировать выбранную длительность
+    isLeftSideStart = false;
+    leftPauseTime = now;
+    
+    // Показываем панель редактирования
+    showEditMenu = true;
+    
+    // Обновляем отображение
+    updateLeftTimerDisplay();
+  }
+
+  @action
+  void setRightTimerManually(DateTime time) {
+    // Устанавливаем время начала для правой стороны вручную
+    final now = DateTime.now();
+    
+    // Если время в будущем, используем текущее время
+    if (time.isAfter(now)) {
+      rightTimerStartTime = now;
+      rightOriginalStartTime = now;
+    } else {
+      rightTimerStartTime = time;
+      rightOriginalStartTime = time;
+    }
+    
+    // Останавливаем таймер и устанавливаем паузу на текущее время
+    // чтобы зафиксировать выбранную длительность
+    isRightSideStart = false;
+    rightPauseTime = now;
+    
+    // Показываем панель редактирования
+    showEditMenu = true;
+    
+    // Обновляем отображение
+    updateRightTimerDisplay();
+  }
+
+  @action
   confirmButtonPressed() async {
     // Останавливаем обе стороны
     isRightSideStart = false;
@@ -299,17 +351,27 @@ abstract class _AddFeeding with Store {
       // Если сторона была на паузе, используем момент паузы, а не Confirm
       final DateTime leftEffectiveEnd = leftPauseTime ?? endMoment;
       final duration = leftEffectiveEnd.difference(leftTimerStartTime!);
-      final minutes = duration.inMinutes;
+      final hours = duration.inHours;
+      final minutes = duration.inMinutes % 60;
       final seconds = duration.inSeconds % 60;
-      leftCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      if (hours > 0) {
+        leftCurrentTimerText = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      } else {
+        leftCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      }
     }
     if (rightTimerStartTime != null) {
       // Если сторона была на паузе, используем момент паузы, а не Confirm
       final DateTime rightEffectiveEnd = rightPauseTime ?? endMoment;
       final duration = rightEffectiveEnd.difference(rightTimerStartTime!);
-      final minutes = duration.inMinutes;
+      final hours = duration.inHours;
+      final minutes = duration.inMinutes % 60;
       final seconds = duration.inSeconds % 60;
-      rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      if (hours > 0) {
+        rightCurrentTimerText = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      } else {
+        rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      }
     }
     
     // Сохраняем запись при подтверждении
@@ -473,8 +535,8 @@ abstract class _AddFeeding with Store {
         }
       }
       
-      // Дополнительная проверка - обновляем только если таймер действительно запущен
-      if (!isLeftSideStart && leftPauseTime == null) {
+      // Дополнительная проверка - обновляем только если таймер действительно запущен или на паузе
+      if (!isLeftSideStart && leftPauseTime == null && leftTimerStartTime == null) {
         leftCurrentTimerText = '00:00';
         return;
       }
@@ -483,9 +545,17 @@ abstract class _AddFeeding with Store {
         if (leftPauseTime != null && leftTimerStartTime != null) {
           // Show paused time - время с момента старта до паузы
           final duration = leftPauseTime!.difference(leftTimerStartTime!);
-          final minutes = duration.inMinutes;
+          final hours = duration.inHours;
+          final minutes = duration.inMinutes % 60;
           final seconds = duration.inSeconds % 60;
-          leftCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          if (hours > 0) {
+            leftCurrentTimerText = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          } else {
+            leftCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          }
+        } else if (leftTimerStartTime != null) {
+          // Если есть время старта, но нет паузы, показываем 00:00
+          leftCurrentTimerText = '00:00';
         } else {
           leftCurrentTimerText = '00:00';
         }
@@ -493,9 +563,14 @@ abstract class _AddFeeding with Store {
         // Timer is running - show current elapsed time
         if (leftTimerStartTime != null) {
           final duration = now.difference(leftTimerStartTime!);
-          final minutes = duration.inMinutes;
+          final hours = duration.inHours;
+          final minutes = duration.inMinutes % 60;
           final seconds = duration.inSeconds % 60;
-          leftCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          if (hours > 0) {
+            leftCurrentTimerText = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          } else {
+            leftCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          }
         } else {
           leftCurrentTimerText = '00:00';
         }
@@ -539,8 +614,8 @@ abstract class _AddFeeding with Store {
         }
       }
       
-      // Дополнительная проверка - обновляем только если таймер действительно запущен
-      if (!isRightSideStart && rightPauseTime == null) {
+      // Дополнительная проверка - обновляем только если таймер действительно запущен или на паузе
+      if (!isRightSideStart && rightPauseTime == null && rightTimerStartTime == null) {
         rightCurrentTimerText = '00:00';
         return;
       }
@@ -549,9 +624,17 @@ abstract class _AddFeeding with Store {
         if (rightPauseTime != null && rightTimerStartTime != null) {
           // Show paused time - время с момента старта до паузы
           final duration = rightPauseTime!.difference(rightTimerStartTime!);
-          final minutes = duration.inMinutes;
+          final hours = duration.inHours;
+          final minutes = duration.inMinutes % 60;
           final seconds = duration.inSeconds % 60;
-          rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          if (hours > 0) {
+            rightCurrentTimerText = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          } else {
+            rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          }
+        } else if (rightTimerStartTime != null) {
+          // Если есть время старта, но нет паузы, показываем 00:00
+          rightCurrentTimerText = '00:00';
         } else {
           rightCurrentTimerText = '00:00';
         }
@@ -559,9 +642,14 @@ abstract class _AddFeeding with Store {
         // Timer is running - show current elapsed time
         if (rightTimerStartTime != null) {
           final duration = now.difference(rightTimerStartTime!);
-          final minutes = duration.inMinutes;
+          final hours = duration.inHours;
+          final minutes = duration.inMinutes % 60;
           final seconds = duration.inSeconds % 60;
-          rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          if (hours > 0) {
+            rightCurrentTimerText = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          } else {
+            rightCurrentTimerText = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          }
         } else {
           rightCurrentTimerText = '00:00';
         }

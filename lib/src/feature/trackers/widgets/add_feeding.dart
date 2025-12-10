@@ -62,13 +62,13 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
         return;
       }
 
-      // Обновляем левый таймер если он запущен и не зафиксирован Confirm
-      if (_addFeeding!.isLeftSideStart && !_addFeeding!.confirmFeedingTimer) {
+      // Обновляем левый таймер если он запущен или на паузе (но не после Confirm)
+      if ((_addFeeding!.isLeftSideStart || _addFeeding!.leftPauseTime != null) && !_addFeeding!.confirmFeedingTimer) {
         _addFeeding!.updateLeftTimerDisplay();
       }
 
-      // Обновляем правый таймер если он запущен и не зафиксирован Confirm
-      if (_addFeeding!.isRightSideStart && !_addFeeding!.confirmFeedingTimer) {
+      // Обновляем правый таймер если он запущен или на паузе (но не после Confirm)
+      if ((_addFeeding!.isRightSideStart || _addFeeding!.rightPauseTime != null) && !_addFeeding!.confirmFeedingTimer) {
         _addFeeding!.updateRightTimerDisplay();
       }
 
@@ -140,6 +140,12 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                             needTimer: true,
                             timer: addFeeding.leftCurrentTimerDisplay,
                             showTimerBadge: true,
+                            onTimeChange: (TimeOfDay time) {
+                              // Устанавливаем время для левой стороны
+                              final now = DateTime.now();
+                              final newTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+                              addFeeding.setLeftTimerManually(newTime);
+                            },
                           ),
                         ),
                       ),
@@ -155,6 +161,12 @@ class _AddFeedingWidgetState extends State<AddFeedingWidget> {
                             needTimer: true,
                             timer: addFeeding.rightCurrentTimerDisplay,
                             showTimerBadge: true,
+                            onTimeChange: (TimeOfDay time) {
+                              // Устанавливаем время для правой стороны
+                              final now = DateTime.now();
+                              final newTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+                              addFeeding.setRightTimerManually(newTime);
+                            },
                           ),
                         ),
                       ),

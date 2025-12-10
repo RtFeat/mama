@@ -179,7 +179,14 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
       if (normStatus == 'Граница нормы') {
         normStatus = 'Показатель в норме';
       } else if (normStatus.isEmpty) {
-        normStatus = 'Показатель в норме'; // По умолчанию считаем в норме
+        // Если статус не пришел с сервера, проверяем по нормам ВОЗ
+        // Для окружности головы нормальный диапазон примерно 30-45 см (зависит от возраста)
+        // Если значение выходит за пределы зеленой зоны на графике, считаем вне нормы
+        if (value < 30 || value > 45) {
+          normStatus = 'Вне нормы';
+        } else {
+          normStatus = 'Показатель в норме';
+        }
       }
       
       // Рассчитываем количество дней назад
@@ -335,10 +342,65 @@ abstract class _CircleStore extends LearnMoreStore<EntityHistoryCircle>
   }
 
   @computed
-  double get minValue => circleUnit == CircleUnit.cm ? 30 : 300;
+  double get minValue {
+    // Получаем все значения из графика
+    final values = chartData.map((e) => e.value).toList();
+    if (values.isEmpty) {
+      // По умолчанию показываем 30-50 см (или 300-500 мм)
+      return circleUnit == CircleUnit.cm ? 30.0 : 300.0;
+    }
+    
+    final minDataValue = values.reduce((a, b) => a < b ? a : b);
+    final maxDataValue = values.reduce((a, b) => a > b ? a : b);
+    
+    // Диапазон данных
+    final dataRange = maxDataValue - minDataValue;
+    
+    // Желаемый диапазон отображения (20 см или 200 мм)
+    final displayRange = circleUnit == CircleUnit.cm ? 20.0 : 200.0;
+    
+    // Если данные помещаются в диапазон 20, центрируем их
+    if (dataRange <= displayRange) {
+      final center = (minDataValue + maxDataValue) / 2;
+      final calculatedMin = center - displayRange / 2;
+      // Не опускаемся ниже 0
+      return (calculatedMin).clamp(0, double.infinity);
+    }
+    
+    // Если данные больше 20, показываем их с небольшим отступом
+    final offset = circleUnit == CircleUnit.cm ? 2.0 : 20.0;
+    return (minDataValue - offset).clamp(0, double.infinity);
+  }
 
   @computed
-  double get maxValue => circleUnit == CircleUnit.cm ? 50 : 500;
+  double get maxValue {
+    // Получаем все значения из графика
+    final values = chartData.map((e) => e.value).toList();
+    if (values.isEmpty) {
+      // По умолчанию показываем 30-50 см (или 300-500 мм)
+      return circleUnit == CircleUnit.cm ? 50.0 : 500.0;
+    }
+    
+    final minDataValue = values.reduce((a, b) => a < b ? a : b);
+    final maxDataValue = values.reduce((a, b) => a > b ? a : b);
+    
+    // Диапазон данных
+    final dataRange = maxDataValue - minDataValue;
+    
+    // Желаемый диапазон отображения (20 см или 200 мм)
+    final displayRange = circleUnit == CircleUnit.cm ? 20.0 : 200.0;
+    
+    // Если данные помещаются в диапазон 20, центрируем их
+    if (dataRange <= displayRange) {
+      final center = (minDataValue + maxDataValue) / 2;
+      final calculatedMax = center + displayRange / 2;
+      return calculatedMax;
+    }
+    
+    // Если данные больше 20, показываем их с небольшим отступом
+    final offset = circleUnit == CircleUnit.cm ? 2.0 : 20.0;
+    return maxDataValue + offset;
+  }
 
   @observable
   CircleUnit circleUnit = CircleUnit.cm;

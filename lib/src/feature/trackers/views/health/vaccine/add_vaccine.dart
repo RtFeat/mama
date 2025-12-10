@@ -72,7 +72,7 @@ class _BodyState extends State<_Body> {
       final bool isAdd = widget.addVaccineViewStore.isAdd;
 
       return Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         appBar: CustomAppBar(
           title: !isAdd
               ? t.trackers.vaccines.addFromListVacAppBarTitle
